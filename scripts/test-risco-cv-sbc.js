@@ -26,7 +26,15 @@
 //     campo escapado;
 // (5) a fiação: o cartão antes do PREVENT, o caminho `render` de `openCalc`, e o
 //     bloco de metas do PREVENT chamando o MESMO motor;
-// (6) mutações que cada asserção tem de pegar.
+// (6) mutações que cada asserção tem de pegar;
+// (7) a revisão independente de 24/10 (commit b9ebf1b), um teste por item: A1 sexo
+//     em branco no DM2; A2 esquema fora da Figura 7.2; M1 SCA recente × evento
+//     < 2 anos; M2 "sem tratamento" menor que o atual; M3 não-HDL-c do alto para
+//     cima; B1 ganho arredondado; B2 LDL-c igual à meta; B3 79–80 e 59–60 anos;
+//     B4 duração pelo ano; B5 80 anos com diabetes; B6 diálise peritoneal; B7
+//     textos; B8 TFGe < 60 e PAS < 110 nas referências do PREVENT. A varredura do
+//     "não sei" passou a cobrir sexo, LDL-c sem tratamento, a coerência SCA × 2
+//     anos e os 80 anos.
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -112,6 +120,38 @@ const REF = [
   ['+fumante', { sbp: 148, bptx: 0, hdl: 60, statin: 1, dm: 0, smk: 1 }, [.096, .06, .074, .032, .032], [.334, .213, .271, .122, .119]],
   ['+TFGe 67', { sbp: 148, bptx: 0, hdl: 60, statin: 1, dm: 0, smk: 1, egfr: 67 }, [.099, .062, .076, .033, .033], [.355, .228, .291, .132, .128]],
 ].forEach(([n, mod, e10, e30]) => { const p = com(Object.assign({ age: 59 }, mod)); REF.push(['preventr homem ' + n, p, 'm', 10, e10], ['preventr homem ' + n, p, 'm', 30, e30]); });
+// Revisão de 24/10 (B8): TFGe < 60 e PAS < 110 — os termos egfr_lt_60 e sbp_lt_110 e a
+// interação idade × TFGe < 60 (por isso dois perfis de idade) —, nos quatro modelos,
+// para prender também os coeficientes de DAC e AVC desses termos, que os casos acima
+// (TFGe ≥ 60, PAS ≥ 110) não exercitam. Esperados: preventr 0.12.1 (tabelas do
+// sysdata.rda), calculados pela implementação independente em Python
+// (calc-risco/tools/gera-ref-b8.py sobre confere-independente.py; o R não está na
+// máquina). Fração com 6 casas; o de 30 anos só até 59 anos.
+const B8_PERFIL = { 'TFGe 45': { egfr: 45 }, 'PAS 100': { sbp: 100 }, '65a TFGe 45': { age: 65, egfr: 45 } };
+const B8_MODELO = { base: {}, uacr: { uacr: 40 }, hba1c: { hba1c: 7.5 }, full: { uacr: 40, hba1c: 7.5 } };
+const B8 = [
+  ['TFGe 45', 'base', 'f', 10, [.271629, .162404, .184831, .082312, .098132]], ['TFGe 45', 'base', 'f', 30, [.619753, .416930, .515201, .243608, .269621]],
+  ['TFGe 45', 'base', 'm', 10, [.271549, .153784, .214121, .084943, .084470]], ['TFGe 45', 'base', 'm', 30, [.587165, .379666, .535209, .236456, .226585]],
+  ['TFGe 45', 'uacr', 'f', 10, [.264620, .158438, .176753, .079756, .096123]], ['TFGe 45', 'uacr', 'f', 30, [.610525, .409242, .504192, .238045, .265764]],
+  ['TFGe 45', 'uacr', 'm', 10, [.248988, .146086, .185536, .078971, .079370]], ['TFGe 45', 'uacr', 'm', 30, [.561493, .369831, .496397, .226802, .219964]],
+  ['TFGe 45', 'hba1c', 'f', 10, [.265708, .155532, .183740, .075866, .094252]], ['TFGe 45', 'hba1c', 'f', 30, [.600231, .395596, .504063, .222488, .255576]],
+  ['TFGe 45', 'hba1c', 'm', 10, [.260491, .146936, .202292, .078479, .082088]], ['TFGe 45', 'hba1c', 'm', 30, [.565810, .360420, .513675, .213857, .218446]],
+  ['TFGe 45', 'full', 'f', 10, [.259120, .153521, .174682, .074672, .093288]], ['TFGe 45', 'full', 'f', 30, [.586656, .390252, .484846, .220491, .254862]],
+  ['TFGe 45', 'full', 'm', 10, [.233124, .135417, .170113, .071642, .076069]], ['TFGe 45', 'full', 'm', 30, [.531492, .341556, .463248, .201978, .207379]],
+  ['PAS 100', 'base', 'f', 10, [.076386, .040039, .048622, .021699, .020795]], ['PAS 100', 'base', 'f', 30, [.352555, .187158, .281489, .110583, .098576]],
+  ['PAS 100', 'base', 'm', 10, [.093611, .053197, .060770, .031791, .021648]], ['PAS 100', 'base', 'm', 30, [.353654, .207382, .291378, .133602, .090465]],
+  ['PAS 100', 'uacr', 'f', 10, [.089248, .045885, .059823, .025236, .023760]], ['PAS 100', 'uacr', 'f', 30, [.376538, .199639, .315635, .120356, .105839]],
+  ['PAS 100', 'uacr', 'm', 10, [.106600, .061022, .070964, .035917, .024826]], ['PAS 100', 'uacr', 'm', 30, [.367470, .218833, .309730, .140101, .096458]],
+  ['PAS 100', 'hba1c', 'f', 10, [.077238, .039634, .051045, .020945, .020633]], ['PAS 100', 'hba1c', 'f', 30, [.343875, .179449, .284828, .103918, .094935]],
+  ['PAS 100', 'hba1c', 'm', 10, [.089286, .050629, .057466, .029285, .021102]], ['PAS 100', 'hba1c', 'm', 30, [.335915, .194807, .278504, .119185, .087238]],
+  ['PAS 100', 'full', 'f', 10, [.089245, .045271, .059544, .023427, .023896]], ['PAS 100', 'full', 'f', 30, [.362432, .192002, .301973, .110281, .104354]],
+  ['PAS 100', 'full', 'm', 10, [.102167, .057636, .065789, .035100, .023411]], ['PAS 100', 'full', 'm', 30, [.352874, .204894, .290142, .133322, .089021]],
+  ['65a TFGe 45', 'base', 'f', 10, [.322276, .186552, .236343, .101065, .106335]], ['65a TFGe 45', 'base', 'm', 10, [.333702, .202151, .276874, .123388, .106157]],
+  ['65a TFGe 45', 'uacr', 'f', 10, [.326247, .189084, .240777, .102826, .108586]], ['65a TFGe 45', 'uacr', 'm', 10, [.319981, .199150, .255358, .119968, .104983]],
+  ['65a TFGe 45', 'hba1c', 'f', 10, [.330266, .189810, .250829, .102066, .108915]], ['65a TFGe 45', 'hba1c', 'm', 10, [.336795, .203810, .280511, .117905, .110883]],
+  ['65a TFGe 45', 'full', 'f', 10, [.325143, .188186, .247157, .102952, .109806]], ['65a TFGe 45', 'full', 'm', 10, [.316636, .193637, .249039, .111916, .105674]],
+];
+B8.forEach(([pf, mo, sx, hz, vals]) => REF.push(['preventr B8 ' + pf + ' (' + mo + ')', com(Object.assign({}, B8_PERFIL[pf], B8_MODELO[mo])), sx, hz, vals]));
 
 const V = (p, sx) => ({ pv_sexo: sx === 'm' ? '1' : '0', pv_idade: String(p.age), pv_ct: String(p.tc), pv_hdl: String(p.hdl), pv_pas: String(p.sbp), pv_egfr: String(p.egfr),
   pv_imc: String(p.bmi), pv_dm: p.dm ? '1' : '0', pv_fum: p.smk ? '1' : '0', pv_ahas: p.bptx ? '1' : '0', pv_est: p.statin ? '1' : '0',
@@ -155,7 +195,9 @@ function riscoComSDI(v, sdi) {
   // ela não é usada; o caso abaixo cobre o modelo completo).
   { const v = V(com({ hba1c: 7.5, uacr: 40 }), 'f'), c = riscoComSDI(v, null), a = M.preventRisk(v); OUT.forEach((o) => { fid++; fidMax = Math.max(fidMax, Math.abs(c[o] - a[o]), Math.abs(c[o + '30'] - a[o + '30'])); }); }
   ok(fid > 0 && fidMax < 1e-9, '(1) a cópia do modelo completo com SDI não reproduz o preventRisk do app sem SDI (dif ' + fidMax + ')');
-  ok(n === 234, '(1) a tabela de referência perdeu valores (eram 234): ' + n);
+  ok(n === 434, '(1) a tabela de referência perdeu valores (eram 434: 234 + 200 da revisão B8): ' + n);
+  // B8: cada perfil novo caiu no modelo pedido (base, +RAC, +HbA1c, completo).
+  ok(B8.length === 40 && B8.every(([pf, mo, sx]) => M.preventRisk(V(com(Object.assign({}, B8_PERFIL[pf], B8_MODELO[mo])), sx)).model === mo), '(1) B8: os perfis de TFGe < 60 e PAS < 110 têm de passar pelos quatro modelos');
   // ⚠️ A errata: com HbA1c, os coeficientes "com diabetes" e "sem diabetes" estavam
   // trocados. Antes dela o AVC em 10 anos da mulher S12 com HbA1c 9,2 saía 5,3%; o
   // certo é 6,7% (preventr 0.12.1).
@@ -283,28 +325,121 @@ for (const [id, d, k, mot, fonte] of OURO) {
     '(2) sem escore, LDL-c 160–189 já é no mínimo intermediário, e com agravante, alto (F4.1)');
   ok(E({ sexo: 'M', idade: 50 }).pendencias.some((p) => /PREVENT não calculado/.test(p.t)), '(2) sem escore, a pendência pede o PREVENT');
 }
+// ── Revisão independente de 24/10/2026 (commit b9ebf1b): um teste por item ──
+{
+  const semEAR = { nac: 'ausente', retino: 'ausente', tfge: 95, rac: 10, ag: { hfam: false, sm: false } };
+  const dm2 = (o) => E(Object.assign({ dm: 'DM2', dmDuracao: 3 }, semEAR, o));
+  // A1 — sexo em branco não rebaixa o DM2 nem inventa o sexo no motivo.
+  const a60 = dm2({ sexo: null, idade: 60 }), a53 = dm2({ sexo: null, idade: 53 }), a45 = dm2({ sexo: null, idade: 45 });
+  ok(a60.k === 'alto' && /com 56 anos ou mais \(alto nos dois sexos\)/.test(a60.motivo) && !/mulher|homem/.test(a60.motivo),
+    '(2) ⚠️ A1: DM2 de 60 anos com o sexo em branco é ALTO (≥ 56 vale nos dois sexos), sem citar sexo no motivo: ' + a60.k + ' · ' + a60.motivo);
+  ok(a53.k === 'intermediario' && !/mulher|homem/.test(a53.motivo) && /sexo não informado/.test(a53.motivo) && a53.pendencias.some((x) => x.sobe === 'alto' && /Sexo não informado: no DM2, o homem já é alto risco a partir dos 50 anos/.test(x.t)),
+    '(2) A1: de 50 a 55 anos com o sexo em branco, intermediário com pendência "→ alto" pedindo o sexo');
+  ok(a45.k === 'intermediario' && !a45.pendencias.some((x) => /Sexo não informado/.test(x.t)), '(2) A1: abaixo de 50 anos o sexo não muda o DM2 — sem pendência de sexo');
+  ok(dm2({ sexo: 'M', idade: 52 }).k === 'alto' && dm2({ sexo: 'F', idade: 52 }).k === 'intermediario' && /em mulher < 56 anos/.test(dm2({ sexo: 'F', idade: 52 }).motivo), '(2) A1: com o sexo informado, os cortes 50/56 continuam');
+  ok(M.rcvDados({ sexo: '', idade: '60', dm: 'DM2', dm_ano: '2023', ev: 'nao' }, 2026).cat.k === 'alto', '(2) A1 pela tela: DM2 de 60 anos sem o sexo marcado é alto');
+  // M1 — SCA nos últimos 12 meses já é evento agudo há menos de 2 anos (T4.2).
+  const m1 = E({ sexo: 'M', idade: 70, ev: { iam: true, sca12m: true }, tfge: 90 }), m1n = E({ sexo: 'M', idade: 70, ev: { iam: true, sca12m: true }, evento2a: false, tfge: 90 });
+  ok(m1.k === 'extremo' && m1.condicoes.some((c) => /há menos de 2 anos, pela SCA dos últimos 12 meses/.test(c)), '(2) ⚠️ M1: IAM + SCA recente aos 70 anos é EXTREMO (idade ≥ 65 + evento < 2 anos): ' + m1.k);
+  ok(m1n.k === 'extremo' && m1n.alertas.some((a) => /Respostas em conflito: "SCA nos últimos 12 meses"/.test(a)) && !m1.alertas.some((a) => /em conflito/.test(a)),
+    '(2) M1: SCA recente com "evento < 2 anos: Não" é contradição — conta a SCA e avisa');
+  // M2 — "sem tratamento" menor que o atual: para os cortes vale o maior, com alerta.
+  const m2a = E({ sexo: 'M', idade: 50, prevent: 3, ldl: 200, ldlBasal: 150, trat: { estatina: 'alta' } });
+  const m2b = E({ sexo: 'M', idade: 45, dm: 'DM2', dmDuracao: 2, ldl: 200, ldlBasal: 180, trat: { estatina: 'moderada' } });
+  ok(m2a.k === 'alto' && /LDL-c ≥ 190/.test(m2a.motivo) && m2a.alertas.some((a) => /LDL-c sem tratamento informado \(150 mg\/dL\) abaixo do LDL-c atual \(200\)/.test(a)), '(2) ⚠️ M2: EAI com LDL-c 200 e "basal" 150 é ALTO (≥ 190), não baixo — e avisa: ' + m2a.k);
+  ok(m2b.k === 'muitoalto' && /hipercolesterolemia grave \(LDL-c de 200/.test(m2b.motivo), '(2) ⚠️ M2: DM2 com LDL-c 200 sob estatina e "basal" 180 é MUITO ALTO (LDL-c > 190, T4.8): ' + m2b.k);
+  ok(E({ sexo: 'M', idade: 50, prevent: 3, ldl: 170, ldlBasal: 120, trat: { estatina: 'nao' } }).k === 'intermediario', '(2) M2: sem tratamento, duas dosagens — vale a maior para 160–189');
+  const m2c = E({ sexo: 'M', idade: 50, prevent: 3, ldl: 150, ldlBasal: 120, trat: { estatina: 'alta' } });
+  ok(m2c.k === 'baixo' && m2c.pendencias.some((x) => x.sobe === 'alto' && /sem tratamento informado abaixo do atual/.test(x.t)), '(2) M2: basal contraditório abaixo de 190: o verdadeiro pode passar de 190 — pendência');
+  // B3 — 79,5 anos ainda tem escore (o campo aceita decimal); 80 já é a regra dos 80.
+  const b3 = E({ sexo: 'M', idade: 79.5, prevent: 8 });
+  ok(b3.k === 'intermediario' && b3.escoreUsado && !b3.semEscore && E({ sexo: 'M', idade: 80, prevent: 3 }).k === 'alto', '(2) B3: 79,5 anos cai no escore (< 80), não no vão entre "≤ 79" e "≥ 80"');
+  // B4 — duração pelo ano do diagnóstico: no limite do corte, pendência.
+  const b4 = dm2({ sexo: 'M', idade: 45, dmDuracao: 10, dmDuracaoAprox: true });
+  ok(b4.k === 'intermediario' && b4.pendencias.some((x) => x.sobe === 'alto' && /duração do diabetes \(pelo ano do diagnóstico dá 10 anos; com mais de 10, é estratificador\)/.test(x.t)),
+    '(2) B4: DM2 "há 10 anos" pela conta do ano pode ter mais de 10 — pendência "→ alto"');
+  ok(!dm2({ sexo: 'M', idade: 45, dmDuracao: 10 }).pendencias.some((x) => /duração do diabetes/.test(x.t)) && !dm2({ sexo: 'M', idade: 45, dmDuracao: 9, dmDuracaoAprox: true }).pendencias.some((x) => /duração do diabetes/.test(x.t)),
+    '(2) B4: duração exata de 10, ou 9 pelo ano, não deixa o critério em aberto');
+  const xb4 = M.rcvDados({ sexo: 'M', idade: '45', dm: 'DM2', dm_ano: '2016', ev: 'nao', nac: 'ausente', retino: 'ausente', ag_hfam: 'nao', ag_sm: 'nao', tab: 'nao', has: 'nao', cr: '0.9', rac: '10' }, 2026);
+  ok(xb4.d.dmDuracaoAprox === true && xb4.cat.pendencias.some((x) => /pelo ano do diagnóstico dá 10 anos/.test(x.t)), '(2) B4 pela tela: diagnóstico em 2016 conferido em 2026 deixa os "10 anos" em aberto');
+  const dm1 = (o) => E(Object.assign({ dm: 'DM1', sexo: 'F' }, semEAR, o));
+  ok(dm1({ idade: 45, dmDuracao: 20, dmDuracaoAprox: true }).pendencias.some((x) => x.sobe === 'muitoalto' && /duração do DM1 e idade ao diagnóstico \(pelo ano do diagnóstico: 20 anos/.test(x.t))
+    && dm1({ idade: 43, dmDuracao: 25, dmDuracaoAprox: true }).pendencias.some((x) => /diagnóstico aos 18/.test(x.t)) && !dm1({ idade: 43, dmDuracao: 25 }).pendencias.some((x) => /em aberto/.test(x.t)),
+    '(2) B4: no DM1, "20 anos" e "diagnóstico aos 18" pela conta do ano ficam em aberto (T4.8)');
+  // B5 — 80 anos ou mais: alto com ou sem diabetes (§4.8).
+  const b5 = dm1({ idade: 85, dmDuracao: 10 }), b5b = dm2({ sexo: 'F', idade: 85 });
+  ok(b5.k === 'alto' && /80 anos ou mais/.test(b5.motivo) && b5b.k === 'alto' && b5b.outros.some((o) => /80 anos ou mais/.test(o.motivo)), '(2) ⚠️ B5: DM1 de 85 anos sem estratificador é ALTO pela regra dos 80 anos, como o mesmo paciente sem diabetes: ' + b5.k);
+  // B7 — DM1 com a idade em branco: a pendência pede a idade, não a duração.
+  const b7 = dm1({ idade: NaN, dmDuracao: 25 });
+  ok(b7.pendencias.some((x) => x.sobe === 'muitoalto' && /em aberto: idade \(o DM1 com mais de 20 anos/.test(x.t)) && !b7.pendencias.some((x) => /duração do DM1/.test(x.t) || /fica fora das duas regras/.test(x.t)),
+    '(2) B7: DM1 há 25 anos com a idade em branco pede a IDADE (diagnóstico depois dos 18), não a duração');
+  ok(dm1({ idade: NaN, dmDuracao: 10 }).pendencias.some((x) => /Idade não informada: com 80 anos ou mais/.test(x.t)) && !dm1({ idade: NaN, dmDuracao: 10 }).pendencias.some((x) => /no DM2, 50 anos/.test(x.t)),
+    '(2) B7: no DM1 a pendência da idade não cita o corte do DM2');
+  // B6 — diálise peritoneal no muito alto: o alerta admite iniciar estatina (§9.5).
+  const b6 = E({ sexo: 'M', idade: 60, dm: 'DM2', dmDuracao: 3, dialise: 'peritoneal' }), b6h = E({ sexo: 'M', idade: 60, dm: 'DM2', dmDuracao: 3, dialise: 'hemo' });
+  ok(b6.k === 'muitoalto' && b6.alertas.some((a) => /Diálise peritoneal .*no risco muito alto: a diretriz admite iniciar estatina/.test(a)) && b6h.alertas.some((a) => /recomenda contra INICIAR estatina/.test(a)),
+    '(2) B6: na diálise peritoneal com risco muito alto o alerta admite iniciar estatina; na hemodiálise, contra');
+}
 // "NÃO SEI" NÃO DERRUBA A CATEGORIA. Para cada fator de risco em aberto, a
 // categoria com "não sei" é a MESMA de "não" (o "não sei" não dispara regra) e
 // nunca maior que a de "sim". Varredura determinística sobre pacientes sorteados.
+// Revisão de 24/10: a varredura cobre também (b) o SEXO — em branco dá o MÍNIMO das
+// duas respostas (A1); (c) o LDL-c SEM TRATAMENTO — em branco é o mesmo que informar
+// o próprio LDL-c atual e nunca fica acima de valor nenhum informado (M2); (d) a
+// coerência SCA recente × evento < 2 anos — com SCA nos últimos 12 meses, a resposta
+// dos 2 anos não muda nada, e vale o mesmo que IAM com evento < 2 anos (M1); e (e) os
+// 80 anos — sem doença aterosclerótica, no mínimo alto, com ou sem diabetes (B5).
 {
   let seed = 20261024;
   const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
   const pick = (a) => a[Math.floor(rnd() * a.length)];
   const CAMPOS = [['tabagismo'], ['has'], ['hf'], ['aaa'], ['evento2a'], ['ldlPersist100'], ['evMais1'], ['obstrOutra'], ['ag', 'hfam'], ['ag', 'sm'], ['ag', 'les'], ['ag', 'psor'], ['ag', 'menop']];
+  const NUM = ['dmDuracao', 'prevent', 'ldl', 'ldlBasal', 'ct', 'tfge', 'rac'];
+  const copia = (d) => { const c = JSON.parse(JSON.stringify(d, (k, x) => (typeof x === 'number' && !isFinite(x) ? null : x))); NUM.forEach((k) => { if (c[k] == null) c[k] = NaN; }); return c; };
+  const K = (c) => M.sbcEstratifica(c).k;
+  const menor = (a, b) => (a === null || b === null ? null : (ix(a) <= ix(b) ? a : b));
   let n = 0, quebras = [];
+  const vis = { sexo: [0, []], basal: [0, []], sca: [0, []], idoso: [0, []] };
+  const quebra = (q, msg) => { vis[q][1].push(msg); };
   for (let i = 0; i < 1500; i++) {
     const d = {
       idade: Math.round(20 + rnd() * 65), sexo: pick(['M', 'F']), dm: pick(['nenhum', 'DM2', 'DM1', null]), dmDuracao: pick([NaN, 3, 12, 25]),
-      prevent: pick([NaN, 2, 7, 14, 22]), ldl: pick([NaN, 90, 150, 175, 200]), ct: pick([NaN, 200, 320]), hdl: 45, tfge: pick([NaN, 95, 50, 25]), rac: pick([NaN, 10, 100, 400]),
-      ev: pick([{}, { iam: true }, { ait: true }, { iam: true, avc: true }]), trat: { estatina: pick(['nao', 'alta', null]) }, nac: pick([null, 'ausente']), retino: pick([null, 'ausente', 'leve']), ag: {}
+      prevent: pick([NaN, 2, 7, 14, 22]), ldl: pick([NaN, 90, 150, 175, 200]), ldlBasal: NaN, ct: pick([NaN, 200, 320]), hdl: 45, tfge: pick([NaN, 95, 50, 25]), rac: pick([NaN, 10, 100, 400]),
+      ev: pick([{}, { iam: true }, { ait: true }, { iam: true, avc: true }, { sca12m: true }, { iam: true, sca12m: true }]), trat: { estatina: pick(['nao', 'alta', null]) }, nac: pick([null, 'ausente']), retino: pick([null, 'ausente', 'leve']), ag: {}
     };
+    // (a) os campos sim / não / não sei
     const campo = pick(CAMPOS);
-    const com = (v) => { const c = JSON.parse(JSON.stringify(d, (k, x) => (typeof x === 'number' && !isFinite(x) ? null : x))); ['dmDuracao', 'prevent', 'ldl', 'ct', 'tfge', 'rac'].forEach((k) => { if (c[k] == null) c[k] = NaN; }); if (campo.length === 2) c.ag[campo[1]] = v; else c[campo[0]] = v; return c; };
-    const kNs = M.sbcEstratifica(com(null)).k, kNao = M.sbcEstratifica(com(false)).k, kSim = M.sbcEstratifica(com(true)).k;
+    const com = (v) => { const c = copia(d); if (campo.length === 2) c.ag[campo[1]] = v; else c[campo[0]] = v; return c; };
+    const kNs = K(com(null)), kNao = K(com(false)), kSim = K(com(true));
     n++;
     if (kNs !== kNao || (kSim !== null && kNs !== null && ix(kNs) > ix(kSim))) quebras.push(campo.join('.') + ' ' + JSON.stringify([kNs, kNao, kSim]));
+    // (b) sexo em branco = o mínimo de "masculino" e "feminino"
+    { const c = copia(d); c.sexo = null; const kN = K(c); c.sexo = 'M'; const kM = K(c); c.sexo = 'F'; const kF = K(c);
+      vis.sexo[0]++; if (kN !== menor(kM, kF)) quebra('sexo', JSON.stringify({ idade: d.idade, dm: d.dm, ev: d.ev, k: [kN, kM, kF] })); }
+    // (c) LDL-c sem tratamento em branco = informar o próprio LDL-c atual, e nunca acima de um valor informado
+    if (isFinite(d.ldl)) {
+      const c = copia(d); const k0 = K(c); c.ldlBasal = d.ldl; const kIg = K(c);
+      const ks = [d.ldl - 40, d.ldl + 40, 195].map((b) => { c.ldlBasal = b; return K(c); });
+      vis.basal[0]++;
+      if (k0 !== kIg || ks.some((k) => k0 !== null && (k === null || ix(k) < ix(k0)))) quebra('basal', JSON.stringify({ ldl: d.ldl, trat: d.trat.estatina, dm: d.dm, k: [k0, kIg].concat(ks) }));
+    }
+    // (d) SCA recente: a resposta dos 2 anos não muda a categoria, e é o mesmo que IAM com evento < 2 anos
+    if (d.ev.sca12m) {
+      const c = copia(d); const ks = [null, false, true].map((v) => { c.evento2a = v; return K(c); });
+      const c2 = copia(d); c2.ev = { iam: true, avc: !!d.ev.avc }; c2.evento2a = true;
+      vis.sca[0]++; if (!(ks[0] === ks[1] && ks[1] === ks[2] && ks[0] === K(c2))) quebra('sca', JSON.stringify({ idade: d.idade, ev: d.ev, k: ks.concat([K(c2)]) }));
+    }
+    // (e) 80 anos ou mais, sem doença aterosclerótica: no mínimo alto, com ou sem diabetes
+    if (d.idade >= 80) {
+      const c = copia(d); c.ev = {}; c.dcva = false; const k = K(c);
+      vis.idoso[0]++; if (k === null || ix(k) < ix('alto')) quebra('idoso', JSON.stringify({ idade: d.idade, dm: d.dm, k }));
+    }
   }
   ok(n === 1500 && quebras.length === 0, '(2) ⚠️ "não sei" mudou a categoria em relação a "não", ou ficou acima de "sim": ' + quebras.slice(0, 3).join(' | '));
+  ok(vis.sexo[0] === 1500 && vis.sexo[1].length === 0, '(2) ⚠️ A1: sexo em branco tem de dar o MÍNIMO de masculino e feminino (nem abaixo, nem regra disparada): ' + vis.sexo[1].slice(0, 3).join(' | '));
+  ok(vis.basal[0] > 800 && vis.basal[1].length === 0, '(2) ⚠️ M2: LDL-c sem tratamento em branco = informar o próprio LDL-c atual, e nenhum valor informado pode baixar a categoria: ' + vis.basal[1].slice(0, 3).join(' | '));
+  ok(vis.sca[0] > 300 && vis.sca[1].length === 0, '(2) ⚠️ M1: com SCA recente, a resposta dos 2 anos não pode mudar a categoria (e vale o mesmo que IAM com evento < 2 anos): ' + vis.sca[1].slice(0, 3).join(' | '));
+  ok(vis.idoso[0] > 50 && vis.idoso[1].length === 0, '(2) ⚠️ B5: 80 anos ou mais sem doença aterosclerótica é no mínimo alto, com ou sem diabetes: ' + vis.idoso[1].slice(0, 3).join(' | '));
   // E vira pendência, com a categoria a que leva.
   const p = E({ sexo: 'M', idade: 60, prevent: 8, ldl: 120, ct: 190, hdl: 50, ag: { hfam: null } });
   ok(p.k === 'intermediario' && p.pendencias.some((x) => x.sobe === 'alto' && /Agravantes em aberto: história familiar/.test(x.t)), '(2) agravante em aberto vira "pode subir" para alto, no intermediário');
@@ -365,6 +500,62 @@ for (const [id, d, k, mot, fonte] of OURO) {
   ok(R['EZE'] === 20 && R['ABp'] === 20 && R['EMI'] === 30 && R['ABp + EZE'] === 40 && R['EAI'] === 50 && R['EMI + EZE'] === 50 && R['anti-PCSK9'] === 55 && R['EAI + EZE'] === 65
     && R['EZE + anti-PCSK9'] === 70 && R['EAI + EZE + ABp'] === 75 && R['EAI + anti-PCSK9'] === 80 && R['EZE + ABp + anti-PCSK9'] === 80 && R['EAI + EZE + anti-PCSK9'] === 85
     && R['EAI + ABp + anti-PCSK9'] === 85 && R['EAI + EZE + ABp + anti-PCSK9'] === 90 && M.RCV_ESTRATEGIAS.length === 15, '(3) as reduções médias saíram da Figura 7.2');
+}
+// ── Revisão de 24/10: alvo e estratégias (A2, B1, B2, B6, M2, M3) ──
+{
+  const tela = (e) => M.rcvEstrategiasHTML(M.rcvDados(e, 2026));
+  const metas = (e) => M.rcvMetasHTML(M.rcvDados(e, 2026));
+  const linha = (h, t) => { const m = h.match(new RegExp('<td>' + t.replace(/[+()]/g, '\\$&') + '(?: <span class="rcv-fonte">[^<]*</span>)?</td>[\\s\\S]*?</tr>')); return m ? m[0] : ''; };
+  // Muito alto por AIT, sem diabetes, para isolar o esquema em uso.
+  const AIT = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'sim', e_ait: '1', lpa_un: 'nd' };
+  const ait = (o) => Object.assign({}, AIT, o);
+  const corpoTab = (h) => h.slice(h.indexOf('<tbody>'), h.indexOf('</tbody>'));
+  // A2 — esquema fora da figura é TRATAMENTO, não "sem tratamento".
+  ok(M.rcvRegime({ estatina: 'moderada', pcsk9: true }) === null && M.rcvRegime({ estatina: 'alta', abp: true }) === null && M.rcvRegime({ estatina: null, eze: true }) === null
+    && M.rcvRegime({ estatina: 'nao', eze: false }).nada && M.rcvRegime({ estatina: 'alta' }).id === 'eai', '(3) A2: rcvRegime — fora da figura (ou estatina em branco com outro fármaco) é null; sem nada, "nada"');
+  const a2 = tela(ait({ ldl: '90', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'sim' }));
+  ok(/O esquema em uso \(EMI \+ anti-PCSK9\) não é uma das combinações da Figura 7\.2/.test(a2) && /Informe o LDL-c sem tratamento/.test(a2) && !/sugerida/.test(a2) && !/✓ sim/.test(a2) && !/Sobre o atual/.test(a2),
+    '(3) ⚠️ A2: em EMI + anti-PCSK9 sem o basal, nenhuma estratégia é dada como suficiente, e a tela pede o LDL-c sem tratamento');
+  const a2b = tela(ait({ ldl: '90', ldlb: '200', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'sim' }));
+  ok(/sugerida/.test(linha(a2b, 'EAI + anti-PCSK9')) && !/sugerida/.test(linha(a2b, 'EAI + EZE')) && /redução observada, 55%/.test(a2b) && /\+56%/.test(linha(a2b, 'EAI + anti-PCSK9')),
+    '(3) ⚠️ A2: com o basal (200 → 90: 55% observados), a sugerida mantém o anti-PCSK9 (EAI + anti-PCSK9), nunca "trocar por EAI + EZE"');
+  // Intensificar não é trocar, também dentro da figura: em anti-PCSK9 isolado, a sugerida mantém o anticorpo.
+  const a2c = tela(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '80', est: 'nao', eze: 'nao', abp: 'nao', pcsk9: 'sim' }));
+  ok(/sugerida/.test(linha(a2c, 'EAI + anti-PCSK9')) && !/sugerida/.test(linha(a2c, 'EAI + EZE')) && /em uso/.test(linha(a2c, 'anti-PCSK9')), '(3) A2: a sugerida contém o esquema atual (não tira o anti-PCSK9 em uso)');
+  // B1 — o LDL-c previsto IGUAL ao alvo estrito não alcança: EMI, LDL-c 140 no muito alto; EAI + EZE + ABp leva a 50 (140 × 0,25/0,70).
+  const b1 = tela(ait({ ldl: '140', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'nao' }));
+  ok(/\+64%/.test(linha(b1, 'EAI + EZE + ABp')) && /não/.test(linha(b1, 'EAI + EZE + ABp')) && !/✓ sim/.test(linha(b1, 'EAI + EZE + ABp')) && /sugerida/.test(linha(b1, 'EAI + anti-PCSK9')),
+    '(3) ⚠️ B1: o esquema que leva o LDL-c a exatamente 50 no muito alto (meta < 50) NÃO alcança; a sugerida é a seguinte (EAI + anti-PCSK9)');
+  // B2 — LDL-c igual à meta estrita: fora da meta, sem "Redução necessária: 0,0%".
+  const lim = M.sbcAlvoLDL('alto', 70, NaN, true, 90);
+  ok(lim.limite && !lim.naMeta && lim.red === 0 && !M.sbcAlvoLDL('alto', 69, NaN, true, 90).limite && !M.sbcAlvoLDL('alto', 75, NaN, true, 90).limite, '(3) B2: sbcAlvoLDL marca o limite (LDL-c = meta estrita)');
+  const b2 = metas(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao' }));
+  ok(/<b>LDL-c no limite da meta:<\/b> a meta é estrita \(&lt; 70\)/.test(b2) && !/Redução necessária: 0,0%/.test(b2) && /no limite \(a meta é &lt; 70\)/.test(b2) && !/\+0 acima/.test(b2),
+    '(3) ⚠️ B2: LDL-c de 70 no alto, em estatina: "no limite da meta", não "Redução necessária: 0,0%" nem "+0 acima"');
+  ok(/sugerida/.test(corpoTab(tela(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao' })))), '(3) B2: no limite da meta as estratégias ainda sugerem a intensificação');
+  // B6 — diálise peritoneal no muito alto: o §9.5 admite iniciar estatina, e o bloco não bloqueia.
+  const DPm = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', ev: 'nao', lpa_un: 'nd', dm: 'DM2', dm_ano: '2020', ldl: '120', est: 'nao' };
+  const b6 = tela(Object.assign({}, DPm, { dial: 'dp' })), b6h = tela(Object.assign({}, DPm, { dial: 'hemo' }));
+  ok(M.rcvDados(Object.assign({}, DPm, { dial: 'dp' }), 2026).cat.k === 'muitoalto' && /Diálise peritoneal no risco muito alto: a diretriz admite iniciar estatina/.test(b6) && /sugerida/.test(corpoTab(b6)) && !/contra INICIAR/.test(b6),
+    '(3) ⚠️ B6: diálise peritoneal no muito alto — o bloco de estratégias admite iniciar estatina, como o alerta (§9.5)');
+  ok(/recomenda contra INICIAR estatina/.test(b6h) && !/sugerida/.test(corpoTab(b6h)), '(3) B6: na hemodiálise sem DCV, continua sem esquema sugerido (rec. §9.5)');
+  // M2 — o "sem tratamento" menor que o atual não serve de base para a redução mínima.
+  ok(isNaN(M.sbcAlvoLDL('alto', 120, 100, true, 150).base) && !M.sbcAlvoLDL('alto', 120, 100, true, 150).porPct && M.sbcAlvoLDL('alto', 200, 150, false, 230).base === 200,
+    '(3) M2: basal menor que o atual — sob tratamento não serve de base; sem tratamento vale a maior dosagem');
+  ok(/O LDL-c sem tratamento informado é menor que o atual, sob tratamento: não serve de base/.test(metas(ait({ ldl: '120', ldlb: '100', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao' }))), '(3) M2: a tela diz por que a redução mínima ficou sem conferência');
+  // M3 — do alto para cima, não-HDL-c fora da meta não é "manter".
+  const nh = M.sbcAlvoLDL('muitoalto', 45, NaN, true, 120);
+  ok(nh.naMeta && nh.nhdlAcima && !M.sbcAlvoLDL('muitoalto', 45, NaN, true, 79).nhdlAcima && M.sbcAlvoLDL('muitoalto', 45, NaN, true, 80).nhdlAcima, '(3) M3: sbcAlvoLDL marca o não-HDL-c fora da meta (estrita)');
+  const m3 = ait({ ldl: '45', est: 'alta', eze: 'sim', abp: 'nao', pcsk9: 'nao', ct: '160', hdl: '40' });
+  const m3m = metas(m3), m3e = tela(m3);
+  ok(/não manter — intensificar o tratamento/.test(m3m) && !/manter o esquema e reavaliar/.test(m3m) && /§5\.5/.test(m3m), '(3) ⚠️ M3: muito alto com LDL-c 45 e não-HDL-c 120 (meta < 80): a redução diz intensificar, não manter');
+  ok(/intensificar o tratamento/.test(m3e) && !/nenhuma estratégia a acrescentar agora/.test(m3e), '(3) ⚠️ M3: as estratégias também não dizem "nada a acrescentar"');
+  ok(/manter o esquema e reavaliar/.test(metas(ait({ ldl: '45', est: 'alta', eze: 'sim', abp: 'nao', pcsk9: 'nao', ct: '110', hdl: '40' }))), '(3) M3: com o não-HDL-c na meta (70 < 80), "manter" continua');
+  // B7 — abaixo da meta, fora dela só pela redução mínima: não é "0 mg/dL acima".
+  const b7 = metas({ sexo: 'M', idade: '55', ct: '170', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'nao', lpa_un: 'nd', ldl: '95', ldlb: '130', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'nao', ag_hfam: 'sim' });
+  ok(/o LDL-c está abaixo da meta \(&lt; 100\), mas sem a redução mínima de 30% sobre o LDL-c sem tratamento \(alvo ≤ 91\)/.test(b7) && !/está 0 mg\/dL acima/.test(b7), '(3) ⚠️ B7: "abaixo da meta, mas sem a redução mínima", não "o LDL-c está 0 mg/dL acima da meta"');
+  const b7c = M.ldlCondutaHTML({ k: 'intermediario', lip: { basal: 130, nhdl: 120 } }, M.LDL_METAS.intermediario, 95, true);
+  ok(/LDL-c abaixo da meta \(&lt; 100\), mas sem a redução mínima de 30%/.test(b7c) && !/no limite da meta/.test(b7c), '(3) B7: a conduta do PREVENT antigo também não chama de "limite" o LDL-c abaixo da meta');
 }
 
 // ───────────────────── (4) a tela ─────────────────────
@@ -467,6 +658,23 @@ const SEC = { ev: 'sim', e_iam: '1', e_sca: '1', e_mais1: 'nao', e_2a: 'sim', e_
   ok(/cerca de 4 semanas/.test(M.ldlCondutaHTML(M.sbcCategoria(25, pac({})), M.LDL_METAS.alto, 150, false)), '(5) D15: reavaliar em cerca de 4 semanas (§7.1)');
   const nota = html.slice(iP, html.indexOf("{id:'prevent30'", iP));
   ok(!/Reestratificar o risco moderado pelo escore de cálcio/.test(nota) && /intermediário 5 a &lt; 20%|intermediário 5 a < 20%/.test(nota), '(5) D9/D18: a nota do PREVENT com as faixas e o reclassificador da diretriz');
+  // ── Revisão de 24/10 no PREVENT antigo e na tela nova ──
+  // B2: LDL-c igual à meta estrita, em estatina — antes "precisa cair ≥ 1% além do que a estatina atual já faz: ." (esquema vazio).
+  const b2 = M.ldlAlvoHTML(25, pac({ pv_sexo: '1', pv_idade: '60', pv_ldl: '70', pv_est: '1' }));
+  ok(/no limite da meta \(ela é &lt; 70, estrita\): basta <b>qualquer redução<\/b>/.test(b2) && !/precisa cair <b>≥ 1%/.test(b2) && !/: \./.test(b2) && /associar <b>ezetimiba<\/b>/.test(b2) && !/\+0 acima/.test(b2),
+    '(5) ⚠️ B2: no PREVENT antigo, LDL-c de 70 no alto em estatina: "no limite da meta", com o esquema (EZE), sem frase vazia nem "+0 acima"');
+  // M3: LDL-c na meta e não-HDL-c acima, no alto — não "manter".
+  const m3 = M.ldlAlvoHTML(25, pac({ pv_sexo: '1', pv_idade: '60', pv_ct: '200', pv_hdl: '40', pv_ldl: '65', pv_est: '1' }));
+  ok(/não basta manter — intensificar o tratamento/.test(m3) && !/manter o esquema e reavaliar/.test(m3), '(5) ⚠️ M3: no PREVENT antigo, LDL-c na meta com não-HDL-c 160 (meta < 100) pede intensificar');
+  // B3: 79,5 anos tem escore; 59,5, o de 30 anos — "até 79" é < 80 e "até 59", < 60.
+  const ex = Object.assign({}, PRIM, { idade: '79.5' }), h795 = M.rcvPreventHTML(M.rcvDados(ex, 2026)), h595 = M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '59.5' }), 2026));
+  ok(/<td>DCV total/.test(h795) && !/vai até 79 anos/.test(h795) && /vai até 79 anos/.test(M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '80' }), 2026))), '(5) ⚠️ B3: aos 79,5 anos o PREVENT aparece (antes: vão entre "> 79" e "≥ 80")');
+  ok(!/só vai de 30 a 59 anos/.test(h595) && !/<td>—<\/td>/.test(h595), '(5) B3: aos 59,5 anos o PREVENT de 30 anos aparece');
+  const h795p = M.ldlAlvoHTML(8, pac({ pv_idade: '79.5' }));
+  ok(/CATEGORIA SBC · INTERMEDIÁRIO/.test(h795p) && /por escore de 5 a &lt; 20% em 10 anos/.test(h795p) && !/fora de 30–79 anos o escore não categoriza/.test(h795p) && /fora de 30–79 anos o escore não categoriza/.test(M.ldlAlvoHTML(8, pac({ pv_idade: '80' }))),
+    '(5) B3: no PREVENT antigo, 79,5 anos ainda categoriza pelo escore (8% → intermediário)');
+  const itemP = html.slice(iP, html.indexOf("{id:'prevent30'", iP)), item30 = html.slice(html.indexOf("{id:'prevent30'", iP), html.indexOf("{id:'imc'", iP));
+  ok(/var fora=\(idade>=30&&idade<80\)/.test(itemP) && (item30.match(/idade<30\|\|idade>=60/g) || []).length === 2 && !/idade<=79|idade>59/.test(itemP + item30), '(5) B3: a tarja do PREVENT e o de 30 anos usam < 80 e < 60');
 }
 
 // ───────────────────── (6) mutações ─────────────────────
@@ -488,7 +696,7 @@ ok(Em(mutante('sbcEstratifica', "if(lpaAg)agSim.push(lpaTxt);", ""), { sexo: 'F'
   'MUTAÇÃO: sem a Lp(a) como agravante, o F3 deixaria de ser alto');
 ok(Em(mutante('sbcEstratifica', "if(temAg)dispara('alto','escore de 5 a < 20% em 10 anos com agravante", "if(false)dispara('alto','escore de 5 a < 20% em 10 anos com agravante"), { sexo: 'F', idade: 62, prevent: 8, ldl: 128, ag: { les: true } }).k !== 'alto',
   'MUTAÇÃO: sem "intermediário + agravante → alto" (T4.1) o teste tinha de ver');
-ok(Em(mutante('sbcEstratifica', "if(temIdade&&idade>=30&&idade<=79&&num(escore))", "if(temIdade&&idade>=18&&num(escore))"), { sexo: 'M', idade: 25, prevent: 25 }).k !== 'baixo',
+ok(Em(mutante('sbcEstratifica', "if(temIdade&&idade>=30&&idade<80&&num(escore))", "if(temIdade&&idade>=18&&num(escore))"), { sexo: 'M', idade: 25, prevent: 25 }).k !== 'baixo',
   'MUTAÇÃO: deixar o escore categorizar abaixo de 30 anos (D4) tinha de aparecer');
 ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').sbcAlvoLDL('alto', 65, NaN, false, 100).red - 50) > 1,
   'MUTAÇÃO: sem a redução mínima no alvo, o F15 voltaria a "abaixo da meta"');
@@ -500,6 +708,44 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   const t = lista.split(','), x = t[22]; t[22] = t[23]; t[23] = x;
   const W = mundo(html.replace(linhaF, linhaF.replace('stroke:[' + lista + ']', 'stroke:[' + t.join(',') + ']')));
   ok(Math.abs(W.preventRisk(V(com({ hba1c: 9.2 }), 'f')).stroke - 6.7) >= 0.05, 'MUTAÇÃO: desfazer a errata no AVC tinha de tirar o valor da tolerância');
+  // B7 (revisão de 24/10): o comentário da procedência dizia que a errata muda "até 4
+  // p.p."; nas faixas válidas chega a ~15 (AVC da mulher com diabetes e HbA1c 15, risco
+  // perto de 50%). O número do comentário tem de ser o medido.
+  const pior = { pv_sexo: '0', pv_idade: '51', pv_ct: '130', pv_hdl: '50', pv_pas: '200', pv_egfr: '30', pv_imc: '18.5', pv_dm: '1', pv_fum: '1', pv_ahas: '0', pv_est: '0', pv_hba1c: '15', pv_uacr: '' };
+  const dif = Math.abs(M.preventRisk(pior).stroke - W.preventRisk(pior).stroke);
+  const proc = html.slice(html.indexOf('// ⚠️ ERRATA DE 14/10/2026'), html.indexOf('\nvar PREVENT_COEFS='));
+  ok(dif > 14 && dif < 15.5 && /chega a ~15 p\.p\./.test(proc) && !/até 4 p\.p\./.test(proc), '(1) B7: o comentário da errata tem de trazer a diferença medida nas faixas válidas (~15 p.p.; deu ' + dif.toFixed(2) + ')');
+}
+// Revisão de 24/10: uma mutação por item de gravidade alta ou média, e as de B1, B5 e B8.
+{
+  const semEAR = { nac: 'ausente', retino: 'ausente', tfge: 95, rac: 10, ag: { hfam: false, sm: false } };
+  ok(Em(mutante('sbcEstratifica', '(idade>=56||(M&&idade>=50))', '((M&&idade>=50)||(F&&idade>=56))'), Object.assign({ sexo: null, idade: 60, dm: 'DM2', dmDuracao: 3 }, semEAR)).k !== 'alto',
+    'MUTAÇÃO A1: voltar ao corte que exige o sexo tinha de rebaixar o DM2 de 60 anos com sexo em branco');
+  ok(Em(mutante('sbcEstratifica', 'cnd(ev.sca12m===true?true:d.evento2a,', 'cnd(d.evento2a,'), { sexo: 'M', idade: 70, ev: { iam: true, sca12m: true }, tfge: 90 }).k !== 'extremo',
+    'MUTAÇÃO M1: sem "SCA recente ⇒ evento < 2 anos", IAM + SCA aos 70 anos deixaria de ser extremo');
+  ok(Em(mutante('sbcEstratifica', 'var ldlMin=num(basal)?(basalBaixo?ldl:basal):', 'var ldlMin=num(basal)?basal:'), { sexo: 'M', idade: 50, prevent: 3, ldl: 200, ldlBasal: 150, trat: { estatina: 'alta' } }).k !== 'alto',
+    'MUTAÇÃO M2: valer o "basal" menor que o atual tinha de derrubar o LDL-c 200 sob estatina');
+  ok(Em(mutante('sbcEstratifica', 'if(!dcva&&temIdade&&idade>=80)dispara(', 'if(!temDM&&!dcva&&temIdade&&idade>=80)dispara('), Object.assign({ sexo: 'F', idade: 85, dm: 'DM1', dmDuracao: 10 }, semEAR)).k !== 'alto',
+    'MUTAÇÃO B5: a regra dos 80 anos só sem diabetes tinha de deixar o DM1 de 85 anos no intermediário');
+  const AIT = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'sim', e_ait: '1', lpa_un: 'nd' };
+  const Wa2 = mutante('rcvEstrategiasHTML', 'var foraFig=reg===null,tratando=foraFig||!reg.nada', 'var foraFig=false,tratando=!!reg&&!reg.nada');
+  ok(/sugerida/.test(Wa2.rcvEstrategiasHTML(Wa2.rcvDados(Object.assign({}, AIT, { ldl: '90', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'sim' }), 2026))),
+    'MUTAÇÃO A2: tratar o esquema fora da figura como "sem tratamento" tinha de voltar a sugerir esquema sem o basal');
+  const Wb1 = mutante('rcvEstrategiasHTML', 'var prev=d.ldl*(1-g/100);', 'var prev=d.ldl*(1-Math.round(g*10)/1000);');
+  const hb1 = Wb1.rcvEstrategiasHTML(Wb1.rcvDados(Object.assign({}, AIT, { ldl: '140', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'nao' }), 2026));
+  ok(/✓ sim/.test((hb1.match(/<td>EAI \+ EZE \+ ABp(?: <span class="rcv-fonte">[^<]*<\/span>)?<\/td>[\s\S]*?<\/tr>/) || [''])[0]), 'MUTAÇÃO B1: comparar o ganho arredondado tinha de dar "✓ sim" ao esquema que leva a exatamente 50');
+  // B8: mexer no termo da TFGe < 60 (ou na interação com a idade) da DAC, ou no da PAS < 110 do AVC, no modelo base, tinha de tirar os perfis novos da tolerância.
+  const lin = linhaVar('PREVENT_COEFS'), W0 = vm.createContext({});
+  vm.runInContext(lin + '\nthis.P=PREVENT_COEFS;', W0);
+  const fora = (sx, out, i) => {
+    const P = JSON.parse(JSON.stringify(W0.P)); P[sx][out][i] += 0.1;
+    const Wm = mundo(html.replace(lin, 'var PREVENT_COEFS=' + JSON.stringify(P) + ';'));
+    let maior = 0;
+    B8.filter((r) => r[1] === 'base' && r[2] === sx).forEach(([pf, mo, s2, hz, vals]) => { const r = Wm.preventRisk(V(com(B8_PERFIL[pf]), s2)); OUT.forEach((o, j) => { maior = Math.max(maior, Math.abs(r[o + (hz === 30 ? '30' : '')] - vals[j] * 100)); }); });
+    return maior;
+  };
+  ok(fora('m', 'chd', 10) > 0.05 && fora('m', 'chd', 22) > 0.05 && fora('f', 'stroke', 4) > 0.05 && fora('f', 'stroke30', 4) > 0.05,
+    'MUTAÇÃO B8: os perfis de TFGe < 60 e PAS < 110 tinham de pegar um erro nos termos de DAC e AVC');
 }
 
 if (falhas.length) { console.error('test-risco-cv-sbc: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }

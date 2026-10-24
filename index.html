@@ -3220,7 +3220,12 @@ function ageLabelFromMonths(mo){
 // DAC e AVC faria os cinco números da mesma tabela saírem de versões diferentes
 // da equação. Os modelos base e +RAC não mudam. Quem conferir com a calculadora
 // on-line da AHA ou com a Tabela S12 nos modelos com HbA1c vai ver os números
-// ANTERIORES à errata (até 4 p.p. de diferença): é a errata, não defeito.
+// ANTERIORES à errata: é a errata, não defeito. A diferença cresce com a HbA1c e é
+// maior no AVC: no caso S12 (HbA1c 9,2) o AVC de 10 anos da mulher vai de 5,3% para
+// 6,7%; nas faixas válidas da equação (HbA1c até 15%), chega a ~15 p.p. (AVC de
+// mulher com diabetes e risco perto de 50%; ~7 p.p. com HbA1c até 10%). Medido por
+// busca nas faixas de entrada (revisão de 24/10, B7): o número anterior, 4 p.p.,
+// subestimava a diferença.
 // Prova: scripts/test-risco-cv-sbc.js (Tabela S12 e preventr 0.12.1, ±0,05 p.p.).
 var PREVENT_COEFS={f:{ascvd:[0.719883,0,0.1176967,-0.151185,-0.0835358,0.3592852,0.8348585,0.4831078,0,0,0.4864619,0.0397779,0.2265309,-0.0592374,-0.0395762,0.0844423,-0.0567839,0.0325692,-0.1035985,-0.2417542,-0.0791142,0,-0.1671492,-3.819975],cvd:[0.7939329,0,0.0305239,-0.1606857,-0.2394003,0.3600781,0.8667604,0.5360739,0,0,0.6045917,0.0433769,0.3151672,-0.1477655,-0.0663612,0.1197879,-0.0819715,0.0306769,-0.0946348,-0.27057,-0.078715,0,-0.1637806,-3.307728],hf:[0.8998235,0,0,0,-0.4559771,0.3576505,1.038346,0.583916,-0.0072294,0.2997706,0.7451638,0.0557087,0.3534442,0,-0.0981511,0,0,0,-0.0946663,-0.3581041,-0.1159453,-0.003878,-0.1884289,-4.310409],ascvd30:[0.4669202,-0.0893118,0.1256901,-0.1542255,-0.0018093,0.322949,0.6296707,0.268292,0,0,0.100106,0.0499663,0.1875292,0.0152476,-0.0276123,0.0736147,-0.0521962,0.0316918,-0.1046101,-0.2727793,-0.1530907,0,-0.1299149,-1.974074],cvd30:[0.5503079,-0.0928369,0.0409794,-0.1663306,-0.1628654,0.3299505,0.6793894,0.3196112,0,0,0.1857101,0.0553528,0.2894,-0.075688,-0.056367,0.1071019,-0.0751438,0.0301786,-0.0998776,-0.3206166,-0.1607862,0,-0.1450788,-1.318827],hf30:[0.6254374,-0.0983038,0,0,-0.3919241,0.3142295,0.8330787,0.3438651,0.0594874,0.2525536,0.2981642,0.0667159,0.333921,0,-0.0893177,0,0,0,-0.0974299,-0.404855,-0.1982991,-0.0035619,-0.1564215,-2.205379],chd:[0.7587146,0,0.1810949,-0.2014507,-0.0881827,0.3547731,0.9045358,0.5410917,0,0,0.5198725,0.0325935,0.2010642,-0.036195,-0.0891238,0.0750716,-0.0683256,0.0484755,-0.0898086,-0.2569041,-0.0786607,0,-0.1597513,-4.608751],stroke:[0.6907849,0,0.0534279,-0.1055109,-0.113078,0.3665217,0.8013721,0.4187039,0,0,0.4539767,0.0515087,0.2494624,-0.0798829,-0.0079039,0.0833101,-0.0409242,0.016994,-0.1191213,-0.2480549,-0.0998063,0,-0.1759075,-4.409199],chd30:[0.4912423,-0.0917078,0.1878256,-0.2035703,-0.0030222,0.3111757,0.6803247,0.3215313,0,0,0.1252615,0.0414579,0.1561303,0.0384138,-0.0795531,0.0635262,-0.0637665,0.0474074,-0.0876484,-0.2803099,-0.1513626,0,-0.1130454,-2.733866],stroke30:[0.4366978,-0.0873673,0.0586334,-0.1069016,-0.0317106,0.3272741,0.5841726,0.2045681,0,0,0.0765812,0.0603226,0.2087816,-0.0095137,0.0014436,0.0720012,-0.0361779,0.015888,-0.1179062,-0.2710221,-0.1702836,0,-0.1320992,-2.62078]},m:{ascvd:[0.7099847,0,0.1658663,-0.1144285,-0.2837212,0.3239977,0.7189597,0.3956973,0,0,0.3690075,0.0203619,0.2036522,-0.0865581,-0.0322916,0.114563,-0.0300005,0.0232747,-0.0927024,-0.2018525,-0.0970527,0,-0.1217081,-3.500655],cvd:[0.7688528,0,0.0736174,-0.0954431,-0.4347345,0.3362658,0.7692857,0.4386871,0,0,0.5378979,0.0164827,0.288879,-0.1337349,-0.0475924,0.150273,-0.0517874,0.0191169,-0.1049477,-0.2251948,-0.0895067,0,-0.1543702,-3.031168],hf:[0.8972642,0,0,0,-0.6811466,0.3634461,0.923776,0.5023736,-0.0485841,0.3726929,0.6926917,0.0251827,0.2980922,0,-0.0497731,0,0,0,-0.1289201,-0.3040924,-0.1401688,0.0068126,-0.1797778,-3.946391],ascvd30:[0.3994099,-0.0937484,0.1744643,-0.120203,-0.0665117,0.2753037,0.4790257,0.1782635,0,0,-0.0218789,0.0602553,0.1421182,0.0135996,-0.0218265,0.1013148,-0.0312619,0.020673,-0.0920935,-0.2159947,-0.1548811,0,-0.0712547,-1.736444],cvd30:[0.4627309,-0.0984281,0.0836088,-0.1029824,-0.2140352,0.2904325,0.5331276,0.2141914,0,0,0.1155556,0.0603775,0.232714,-0.0272112,-0.0384488,0.134192,-0.0511759,0.0165865,-0.1101437,-0.2585943,-0.1566406,0,-0.1166776,-1.148204],hf30:[0.5681541,-0.1048388,0,0,-0.4761564,0.30324,0.6840338,0.2656273,0.0833107,0.26999,0.2541805,0.0638923,0.2583631,0,-0.0391938,0,0,0,-0.1269124,-0.3273572,-0.2043019,-0.0182831,-0.1342618,-1.95751],chd:[0.7423283,0,0.2572109,-0.1820374,-0.3174515,0.312778,0.7485249,0.3912047,0,0,0.376487,0.0193687,0.1588199,-0.0494555,-0.0577851,0.0809765,-0.0517872,0.0489033,-0.0850404,-0.2107552,-0.1206397,0,-0.07795,-4.156753],stroke:[0.722513,0,0.0263348,-0.0248959,-0.268104,0.3474634,0.684699,0.3874844,0,0,0.3877827,0.0201965,0.232963,-0.1178935,0.0120926,0.155739,0.0141928,-0.0111745,-0.1155391,-0.2123743,-0.0824133,0,-0.180789,-4.20881],chd30:[0.4171209,-0.0949994,0.2651913,-0.1879446,-0.0971746,0.258931,0.4956463,0.1728844,0,0,-0.0091955,0.0578155,0.0939196,0.0508921,-0.0486024,0.0669478,-0.0533361,0.0461425,-0.0812234,-0.216315,-0.1749197,0,-0.0241467,-2.376762],stroke30:[0.4003448,-0.0935927,0.0309419,-0.0280763,-0.047704,0.2925734,0.4236823,0.1675238,0,0,-0.0009216,0.0575221,0.1685514,-0.020829,0.0230042,0.1413652,0.0145411,-0.0149606,-0.1118468,-0.2152953,-0.1339295,0,-0.1225081,-2.458022]}};
 var PREVENT_AUG={
@@ -3648,7 +3653,8 @@ var LDL_METAS={
 // não aparece na consulta seguinte.
 //
 // Entrada `d` (null = não sei): idade, sexo 'M'|'F', gestante, dm 'nenhum'|'DM1'|
-// 'DM2'|null, dmDuracao (anos), dcva (evento prévio), ev {iam, sca12m, avc, ait,
+// 'DM2'|null, dmDuracao (anos), dmDuracaoAprox (a duração veio do ANO do
+// diagnóstico e erra até 1 ano), dcva (evento prévio), ev {iam, sca12m, avc, ait,
 // anginaEst, dapSint, amputacao, revCor, revCar, revRenal, revPer}, revCorEletiva,
 // evMais1, evento2a, ldlPersist100, cac (UA), cacPct, carotida 'ausente'|'lt50'|
 // 'ge50', angioTC 'semplaca'|'lt50'|'ge50', obstrOutra, aaa, ct, hdl, tg, ldl (do
@@ -3705,9 +3711,15 @@ function sbcEstratifica(d){
   var tratConhecido=tr.estatina!=null;
   var emTrat=(tr.estatina!=null&&tr.estatina!=='nao')||tr.eze===true||tr.abp===true||tr.pcsk9===true;
   var ldl=d.ldl,basal=d.ldlBasal;
-  var ldlMin=num(basal)?basal:(num(ldl)?ldl:NaN);
-  var ldlExato=num(basal)||(num(ldl)&&tratConhecido&&!emTrat);
-  var ldlSob=(!num(basal)&&emTrat&&num(ldl))?' sob tratamento (o basal é ainda maior)':'';
+  // ⚠️ "Sem tratamento" MENOR que o LDL-c atual (revisão de 24/10, M2). Sob
+  // tratamento é contradição (o atual é piso do basal); sem tratamento são duas
+  // dosagens. Para os cortes vale o MAIOR: antes valia o informado, e um LDL-c de
+  // 200 sob estatina com "basal" de 150 saía baixo, "com LDL-c < 160".
+  var basalBaixo=num(basal)&&num(ldl)&&basal<ldl;
+  var ldlMin=num(basal)?(basalBaixo?ldl:basal):(num(ldl)?ldl:NaN);
+  var ldlExato=(num(basal)&&!basalBaixo)||(num(ldl)&&tratConhecido&&!emTrat);
+  var ldlSob=(emTrat&&num(ldl)&&(!num(basal)||basalBaixo))?' sob tratamento (o basal é ainda maior)':'';
+  if(basalBaixo)A.push('LDL-c sem tratamento informado ('+sbcN(basal)+' mg/dL) abaixo do LDL-c atual ('+sbcN(ldl)+')'+(emTrat?', que é sob tratamento: o fármaco só baixa, e o atual é piso do basal':'')+'. Confira as dosagens; para os cortes de 160–189 e ≥ 190 vale o maior ('+sbcN(ldl)+').');
   var nhdl=(num(d.ct)&&num(d.hdl))?d.ct-d.hdl:NaN;
   // Lp(a) sem converter unidade: "As fórmulas de conversão não corrigem a diferença
   // entre os métodos e não são recomendadas" (rec. §3). Agravante ≥ 50 mg/dL ou
@@ -3745,6 +3757,11 @@ function sbcEstratifica(d){
   // T4.8). Cada EAR conta 1; três ou mais já são EMAR.
   var dmT=d.dm,temDM=dmT==='DM1'||dmT==='DM2',dmRot=dmT==='DM1'?'DM1':'DM2';
   var dur=d.dmDuracao,idDx=(num(dur)&&temIdade)?idade-dur:NaN;
+  // A duração que vem do ANO do diagnóstico erra até 1 ano (revisão de 24/10, B4):
+  // diagnóstico em 2016 dá "10 anos" em 2026, e podem ser 10 anos e meses. A menos
+  // de 1 ano de um corte ("mais de 10", "mais de 20", "depois dos 18"), o critério
+  // fica em aberto — pendência, não "não".
+  var aprox=d.dmDuracaoAprox===true;
   var has=d.has,tab=d.tabagismo;
   var obstr=d.carotida==='ge50'||d.angioTC==='ge50'||d.obstrOutra===true;
   var obstrTxt=[d.carotida==='ge50'?'carótida':'',d.angioTC==='ge50'?'coronárias, na angio-TC':'',d.obstrOutra===true?'outro território':''].filter(Boolean).join('; ');
@@ -3752,7 +3769,11 @@ function sbcEstratifica(d){
   if(temDM){
     var ear=function(v,t){if(v===true)EAR.push(t);else if(v!==false)EARab.push(t);};
     // Leitura E-11: "há mais de 10 anos" (T4.6, F5.1), não "≥ 10".
-    if(dmT==='DM2'){if(num(dur)){if(dur>10)EAR.push('DM2 há mais de 10 anos');}else EARab.push('duração do diabetes');}
+    if(dmT==='DM2'){
+      if(!num(dur))EARab.push('duração do diabetes');
+      else if(dur>10)EAR.push('DM2 há mais de 10 anos');
+      else if(aprox&&dur+1>10)EARab.push('duração do diabetes (pelo ano do diagnóstico dá '+sbcN(dur)+' anos; com mais de 10, é estratificador)');
+    }
     ear(ag.hfam,'história familiar de DAC prematura');     // leitura E-29: a mesma do agravante
     ear(ag.sm,'síndrome metabólica (IDF)');
     ear(has,'hipertensão arterial');                       // "tratada ou não" (T4.6)
@@ -3771,9 +3792,15 @@ function sbcEstratifica(d){
     if(d.angioTC==='lt50')EAR.push('placa < 50% na angio-TC de coronárias');
     if(d.aaa===true)EAR.push('aneurisma de aorta abdominal');
     if(EAR.length>=3)EMAR.push('três ou mais estratificadores de alto risco ('+EAR.join('; ')+')');
+    // DM1: mais de 20 anos de doença E diagnóstico depois dos 18 (T4.8). ⚠️ Cada
+    // dado em aberto com o próprio nome (revisão de 24/10, B7): com a duração
+    // informada e a idade em branco, a pendência pedia "a duração".
     if(dmT==='DM1'){
-      if(num(dur)&&num(idDx)){if(dur>20&&idDx>18)EMAR.push('DM1 há mais de 20 anos, diagnosticado depois dos 18');}
-      else EMARab.push('duração do DM1');
+      var dm1Dur=num(dur)&&(dur>20||(aprox&&dur+1>20));            // a duração pode passar de 20
+      if(!num(dur))EMARab.push(temIdade?'duração do DM1':'duração do DM1 e idade');
+      else if(dm1Dur&&!temIdade)EMARab.push('idade (o DM1 com mais de 20 anos de doença, diagnosticado depois dos 18, é de muito alto risco)');
+      else if(dur>20&&idDx>18)EMAR.push('DM1 há mais de 20 anos, diagnosticado depois dos 18');
+      else if(aprox&&dm1Dur&&idDx+1>18)EMARab.push('duração do DM1 e idade ao diagnóstico (pelo ano do diagnóstico: '+sbcN(dur)+' anos de doença, diagnóstico aos '+sbcN(idDx)+'; com mais de 20 anos e diagnóstico depois dos 18, é de muito alto risco)');
     }
     if(obstr)EMAR.push('estenose ≥ 50% ('+obstrTxt+')');
     if(renal.nivel==='EMAR')EMAR.push('doença renal de muito alto risco (T4.7: '+(dial?'diálise':renTxt)+')');
@@ -3812,8 +3839,12 @@ function sbcEstratifica(d){
     if(dial||(num(tfge)&&tfge<60))COND.push('DRC (TFGe < 60)');else if(!num(tfge))CONDab.push('TFGe');
     cnd(tab,'tabagismo atual');
     cnd(d.ldlPersist100,'LDL-c persistentemente ≥ 100 apesar de estatina na dose máxima tolerada + ezetimiba');
-    cnd(d.evento2a,'evento agudo aterosclerótico há menos de 2 anos');
+    // ⚠️ A SCA dos últimos 12 meses JÁ É evento agudo há menos de 2 anos (revisão de
+    // 24/10, M1): antes a condição dependia só da pergunta dos 2 anos, e IAM + SCA
+    // recente aos 70 anos ficava muito alto com pendência, sendo extremo (T4.2).
+    cnd(ev.sca12m===true?true:d.evento2a,'evento agudo aterosclerótico há menos de 2 anos'+(ev.sca12m===true?', pela SCA dos últimos 12 meses':''));
   }
+  if(ev.sca12m===true&&d.evento2a===false)A.push('Respostas em conflito: "SCA nos últimos 12 meses" está marcada, mas "último evento agudo há menos de 2 anos" está "Não". A SCA recente é evento há menos de 2 anos e conta como condição de alto risco do extremo (T4.2); confira.');
 
   // ── As regras, na ordem do fluxograma (F4.1). A categoria é o máximo (R6).
   var mTxt=maiores.join(', ');
@@ -3832,18 +3863,23 @@ function sbcEstratifica(d){
     if(EMAR.length)dispara('muitoalto',dmRot+' com estratificador de muito alto risco: '+EMAR.join('; '),'T4.5; T4.8');
     // A idade vem antes dos EAR: no empate (os dois dão alto) o motivo exibido é o
     // que não depende de dado nenhum além da idade, e os EAR ficam em "outros".
-    var dmIdade=dmT==='DM2'&&temIdade&&((M&&idade>=50)||(F&&idade>=56));
-    if(dmIdade)dispara('alto','diabetes tipo 2 em '+(M?'homem ≥ 50':'mulher ≥ 56')+' anos','T4.5; F4.1');
+    // ⚠️ SEXO EM BRANCO NÃO REBAIXA (revisão de 24/10, A1). Com 56 anos ou mais o
+    // DM2 é alto nos dois sexos; de 50 a 55, só no homem — sem o sexo, pendência. E o
+    // motivo só cita o sexo quando ele é conhecido: antes, sexo vazio com 60 anos
+    // saía "diabetes tipo 2 em mulher < 56 anos", intermediário.
+    var dmIdade=dmT==='DM2'&&temIdade&&(idade>=56||(M&&idade>=50));
+    if(dmIdade)dispara('alto','diabetes tipo 2 '+(M?'em homem ≥ 50 anos':(F?'em mulher ≥ 56 anos':'com 56 anos ou mais (alto nos dois sexos)')),'T4.5; F4.1');
     if(EAR.length&&EAR.length<3)dispara('alto',dmRot+' com '+EAR.length+' estratificador'+(EAR.length>1?'es':'')+' de alto risco: '+EAR.join('; '),'T4.5; T4.6');
     if(!EAR.length&&!EMAR.length){
-      if(dmT==='DM2'&&!dmIdade)dispara('intermediario','diabetes tipo 2'+(temIdade?' em '+(M?'homem < 50':'mulher < 56')+' anos':'')+', sem estratificador de alto ou muito alto risco','T4.5');
+      if(dmT==='DM2'&&!dmIdade)dispara('intermediario','diabetes tipo 2'+(!temIdade?'':(M?' em homem < 50 anos':(F?' em mulher < 56 anos':' com '+sbcN(idade)+' anos (sexo não informado)')))+', sem estratificador de alto ou muito alto risco','T4.5');
       if(dmT==='DM1'){
         if(num(dur)&&dur<20){
           dispara('intermediario','DM1 com menos de 20 anos de doença, sem estratificador','T4.5');
           podeSubir('alto','DM1 com menos de 20 anos de doença e sem estratificador: calcular o Steno Type 1 Risk Engine (T4.5). A diretriz não dá limiares para convertê-lo em categoria (leitura E-14).');
         }else if(num(dur)){
           dispara('intermediario','DM1 há '+sbcN(dur)+' anos, sem estratificador','T4.5 (lacuna; leitura E-14)');
-          podeSubir('muitoalto','DM1 há '+sbcN(dur)+' anos'+(num(idDx)&&idDx<=18?', diagnosticado até os 18':'')+': fica fora das duas regras da diretriz (Steno T1 é para menos de 20 anos de doença; o EMAR, para mais de 20 com diagnóstico depois dos 18). Decisão clínica (leitura E-14).');
+          // Com idade ou duração em aberto, a pendência "em aberto" (abaixo) é que vale.
+          if(!EMARab.length)podeSubir('muitoalto','DM1 há '+sbcN(dur)+' anos'+(num(idDx)&&idDx<=18?', diagnosticado até os 18':'')+': fica fora das duas regras da diretriz (Steno T1 é para menos de 20 anos de doença; o EMAR, para mais de 20 com diagnóstico depois dos 18). Decisão clínica (leitura E-14).');
         }else dispara('intermediario','DM1 sem estratificador conhecido','T4.5');
       }
     }
@@ -3864,10 +3900,17 @@ function sbcEstratifica(d){
   // (§4.1), e só de 30 a 79 anos (§4.2). ⚠️ Fora dessa faixa o número existe, mas
   // não entra: < 30 não tem escore (§4.9) e ≥ 80 é "subgrupo de alto risco" pelo
   // SCORE2-OP (§4.8; leitura E-20).
+  // ⚠️ Os 80 anos valem COM OU SEM diabetes (revisão de 24/10, B5): o §4.8 fala de
+  // "pessoas com idade ≥ 80 anos", e o DM1 de 85 anos sem estratificador saía
+  // intermediário, abaixo do mesmo paciente sem diabetes. Com doença aterosclerótica
+  // a categoria já é maior.
+  if(!dcva&&temIdade&&idade>=80)dispara('alto','80 anos ou mais: o risco em 10 anos é invariavelmente ≥ 20% (SCORE2-OP)','§4.8; leitura E-20');
   var semEscore=false,escoreUsado=false;
   if(!temDM&&!dcva){
     var escore=d.prevent,ldl160=num(ldlMin)&&ldlMin>=160&&ldlMin<190;
-    if(temIdade&&idade>=30&&idade<=79&&num(escore)){
+    // "Até 79" é idade < 80 (revisão de 24/10, B3): o campo aceita decimal, e 79,5
+    // caía no vão entre "≤ 79" e "≥ 80", sem escore e sem a regra dos 80.
+    if(temIdade&&idade>=30&&idade<80&&num(escore)){
       escoreUsado=true;
       if(escore>=20)dispara('alto','escore ≥ 20% em 10 anos','T4.1; F4.1');
       else if(escore>=5){
@@ -3879,13 +3922,11 @@ function sbcEstratifica(d){
         else dispara('intermediario','LDL-c de 160–189 mg/dL'+ldlSob+' (escore < 5%)','§4.1; F4.1');
       }else if(temAg)dispara('intermediario','escore < 5% em 10 anos com agravante ('+agTxt+'): sobe um degrau, e só um','T4.1; F4.1');
       else dispara('baixo',(!agAberto.length&&ldlExato&&dmT==='nenhum')?'escore < 5% em 10 anos, sem agravante, sem diabetes e com LDL-c < 160':'escore < 5% em 10 anos, sem critério que suba a categoria entre os dados informados','T4.1; F5.1');
-    }else if(temIdade&&idade>=80){
-      dispara('alto','80 anos ou mais: o risco em 10 anos é invariavelmente ≥ 20% (SCORE2-OP)','§4.8; leitura E-20');
     }else if(temIdade&&idade<30){
       if(ldl160)dispara(temAg?'alto':'intermediario','LDL-c de 160–189 mg/dL'+(temAg?' com agravante ('+agTxt+')':''),'§4.1; F4.1');
       else if(temAg)dispara('intermediario','menos de 30 anos com agravante ('+agTxt+'): sem escore, o agravante pode reclassificar','§4.9 (forte, evidência baixa)');
       else dispara('baixo','menos de 30 anos (sem escore, §4.9), sem critério que suba a categoria entre os dados informados','§4.9');
-    }else{
+    }else if(!(temIdade&&idade>=80)){   // com 80 anos ou mais, a regra acima já decidiu
       // 30–79 anos sem escore (ou idade em branco): só o que os outros dados provam.
       semEscore=true;
       if(ldl160&&temAg)dispara('alto','LDL-c de 160–189 mg/dL com agravante ('+agTxt+'): alto com qualquer escore','F4.1');
@@ -3913,21 +3954,28 @@ function sbcEstratifica(d){
   // Leitura E-5: no DM sem estratificador o agravante que não é EAR não sobe sozinho.
   if(temDM&&k==='intermediario'&&temAg)podeSubir('alto','Agravante presente ('+agTxt+'): no diabetes sem estratificador a tabela mantém o intermediário (T4.5), mas o agravante pode justificar subir para alto — julgamento clínico (leitura E-5).');
   if(!num(ldlMin))podeSubir(temDM?'muitoalto':'alto','LDL-c não informado: '+(temDM?'no diabetes, LDL-c > 190 é estratificador de muito alto risco (T4.8)':'160–189 mg/dL sobe para intermediário; ≥ 190, para alto (§4.1)')+'.');
-  else if(!ldlExato&&ldlMin<190)podeSubir(temDM?'muitoalto':'alto',(emTrat?'LDL-c sem tratamento (basal) desconhecido em quem já usa hipolipemiante':'Uso de hipolipemiante não informado')+': o basal pode passar de 190 ('+(temDM?'no diabetes, > 190 é muito alto':'≥ 190 é alto')+') e, sem ele, não dá para conferir a redução percentual.');
+  else if(!ldlExato&&(temDM?ldlMin<=190:ldlMin<190))podeSubir(temDM?'muitoalto':'alto',(basalBaixo&&emTrat?'LDL-c sem tratamento informado abaixo do atual, que é sob tratamento':(emTrat?'LDL-c sem tratamento (basal) desconhecido em quem já usa hipolipemiante':'Uso de hipolipemiante não informado'))+': o basal pode passar de 190 ('+(temDM?'no diabetes, > 190 é muito alto':'≥ 190 é alto')+') e, sem ele, não dá para conferir a redução percentual.');
+  // A1: de 50 a 55 anos, o DM2 é alto no homem e intermediário (sem EAR) na mulher.
+  if(dmT==='DM2'&&!dmIdade&&temIdade&&!M&&!F&&idade>=50)podeSubir('alto','Sexo não informado: no DM2, o homem já é alto risco a partir dos 50 anos (T4.5).');
   if(!lpa&&!d.agNaoPerguntados)podeSubir('alto','Lp(a) nunca dosada (a diretriz recomenda uma dosagem na vida): ≥ 50 mg/dL (≥ 125 nmol/L) é agravante; > 180 mg/dL (> 390 nmol/L), alto (T4.1; T4.3).');
   if(k==='intermediario'&&!num(d.cac)&&temIdade&&idade>40&&num(ldlMin)&&ldlMin>=70&&ldlMin<=159)
     podeSubir('muitoalto','Sem escore de cálcio: no intermediário com mais de 40 anos e LDL-c de 70–159, o CAC pode reclassificar (> 100 UA ou percentil > 75, alto; > 300, muito alto) — rec. §4, forte, evidência moderada.');
   if(!temDM&&!dcva&&!temAg&&agAberto.length&&(k==null||k==='baixo'||k==='intermediario'))
     podeSubir(k==='intermediario'?'alto':'intermediario','Agravantes em aberto: '+agAberto.join('; ')+'. Com um só, '+(k==='baixo'?'o baixo sobe para intermediário':(k==='intermediario'?'o intermediário sobe para alto':'a categoria é no mínimo intermediária'))+' (T4.1; F4.1). No intermediário a pesquisa é ativa (§4.3, forte, evidência alta).');
   if(semEscore&&(k==null||ix(k)<ix('alto')))podeSubir('alto',(temIdade?'PREVENT não calculado':'Idade não informada')+((d.preventFaltam&&d.preventFaltam.length)?' (falta: '+d.preventFaltam.join(', ')+')':'')+': ≥ 20% em 10 anos é alto; 5 a < 20%, intermediário (com agravante, alto). Alternativas da diretriz: escores da OMS e Globorisk-LAC (§4.2).');
-  if(!temIdade&&temDM)podeSubir('alto','Idade não informada: no DM2, 50 anos no homem e 56 na mulher já são alto risco (T4.5).');
+  if(!temIdade&&temDM)podeSubir('alto','Idade não informada: '+(dmT==='DM2'?'no DM2, 50 anos no homem e 56 na mulher já são alto risco (T4.5)':'com 80 anos ou mais, o risco é alto também no diabetes (§4.8)')+'.');
   // Leitura E-27: a diretriz não dá limiar para "hipertensão"; PAS alta isolada só avisa.
   if(has!==true&&num(d.pas)&&d.pas>=140&&(temDM||nMaiores===1))
     podeSubir(temDM?'alto':'extremo','PAS de '+sbcN(d.pas)+' mmHg sem diagnóstico de hipertensão: confirmar — a hipertensão é estratificador no diabetes e condição de alto risco no extremo (leitura E-27).');
   if(d.hf==null&&num(d.cac)&&d.cac>100&&d.cac<=300)podeSubir('muitoalto','Hipercolesterolemia familiar não informada: com HF, CAC > 100 UA já é muito alto (T4.4).');
 
   // ── Alertas de conduta (não mudam a categoria).
-  if(dial&&!dcva)A.push('Diálise sem doença cardiovascular estabelecida: a diretriz recomenda contra INICIAR estatina (rec. §9.5, forte, evidência alta); quem já usa mantém, e na diálise peritoneal admite-se iniciar no muito alto risco.');
+  // ⚠️ Na diálise peritoneal, o §9.5 admite iniciar estatina no muito alto risco: o
+  // alerta e o bloco de estratégias dizem a mesma coisa (revisão de 24/10, B6).
+  if(dial&&!dcva){
+    if(d.dialise==='peritoneal'&&k==='muitoalto')A.push('Diálise peritoneal sem doença cardiovascular estabelecida, no risco muito alto: a diretriz admite iniciar estatina (§9.5). Na diálise fora dessa situação, ela recomenda contra iniciar (rec. §9.5, forte, evidência alta); quem já usa mantém.');
+    else A.push('Diálise sem doença cardiovascular estabelecida: a diretriz recomenda contra INICIAR estatina (rec. §9.5, forte, evidência alta); quem já usa mantém'+(d.dialise==='peritoneal'?'. Na diálise peritoneal, admite-se iniciar se o risco for muito alto.':'.'));
+  }
   if(temIdade&&idade>75)A.push('Acima de 75 anos: individualizar as doses e a intensidade do tratamento (§9.7–9.9).');
   if(num(d.tg)&&d.tg>=500)A.push('TG ≥ 500 mg/dL: fibrato para reduzir o risco de pancreatite (§5.5).');
   if(num(d.tg)&&d.tg>800)A.push('TG > 800 mg/dL: o LDL-c calculado subestima o real; acompanhe pelo não-HDL-c (rec. §3).');
@@ -3939,7 +3987,7 @@ function sbcEstratifica(d){
   return {k:k,motivo:melhor?melhor.motivo:'os dados informados ainda não fecham uma categoria',fonte:melhor?melhor.fonte:'',
     outros:outros,pendencias:P.filter(function(p){return k==null||ix(p.sobe)>ix(k);}),alertas:A,
     ear:EAR,emar:EMAR,condicoes:COND,agravantes:agSim,nMaiores:nMaiores,dcva:dcva,temDM:temDM,escoreUsado:escoreUsado,semEscore:semEscore,
-    renal:{G:G,A:Ac,nivel:renal.nivel},lip:{ldl:ldl,basal:basal,ldlMin:ldlMin,ldlExato:ldlExato,nhdl:nhdl,emTrat:emTrat,tratConhecido:tratConhecido}};
+    renal:{G:G,A:Ac,nivel:renal.nivel},lip:{ldl:ldl,basal:basal,basalBaixo:basalBaixo,ldlMin:ldlMin,ldlExato:ldlExato,nhdl:nhdl,emTrat:emTrat,tratConhecido:tratConhecido}};
 }
 // O bloco "Metas de LDL-c" do PREVENT usa o MESMO motor da calculadora SBC 2025.
 // O formulário do PREVENT é de prevenção primária e não pergunta eventos, imagem,
@@ -4056,9 +4104,14 @@ function ldlDosesHTML(){
 // fármaco (gatilho ou tratamento em curso); o gatilho é ≥ 30 mg/dL acima da meta
 // no LDL-c OU no não-HDL-c (rec. §5, forte/alta). ⚠️ Meta estrita: LDL-c IGUAL à
 // meta não está na meta. `red` é a queda que falta, em % do LDL-c atual.
+// Revisão de 24/10: (M2) o "sem tratamento" menor que o atual não serve de base — sob
+// tratamento é contradição (fica só a meta), sem tratamento vale a maior das duas
+// dosagens; (B2) `limite`: LDL-c igual à meta estrita, fora dela com red = 0 (basta
+// qualquer redução); (M3) `nhdlAcima`: o não-HDL-c, meta coprimária (§5.1, com
+// prioridade na hipertrigliceridemia, §5.5), acima da meta dele.
 function sbcAlvoLDL(k,ldl,basal,emTrat,nhdl){
   var m=LDL_METAS[k];if(!m||!(ldl>0))return null;
-  var base=(basal>0)?basal:(emTrat?NaN:ldl);
+  var base=(basal>0&&basal>=ldl)?basal:(emTrat?NaN:ldl);
   var gatCat=(k==='baixo'||k==='intermediario');
   var gatLdl=gatCat&&(ldl-m.ldl)>=30,gatNhdl=gatCat&&isFinite(nhdl)&&(nhdl-m.nhdl)>=30;
   var usaPct=isFinite(base)&&(!gatCat||gatLdl||gatNhdl||emTrat);
@@ -4066,7 +4119,8 @@ function sbcAlvoLDL(k,ldl,basal,emTrat,nhdl){
   var porPct=teto<m.ldl,alvo=porPct?teto:m.ldl;
   var naMeta=porPct?(ldl<=teto+1e-9):(ldl<m.ldl);
   var red=naMeta?0:Math.round((1-alvo/ldl)*1e8)/1e6;
-  return {meta:m.ldl,alvo:alvo,porPct:porPct,naMeta:naMeta,red:red,inclusivo:porPct,gatilho:gatLdl||gatNhdl,gatLdl:gatLdl,gatNhdl:gatNhdl,base:base};
+  return {meta:m.ldl,alvo:alvo,porPct:porPct,naMeta:naMeta,red:red,limite:!naMeta&&red<=0,inclusivo:porPct,gatilho:gatLdl||gatNhdl,gatLdl:gatLdl,gatNhdl:gatNhdl,
+    nhdl:nhdl,nhdlAcima:isFinite(nhdl)&&nhdl>=m.nhdl,base:base};
 }
 function ldlCondutaHTML(cat,m,ldl,emEstatina){
   var lip=cat.lip||{},a=sbcAlvoLDL(cat.k,ldl,lip.basal,emEstatina,lip.nhdl);
@@ -4078,16 +4132,26 @@ function ldlCondutaHTML(cat,m,ldl,emEstatina){
     // ≥ 30 acima, a linha do medido marcava "≥ 30 · trata" e a conduta dizia
     // "manter": a tela se contradizia.
     if(a.naMeta&&a.gatNhdl)distancia='LDL-c na meta, mas há gatilho farmacológico pelo não-HDL-c (≥ 30 mg/dL acima da meta dele, &lt; '+m.nhdl+').';
+    // ⚠️ Do alto para cima o não-HDL-c é meta coprimária (§5.1), com prioridade na
+    // hipertrigliceridemia (§5.5): acima dela, "manter" contradiz a conduta da
+    // categoria (revisão de 24/10, M3).
+    else if(a.naMeta&&!gatCat&&a.nhdlAcima)distancia='LDL-c na meta, mas o não-HDL-c ('+Math.round(a.nhdl)+' mg/dL) não está na meta dele (&lt; '+m.nhdl+'), que é coprimária (§5.1; com prioridade na hipertrigliceridemia, §5.5): <b>não basta manter — intensificar o tratamento</b>, como na conduta acima.';
     else if(a.naMeta)distancia='LDL-c informado já abaixo da meta'+(a.porPct?' e com a redução mínima de '+m.red+'%':'')+': manter o esquema e reavaliar no seguimento.';
-    else if(gatCat&&!a.gatilho)distancia=(acima>0?'LDL-c '+acima+' mg/dL acima da meta':'LDL-c no limite da meta (ela é &lt; '+m.ldl+')')+': ainda sem gatilho farmacológico (é ≥ 30 no LDL-c ou no não-HDL-c). Estilo de vida e nova dosagem.';
+    // Abaixo do número da meta e fora dela só por falta da redução mínima (quem já
+    // trata): "no limite da meta" era falso (revisão de 24/10, B7).
+    else if(gatCat&&!a.gatilho)distancia=(ldl<m.ldl?'LDL-c abaixo da meta (&lt; '+m.ldl+'), mas sem a redução mínima de '+m.red+'% sobre o LDL-c sem tratamento (alvo ≤ '+Math.floor(a.alvo)+')':(acima>0?'LDL-c '+acima+' mg/dL acima da meta':'LDL-c no limite da meta (ela é &lt; '+m.ldl+')'))+': ainda sem gatilho farmacológico (é ≥ 30 no LDL-c ou no não-HDL-c). Estilo de vida e nova dosagem.';
     else{
-      var nivel=ldlEsquemaNivel(a.red,a.inclusivo),inicial={alto:2,muitoalto:2,extremo:3}[cat.k]||0;
+      // B2: LDL-c igual à meta estrita — fora dela, mas basta qualquer redução; antes
+      // saía "precisa cair ≥ 1% além do que a estatina atual já faz: ." (sem esquema).
+      var redEsq=a.limite?1:a.red;
+      var nivel=ldlEsquemaNivel(redEsq,a.inclusivo),inicial={alto:2,muitoalto:2,extremo:3}[cat.k]||0;
       // Com o gatilho vindo só do não-HDL-c, a tela diz de onde ele veio: o LDL-c,
       // sozinho, não pediria fármaco, e a frase abaixo pareceria contradizer o medido.
       distancia=(a.gatNhdl&&!a.gatLdl?'Há gatilho farmacológico pelo não-HDL-c (≥ 30 mg/dL acima da meta dele, &lt; '+m.nhdl+'). ':'')
-        +'Para chegar à meta (&lt; '+m.ldl+')'+(a.porPct?' com a redução mínima de '+m.red+'% (alvo ≤ '+Math.floor(a.alvo)+' mg/dL)':'')
-        +', o LDL-c de '+Math.round(ldl)+' precisa cair <b>≥ '+Math.max(1,Math.ceil(a.red))+'%</b>'
-        +(emEstatina?' <b>além do que a estatina atual já faz</b>':'')+': '+ldlEsquemaPelaReducao(a.red,emEstatina,a.inclusivo)+'.'
+        +(a.limite?'O LDL-c de '+Math.round(ldl)+' está no limite da meta (ela é &lt; '+m.ldl+', estrita): basta <b>qualquer redução</b>'
+          :'Para chegar à meta (&lt; '+m.ldl+')'+(a.porPct?' com a redução mínima de '+m.red+'% (alvo ≤ '+Math.floor(a.alvo)+' mg/dL)':'')
+          +', o LDL-c de '+Math.round(ldl)+' precisa cair <b>≥ '+Math.max(1,Math.ceil(a.red))+'%</b>')
+        +(emEstatina?' <b>além do que a estatina atual já faz</b>':'')+': '+ldlEsquemaPelaReducao(redEsq,emEstatina,a.inclusivo)+'.'
         +((!emEstatina&&nivel<inicial)?' Mesmo assim, nesta categoria a diretriz começa pela combinação acima.':'');
     }
   }
@@ -4177,7 +4241,7 @@ function ldlAlvoHTML(escore,v){
       +'<span style="font-size:.72rem;color:var(--t3);min-width:9.5rem">'+rot+'</span>'
       +'<b style="font-size:.85rem;color:var(--tx)">'+Math.round(val)+'</b><span style="font-size:.72rem;color:var(--t3)">mg/dL</span>'
       +'<span style="font-size:.75rem;color:var('+(acima||falta?'--red':'--grn')+')">'
-        +(acima?'+'+Math.round(d)+' acima da meta':(falta?'abaixo de '+meta+', mas falta a redução mínima de '+LDL_METAS[cat.k].red+'% (alvo ≤ '+Math.floor(a.alvo)+')':'na meta'))+'</span>'
+        +(acima?(Math.round(d)>0?'+'+Math.round(d)+' acima da meta':'no limite da meta (ela é &lt; '+meta+')'):(falta?'abaixo de '+meta+', mas falta a redução mínima de '+LDL_METAS[cat.k].red+'% (alvo ≤ '+Math.floor(a.alvo)+')':'na meta'))+'</span>'
       +(usaGatilho&&acima&&d>=30?'<span class="tag tag-gold" style="font-size:.62rem">≥ 30 · trata</span>':'')
       +'</div>';
   }
@@ -4194,8 +4258,9 @@ function ldlAlvoHTML(escore,v){
   if(cat.pendencias.length)notas.push('A estratificação completa — eventos, imagem, agravantes e estratificadores do diabetes — está na calculadora <b>Risco CV e metas — SBC 2025</b>, que usa as mesmas regras.');
   // ⚠️ Fora de 30–79 anos o escore existe como número, mas NÃO categoriza (§4.2;
   // §4.9 para < 30; §4.8 para ≥ 80): antes a tela categorizava um paciente de 25
-  // ou de 85 anos pelo PREVENT extrapolado, com um "⚠" ao lado.
-  var idade=parseFloat(v.pv_idade),naFaixa=idade>=30&&idade<=79;
+  // ou de 85 anos pelo PREVENT extrapolado, com um "⚠" ao lado. "Até 79" é < 80:
+  // o campo aceita decimal (revisão de 24/10, B3).
+  var idade=parseFloat(v.pv_idade),naFaixa=idade>=30&&idade<80;
   var faixa=naFaixa?ldlFaixaEscore(escore):'',dif=faixa?SBC_ORD.indexOf(cat.k)-SBC_ORD.indexOf(faixa):0;
   var porque=!naFaixa?'fora de 30–79 anos o escore não categoriza (§4.2); vale: '+esc(cat.motivo)
     :(dif>0?'a faixa do escore é '+LDL_FAIXA_F[faixa]+'; sobe por '+esc(cat.motivo)
@@ -4291,6 +4356,8 @@ function rcvDados(e,ano){
   var tfge=sexo?ckdEpi2021(n('cr'),idade,fem):NaN;
   var ct=n('ct'),hdl=n('hdl'),nhdl=(ct>0&&hdl>0)?ct-hdl:NaN;
   var dm=(e.dm==='DM2'||e.dm==='DM1')?e.dm:(e.dm==='nao'?'nenhum':null),temDM=dm==='DM1'||dm==='DM2';
+  // A duração sai do ANO do diagnóstico: erra até 1 ano, e o motor deixa o limite de
+  // cada corte em aberto (`dmDuracaoAprox`; revisão de 24/10, B4).
   var anoDx=n('dm_ano'),dur=(temDM&&anoDx>1900&&anoDx<=ano)?ano-anoDx:NaN;
   var evSim=e.ev==='sim',c=function(k){return evSim&&e[k]==='1';};
   var est=e.est==='mod'?'moderada':(e.est==='alta'?'alta':(e.est==='nao'?'nao':null));
@@ -4302,7 +4369,7 @@ function rcvDados(e,ano){
   var ag={};
   ['hfam','sm','adip','masld','ar','psor','les','dii','hiv','tx'].forEach(function(k){ag[k]=tri('ag_'+k);});
   ['menarca','gest','parto','rciu','abortos','menop'].forEach(function(k){ag[k]=fem?tri('ag_'+k):null;});
-  var d={idade:idade,sexo:sexo||null,gestante:fem?tri('gest'):null,dm:dm,dmDuracao:dur,
+  var d={idade:idade,sexo:sexo||null,gestante:fem?tri('gest'):null,dm:dm,dmDuracao:dur,dmDuracaoAprox:isFinite(dur),
     dcva:e.ev==='sim'?true:(e.ev==='nao'?false:null),
     ev:{iam:c('e_iam'),sca12m:c('e_sca'),avc:c('e_avc'),ait:c('e_ait'),anginaEst:c('e_angina'),dapSint:c('e_dap'),amputacao:c('e_amp'),
       revCor:c('e_rcor'),revCar:c('e_rcar'),revRenal:c('e_rren'),revPer:c('e_rper')},
@@ -4333,12 +4400,16 @@ function rcvDados(e,ano){
   return {e:e,d:d,r:r,falta:falta,imc:imc,tfge:tfge,nhdl:nhdl,dur:dur,ano:ano,cat:cat,alvo:alvo};
 }
 // O esquema em uso, como linha da Figura 7.2 ({r: redução total, id}); sem
-// hipolipemiante, r = 0; combinação que a figura não traz (EMI + ABp, por
-// exemplo), null — e aí não se calcula o que os outros esquemas acrescentam.
+// hipolipemiante, r = 0 (`estDesc`: a estatina não foi respondida). ⚠️ null = EM
+// TRATAMENTO com esquema que a figura não traz (EMI + anti-PCSK9, EAI + ABp, ABp +
+// anti-PCSK9…) ou com a estatina em branco — nunca "sem tratamento" (revisão de
+// 24/10, A2): antes a tela somava a redução TOTAL das estratégias e sugeria, a quem
+// já usa EMI + anti-PCSK9, trocar por EAI + EZE.
 function rcvRegime(t){
   t=t||{};
   var est=t.estatina==='alta'?'alta':(t.estatina==='moderada'?'mod':''),eze=t.eze===true,abp=t.abp===true,pc=t.pcsk9===true;
-  if(!est&&!eze&&!abp&&!pc)return {r:0,id:'',nada:true};
+  if(!est&&!eze&&!abp&&!pc)return {r:0,id:'',nada:true,estDesc:t.estatina==null};
+  if(t.estatina==null)return null;
   for(var i=0;i<RCV_ESTRATEGIAS.length;i++){
     var s=RCV_ESTRATEGIAS[i];
     if((s.est||'')===est&&!!s.eze===eze&&!!s.abp===abp&&!!s.pcsk9===pc)return {r:s.r,id:s.id};
@@ -4465,10 +4536,11 @@ function rcvPreventHTML(x){
   if(cat.dcva)msg='Sem escore: com doença aterosclerótica (prevenção secundária) o PREVENT não se aplica — ele estima o primeiro evento, em quem não tem doença cardiovascular (§4.2).';
   else if(!(d.idade>0))msg='Informe a idade.';
   else if(d.idade<30)msg='Sem escore: o PREVENT não foi desenvolvido para menos de 30 anos (§4.9). Os agravantes podem reclassificar.';
-  else if(d.idade>79)msg='Sem escore: o PREVENT vai até 79 anos. Com 80 anos ou mais, a diretriz considera o risco em 10 anos ≥ 20% (§4.8).';
+  // "Até 79" é < 80, e "até 59", < 60: o campo aceita decimal (revisão de 24/10, B3).
+  else if(d.idade>=80)msg='Sem escore: o PREVENT vai até 79 anos. Com 80 anos ou mais, a diretriz considera o risco em 10 anos ≥ 20% (§4.8).';
   else if(!r)msg='Faltam para o PREVENT: '+x.falta.join(', ')+'.';
   if(msg)return h+'<div class="rcv-msg">'+esc(msg)+'</div></div>';
-  var t30=d.idade<=59,pct=function(v){return sbcN(v,1)+'%';};
+  var t30=d.idade<60,pct=function(v){return sbcN(v,1)+'%';};
   var L=[['DCV total','cvd'],['DASCV (aterosclerótica)','ascvd'],['Insuficiência cardíaca','hf'],['Doença coronariana (DAC)','chd'],['AVC','stroke']];
   var mod=({base:'base',uacr:'+RAC',hba1c:'+HbA1c',full:'completo (+RAC e HbA1c)'})[r.model];
   var fora=[];
@@ -4497,7 +4569,8 @@ function rcvMetasHTML(x){
   var m=LDL_METAS[k],d=x.d,a=x.alvo,lip=cat.lip,gatCat=k==='baixo'||k==='intermediario';
   var sit=function(v,meta,falta){
     if(!isFinite(v))return '<span class="rcv-t3">não informado</span>';
-    if(v>=meta)return '<span class="rcv-ver">+'+Math.round(v-meta)+' acima</span>';
+    // LDL-c igual à meta (estrita) está fora dela, mas não "+0 acima" (revisão de 24/10, B2).
+    if(v>=meta)return '<span class="rcv-ver">'+(Math.round(v-meta)>0?'+'+Math.round(v-meta)+' acima':'no limite (a meta é &lt; '+meta+')')+'</span>';
     return falta?'<span class="rcv-ver">abaixo de '+meta+', falta a redução mínima</span>':'<span class="rcv-vrd">na meta</span>';
   };
   var val=function(v){return isFinite(v)?'<b>'+Math.round(v)+'</b>':'—';};
@@ -4512,15 +4585,27 @@ function rcvMetasHTML(x){
     +'<div class="rcv-rolagem"><table class="rcv-tab"><thead><tr><th>Parâmetro (mg/dL)</th><th>Atual</th><th>Meta</th><th>Situação</th></tr></thead><tbody>'
     +linhas.map(function(l){return '<tr><td>'+l[0]+'</td><td>'+l[1]+'</td><td>'+l[2]+'</td><td>'+l[3]+'</td></tr>';}).join('')+'</tbody></table></div>';
   // A redução necessária, com a conta à vista: (LDL-c atual − alvo) ÷ LDL-c atual.
-  var red='';
+  var red='',nhPre=a&&a.gatNhdl&&!a.gatLdl?'Há gatilho farmacológico pelo não-HDL-c (≥ 30 mg/dL acima da meta dele; rec. §5). ':'';
+  // Em tratamento sem base para a redução mínima: sem o "sem tratamento", ou com um
+  // menor que o atual (o fármaco só baixa; revisão de 24/10, M2).
+  var semBase=(a&&lip.emTrat&&!isFinite(a.base))?(lip.basal>0?' O LDL-c sem tratamento informado é menor que o atual, sob tratamento: não serve de base, e a redução mínima de '+m.red+'% fica sem conferência.'
+    :' Sem o LDL-c sem tratamento, não dá para conferir a redução mínima de '+m.red+'%.'):'';
   if(!a)red='Informe o LDL-c do laudo para calcular a redução necessária.';
   else if(a.naMeta&&a.gatNhdl)red='LDL-c no alvo, mas há gatilho farmacológico pelo não-HDL-c (≥ 30 mg/dL acima da meta dele; rec. §5).';
+  // ⚠️ Do alto para cima, não-HDL-c fora da meta (coprimária, §5.1; prioridade na
+  // hipertrigliceridemia, §5.5) não é "manter" (revisão de 24/10, M3).
+  else if(a.naMeta&&!gatCat&&a.nhdlAcima)red='LDL-c no alvo, mas o não-HDL-c ('+Math.round(x.nhdl)+') está '+(x.nhdl>m.nhdl?Math.round(x.nhdl-m.nhdl)+' mg/dL acima da meta dele':'no limite da meta dele')+' (&lt; '+m.nhdl+'), que é coprimária (§5.1; com prioridade na hipertrigliceridemia, §5.5): <b>não manter — intensificar o tratamento</b>, na ordem da terapia da categoria (abaixo).';
   else if(a.naMeta)red='LDL-c no alvo'+(a.porPct?' (abaixo de '+m.ldl+' e com a redução mínima de '+m.red+'% sobre o basal)':'')+': manter o esquema e reavaliar no seguimento.';
-  else if(gatCat&&!a.gatilho)red='Sem gatilho farmacológico: o LDL-c está '+Math.max(0,Math.round(d.ldl-m.ldl))+' mg/dL acima da meta, e o gatilho é ≥ 30 mg/dL acima no LDL-c (≥ '+(m.ldl+30)+') ou no não-HDL-c (≥ '+(m.nhdl+30)+'), persistente (≥ 2 dosagens) e depois das mudanças de estilo de vida (rec. §5; leitura E-23).';
-  else red=(a.gatNhdl&&!a.gatLdl?'Há gatilho farmacológico pelo não-HDL-c (≥ 30 mg/dL acima da meta dele; rec. §5). ':'')+'<b>Redução necessária: '+sbcN(a.red,1)+'%</b> = (LDL-c atual − alvo) ÷ LDL-c atual = ('+Math.round(d.ldl)+' − '+(a.porPct?Math.floor(a.alvo):m.ldl)+') ÷ '+Math.round(d.ldl)
+  // B7: abaixo do número da meta, fora dela só pela redução mínima (quem já trata) —
+  // antes saía "o LDL-c está 0 mg/dL acima da meta".
+  else if(gatCat&&!a.gatilho)red='Sem gatilho farmacológico: o LDL-c está '+(d.ldl<m.ldl?'abaixo da meta (&lt; '+m.ldl+'), mas sem a redução mínima de '+m.red+'% sobre o LDL-c sem tratamento (alvo ≤ '+Math.floor(a.alvo)+')'
+      :(Math.round(d.ldl-m.ldl)>0?Math.round(d.ldl-m.ldl)+' mg/dL acima da meta':'no limite da meta (ela é &lt; '+m.ldl+')'))
+    +', e o gatilho é ≥ 30 mg/dL acima no LDL-c (≥ '+(m.ldl+30)+') ou no não-HDL-c (≥ '+(m.nhdl+30)+'), persistente (≥ 2 dosagens) e depois das mudanças de estilo de vida (rec. §5; leitura E-23).';
+  // B2: LDL-c igual à meta estrita — antes, "Redução necessária: 0,0%".
+  else if(a.limite)red=nhPre+'<b>LDL-c no limite da meta:</b> a meta é estrita (&lt; '+m.ldl+'), e o LDL-c de '+Math.round(d.ldl)+' ainda não está nela — basta qualquer redução'+(lip.emTrat?' adicional ao esquema atual':'')+'.'+semBase;
+  else red=nhPre+'<b>Redução necessária: '+sbcN(a.red,1)+'%</b> = (LDL-c atual − alvo) ÷ LDL-c atual = ('+Math.round(d.ldl)+' − '+(a.porPct?Math.floor(a.alvo):m.ldl)+') ÷ '+Math.round(d.ldl)
     +(a.porPct?' — o alvo é o LDL-c sem tratamento ('+Math.round(a.base)+') menos '+m.red+'%, abaixo da meta de '+m.ldl+' (F5.1: meta e redução mínima valem juntas)':' — a meta é estrita (&lt; '+m.ldl+'): é preciso passar desse valor')
-    +(lip.emTrat?'. É redução ADICIONAL ao esquema atual.':'.')
-    +(lip.emTrat&&!(lip.basal>0)?' Sem o LDL-c sem tratamento, não dá para conferir a redução mínima de '+m.red+'%.':'');
+    +(lip.emTrat?'. É redução ADICIONAL ao esquema atual.':'.')+semBase;
   h+='<div class="rcv-red">'+red+'</div>';
   if(gatCat)h+='<div class="rcv-nota">Gatilho no '+m.rot.toLowerCase()+': LDL-c ≥ '+(m.ldl+30)+' ou não-HDL-c ≥ '+(m.nhdl+30)+' mg/dL, persistente, depois de afastar causa secundária e das mudanças de estilo de vida. Do alto para cima, fármaco sempre (forte, evidência alta).</div>';
   h+='<div class="rcv-nota">ApoB é meta secundária: usar depois de LDL-c e não-HDL-c na meta (§5.3). HDL-c não tem meta (§5.4). Lp(a) não tem meta terapêutica (T3.1).</div>';
@@ -4529,10 +4614,20 @@ function rcvMetasHTML(x){
 function rcvEstrategiasHTML(x){
   var cat=x.cat,k=cat.k;if(!k)return '';
   var d=x.d,a=x.alvo,t=d.trat||{},lip=cat.lip,reg=rcvRegime(t),intol=t.intol===true;
-  var tratando=!!reg&&!reg.nada,gatCat=k==='baixo'||k==='intermediario';
+  // ⚠️ `reg` null = em tratamento com esquema fora da figura (revisão de 24/10, A2).
+  var foraFig=reg===null,tratando=foraFig||!reg.nada,gatCat=k==='baixo'||k==='intermediario';
+  var emUso=[t.estatina==='alta'?'EAI':(t.estatina==='moderada'?'EMI':(t.estatina==null?'estatina não informada':'')),t.eze===true?'EZE':'',t.abp===true?'ABp':'',t.pcsk9===true?'anti-PCSK9':''].filter(Boolean).join(' + ');
+  var semFig=t.estatina==null?'Com a estatina em branco, o esquema em uso ('+emUso+') não fica definido':'O esquema em uso ('+emUso+') não é uma das combinações da Figura 7.2';
+  // A redução que o esquema atual já faz: a da figura; fora dela, a OBSERVADA (1 −
+  // LDL-c atual ÷ sem tratamento), se houver um basal maior que o atual. Sem isso,
+  // nada se calcula e nenhuma estratégia é dada como suficiente.
+  var rAtual=!tratando?0:(reg?reg.r:((lip.basal>0&&d.ldl>0&&lip.basal>d.ldl)?(1-d.ldl/lip.basal)*100:NaN));
+  var semConta=tratando&&!isFinite(rAtual);
   // Gestação, e diálise sem doença cardiovascular em quem ainda não trata: a conduta é
-  // outra (alertas acima), e a tabela não sugere esquema nenhum.
-  var bloqueio=d.gestante===true||(d.dialise==='hemo'||d.dialise==='peritoneal')&&!cat.dcva&&!tratando;
+  // outra (alertas acima), e a tabela não sugere esquema nenhum. ⚠️ Na diálise
+  // peritoneal o §9.5 admite iniciar estatina no muito alto risco (revisão de 24/10, B6).
+  var dial=d.dialise==='hemo'||d.dialise==='peritoneal',dpLibera=d.dialise==='peritoneal'&&k==='muitoalto';
+  var bloqueio=d.gestante===true||(dial&&!cat.dcva&&!tratando&&!dpLibera);
   var precisa=!!a&&!a.naMeta&&(!gatCat||a.gatilho)&&!bloqueio;
   // Terapia inicial mínima (rec. §7.13): alto e muito alto, EAI + EZE; extremo, EAI +
   // EZE + anti-PCSK9; HF ou LDL-c ≥ 190, EAI + EZE. Escolhe-se a estratégia menos
@@ -4541,42 +4636,73 @@ function rcvEstrategiasHTML(x){
   var hf190=d.hf===true||lip.ldlMin>=190;
   var minimo=({alto:65,muitoalto:65,extremo:85})[k]||0;if(hf190)minimo=Math.max(minimo,65);
   var inicial=k==='extremo'?'eaiezepcsk9':((k==='alto'||k==='muitoalto'||hf190)?'eaieze':'');
+  // O que cada estratégia ACRESCENTA ao esquema atual: 1 − (1 − nova)/(1 − atual); sem
+  // tratamento, a redução total da figura. ⚠️ Sem arredondar (B1): o arredondamento
+  // é só da tela.
   var ganho=function(s){
     var r=s.mais?90.0001:s.r;
     if(!tratando)return r;
-    if(!reg||r<=reg.r)return NaN;
-    return Math.round((1-(1-r/100)/(1-reg.r/100))*1000)/10;
+    if(!isFinite(rAtual)||r<=rAtual)return NaN;
+    return (1-(1-r/100)/(1-rAtual/100))*100;
   };
-  var alcanca=function(g){return isFinite(g)&&a&&(a.inclusivo?g>=a.red-1e-9:g>a.red+1e-9);};
-  var elegivel=function(s){return (intol?!s.est:!!s.est)&&(intol||s.r>=minimo);};
+  // Alcança se o LDL-c PREVISTO passa do alvo: abaixo da meta, que é estrita, ou até
+  // o teto da redução mínima, inclusivo. ⚠️ B1 (revisão de 24/10): antes comparava o
+  // ganho arredondado a 0,1 com a redução sem arredondar, e um esquema que levava o
+  // LDL-c a exatamente 50 no muito alto aparecia "✓ sim".
+  var alcanca=function(g){
+    if(!isFinite(g)||!a)return false;
+    var prev=d.ldl*(1-g/100);
+    return a.inclusivo?prev<=a.alvo+1e-9:prev<a.alvo-1e-9;
+  };
+  // Intensificar não é trocar: a sugerida contém o esquema atual (estatina de
+  // intensidade igual ou maior; EZE, ABp e anti-PCSK9 que já usa). Na intolerância à
+  // estatina, a estatina sai.
+  var intens=function(s){return s.est==='alta'?2:(s.est==='mod'?1:0);};
+  var estAtual=t.estatina==='alta'?2:(t.estatina==='moderada'?1:0);
+  var contem=function(s){
+    if(!tratando)return true;
+    if((t.eze===true&&!s.eze)||(t.abp===true&&!s.abp)||(t.pcsk9===true&&!s.pcsk9))return false;
+    return intol||intens(s)>=estAtual;
+  };
+  var elegivel=function(s){return (intol?!s.est:!!s.est)&&(intol||s.r>=minimo)&&contem(s);};
   var sug=null,nenhuma=false;
-  if(precisa){
+  if(precisa&&!semConta){
     for(var i=0;i<RCV_ESTRATEGIAS.length;i++){var s=RCV_ESTRATEGIAS[i];if(elegivel(s)&&alcanca(ganho(s))){sug=s;break;}}
-    if(!sug){nenhuma=true;for(var j=RCV_ESTRATEGIAS.length-1;j>=0;j--){if(elegivel(RCV_ESTRATEGIAS[j])&&(!tratando||isFinite(ganho(RCV_ESTRATEGIAS[j])))){sug=RCV_ESTRATEGIAS[j];break;}}}
+    if(!sug){nenhuma=true;for(var j=RCV_ESTRATEGIAS.length-1;j>=0;j--){if(elegivel(RCV_ESTRATEGIAS[j])&&isFinite(ganho(RCV_ESTRATEGIAS[j]))){sug=RCV_ESTRATEGIAS[j];break;}}}
   }
   var h='<div class="rcv-bloco"><div class="rcv-bt">Estratégias · redução média do LDL-c (Figura 7.2)</div>';
   var topo='';
   if(d.gestante===true)topo='Na gestação, a conduta muda: veja o alerta acima.';
-  else if(d.dialise&&d.dialise!=='nao'&&!cat.dcva)topo='Diálise sem doença cardiovascular: a diretriz recomenda contra INICIAR estatina (rec. §9.5); quem já usa mantém.';
+  else if(dial&&!cat.dcva&&!dpLibera)topo='Diálise sem doença cardiovascular: a diretriz recomenda contra INICIAR estatina (rec. §9.5); quem já usa mantém.';
   else if(!a)topo='Informe o LDL-c do laudo para marcar as estratégias que alcançam a redução necessária.';
   else if(a.naMeta&&a.gatNhdl)topo='LDL-c no alvo, mas o não-HDL-c está ≥ 30 mg/dL acima da meta dele (&lt; '+LDL_METAS[k].nhdl+'): há gatilho pelo não-HDL-c, e é nele que se mede a redução que falta.';
+  // M3: a figura mede o LDL-c; o não-HDL-c fora da meta, do alto para cima, também
+  // pede intensificar.
+  else if(a.naMeta&&!gatCat&&a.nhdlAcima)topo='LDL-c no alvo, mas o não-HDL-c não está na meta dele (&lt; '+LDL_METAS[k].nhdl+'), que é coprimária: <b>intensificar o tratamento</b> (terapia da categoria, abaixo). A figura mede a redução do LDL-c, e por isso nenhuma linha é marcada.';
   else if(a.naMeta)topo='LDL-c no alvo: nenhuma estratégia a acrescentar agora.';
   else if(gatCat&&!a.gatilho)topo=(lip.emTrat?'Sem gatilho para intensificar (≥ 30 mg/dL acima da meta): manter o esquema e o estilo de vida.':'Sem gatilho farmacológico: estilo de vida.')+' A tabela mostra o que cada estratégia faz, para quando houver indicação.';
-  else if(sug)topo=(nenhuma?'Nenhum esquema da figura alcança, em média, a redução necessária; o mais intenso possível é ':'Menor estratégia que alcança a redução necessária'+(minimo?' sem ficar abaixo da terapia inicial da categoria':'')+': ')+'<b>'+sug.t+'</b>'+(tratando?' (a partir do esquema atual)':'')+'.';
-  if(tratando&&!reg)topo+=(topo?' ':'')+'O esquema atual não é uma das combinações da figura: a redução adicional de cada estratégia não pode ser calculada.';
+  else if(semConta)topo='<b>'+semFig+'</b>: '
+    +(lip.basal>0?'o LDL-c sem tratamento informado não é maior que o atual, e sem ele':'sem o LDL-c sem tratamento')+' não dá para estimar o que cada estratégia acrescenta — nenhuma é dada como suficiente. Informe o LDL-c sem tratamento (seção 2).';
+  else if(sug)topo=(nenhuma?'Nenhum esquema da figura alcança, em média, a redução necessária; o mais intenso possível é ':'Menor estratégia que alcança a redução necessária'+(minimo?' sem ficar abaixo da terapia inicial da categoria':'')+': ')+'<b>'+sug.t+'</b>'+(tratando?' (a partir do esquema atual)':'')+'.'
+    +(foraFig?' '+semFig+': a conta parte da redução observada, '+sbcN(rAtual,0)+'% (LDL-c atual sobre o sem tratamento).':'');
+  else if(precisa)topo='Nenhuma estratégia da figura vai além do esquema atual ('+emUso+').';
+  if(dpLibera&&!d.gestante&&!cat.dcva)topo='Diálise peritoneal no risco muito alto: a diretriz admite iniciar estatina (§9.5). '+topo;
+  if(reg&&reg.nada&&reg.estDesc&&!bloqueio)topo+=(topo?' ':'')+'Estatina não informada: a tabela supõe que o paciente não usa hipolipemiante.';
   if(topo)h+='<div class="rcv-red">'+topo+'</div>';
-  h+='<div class="rcv-rolagem"><table class="rcv-tab"><thead><tr><th>Estratégia</th><th>Média</th>'+(tratando?'<th>Sobre o atual</th>':'')+'<th>Alcança</th></tr></thead><tbody>'
+  var rel=tratando&&!semConta;
+  h+='<div class="rcv-rolagem"><table class="rcv-tab"><thead><tr><th>Estratégia</th><th>Média</th>'+(rel?'<th>Sobre o atual</th>':'')+'<th>Alcança</th></tr></thead><tbody>'
     +RCV_ESTRATEGIAS.map(function(s){
       var g=ganho(s),na=intol&&!!s.est,marcas=[];
-      if(tratando&&reg&&reg.id===s.id)marcas.push('em uso');
+      if(reg&&!reg.nada&&reg.id===s.id)marcas.push('em uso');
       if(s.id===inicial)marcas.push('terapia inicial');
       if(sug===s)marcas.push(nenhuma?'mais intensa':'sugerida');
-      var alc=na?'<span class="rcv-t3">intolerância</span>':(!a||!precisa?'<span class="rcv-t3">—</span>':(alcanca(g)?'<span class="rcv-vrd">✓ sim</span>':'<span class="rcv-t3">não</span>'));
+      var alc=na?'<span class="rcv-t3">intolerância</span>':(!a||!precisa||semConta?'<span class="rcv-t3">—</span>':(alcanca(g)?'<span class="rcv-vrd">✓ sim</span>':'<span class="rcv-t3">não</span>'));
       return '<tr'+(sug===s?' class="rcv-eu"':'')+'><td>'+s.t+(marcas.length?' <span class="rcv-fonte">'+marcas.join(' · ')+'</span>':'')+'</td>'
         +'<td>'+(s.mais?'&gt; 90%':'≈ '+s.r+'%')+'</td>'
-        +(tratando?'<td>'+(isFinite(g)?'+'+sbcN(g,0)+'%':'—')+'</td>':'')+'<td>'+alc+'</td></tr>';
+        +(rel?'<td>'+(isFinite(g)?'+'+sbcN(g,0)+'%':'—')+'</td>':'')+'<td>'+alc+'</td></tr>';
     }).join('')+'</tbody></table></div>'
-    +'<div class="rcv-nota">EMI e EAI = estatina de moderada e de alta intensidade · EZE = ezetimiba · ABp = ácido bempedoico · anti-PCSK9 = anticorpo (a inclisirana é alternativa aos anticorpos). Valores aproximados da Figura 7.2; a resposta individual varia.</div>'
+    +'<div class="rcv-nota">EMI e EAI = estatina de moderada e de alta intensidade · EZE = ezetimiba · ABp = ácido bempedoico · anti-PCSK9 = anticorpo (a inclisirana é alternativa aos anticorpos). Valores aproximados da Figura 7.2; a resposta individual varia.'
+      +(tratando&&!intol&&sug?' A sugerida acrescenta ao esquema atual, sem tirar o que já está em uso.':'')+'</div>'
     +'<div class="rcv-sub">Terapia inicial da categoria</div><div class="rcv-conduta">'+ldlConduta(k)+'</div>'
     +ldlDosesHTML()
     +'<div class="rcv-nota">Intolerância à estatina: ácido bempedoico + ezetimiba, ou anti-PCSK9 com ou sem ezetimiba (forte, evidência alta). Reavaliar o perfil lipídico cerca de 4 semanas depois de iniciar ou ajustar e, na meta, anualmente (§7.1).</div>';
@@ -4759,15 +4885,15 @@ var CALCS=[
   {id:'prevent',name:'Risco CV — PREVENT (AHA)',area:'Lípides',desc:'Risco de DASCV, DCV total e IC em 10 anos (AHA PREVENT 2024; opcional: UACR/HbA1c)',
    fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim, tipo 2','Sim, tipo 1'],vals:[0,1,2]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'},{id:'pv_ldl',label:'LDL-c (mg/dL) — opcional, só para a meta',type:'num'}],
    calc:function(v){var r=preventRisk(v);return r?r.ascvd:NaN;},
-   interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);var fora=(idade>=30&&idade<=79)?'':' ⚠ fora de 30–79a';var cat=s<5?{t:'baixa',c:'tag-grn'}:(s<20?{t:'intermediária',c:'tag-gold'}:{t:'alta',c:'tag-red'});var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+s.toFixed(1)+'% em 10 anos · faixa '+cat.t+' do escore · DCV total '+r.cvd.toFixed(1)+'% · IC '+r.hf.toFixed(1)+'%'+fora+mt,c:cat.c};},
+   interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);var fora=(idade>=30&&idade<80)?'':' ⚠ fora de 30–79a';var cat=s<5?{t:'baixa',c:'tag-grn'}:(s<20?{t:'intermediária',c:'tag-gold'}:{t:'alta',c:'tag-red'});var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+s.toFixed(1)+'% em 10 anos · faixa '+cat.t+' do escore · DCV total '+r.cvd.toFixed(1)+'% · IC '+r.hf.toFixed(1)+'%'+fora+mt,c:cat.c};},
    // O `pv_ldl` NÃO entra no escore (o PREVENT usa CT e HDL): serve só para a
    // meta — reclassificar em 160–189 e ≥ 190, e dizer se o paciente está nela.
    extra:function(s,v){try{return ldlAlvoHTML(s,v);}catch(e){return '';}},
    unit:'% DASCV/10a',note:'AHA PREVENT (Khan, Circulation 2024) — risco em 10 anos de DASCV (doença aterosclerótica), DCV total e insuficiência cardíaca (IC). Validado para 30–79 anos, prevenção primária. Faixas do escore na Diretriz Brasileira de Dislipidemias 2025 (Tabela 4.1): baixo < 5%, intermediário 5 a < 20%, alto ≥ 20% — e o escore só categoriza quem tem 30–79 anos, sem doença aterosclerótica e sem diabetes. O reclassificador principal do intermediário são os fatores agravantes, que se pesquisam ativamente (forte, evidência alta); o escore de cálcio coronário pode ajudar com mais de 40 anos e LDL-c de 70–159, quando disponível. Os campos opcionais RAC/UACR (albumina/creatinina urinária, mg/g) e HbA1c (%) ativam o modelo aprimorado do PREVENT; nos modelos com HbA1c os coeficientes já seguem a errata de 14/10/2026 (Circulation), e calculadoras ainda não atualizadas podem mostrar valores um pouco diferentes. A estratificação completa da SBC 2025 está na calculadora Risco CV e metas — SBC 2025.'},
   {id:'prevent30',name:'Risco CV — PREVENT 30 anos (AHA)',area:'Lípides',desc:'Risco de DASCV, DCV total e IC em 30 anos (AHA PREVENT 2024; 30–59 anos; opcional: UACR/HbA1c)',
    fields:[{id:'pv_sexo',label:'Sexo',type:'select',opts:['Feminino','Masculino'],vals:[0,1]},{id:'pv_idade',label:'Idade (anos)',type:'num'},{id:'pv_ct',label:'Colesterol total (mg/dL)',type:'num'},{id:'pv_hdl',label:'HDL (mg/dL)',type:'num'},{id:'pv_pas',label:'PA sistólica (mmHg)',type:'num'},{id:'pv_egfr',label:'TFGe (mL/min/1,73m²)',type:'num'},{id:'pv_imc',label:'IMC (kg/m²)',type:'num'},{id:'pv_dm',label:'Diabetes',type:'select',opts:['Não','Sim, tipo 2','Sim, tipo 1'],vals:[0,1,2]},{id:'pv_fum',label:'Tabagismo atual',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_ahas',label:'Uso de anti-hipertensivo',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_est',label:'Uso de estatina',type:'select',opts:['Não','Sim'],vals:[0,1]},{id:'pv_uacr',label:'RAC urinária / UACR (mg/g) — opcional',type:'num'},{id:'pv_hba1c',label:'HbA1c (%) — opcional',type:'num'}],
-   calc:function(v){var r=preventRisk(v);if(!r)return NaN;var idade=parseFloat(v.pv_idade);if(idade<30||idade>59)return NaN;return r.ascvd30;},
-   interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);if(idade<30||idade>59)return{t:'PREVENT 30 anos: validado apenas para 30–59 anos.',c:'tag-gold'};var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+s.toFixed(1)+'% · DCV total '+r.cvd30.toFixed(1)+'% · IC '+r.hf30.toFixed(1)+'% (em 30 anos)'+mt,c:'tag-blue'};},
+   calc:function(v){var r=preventRisk(v);if(!r)return NaN;var idade=parseFloat(v.pv_idade);if(idade<30||idade>=60)return NaN;return r.ascvd30;},
+   interp:function(s,v){var r=preventRisk(v);if(!r)return{t:'Preencha sexo, idade, lípides, PAS, TFGe e IMC.',c:'tag-gold'};var idade=parseFloat(v.pv_idade);if(idade<30||idade>=60)return{t:'PREVENT 30 anos: validado apenas para 30–59 anos.',c:'tag-gold'};var mt=r.model==='full'?' · +UACR/HbA1c':(r.model==='uacr'?' · +UACR':(r.model==='hba1c'?' · +HbA1c':''));return{t:'DASCV '+s.toFixed(1)+'% · DCV total '+r.cvd30.toFixed(1)+'% · IC '+r.hf30.toFixed(1)+'% (em 30 anos)'+mt,c:'tag-blue'};},
    unit:'% DASCV/30a',note:'AHA PREVENT (Khan, Circulation 2024) — risco em 30 anos de DASCV (aterosclerótica), DCV total e insuficiência cardíaca. Calculado apenas para 30–59 anos. Útil para comunicar a adultos mais jovens o risco ao longo da vida, que o risco de 10 anos costuma subestimar. Os campos opcionais RAC/UACR e HbA1c ativam o modelo aprimorado do PREVENT (com HbA1c, já com a errata de 14/10/2026). ⚠️ NÃO há limiares definidos para categorizar o risco pela estimativa de 30 anos (Diretriz Brasileira de Dislipidemias 2025), e por isso esta calculadora não deriva meta de LDL-c: a meta segue a categoria do risco de 10 anos. O risco em 30 anos serve para conscientizar sobre os fatores de risco e motivar o tratamento.'},
   {id:'imc',name:'IMC',area:'Obesidade',desc:'Índice de Massa Corporal',
    fields:[{id:'imc_peso',label:'Peso (kg)',type:'num'},{id:'imc_alt',label:'Altura (cm)',type:'num'}],

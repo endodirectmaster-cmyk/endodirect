@@ -5,7 +5,12 @@ atualizado: 2026-10-24
 
 # Pendências
 
-## 🧮 AGENDADO (sábado, 24/10, 8h de Brasília): calculadora de risco CV no estilo da Clarity
+## ✅ FEITO (24/10): calculadora "Risco CV e metas — SBC 2025" (pedido de 22/10, com prints da Clarity)
+
+No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026). Fica para decidir com o professor: a calculadora "LDL (Friedewald)" e a frase da Lp(a) nas perguntas e respostas (a SBC 2025 prefere Martin/Hopkins e Lp(a) uma vez na vida para todos).
+- [ ] **Professor decide:** a tabela "Estratificação de risco e metas na HF" do cap. 113 (Hipercolesterolemias Primárias) põe a HF heterozigótica em prevenção primária sem outros fatores como risco intermediário (LDL < 100). Na SBC 2025, LDL-c ≥ 190 já é alto (§4.1), HF com CAC > 100 é muito alto (T4.4) e a terapia inicial na HF é EAI + EZE (§7.13). Proposta: alinhar a tabela à SBC 2025.
+
+### Registro do pedido (22/10)
 
 Pedido do professor em 22/10, com prints da Clarity Prevention (Clarity Health; apoio de
 Libbs, Novo Nordisk, Farmoquímica e Daiichi-Sankyo): *"Será que conseguiríamos importar essa
