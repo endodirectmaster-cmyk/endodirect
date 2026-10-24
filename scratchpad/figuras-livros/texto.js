@@ -7,8 +7,9 @@
 // lote 1 (Endocrinologia Básica), lote de diabetes (figuras-diabetes.js, 18/10/2026), lote de
 // tireoide, obesidade e osteometabolismo (figuras-tireoide-obesidade-osteo.js, 19/10/2026) e parte
 // 2 de tireoide (figuras-tireoide-parte2.js, 20/10/2026) e 2º lote da Endocrinologia Básica, a
-// fisiologia de cada glândula (figuras-fisiologia-glandulas.js, 23/10/2026)
-const FIGURAS = require('./figuras.js').concat(require('./figuras-diabetes.js'), require('./figuras-tireoide-obesidade-osteo.js'), require('./figuras-tireoide-parte2.js'), require('./figuras-fisiologia-glandulas.js'));
+// fisiologia de cada glândula (figuras-fisiologia-glandulas.js, 23/10/2026) e o lote de adrenal,
+// neuroendocrinologia e lípides (figuras-adrenal-neuro-lipides.js, 24/10/2026)
+const FIGURAS = require('./figuras.js').concat(require('./figuras-diabetes.js'), require('./figuras-tireoide-obesidade-osteo.js'), require('./figuras-tireoide-parte2.js'), require('./figuras-fisiologia-glandulas.js'), require('./figuras-adrenal-neuro-lipides.js'));
 const BASE = 'https://eutizblmrcypzyqzczgq.supabase.co/storage/v1/object/public/endodirect-assets/resumos/livros/';
 const escAlt = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\]/g, '\\]');
 const escRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

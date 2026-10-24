@@ -93,12 +93,13 @@ sessão: `trig_01PMo4FS7qqYwTMyeK1tia6N` (11h UTC), com o plano completo.
       diabetes segue o capítulo de tratamento do DM2.
 - [ ] Construir, testar (casos-ouro da diretriz), fazer o A/B, publicar e fazer o relatório.
 
-## 🖼️ AGUARDA APROVAÇÃO (24/10): figuras de adrenal, neuroendocrinologia e lípides
+## ✅ GRAVADO (24/10): figuras de adrenal, neuroendocrinologia e lípides, junto com o 2º lote
 
 Pedido do professor em 24/10 (prints do bucket `livros`, pastas Adrenal, Neuroend e Lipides: "adrenal e neuroendocrino"). 232 figuras revisadas; 101 entram em 29 capítulos, 48 consertadas (10 com troca de número, corte ou conduta para bater com o capítulo). Detalhes em [[Ilustrações dos Resumos]].
 - [x] Revisão (13 lotes), curadoria, consertos (4 grupos) e prévia: [Figuras de Adrenal, Neuro e Lípides](https://claude.ai/artifact/4FCQK4oXCKMLXaTytxqsTs).
-- [ ] **Professor:** aprovar a prévia (e dizer se a fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno que ficou).
-- [ ] Depois da aprovação: lista no `texto.js`, reexportar os 29 capítulos, subir as imagens, gravar em grupos de até 4 com backup e md5, F5 e zumbi.
+- [x] **Professor aprovou as duas prévias** (esta e a do 2º lote): *"Aprovo tudo."* A fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno que ficou; a fig. 77-5 do Guyton fica como na edição brasileira.
+- [x] Lista no `texto.js`; 48 capítulos reexportados (idênticos às prévias); 135 imagens subidas e conferidas; 12 grupos gravados das 22h17 às 22h29 UTC com backup e md5; conferência final (48 md5, 135 figuras uma vez cada, 334 figuras de livros); professor avisado do F5.
+- [ ] Conferência de zumbi dos 48 md5 alguns minutos depois.
 
 ## 📋 EM ANDAMENTO (desde 23/10, 19h de Brasília): auditoria das Diretrizes
 
@@ -289,15 +290,12 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
    - [ ] Williams 11.6 (D2/D3, p. 428): segue cortada embaixo (~180 px). Precisa de recorte novo
      da outra conversa do professor (o PDF do Williams no Drive tem 68 MB, acima dos 10 MB do
      conector). Quando vier, entra no 77, no trecho da D3.
-3. [ ] **2º lote (fisiologia de cada glândula): prévia enviada em 24/10, aguarda aprovação.**
-   Começou na hora agendada (23/10, 18h de Brasília). 34 figuras em 31 capítulos, 19 com
-   conserto; 15 ficam de fora. Detalhes em [[Ilustrações dos Resumos]]; prévia em
+3. [x] **2º lote (fisiologia de cada glândula): gravado em 24/10**, junto com as figuras de
+   adrenal, neuroendocrinologia e lípides (aprovação: *"Aprovo tudo."*). Começou na hora
+   agendada (23/10, 18h de Brasília). 34 figuras em 31 capítulos, 19 com conserto; 15 ficam de
+   fora. Detalhes em [[Ilustrações dos Resumos]]; prévia em
    [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v).
-   - [ ] Professor: aprovar; dizer se troca "Iodinase" e "Resposta ao hormônio tireoidiano" na
-     fig. 77-5 do Guyton (edição brasileira, deixada como está).
-   - [ ] Depois da aprovação: exportar de novo os 31 capítulos, conferir os md5, subir as 34
-     pela `subir-figuras-livros` (depois 410), gravar em grupos de até 4 capítulos com backup e
-     guarda de md5, avisar o F5 e fazer a conferência de zumbi.
+   A fig. 77-5 do Guyton ficou como na edição brasileira ("Iodinase").
 4. [x] A cópia da prévia (`Lp7eetjE7zsAtctbPuKVEt`) já não existe (conferido em 19/10). Fica a de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`).
 
 ## 📱 App nas lojas (18/10) — decisões tomadas; a fazer

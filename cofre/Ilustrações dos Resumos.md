@@ -226,8 +226,8 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       junto (`prontas-todas/`). Todas carregam, cabem e ficam logo depois do trecho. Avisos só
       os conhecidos (ampliador no celular e a "deformação" de 1,9% da Vilar 31.4, da parte 1).
     - **Prévia:** [Figuras de Tireoide, Parte 2](https://claude.ai/artifact/W8g7X9zJD9TMUhiFH4QkCZ).
-  - **2º lote da Endocrinologia Básica, fisiologia de cada glândula (23–24/10): prévia
-    enviada em 24/10, aguarda aprovação.**
+  - **2º lote da Endocrinologia Básica, fisiologia de cada glândula (23–24/10): gravado em
+    24/10** (aprovação do professor: *"Aprovo tudo"*; ver "Gravações feitas").
     - **Origem:** as 49 figuras do zip `imagens_endocrinologia_basica_PT` que ficaram fora do
       lote 1 (47 de fisiologia, mais as Williams 16.1 e 11.6, que vieram cortadas).
     - **Capítulos exportados de novo** (`exportar-capitulos`, depois 410): 97, das posições
@@ -272,7 +272,8 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       carregam, cabem e ficam logo depois do trecho. Avisos só os conhecidos (ampliador no
       celular e a "deformação" de 1,9% da Vilar 31.4).
     - **Prévia:** [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v).
-  - **Adrenal, neuroendocrinologia e lípides (24/10): prévia enviada em 24/10, aguarda aprovação.**
+  - **Adrenal, neuroendocrinologia e lípides (24/10): gravado em 24/10, junto com o 2º lote**
+    (mesma aprovação; ver "Gravações feitas").
     - **Origem:** três zips novos no bucket `livros` (pastas Adrenal, Neuroend e Lipides), 232
       figuras (79 + 80 + 73), baixados pela `baixar-livros` (depois 410). Sem recorte em inglês
       desta vez: a tradução foi julgada pela própria imagem. O índice de lípides lista 26 arquivos
@@ -287,9 +288,8 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     - **Resultado:** 101 entram em 29 capítulos (34 adrenal, 38 neuro, 29 lípides); 131 ficam de
       fora (erro de conteúdo ou diretriz superada, repetição, assunto sem capítulo e 4 por
       curadoria nos capítulos cheios: Cushing com 8, Hipertrigliceridemias e Hipercolesterolemias
-      Primárias com 7). Lista em `scratchpad/figuras-livros/figuras-adrenal-neuro-lipides.js`
-      (**ainda fora do `texto.js`**, até a aprovação: o 2º lote, também pendente, grava pelo
-      mesmo `texto.js`). Na sessão: `figuras-an-scripts/` (`monta-lotes.py`, `monta-an.js`,
+      Primárias com 7). Lista em `scratchpad/figuras-livros/figuras-adrenal-neuro-lipides.js`,
+      no `texto.js` desde a aprovação, depois da do 2º lote. Na sessão: `figuras-an-scripts/` (`monta-lotes.py`, `monta-an.js`,
       `lista-cap.js`, `monta-correcoes.js`, `prepara-an.py`), `figuras-an/ajustes.json`
       (curadoria e 14 legendas acertadas às siglas que ficaram na figura), `prontas/` e `pagina/`.
     - **Consertos (48 figuras), com `corrige-an.py`:** operações em `correcoes-an/c1–c4.json`.
@@ -301,9 +301,10 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
       partir de 150; SM com PA ≥ 130/85; SMRE sem o "grau 2" errado). Conversão de LDL-c de mmol/L
       para mg/dL (× 38,67) na figura da ES 2020, dita na legenda.
     - **Prévia:** [Figuras de Adrenal, Neuro e Lípides](https://claude.ai/artifact/4FCQK4oXCKMLXaTytxqsTs).
-    - **Depois da aprovação:** pôr a lista no `texto.js`, exportar de novo os 29 capítulos (md5),
-      subir as imagens pela `subir-figuras-livros` (depois 410), gravar em grupos de até 4
-      capítulos com backup e guardas de md5, avisar o F5 e conferir zumbi.
+    - **Formato de arquivo:** o `monta-an.js` decide jpg ou png pelo tamanho do arquivo
+      **corrigido**, quando existe (`corrigidas-c1..c4/`), e não pelo do recorte original. A
+      Pappachan 13-1 saía jpg na lista e png na pasta; achado na conferência antes do envio
+      (101 de 101 batem agora).
   - **Desenho próprio:** onde o livro tiver figura equivalente, o recorte substitui o
     desenho; onde não tiver, o desenho fica.
   - **Origem dos livros:** estão no Drive, em Livros › Endocrino Geral (Williams,
@@ -481,3 +482,34 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     fora de `diretrizes` e o número de itens. Tudo verdadeiro nas 2.
   - **Conferido no fim:** as 24 aparecem uma vez cada; o acervo tem 199 figuras de livros,
     todas distintas; os 35 capítulos com figura das partes 1 e 2 estão com o md5 certo.
+- **2º lote e adrenal, neuroendocrinologia e lípides, 24/10/2026, das 22h17 às 22h29 UTC.**
+  Aprovação do professor: *"Aprovo tudo."* (as duas prévias). 135 figuras (34 do 2º lote e
+  101 de adrenal, neuro e lípides) em 48 capítulos, em 12 instruções de `gera-sql.js` com até
+  4 capítulos cada. Backups `main-antes-figuras-an-2026-10-24-g01` a `g12`.
+
+  | grupo | md5 antes → depois |
+  |---|---|
+  | g01 | 77 `975d24c5` → `76b35ba4`; 79 `ef21f770` → `8bdd8e0f`; 89 `02aa2a4c` → `7d0cac65`; 90 `bab2dd43` → `b24fae7a` |
+  | g02 | 91 `875efd7c` → `97cef938`; 92 `f46b4ca6` → `d79d3161`; 93 `89cc2a07` → `a6a81a1f`; 94 `e168de8a` → `70bc9622` |
+  | g03 | 95 `2259e4ac` → `59e81ae9`; 96 `c6909076` → `0026ed5f`; 97 `2923487e` → `6de80a0e`; 98 `c393311c` → `a5ba679a` |
+  | g04 | 99 `45d244b9` → `4ab69223`; 100 `08e45876` → `3b440105`; 101 `a4bbb88c` → `fddb0fef`; 102 `97343125` → `2097ab4c` |
+  | g05 | 107 `db6f8875` → `0741fdd4`; 109 `5dd222bd` → `12e9fbe2`; 110 `46dd6410` → `516a7401`; 111 `eb557677` → `23f42173` |
+  | g06 | 112 `ea91a5e1` → `73a427e4`; 113 `3d2d03bf` → `65210bee`; 114 `85b12bf9` → `5b077523`; 115 `e27c5bdf` → `157f6ee2` |
+  | g07 | 116 `8dc9f66d` → `e189df5c`; 118 `f2d93d40` → `58a2632a`; 121 `a95fd5db` → `b8579af3`; 123 `c112845d` → `969594a5` |
+  | g08 | 128 `9c764c32` → `b763c3f8`; 129 `70adde69` → `b798658c`; 139 `cf91bd64` → `340281c3`; 143 `afa970fb` → `2c9fc07a` |
+  | g09 | 144 `3ad28bf5` → `71464457`; 147 `7362cc93` → `f111a420`; 148 `13f2738f` → `4b7fc75c`; 149 `416c1c7c` → `b27f4a19` |
+  | g10 | 150 `a5a99495` → `8fa2a16a`; 151 `891f49b2` → `725b7920`; 152 `5fb2f669` → `6139f714`; 153 `2d0148fb` → `fb932c0f` |
+  | g11 | 154 `d8771107` → `2c68bb7d`; 159 `47a6c0d9` → `c76ecb36`; 160 `5a8fe36c` → `e715f9e7`; 161 `5b78d856` → `87fffdaf` |
+  | g12 | 163 `e33f7f17` → `29865389`; 165 `ac2f44e7` → `1d32dba5`; 166 `bc0edc45` → `05bd1bcf`; 220 `652e030d` → `6c93d7f7` |
+
+  - **Antes de gravar:** os 48 capítulos foram exportados de novo (`exportar-capitulos`,
+    depois 410) e eram idênticos às bases das prévias. As 135 imagens subiram pela
+    `subir-figuras-livros` (nome conferido por regex, sem sobrescrever; depois 410), todas com
+    200 e conferidas byte a byte. O token desta rodada foi apagado.
+  - Cada instrução conferiu o backup, os md5 de depois, o resto de cada item, os outros itens,
+    o estado fora de `diretrizes` e o número de itens. Tudo verdadeiro nas 12.
+  - **Conferido no fim:** os 48 md5 estão certos; as 135 figuras aparecem uma vez cada, no
+    capítulo esperado; os 12 backups existem; o acervo tem 334 figuras de livros (199 + 135).
+    Os 135 endereços públicos respondem 200 (53 JPG e 82 PNG, 45 MB).
+  - Nenhum save do painel durante a gravação: o `updated_at` ficou no g12 e os logs não têm
+    escrita no estado global desde as 22h UTC. Um acesso às 22h30 já carregou a versão nova.
