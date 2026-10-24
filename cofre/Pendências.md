@@ -272,13 +272,20 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
    - Teto de altura no ar (PR #881, `sw.js` v315).
    - Depois dele, o `{60}`/`{75}` saiu do Netter e do ciclo menstrual no 151 (backup `main-antes-largura-livros-151-2026-10-18`, 12:24 UTC; md5 do 151 agora `891f49b2…`).
    - ✅ **Conferência de zumbi (13:16 UTC):** os 4 resumos seguem com os md5 gravados (149 `416c1c7c…`, 150 `a5a99495…`, 151 `891f49b2…`, 152 `5fb2f669…`), com 19 recortes e nenhum `{N}`. O save de 12:31:52 UTC, posterior à última gravação, já carregou a versão nova.
-2. [ ] Refazer os recortes cortados embaixo: Williams 16.1 (catecolaminas, p. 670) e 11.6 (D2/D3, p. 428).
-3. [ ] **2º lote:** as outras 47 figuras nos capítulos de cada glândula. **Agendado pelo
-   professor para sexta, 23/10, às 18h de Brasília** (*"começa 6a feira às 18h"*, 21/10),
-   logo depois da renovação semanal do limite. O lembrete na sessão é o
-   `trig_01NPdDbFuwcrJAM4JJK49Xat` (21h UTC).
-   - Estão em português no zip `_PT` do bucket `livros`.
-   - Revisar cada tradução contra o original, como no lote 1 (`pares/`, `corrige.py`).
+2. [x] Williams 16.1 (catecolaminas): a versão traduzida está completa (só o original em
+   inglês saiu cortado); entra no 149 no 2º lote.
+   - [ ] Williams 11.6 (D2/D3, p. 428): segue cortada embaixo (~180 px). Precisa de recorte novo
+     da outra conversa do professor (o PDF do Williams no Drive tem 68 MB, acima dos 10 MB do
+     conector). Quando vier, entra no 77, no trecho da D3.
+3. [ ] **2º lote (fisiologia de cada glândula): prévia enviada em 24/10, aguarda aprovação.**
+   Começou na hora agendada (23/10, 18h de Brasília). 34 figuras em 31 capítulos, 19 com
+   conserto; 15 ficam de fora. Detalhes em [[Ilustrações dos Resumos]]; prévia em
+   [Figuras de Fisiologia das Glândulas](https://claude.ai/artifact/FvC4tVCW9BKbzv8NicJv7v).
+   - [ ] Professor: aprovar; dizer se troca "Iodinase" e "Resposta ao hormônio tireoidiano" na
+     fig. 77-5 do Guyton (edição brasileira, deixada como está).
+   - [ ] Depois da aprovação: exportar de novo os 31 capítulos, conferir os md5, subir as 34
+     pela `subir-figuras-livros` (depois 410), gravar em grupos de até 4 capítulos com backup e
+     guarda de md5, avisar o F5 e fazer a conferência de zumbi.
 4. [x] A cópia da prévia (`Lp7eetjE7zsAtctbPuKVEt`) já não existe (conferido em 19/10). Fica a de sempre (`1PdZcjpHFTp4q8Kw4Qx1Xq`).
 
 ## 📱 App nas lojas (18/10) — decisões tomadas; a fazer
