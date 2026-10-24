@@ -47,18 +47,31 @@ function linhaVar(nome, fonte) {
   if (i < 0) throw new Error('var não encontrada: ' + nome);
   return src.slice(i + 1, src.indexOf('\n', i + 1));
 }
+// 24/10/2026: a categoria vem do motor único da SBC 2025 (`sbcEstratifica`), e o
+// alvo de LDL-c de `sbcAlvoLDL` (meta e redução mínima juntas). O mundo carrega os
+// dois e os ajudantes.
 function mundo(fonte) {
   const ctx = vm.createContext({});
   vm.runInContext(
     'function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}\n'
     + trechoVar('LDL_METAS', '\n};', fonte) + '\n'
+    + linhaVar('SBC_ORD', fonte) + '\n'
+    + linhaVar('SBC_COR', fonte) + '\n'
+    + corpo('sbcN', fonte) + '\n'
+    + corpo('sbcRenalDM', fonte) + '\n'
+    + corpo('sbcEstratifica', fonte) + '\n'
+    + corpo('sbcDadosDoPrevent', fonte) + '\n'
+    + corpo('sbcPendenciasHTML', fonte) + '\n'
     + corpo('ldlFaixaEscore', fonte) + '\n'
     + linhaVar('LDL_FAIXA_F', fonte) + '\n'
     + corpo('sbcCategoria', fonte) + '\n'
     + linhaVar('LDL_COLS', fonte) + '\n'
     + corpo('ldlConduta', fonte) + '\n'
+    + corpo('ldlEsquemaNivel', fonte) + '\n'
     + corpo('ldlEsquemaPelaReducao', fonte) + '\n'
     + trechoVar('LDL_DOSES', '\n];', fonte) + '\n'
+    + corpo('ldlDosesHTML', fonte) + '\n'
+    + corpo('sbcAlvoLDL', fonte) + '\n'
     + corpo('ldlCondutaHTML', fonte) + '\n'
     + corpo('ldlQuadroHTML', fonte) + '\n'
     + corpo('ldlAlvoHTML', fonte), ctx);
@@ -120,8 +133,14 @@ ok(/ezetimiba \+ anti-PCSK9/.test(E(60, true)), '(3) em uso de estatina, 60% a m
 {
   const h = M.ldlAlvoHTML(2, paciente({ pv_ldl: '130' })); // baixo, meta 115, +15
   ok(/ainda sem gatilho farmacológico/.test(h) && !/precisa cair/.test(h), '(4) a 15 mg/dL da meta no baixo risco não há fármaco');
-  const h2 = M.ldlAlvoHTML(2, paciente({ pv_ldl: '150' })); // +35 → 23% → moderada
-  ok(/precisa cair <b>≥ 24%<\/b>/.test(h2) && /moderada intensidade/.test(h2), '(4) a 35 mg/dL da meta no baixo risco: estatina de moderada intensidade');
+  // ⚠️ EXPECTATIVA ATUALIZADA em 24/10/2026: antes "≥ 24%" (só a distância até a
+  // meta: (150 − 115)/150). A meta e a redução mínima valem JUNTAS — Figura 5.1:
+  // "ALVO < 115 mg/dL e redução ≥ 30%"; §5.1: "além das metas específicas, a adoção
+  // de uma redução percentual mínima do LDL-c" (Tabela 5.1, coluna da redução).
+  // Com gatilho, o alvo é 150 × 0,7 = 105, e a queda pedida é 30%, que a estatina
+  // de moderada intensidade (30%, Figura 7.2) alcança.
+  const h2 = M.ldlAlvoHTML(2, paciente({ pv_ldl: '150' })); // +35 → alvo ≤ 105 → 30% → moderada
+  ok(/precisa cair <b>≥ 30%<\/b>/.test(h2) && /alvo ≤ 105 mg\/dL/.test(h2) && /moderada intensidade/.test(h2), '(4) a 35 mg/dL da meta no baixo risco: redução mínima de 30% (alvo ≤ 105), estatina de moderada intensidade');
   const h3 = M.ldlAlvoHTML(2, paciente({ pv_ldl: '90' }));
   ok(/já abaixo da meta/.test(h3), '(4) LDL-c abaixo da meta: manter');
 }
@@ -154,11 +173,13 @@ function mutante(fn, de, para) {
   if (alvo.indexOf(de) < 0) throw new Error('mutação não se aplica: ' + de);
   return mundo(html.replace(alvo, alvo.replace(de, para)));
 }
-ok(!/ezetimiba \+ anti-PCSK9/.test(esquema(mutante('ldlEsquemaPelaReducao', 'if(red<65)', 'if(red<75)').ldlAlvoHTML(2, paciente({ pv_ldl: '200' })))),
+// 24/10/2026: os cortes do esquema moraram para `ldlEsquemaNivel` e o gatilho para
+// `sbcAlvoLDL`; as mutações seguem a mesma intenção, no lugar novo.
+ok(!/ezetimiba \+ anti-PCSK9/.test(esquema(mutante('ldlEsquemaNivel', 'cabe(65)', 'cabe(75)').ldlAlvoHTML(2, paciente({ pv_ldl: '200' })))),
   'MUTAÇÃO: subir o corte do esquema triplo de 65 para 75 tinha de tirar o triplo do LDL-c 200 — a asserção do caso (3) não vigia o corte');
 ok(!/além do que a estatina atual já faz/.test(mutante('ldlCondutaHTML', "(emEstatina?' <b>além do que a estatina atual já faz</b>':'')", "''").ldlAlvoHTML(25, paciente({ pv_ldl: '85', pv_est: '1' }))),
   'MUTAÇÃO: apagar a frase do uso de estatina tinha de aparecer');
-ok(!/ainda sem gatilho/.test(mutante('ldlCondutaHTML', '(ldl-m.ldl)<30', '(ldl-m.ldl)<0').ldlAlvoHTML(2, paciente({ pv_ldl: '130' }))),
+ok(!/ainda sem gatilho/.test(mutante('sbcAlvoLDL', '(ldl-m.ldl)>=30', '(ldl-m.ldl)>=0').ldlAlvoHTML(2, paciente({ pv_ldl: '130' }))),
   'MUTAÇÃO: tirar o gatilho dos 30 tinha de mudar o baixo risco a 15 da meta');
 
 if (falhas.length) { console.error('test-conduta-lipidica: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }

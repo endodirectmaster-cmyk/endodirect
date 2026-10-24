@@ -1,9 +1,70 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-10-15
+atualizado: 2026-10-24
 ---
 
 # Calculadoras
+
+## 🫀 RISCO CV E METAS — SBC 2025: CALCULADORA NOVA E UM MOTOR SÓ DE CATEGORIAS (2026-10-24)
+
+Pedido do professor em 22/10, com prints da Clarity Prevention: *"Será que conseguiríamos
+importar essa calculadora para a nossa plataforma? Seria uma tarefa agendada para sábado 8h"*.
+Feita a partir da **Diretriz Brasileira de Dislipidemias 2025 (SBC)**; da Clarity só se usou a
+lista do que ela pergunta (cofre/Pendências.md, seção da calculadora). Nada de código, texto,
+desenho ou marca dela.
+
+**Onde está:** item `riscocv` de `CALCS`, antes do `prevent` (a ordem de `CALCS` define a ordem das
+áreas). É a primeira calculadora de **tela própria**: `openCalc` ganhou o caminho `c.render(root)`
+(monta o cabeçalho e o "← Voltar" e entrega o contêiner), e `calcUpdate` ignora quem tem `render`.
+Funções `rcv*` (formulário em 6 seções, resultado ao lado a partir de 1100 px, folha impressa).
+
+**O motor: `sbcEstratifica(d)`** devolve `{k, motivo, fonte, outros, pendencias:[{sobe,t}], alertas}`.
+A categoria final é o **máximo** das regras que disparam (F5.1: "um dos seguintes critérios");
+dado ausente **nunca rebaixa**, vira pendência ("pode subir para…"). Regras conferidas no texto
+da diretriz (T4.1–T4.8, T5.1, §4.8, §4.9 e a recomendação da diálise): extremo (T4.2: ≥ 2 eventos
+maiores, ou 1 + ≥ 2 condições, entre elas evento agudo < 2 anos; SCA < 12 meses já preenche
+essa condição), muito alto (doença aterosclerótica clínica, obstrução ≥ 50%, CAC > 300, HF com
+CAC > 100, DM com EMAR ou ≥ 3 EAR, incluindo CT > 310 ou LDL-c > 190), alto (PREVENT ≥ 20%,
+intermediário + agravante, placa < 50%, CAC > 100 ou p > 75, AAA, LDL-c ≥ 190, Lp(a) > 180 mg/dL
+ou > 390 nmol/L, DM2 ≥ 50 H / ≥ 56 M, DM com 1–2 EAR, ≥ 80 anos), intermediário e baixo. O
+PREVENT só categoriza de 30 a 79 anos e sem DM (o DM tem estratificação própria, T4.5–T4.8). A
+**calculadora PREVENT antiga usa o mesmo motor** (`sbcDadosDoPrevent` → `sbcCategoria`), e o que o
+formulário dela não pergunta entra como "não sei" (vira pendência na tela).
+
+**Metas (`sbcAlvoLDL`):** alvo de LDL-c **e** redução mínima juntos (T5.1/F5.1), meta estrita;
+gatilho dos 30 mg/dL só no baixo/intermediário, pelo LDL-c **ou** pelo não-HDL-c; do alto para cima
+trata-se sempre, e o não-HDL-c acima da meta pede intensificação mesmo com o LDL-c no alvo
+(§5.1, §5.5). Estratégias pela Figura 7.2 (`RCV_ESTRATEGIAS`), sempre contendo o esquema atual; com
+esquema fora da figura e sem LDL-c basal, nenhuma é marcada como suficiente. LDL-c é o do laudo (a
+diretriz recomenda Martin/Hopkins, que exige a tabela de 180 células: não se calcula aqui);
+o LDL-c sob tratamento é piso do basal.
+
+**Cartões:** PA < 130/80 para todo hipertenso (Diretriz Brasileira de Hipertensão Arterial 2025,
+FORTE/ALTA; exceções: idoso frágil/≥ 80, diálise, AVC agudo); HbA1c < 7% para a maioria,
+individualizada (capítulos de DM2 e metas glicêmicas); IMC pela OMS; tabagismo.
+
+**PREVENT: DAC e AVC + a errata de 14/10/2026.** Coeficientes de doença coronariana e AVC (10 e 30
+anos, todos os modelos) do pacote R `bcjaeger/PooledCohort` (`data-raw/coefs_prevent.xlsx`, Tabelas
+S12A–J do suplemento), validados contra a Tabela S12 e o `preventr` 0.12.1. A **errata** (Circulation,
+14/10/2026, DOI 10.1161/CIR.0000000000001491; FAQ da AHA de 14/10) troca de lugar os dois coeficientes
+de HbA1c ("com DM" × "sem DM") nos modelos +HbA1c e completo; aplicada a todos os desfechos. O texto
+da errata não abriu (proxy); os números vêm do `preventr` 0.12.1, conferidos nos 2.140 coeficientes.
+Muda só o resultado de quem preenche HbA1c (diferença de até ~7 p.p. com HbA1c ≤ 10).
+
+**Conferência:** `scripts/test-risco-cv-sbc.js` (724 asserções: casos-ouro de cada regra, valores do
+PREVENT com tolerância de 0,05 p.p., varreduras "não sei não derruba" com sexo, LDL-c basal e SCA
+recente, mutações), ci-validate, harness A/B no Chromium e uma **revisão independente**, que achou
+dois erros graves antes do ar: sexo em branco rebaixava o DM2 de 60 anos para intermediário, e
+esquema fora da Figura 7.2 (EMI + anti-PCSK9) era lido como "sem tratamento", sugerindo desescalonar.
+
+⚠️ **Lições:** (1) o escore dá o piso, não a categoria; (2) campo vazio tem de ser testado campo a
+campo (o sexo escapou da primeira varredura); (3) os desfechos do PREVENT não têm hierarquia garantida
+(AVC passa da DASCV em extremos, IC passa da DCV total em obesas com TFGe baixa): só mostrar, nunca
+subtrair um do outro.
+
+**Ficou de fora:** FIB-4 (a diretriz não usa); a calculadora "LDL (Friedewald)" e a frase da Lp(a) nas
+perguntas e respostas (a SBC 2025 prefere Martin/Hopkins e Lp(a) uma vez na vida para todos); o texto da
+base da IA que ainda diz "moderado 5–20%" (diretriz de obesidade, ~l. 7684).
 
 ## 🧮 A GRADE DAS CALCULADORAS: COLUNAS PELA LARGURA, CARTÃO COM UNIDADE E BUSCA (2026-10-15, #850)
 
