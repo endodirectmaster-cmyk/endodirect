@@ -9,8 +9,22 @@ atualizado: 2026-10-24
 
 No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026).
 - [x] **Calculadora "LDL (Friedewald)" → "LDL (Martin/Hopkins)" (24/10).** Resposta do professor à pergunta "Mantenho, troco ou retiro?": citou "SBC 2025 recomenda a fórmula de Martin/Hopkins" e escreveu *"mantenha essa"*. A de risco CV também passou a estimar o LDL-c quando o laudo não o traz. Detalhes em [[Calculadoras]].
-- [ ] **Professor decide:** as perguntas e respostas de Lípides (`index.html`, lista por área) ainda têm "Fórmula de Friedewald e sua limitação?" e a Lp(a) "dosar ao menos uma vez em risco aumentado". A SBC 2025 prefere Martin/Hopkins e recomenda dosar a Lp(a) uma vez na vida para todos. Proposta: acrescentar Martin/Hopkins à primeira e trocar a segunda.
-- [ ] **Professor decide:** a tabela "Estratificação de risco e metas na HF" do cap. 113 (Hipercolesterolemias Primárias) põe a HF heterozigótica em prevenção primária sem outros fatores como risco intermediário (LDL < 100). Na SBC 2025, LDL-c ≥ 190 já é alto (§4.1), HF com CAC > 100 é muito alto (T4.4) e a terapia inicial na HF é EAI + EZE (§7.13). Proposta: alinhar a tabela à SBC 2025.
+- [x] **Cartões de Lípides (`FC_MEMBER`), 24/10:** à proposta, o professor respondeu *"Pode sim"*. O verso do Friedewald agora cita a Martin/Hopkins, e o da Lp(a) diz "uma vez na vida em todos os adultos" (SBC 2025: forte, moderada). A frente ficou igual: o `reconcile` do `seedFlashcards` propaga o verso novo aos baralhos sem duplicar cartão. `sw.js` v324.
+- [x] **HF do cap. 113 alinhada à SBC 2025 (24/10, 23h UTC).** À pergunta "Alinho à diretriz?", o professor respondeu *"siga esse"*.
+  - **A tabela "Estratificação de risco e metas na HF" saiu do modelo antigo.** Antes eram muito alto, alto e intermediário, com "placas em mais de um vaso" e fatores adicionais. Agora:
+    - **extremo:** evento maior + mais uma condição de alto risco, porque a HF já é uma delas (T4.2);
+    - **muito alto:** evento, obstrução ≥ 50% ou CAC > 100 (T4.1, T4.4);
+    - **alto:** prevenção primária mesmo sem outros fatores, porque LDL ≥ 190 sem tratamento é alto (T4.1) e a terapia inicial na HF é a do alto (rec. §7.13). É a mesma leitura E-12 da calculadora.
+  - As metas incluem o não-HDL-c (< 70, < 80 e < 100).
+  - **Tratamento:** a estatina de alta intensidade vem com ezetimiba desde o início (forte, alta). Se a meta não for atingida, acrescenta-se anti-PCSK9 (anticorpo ou inclisirana) ou ácido bempedoico; na intolerância à estatina, usam-se combinações sem ela.
+  - Mudaram também o `pts[5]` (metas) e os `flashcards[7]` e `[8]` (base do tratamento e escalonamento).
+  - **Conferências:**
+    - backup `main-antes-hf-cap113-sbc2025-2026-10-24`, com guarda de md5 e dos campos antigos;
+    - o resumo passou de `65210bee` para `85221a96`;
+    - só mudaram o `resumo`, o `pts[5]` e os `flashcards[7]` e `[8]`;
+    - as 7 figuras do capítulo seguem uma vez cada;
+    - a tabela foi renderizada com o `mdToHtml` do app a 390 e 1280 px.
+  - A âncora da figura sbc2025-7-2 na lista foi atualizada para o item novo.
 
 ### Registro do pedido (22/10)
 
@@ -136,6 +150,7 @@ completo.
     o conferente achou recomendações traduzidas quase palavra a palavra, que foram reescritas;
     (3) o conferente renderiza as tabelas e os fluxogramas do PDF em imagem, porque o texto
     extraído perde as setas.
+  - Em 24/10 o professor perguntou quais são os pontos divergentes, e enviei a lista: 4 do cap. 86 × ATA 2026 (aumento da LT4 ~30% × ~25%; TSH < 2,5 só no 1º trimestre × toda a gestação; platô do T4 total com 20 × 16 semanas; PTU mantido depois de 16 semanas × "não se sabe qual é o preferido") e 4 do cap. 89 × Endocrine Society 2016 (cortisol < 3 confirma e > 18 exclui × só < 5 µg/dL com ACTH, como triagem; ACTH > 100 pg/mL × > 2 vezes o LSN; prednisolona 5 mg × 3–5 mg/dia; hidrocortisona na cirurgia a cada 6–8 h × a cada 6 h). Antes de ajustar, conferir cada ponto no PDF.
   - [ ] **Professor:** aprovar o formato e a profundidade; decidir se os capítulos 86 e 89 dos
     Resumos acompanham as diretrizes nos pontos divergentes (listados na prévia); e mandar o
     PDF da SBD 2026 de tratamento do DM2, que não está no Drive.
