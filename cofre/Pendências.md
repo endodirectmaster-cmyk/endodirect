@@ -194,8 +194,9 @@ completo.
     vai por POST e o banco só grava se o item de hoje e o literal novo tiverem os md5
     informados. Ensaio antes de cada uma (md5 de hoje zerado de propósito: a guarda barra e
     a função devolve os dois md5 calculados pelo Postgres). Depois, 410 e token apagado.
-  - [ ] **Conferência de zumbi** dos caps. 86 e 89 e das Diretrizes 18 e 35
-    (`scratchpad/cap86-89/confere.sql` e os md5 acima).
+  - [x] **Conferência de zumbi** dos caps. 86 e 89 e das Diretrizes 18 e 35 (01h37 UTC de
+    25/10): os quatro itens com o md5 gravado e o `updated_at` ainda em 00h29m19s, a última
+    gravação minha; nenhum save do painel desde então.
 - [ ] Lotes por subespecialidade (as outras 70), com conferência independente, pelo mesmo
   caminho do piloto: agente redator a partir do PDF, agente conferente, prévia com o
   renderizador do app e gravação pela `gravar-diretriz` (token e prazo novos a cada lote).
