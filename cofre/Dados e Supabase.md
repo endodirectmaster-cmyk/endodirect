@@ -54,6 +54,12 @@ atualizado: 2026-10-25
 - `CREATE FUNCTION` com `delete from ...` no corpo ficou retido para confirmação e
   expirou em 60 s, duas vezes (apply_migration e execute_sql), sem aplicar nada. A
   mesma função só com SELECT e UPDATE foi criada na hora.
+- **De novo em 25/10, num ensaio.** O ensaio do cache das páginas dos Resumos tinha
+  `delete` dentro de uma função temporária (`pg_temp`), e o `execute_sql` ficou retido e
+  expirou em 60 s sem executar nada.
+  - A regra vale também para ensaio e função temporária: o texto enviado pelo conector
+    não leva DELETE.
+  - Para substituir linhas antigas, usar `on conflict ... do update` sobre uma chave fixa.
 - **Regra:**
   - função nova que precisa apagar linhas não vai pelo conector;
   - quem apaga é o servidor do app (REST com a chave de serviço), pela chave
@@ -76,6 +82,45 @@ expira em 60 s. Expiraram todas as tentativas, inclusive com o professor na conv
 (12/10 e 17/10), e o "Ok" no chat não conta como essa confirmação. O caminho que
 funciona: o professor cola o SQL com guarda no editor (SQL Editor → New query → Run).
 Assim saiu a `tmp_estudos_2026` em 17/10.
+
+## ⚡ Páginas dos Resumos com cache (25/10/2026)
+
+- **A entrega aos alunos.** `endodirect_member_resumos_pagina(p_pagina)` entrega as
+  Diretrizes e os Resumos em páginas de 20, a partir da lista de
+  `endodirect_member_resumos()`.
+  - Desde a 2ª versão (25/10, ~17h40 UTC), as páginas saem prontas de
+    `endodirect_resumos_paginas_cache`.
+  - O SQL está em `supabase/resumos-em-paginas.sql`, e o teste em
+    `scripts/test-resumos-em-paginas.js`.
+- **Por que o cache.** A 1ª versão (stable, SQL puro) remontava a lista inteira a cada
+  página.
+  - Isso custava ~0,2–0,35 s de banco por página, e as 11 páginas paralelas de um
+    assinante chegaram a ~7–8,3 s.
+  - Resultado: estouro do `statement_timeout` de 8 s do `authenticated` às 12h06 e às
+    17h38 UTC (HTTP 500, 57014).
+- **Linha e chave.**
+  - A linha é (escopos, página). `escopos` é o md5 de `endodirect_acessos_ativos()`
+    ordenado; a regra de member_resumos só olha os escopos (conferido em 25/10: não usa
+    `now()` nem `auth.uid()` fora deles).
+  - A `chave` junta o `updated_at` do acervo em microssegundos (renovado pelo gatilho) e
+    o md5 do corpo de `endodirect_member_resumos` e `endodirect_amostra_espalhada`.
+  - Chave nova sobrescreve as linhas por `on conflict do update`: uma versão por conjunto
+    de escopos, sem DELETE.
+  - Em 25/10 eram ~3 conjuntos de escopos de alunos ativos, e o assinante ocupava 2,6 MB.
+- **Na falta,** a página sai da lista em memória. A gravação do cache fica num bloco
+  `exception` que só avisa no log do Postgres.
+- **Fechado para a API.** RLS sem política e `revoke all` de anon/authenticated. Pela
+  API, a tabela dá 401 (42501).
+- **Medido** (25/10):
+
+  | perfil | 1ª página de uma versão nova | páginas seguintes |
+  |---|---|---|
+  | assinante | 358 ms | 2–5 ms |
+  | visitante | 145 ms | — |
+
+  Por HTTPS como anon, as páginas juntas foram iguais à chamada única.
+- **Volátil.** A função é `volatile`; o PostgREST a roda em transação de escrita
+  (POST), e a migração termina com `notify pgrst, 'reload schema'`.
 
 ## Hydrate do conteúdo por perfil (RPCs) — IMPORTANTE
 Quem lê o quê no hydrate (`hydrateRemoteState`, index.html ~l.3593):
