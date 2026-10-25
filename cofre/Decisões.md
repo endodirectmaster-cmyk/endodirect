@@ -8,6 +8,10 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🖼️ FIGURAS DO OPEN-I QUEBRARAM; A DE CAPÍTULO PASSA A SER CÓPIA PRÓPRIA (2026-10-25).** O professor mandou print de duas figuras quebradas nos Resumos (111, hipertrigliceridemias, e 113, hipercolesterolemias). O Open-i estava em manutenção e devolvia HTML no lugar da imagem.
+  - **111 (CC BY 4.0):** foi para `endodirect-assets/resumos/pmc/`, com legenda descritiva e a licença.
+  - **113 saiu.** O artigo só permite uso não comercial, o que a regra de 16/07 não aceita no produto pago, com ou sem Open-i.
+  - **Regra daqui para a frente:** figura de artigo nos Resumos fica hospedada por nós, nunca ligada ao Open-i ou ao PMC.
 - **⚡ CACHE DAS PÁGINAS DOS RESUMOS, SEM DELETE (2026-10-25, ~17h40 UTC).** A pedido do professor ("Corrigir"), feito no uso extra, apesar da pausa. A 1ª versão paginada remontava a lista inteira a cada página e estourou os 8 s do `authenticated` às 12h06 e às 17h38 UTC.
   - **O cache:** linha por (escopos, página), com chave = versão do acervo + corpo das funções da regra.
   - **Sem DELETE:** chave nova sobrescreve por `on conflict do update`, então o conector não segura nada e a tabela não cresce.

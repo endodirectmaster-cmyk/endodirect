@@ -20,6 +20,35 @@ atualizado: 2026-10-25
   - A `subir-figuras-livros` voltou a funcionar em 19/10, com token novo e prazo, para as 51 de diabetes. Depois voltou ao 410 (versão 5), e o token foi apagado.
 - **⚠️ Chave de serviço na função:** use `createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` do supabase-js. Com `fetch` direto e `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`, o Storage respondeu 403 "Invalid Compact JWS" (18/10).
 
+## 🖼️ Open-i fora do ar: figura de artigo fica em cópia própria (25/10/2026)
+
+- **O que aconteceu.** Em 25/10 o Open-i (`openi.nlm.nih.gov`, da NLM) entrou em
+  manutenção. Toda URL de imagem passou a devolver uma página HTML ("The web site is
+  currently under maintenance"), e as figuras ligadas direto a ele quebraram nos Resumos
+  (o professor mandou print de 111 e 113).
+- **O que havia:** 12 links do Open-i no acervo.
+  - 2 estavam em figuras de capítulo (111 e 113).
+  - 10 estavam em `ig_stories` (stories do Instagram, só do professor).
+- **Regra:** figura de artigo que vai para os Resumos fica em cópia própria, em
+  `endodirect-assets/resumos/pmc/`. Ela não fica ligada ao Open-i nem ao PMC, e só entra se
+  a licença for CC BY, CC0 ou domínio público (regra de 16/07).
+  - Onde baixar: o espelho do PMC na AWS (`pmc-oa-opendata.s3.amazonaws.com/PMCxxxx.1/`)
+    dá a imagem e o `license_code`. Daqui, o PMC, a Europe PMC e o `ftp` do NCBI dão 403
+    no proxy.
+  - Como subir: pela `subir-figuras-livros`, com prefixo `resumos/pmc/`, token por hash e
+    prazo.
+- **Feito:**
+  - 111 (PMC4745619, CC BY 4.0): a Figura 1 (soro lipêmico e lipemia retinalis) foi para
+    `resumos/pmc/PMC4745619_CRIE2016-7515721.001.jpg`. A legenda ganhou título descritivo
+    e "CC BY 4.0".
+  - 113 (PMC3513909, Dove 2012, "unrestricted noncommercial use"): a figura saiu.
+  - Backup: `main-antes-figuras-openi-2026-10-25`.
+- **Prazo da função e confirmação do deploy.** O deploy ficou ~25 min esperando a
+  confirmação de permissão, e a v12 entrou já vencida, com 20 min de prazo (410
+  "expirada", nada gravado). A v13, com 60 min, serviu, e a v14 voltou ao 410.
+  - Enquanto a regra do `.claude/settings.json` não valer na sessão em curso, dar 60 min
+    de prazo.
+
 ## ✍️ Gravar item grande do acervo: função `gravar-diretriz` (25/10/2026)
 
 - **Para quê:** uma Diretriz completa tem ~30 mil caracteres, e o SQL com o item inteiro dá

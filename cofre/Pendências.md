@@ -23,6 +23,19 @@ atualizado: 2026-10-25
   - Medido com o assinante: 358 ms na 1ª página de uma versão nova e 2 ms nas seguintes.
 - **Na retomada: o lote 2, 2ª parte** (estado na auditoria, abaixo).
 
+## 🖼️ Open-i em manutenção (25/10): o que ainda depende dele
+
+- [x] Figuras de capítulo:
+  - 111 passou para cópia própria (CC BY 4.0);
+  - 113 saiu (só uso não comercial);
+  - nenhum link do Open-i sobra nos Resumos do aluno.
+- [ ] Os 10 links de `ig_stories` (stories do Instagram, só do professor) ficam quebrados
+  enquanto o Open-i estiver fora.
+- [ ] O buscador de imagem do editor de Resumos e a imagem automática da Questão do Dia
+  buscam no Open-i e não acham nada enquanto ele estiver fora.
+- [ ] Melhoria proposta, a aprovar: o botão "Usar" do buscador copiar a imagem para
+  `resumos/pmc/` em vez de ligar direto, para uma queda do Open-i não quebrar o capítulo.
+
 ## ✅ FEITO (24/10): calculadora "Risco CV e metas — SBC 2025" (pedido de 22/10, com prints da Clarity)
 
 No ar: ver [[Calculadoras]] (motor único `sbcEstratifica`, PREVENT com DAC/AVC e a errata de 14/10/2026).
