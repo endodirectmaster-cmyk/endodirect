@@ -1506,6 +1506,16 @@ o plano.
       chave; `lsSet` engole `QuotaExceeded` e cai em memória. No Safari (~5 MB por
       origem, contado em UTF-16) a cópia local das provas provavelmente nunca existe
       — cada abertura depende da rede. Não medido em aparelho.
+      - **25/10: a auditoria das Diretrizes agrava a cota.** Com as 72 Diretrizes
+        completas, a lista do assinante vai de ~3,3 para ~6 MB, maior que a cota
+        inteira (~5,2 milhões de caracteres no Chromium, medido em `teste-cota.js`).
+        Aí o `lsSet('diretrizes')` falha sempre, e o `setItem` que falha deixa a
+        cópia ANTIGA no aparelho: no boot seguinte o aluno vê as Diretrizes de antes
+        da auditoria até a carga em páginas chegar (ou, sem rede, com o aviso de
+        "última cópia"). A cópia velha também continua ocupando cota.
+      - **Caminho provável:** mover as listas grandes (`diretrizes`, `provas`) para o
+        IndexedDB, ou apagar a chave quando o `setItem` falhar.
+      - Decidir antes de terminar os lotes.
 - [ ] **Dashboard durante falha do `member_resumos`:** a fração "8 de 71" com
       tooltip "A assinatura abre o restante" aparece para um Gold cuja carga caiu.
       Como o `member_content` não manda mais `diretrizes`, a falha da RPC de
