@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-10-19
+atualizado: 2026-10-25
 ---
 
 # Dados e Supabase
@@ -19,6 +19,26 @@ atualizado: 2026-10-19
   - As duas estão desativadas (410), porque a ferramenta do Supabase não apaga função.
   - A `subir-figuras-livros` voltou a funcionar em 19/10, com token novo e prazo, para as 51 de diabetes. Depois voltou ao 410 (versão 5), e o token foi apagado.
 - **⚠️ Chave de serviço na função:** use `createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` do supabase-js. Com `fetch` direto e `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`, o Storage respondeu 403 "Invalid Compact JWS" (18/10).
+
+## ✍️ Gravar item grande do acervo: função `gravar-diretriz` (25/10/2026)
+
+- **Para quê:** uma Diretriz completa tem ~30 mil caracteres, e o SQL com o item inteiro dá
+  ~55 KB por instrução. A função recebe o item por POST e roda **um** comando SQL no banco
+  (`postgres` do npm com o `SUPABASE_DB_URL`, que a função já recebe do Supabase).
+- **O que o comando faz:** só grava se o md5 do item de hoje (jsonb inteiro) e o do item
+  novo, lido pelo Postgres, forem os informados; faz o backup em
+  `endodirect_global_state_backup` antes; devolve se o item ficou certo e se o resto do
+  acervo e do payload ficou igual. A resposta traz sempre os dois md5 calculados no servidor.
+- **Ensaio:** mandar o md5 "de hoje" zerado. A guarda barra, nada é gravado e a função
+  devolve os md5 do servidor para comparar com os locais.
+- **Proteção:** token só como sha256 no código, prazo e lista de posições permitidas. Depois
+  do uso, volta ao 410 e o token é apagado. Usada em 25/10 para as Diretrizes 18 e 35.
+- **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
+  depois por bytes, `", "` entre itens e `": "` entre chave e valor. O `pg()` de
+  `scratchpad/cap86-89/monta.py` reproduz isso; o md5 bateu com o do servidor nos 4 itens
+  testados.
+- **`exportar-capitulos`** passou a devolver o item inteiro (`{pos, item}`), não só o resumo
+  (25/10, versão 13). Está em 410 de novo.
 
 ## 🧨 O conector segura DELETE até dentro de função (19/10/2026)
 

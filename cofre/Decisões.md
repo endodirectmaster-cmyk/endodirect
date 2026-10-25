@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-24
+atualizado: 2026-10-25
 ---
 
 # Decisões
@@ -8,6 +8,12 @@ atualizado: 2026-10-24
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 CAPS. 86 E 89 SEGUEM A ATA 2026 E A ENDOCRINE SOCIETY 2016; PILOTO DAS DIRETRIZES GRAVADO (2026-10-25).** O professor: *"Siga as orientações da diretrizes mais recentes, por exenplo a ATA 2026"* (caps. 86 e 89) e *"aprovados"* (formato e profundidade do piloto). Só banco, sem mudança no app. Detalhes em [[Pendências]].
+  - **Diretriz que não escolhe não vira recomendação.** Depois de 16 semanas a ATA 2026 diz não saber se é melhor manter o PTU ou trocar para metimazol. O capítulo dizia "não se recomenda trocar", que é uma escolha que a diretriz não fez; agora diz "nenhum preferido". Do mesmo jeito, "sugerimos contra" a dexametasona não é "contraindicada".
+  - **Número sem fonte achada não fica como regra.** O < 3 / > 15–18 µg/dL do cortisol basal segue no texto só como "muitos textos ainda usam", ao lado do que a diretriz diz (< 5 com ACTH elevado, como teste preliminar, e nenhum corte consensual para excluir).
+  - **A mudança vai a todo lugar do capítulo que repete o ponto:** resumo, tabelas, pontos-chave, flashcards (só o verso), fluxograma, mapa e `fonte`. Um "~30%" esquecido numa tabela contradiria o "~25%" do texto.
+  - **Guarda do item inteiro, não de um campo.** O serializador local reproduz o texto do jsonb do Postgres (chaves por tamanho e depois por bytes), e o md5 bate com o do servidor. Assim a instrução só grava se o item de hoje for o exportado, e confere que o resultado é o pré-visualizado.
+  - **Item grande vai por função, não por SQL colado.** Uma Diretriz inteira dá ~55 KB de SQL. A função temporária `gravar-diretriz` recebe o item por POST e roda no banco o mesmo comando com guarda e backup. É ela que grava os lotes das outras 70.
 - **🧬 CAP. 113: HIPERCOLESTEROLEMIA FAMILIAR ALINHADA À SBC 2025, E CARTÕES DE LÍPIDES ATUALIZADOS (2026-10-24).** O professor respondeu "siga esse" (alinhar a HF à diretriz) e "Pode sim" (cartões). Detalhes em [[Pendências]].
   - **A HF em prevenção primária é risco no mínimo alto.** A tabela antiga a punha em intermediário, o que contrariava a SBC 2025. A diretriz não dá uma categoria explícita para a HF. A leitura vem de dois pontos: LDL ≥ 190 sem tratamento é alto (T4.1), e a terapia inicial na HF é a do alto (rec. §7.13). Capítulo e calculadora (E-12) dizem agora a mesma coisa.
   - **Cartão semente: só o verso muda.** O app casa o cartão pela frente e propaga o verso aos baralhos (`reconcile`); uma frente nova duplicaria o cartão, como no SOMP (#876).
