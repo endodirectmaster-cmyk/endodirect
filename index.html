@@ -6491,9 +6491,72 @@ function canUseRemoteState(){
 // retentativa, sem log, sem aviso na tela. Agora falha 3x antes de desistir e a
 // tela diz o que houve, com botão de tentar de novo.
 var resumosErro=false;   // a última tentativa esgotou as retentativas
+// ⚠️ AS DIRETRIZES E OS RESUMOS VÊM EM PÁGINAS (25/10/2026). Numa resposta só,
+// `endodirect_member_resumos` já passava de 3 MB para o assinante, e as Diretrizes
+// completas (auditoria de 24/10, texto inteiro de cada diretriz) a levariam a ~6 MB,
+// acima do limite empírico de ~5,3 MB em que a resposta deixa de chegar ao celular.
+// Agora vêm em páginas de 20 itens por `endodirect_member_resumos_pagina`, no
+// desenho das questões (ver carregarProvas): a página 0 diz o total e a versão, as
+// demais vêm em paralelo, cada uma com 3 tentativas; páginas de versões diferentes
+// nunca se juntam e nada parcial é aplicado. Servidor sem a função paginada (app
+// novo antes da migração): cai na chamada única de antes (`tentarResumos`).
+var RESUMOS_PAGINADA='endodirect_member_resumos_pagina';
 function carregarResumos(client,rpc,tentativa){
+  var uid=contaAtual();
+  return carregarResumosPaginas(client,uid,1).catch(function(e){
+    if(!mesmaContaQue(uid))return;
+    if(funcaoAusente(e))return tentarResumos(client,rpc,tentativa||1,uid);
+    resumosErro=true;
+    console.warn('Resumos indisponíveis',e);
+  });
+}
+function funcaoAusente(e){
+  var c=String((e&&e.code)||''),m=String((e&&e.message)||'');
+  return c==='PGRST202'||c==='42883'||/could not find the function|function .* does not exist/i.test(m);
+}
+// Uma página, com 3 tentativas só quando a REDE falhou (mesma regra das questões).
+function carregarPaginaResumos(client,pagina,uid,tentativa){
   tentativa=tentativa||1;
-  return tentarResumos(client,rpc,tentativa,contaAtual());
+  return client.rpc(RESUMOS_PAGINADA,{p_pagina:pagina}).then(function(res){
+    if(res.error)throw res.error;
+    var d=res.data;
+    if(!d||!Array.isArray(d.itens)||typeof d.versao!=='string')throw {message:'a página '+pagina+' dos Resumos veio sem lista',code:'formato'};
+    return d;
+  }).catch(function(e){
+    if(mesmaContaQue(uid)&&tentativa<3&&erroDeRede(e)){
+      return new Promise(function(r){setTimeout(r,900*tentativa);})
+        .then(function(){return carregarPaginaResumos(client,pagina,uid,tentativa+1);});
+    }
+    throw e;
+  });
+}
+// `volta` 2 é a recarga depois de páginas de versões diferentes (o professor
+// gravou o acervo no meio da carga): se mudar de novo, vira erro com "Tentar de novo".
+function carregarResumosPaginas(client,uid,volta){
+  return carregarPaginaResumos(client,0,uid).then(function(p0){
+    if(!mesmaContaQue(uid))return null;
+    // Teto de 100 páginas: uma resposta malformada não vira uma rajada de pedidos.
+    var pedidos=[p0],n=Math.min(Number(p0.paginas)||1,100);
+    for(var i=1;i<n;i++)pedidos.push(carregarPaginaResumos(client,i,uid));
+    return Promise.all(pedidos);
+  }).then(function(pags){
+    if(!pags||!mesmaContaQue(uid))return;
+    var itens=[],mesma=true;
+    pags.forEach(function(pg){if(pg.versao!==pags[0].versao)mesma=false;itens=itens.concat(pg.itens);});
+    if(!mesma||itens.length!==Number(pags[0].total)){
+      if(volta<2)return carregarResumosPaginas(client,uid,volta+1);
+      throw {message:'os Resumos mudaram durante a carga',code:'versao'};
+    }
+    aplicarResumos(itens);
+  });
+}
+// Mesma aplicação da chamada única: lista vazia não apaga o que o aparelho tem.
+function aplicarResumos(lista){
+  if(!Array.isArray(lista)||!lista.length)return;
+  diretrizes=lista;
+  diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
+  try{lsSet('diretrizes',diretrizes);}catch(e){}
+  resumosErro=false;
 }
 // `uid` é quem PEDIU (null = demo/visitante). Os capítulos privados de um
 // assinante em voo não podem ser aplicados — nem guardados no aparelho — na

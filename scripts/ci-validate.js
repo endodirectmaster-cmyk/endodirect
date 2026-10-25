@@ -772,6 +772,17 @@ try {
   fail('regressão de Resumos/logo falhou (verifique carregarResumos e o bloco .tb-logo do celular):\n' + out);
 }
 
+// ⚠️ Diretrizes e Resumos em páginas. A resposta única de endodirect_member_resumos
+//     passaria de ~6 MB com as Diretrizes completas, acima do ponto em que deixa
+//     de chegar ao celular. Páginas de 20, mesma versão em todas, nada parcial.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-resumos-em-paginas.js')], { stdio: 'pipe' });
+  ok('regressão Resumos em páginas: mesma versão, ordem, 3 tentativas, recurso à chamada única');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de Resumos em páginas falhou (verifique carregarResumosPaginas e supabase/resumos-em-paginas.sql):\n' + out);
+}
+
 // ⚠️ Andrologia = Endocrinologia Masculina. O Analytics mostrava as duas como
 //     linhas separadas (84 questões contra 3). A área NÃO entra na chave de
 //     merge de `provas`, então uma aba antiga reescreveria o rótulo de volta.

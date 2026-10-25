@@ -8,6 +8,20 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📄 DIRETRIZES E RESUMOS CHEGAM EM PÁGINAS (2026-10-25).** Preparação para os lotes da auditoria das Diretrizes, sem pedido do professor. `sw.js` v324 → **v325**. Detalhes em [[Dados e Supabase]].
+  - **O motivo.** A resposta única de `endodirect_member_resumos` tinha 3,34 MB para o assinante (233 itens). As 72 Diretrizes reescritas pelo documento original, com ~54 KB cada, a levariam a mais de 6 MB, acima do limite empírico de ~5,3 MB em que a resposta deixa de chegar ao celular.
+  - **O desenho.** Agora a lista vem em páginas de 20 por `endodirect_member_resumos_pagina`, como as questões. A maior página tem 537 KB.
+  - **Uma regra, duas portas.** A função paginada chama `endodirect_member_resumos()` e só fatia. O teste prende que o `.sql` não copia a regra de acesso (`acessos_ativos`, `privado`, `rascunho`).
+  - **Versão pelo md5 da lista, e nada parcial.** Duas trocas de versão seguidas viram aviso com "Tentar de novo", e o aparelho fica com o que tinha.
+  - **Recurso:** se a função paginada não existir (app novo antes da migração), o app cai na chamada única de antes.
+  - **A conta é fixada no início de `carregarResumos`** e segue para as páginas e para o recurso. O `test-banco-nao-fica-mudo.js` ancorava o literal antigo (`tentarResumos(…,contaAtual())`) e foi reancorado no formato novo; a semântica é a mesma.
+  - **O app vive num closure:** um harness de navegador não alcança `goPanel` nem `diretrizes`. Ele navega pelo menu (`.sb-item[data-p]`), como o aluno, e lê a tela e o `localStorage`. O harness de boot das sessões anteriores não estava mais no scratchpad; fiz um focado, que lê a main por `git show` na hora e serve o branch direto da árvore, sem cópia que possa envelhecer.
+  - **Provas:**
+    - `scripts/test-resumos-em-paginas.js`, no CI.
+    - A/B no Chromium (`scratchpad/ab-pag/check.js`), 25 de 25: a main e o branch desenham as mesmas grades de Diretrizes e Resumos; o branch pede 3 páginas e nenhuma chamada única; o recurso funciona; com a versão trocada, aparece o aviso, são pedidas 6 páginas (não um laço) e o botão recarrega; o visitante tem os mesmos 1.623 nós e 171 botões e 0 pageerror.
+    - `ci-validate` com 121 verificações.
+    - Ensaio da função em `pg_temp`, como assinante e como visitante.
+    - Chamada por HTTPS depois da migração.
 - **📋 CAPS. 86 E 89 SEGUEM A ATA 2026 E A ENDOCRINE SOCIETY 2016; PILOTO DAS DIRETRIZES GRAVADO (2026-10-25).** O professor: *"Siga as orientações da diretrizes mais recentes, por exenplo a ATA 2026"* (caps. 86 e 89) e *"aprovados"* (formato e profundidade do piloto). Só banco, sem mudança no app. Detalhes em [[Pendências]].
   - **Diretriz que não escolhe não vira recomendação.** Depois de 16 semanas a ATA 2026 diz não saber se é melhor manter o PTU ou trocar para metimazol. O capítulo dizia "não se recomenda trocar", que é uma escolha que a diretriz não fez; agora diz "nenhum preferido". Do mesmo jeito, "sugerimos contra" a dexametasona não é "contraindicada".
   - **Número sem fonte achada não fica como regra.** O < 3 / > 15–18 µg/dL do cortisol basal segue no texto só como "muitos textos ainda usam", ao lado do que a diretriz diz (< 5 com ACTH elevado, como teste preliminar, e nenhum corte consensual para excluir).
