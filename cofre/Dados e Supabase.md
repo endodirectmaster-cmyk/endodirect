@@ -38,6 +38,10 @@ atualizado: 2026-10-25
   parou por 5h40 antes do ensaio. Na volta, a função respondia 410 sozinha, sem ter ficado
   aberta a noite toda. Reativei com token e prazo novos (v4, 30 min), gravei e voltei ao 410
   (v5) em 2 minutos. **Token e prazo novos a cada ativação; nunca reaproveitar.**
+  No lote 2 aconteceu de novo: a v6 foi publicada depois de 4 h de sessão parada, já com o
+  prazo vencido; v7 com token e prazo novos (20 min) gravou 7, 14, 15, 25 e 59, e a v8 voltou
+  ao 410. Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
+  (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
   depois por bytes, `", "` entre itens e `": "` entre chave e valor. O `pg()` de
   `scratchpad/cap86-89/monta.py` reproduz isso; o md5 bateu com o do servidor nos 4 itens

@@ -221,13 +221,31 @@ completo.
   - Ajuste meu no 45, conferido na imagem da Fig. 4: os 50% do déficit em 8–12 h valem
     para a hipovolemia grave (depois de 1,0 L/h) e para a leve, não só para a leve.
   - Assinante: a resposta única dos Resumos foi a 3,62 MB; pelas páginas, a maior tem 583 KB.
-  - [ ] **Conferência de zumbi** do lote 1 (agendada para ~1 h depois da gravação).
+  - [x] **Conferência de zumbi** do lote 1: às 12h38 e às 16h39 UTC os 6 itens seguiam com o
+    md5 gravado, e o `updated_at` só mudou com as minhas gravações.
   - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (DM2 nos caps.
     129 e 227, CAD no 133, monogênico no 224, LADA no 128, perioperatório no 138): só com
     a orientação do professor, como nos caps. 86 e 89.
-- [ ] **Lote 2, tireoide e adrenal (8):** 7 (ATA 2016), 25 (ATA/ETA 2022), 14 (ESE/ES 2024)
-  e 15 (Pituitary Society 2021) escritas e em conferência; 59 (ATA 2015, CMT) e 36 (ES
-  2018, HAC) em redação; 57 e 58 em seguida.
+- [x] **Lote 2, 1ª parte (25/10, 16h39 UTC):** 5 Diretrizes gravadas, com backup por item,
+  ensaio antes e conferência por SQL depois. `atEdit` 1792946323126.
+
+  | pos | tema | documento | md5 novo | resumo |
+  |---|---|---|---|---|
+  | 7 | Hipertireoidismo e Graves | ATA 2016 (124 recomendações) | `ae92899f…` | 44.982 |
+  | 14 | IA induzida por glicocorticoide | ESE/ES 2024 | `09b0dbd5…` | 34.893 |
+  | 15 | Síndrome de Cushing | Pituitary Society 2021 | `342f3e9d…` | 34.971 |
+  | 25 | Orbitopatia | ATA/ETA 2022 | `276c9ff2…` | 34.991 |
+  | 59 | Carcinoma medular | ATA 2015 (67 recomendações) | `e4a70f41…` | 34.994 |
+
+  - Conferentes independentes: 0 achados graves nas cinco; os menores foram todos aplicados.
+  - O 7 ganhou Nota Endodirect na crise tireotóxica com o consenso ETA/BTA 2026 (metimazol
+    e PTU equivalentes), que conferi no texto do consenso; os campos curtos dizem "ATA 2016".
+  - No 25, conferi na Tabela 6 (p. 14) a hemorragia cerebral com teprotumumabe (1–4,9%).
+  - **De novo a sessão parou ~4 h com a função a ser ativada:** a v6 saiu já com o prazo
+    vencido (410). Reativei com token e prazo novos (v7, 20 min), gravei e voltei ao 410 (v8).
+- [ ] **Lote 2, 2ª parte:** 36 (ES 2018, HAC) em correção depois da conferência (0 graves,
+  10 menores); 57 (revisões de 2021 e 2019) e 58 (ATA 2016 + ETA 2018 + ATA 2026) em
+  conferência.
 - [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
   documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
   `gravar-diretriz` (token e prazo novos a cada lote).
