@@ -808,6 +808,16 @@ ferramenta destrutiva de projeto (pausar, restaurar, apagar branch/projeto)
 tem motivo para rodar sem o professor pedir aquilo nominalmente; as travas de
 migração acima seguem valendo.
 
+**Deploy de função também liberado (2026-10-25):** mesmo com `mcp__Supabase` na
+lista, o deploy da função temporária `gravar-diretriz` voltou a pedir
+confirmação no app (só "Negar" e "Permitir uma vez"). O professor: *"Vou permitir
+sempre. Não aparecer mais essa mensagem"*. Entrou a regra específica
+`mcp__Supabase__deploy_edge_function` em `permissions.allow`, como foi feito com o
+`execute_sql`; a documentação da sessão manda regra específica no
+`.claude/settings.json` do repositório. As travas da função temporária continuam:
+token novo e prazo curto a cada ativação, posições permitidas, ensaio antes e
+volta ao 410 com o token apagado logo depois.
+
 ⚠️ **O que NÃO mudou — as travas continuam obrigatórias antes do merge:**
 `ci-validate` verde, harness A/B em Chromium, bump do `sw.js` a cada mudança de
 `index.html`, e conferir na fonte toda acusação clínica grave. Automático é o

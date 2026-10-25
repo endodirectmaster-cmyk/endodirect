@@ -8,6 +8,11 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 LOTE 2 DAS DIRETRIZES, 1ª PARTE (TIREOIDE E ADRENAL) GRAVADA (2026-10-25).** Graves (ATA 2016), insuficiência adrenal por glicocorticoide (ESE/ES 2024), Cushing (Pituitary Society 2021), orbitopatia (ATA/ETA 2022) e carcinoma medular (ATA 2015), às 16h39 UTC. Detalhes em [[Pendências]].
+  - **Diretriz antiga com parte superada ganha Nota, não reescrita.** A ATA 2016 continua sendo a diretriz de hipertireoidismo, mas a gestação, a orbitopatia e a crise tireotóxica têm documentos mais novos. Cada uma dessas seções abre com uma Nota Endodirect que diz qual documento a substitui, e os campos curtos marcam "ATA 2016" onde a regra mudou.
+  - **Quando o próprio documento diverge de si, mostrar as duas versões.** Na orbitopatia, os pontos-chave e a Figura 5 dão categorias diferentes ao tocilizumabe, ao selênio e à radioterapia; a Diretriz diz as duas. Na HAC, a recomendação 4.14 contradiz o texto da seção; ela fica como impressa, com o aviso.
+  - **A notação de grau é a do documento.** A ESE/ES 2024 não imprime "1" e "2", só o verbo com ⊕; o redator tinha posto "1∣/2∣" e trocou.
+  - **Regra de permissão específica para o deploy de função** (`mcp__Supabase__deploy_edge_function`), a pedido do professor: o `mcp__Supabase` amplo não impediu o pedido de confirmação.
 - **📋 LOTE 1 DAS DIRETRIZES (DIABETES) GRAVADO: 6 REESCRITAS PELO DOCUMENTO ORIGINAL (2026-10-25).** Tratamento do DM2 (SBD 2026), CAD/EHH (consenso 2024), MODY (ISPAD 2022), LADA (2020), DMPT (2024) e perioperatório (SBD 2026), cada uma com redator, conferente independente e conferidor automático. Gravado às 11h37 UTC pela `gravar-diretriz`, com guarda de md5 e backup por item. Detalhes em [[Pendências]].
   - **O conteúdo de figura se confere na figura.** Duas das seis dependiam de fluxogramas que o texto do PMC não traz; o pacote aberto do PMC (espelho na AWS) deu as imagens. Conferi eu mesmo, na imagem, cada número que veio de figura. Na Fig. 4 do consenso de crises, a seta dos 50% do déficit em 8–12 h sai também da hipovolemia grave, e o texto dizia "só na leve".
   - **Prazo curto na função temporária não é burocracia.** A sessão parou por 5h40 com a função recém-ativada; ela expirou sozinha (410) e nada ficou aberto. Na volta: token e prazo novos, ensaio, gravação, 410.
