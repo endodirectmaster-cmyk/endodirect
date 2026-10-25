@@ -197,6 +197,10 @@ completo.
   - [x] **Conferência de zumbi** dos caps. 86 e 89 e das Diretrizes 18 e 35 (01h37 UTC de
     25/10): os quatro itens com o md5 gravado e o `updated_at` ainda em 00h29m19s, a última
     gravação minha; nenhum save do painel desde então.
+- [x] **Entrega em páginas antes dos lotes (25/10).** A resposta única dos Resumos passaria de
+  ~6 MB com as 72 Diretrizes completas. Agora vem em páginas de 20 por
+  `endodirect_member_resumos_pagina`, com a maior página em 537 KB para o assinante. Ver
+  [[Decisões]] 2026-10-25 e [[Dados e Supabase]].
 - [ ] Lotes por subespecialidade (as outras 70), com conferência independente, pelo mesmo
   caminho do piloto: agente redator a partir do PDF, agente conferente, prévia com o
   renderizador do app e gravação pela `gravar-diretriz` (token e prazo novos a cada lote).

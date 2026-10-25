@@ -459,7 +459,13 @@ process.on('exit', (code) => {
     const ca = corpo('carregarAcessos');
     ok((ca.match(/if\(!mesmaContaQue\(uid\)\)return;/g) || []).length === 2, 'carregarAcessos: guarda por conta na resposta e na falha');
     const tr = corpo('tentarResumos');
-    ok((tr.match(/if\(!mesmaContaQue\(uid\)\)return;/g) || []).length === 2 && /return tentarResumos\(client,rpc,tentativa,contaAtual\(\)\);/.test(corpo('carregarResumos')), 'Resumos: os capítulos privados de uma conta em voo não são aplicados na sessão da conta seguinte');
+    // Desde 25/10 (páginas) a conta é fixada no início de carregarResumos e segue
+    // para as páginas e, no recurso, para tentarResumos.
+    const crs = corpo('carregarResumos');
+    ok((tr.match(/if\(!mesmaContaQue\(uid\)\)return;/g) || []).length === 2
+       && /var uid=contaAtual\(\);/.test(crs)
+       && /carregarResumosPaginas\(client,uid,1\)/.test(crs)
+       && /if\(!mesmaContaQue\(uid\)\)return;\s*if\(funcaoAusente\(e\)\)return tentarResumos\(client,rpc,tentativa\|\|1,uid\);/.test(crs), 'Resumos: os capítulos privados de uma conta em voo não são aplicados na sessão da conta seguinte');
     const lo = corpo('doLogout');
     ok(/remoteStateGen\+\+;remoteStateEmVoo=null;conteudoEmVoo=null;conteudoErro=false;provasEmVoo=null;provasErro=false;userAcessos=\[\];/.test(lo), 'doLogout: cargas em voo (conteúdo E questões) ficam órfãs e plano/erros voltam ao zero');
     ok(/carregarConteudo\(client\)\s*\.then\(function\(\)\{return carregarResumos\(client,'endodirect_member_resumos'\);\}\)/.test(hyd), 'hydrate: Resumos seguem vindo depois do conteúdo, sem depender do sucesso dele');
