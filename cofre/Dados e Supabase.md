@@ -32,7 +32,12 @@ atualizado: 2026-10-25
 - **Ensaio:** mandar o md5 "de hoje" zerado. A guarda barra, nada é gravado e a função
   devolve os md5 do servidor para comparar com os locais.
 - **Proteção:** token só como sha256 no código, prazo e lista de posições permitidas. Depois
-  do uso, volta ao 410 e o token é apagado. Usada em 25/10 para as Diretrizes 18 e 35.
+  do uso, volta ao 410 e o token é apagado. Usada em 25/10 para as Diretrizes 18 e 35 e
+  para o lote 1 da auditoria (1, 45, 46, 47, 50, 232).
+- **O prazo curto já salvou uma vez (25/10):** ativei a v3 com prazo de 45 min e a sessão
+  parou por 5h40 antes do ensaio. Na volta, a função respondia 410 sozinha, sem ter ficado
+  aberta a noite toda. Reativei com token e prazo novos (v4, 30 min), gravei e voltei ao 410
+  (v5) em 2 minutos. **Token e prazo novos a cada ativação; nunca reaproveitar.**
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
   depois por bytes, `", "` entre itens e `": "` entre chave e valor. O `pg()` de
   `scratchpad/cap86-89/monta.py` reproduz isso; o md5 bateu com o do servidor nos 4 itens

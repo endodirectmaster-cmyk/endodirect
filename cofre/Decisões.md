@@ -8,6 +8,10 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 LOTE 1 DAS DIRETRIZES (DIABETES) GRAVADO: 6 REESCRITAS PELO DOCUMENTO ORIGINAL (2026-10-25).** Tratamento do DM2 (SBD 2026), CAD/EHH (consenso 2024), MODY (ISPAD 2022), LADA (2020), DMPT (2024) e perioperatório (SBD 2026), cada uma com redator, conferente independente e conferidor automático. Gravado às 11h37 UTC pela `gravar-diretriz`, com guarda de md5 e backup por item. Detalhes em [[Pendências]].
+  - **O conteúdo de figura se confere na figura.** Duas das seis dependiam de fluxogramas que o texto do PMC não traz; o pacote aberto do PMC (espelho na AWS) deu as imagens. Conferi eu mesmo, na imagem, cada número que veio de figura. Na Fig. 4 do consenso de crises, a seta dos 50% do déficit em 8–12 h sai também da hipovolemia grave, e o texto dizia "só na leve".
+  - **Prazo curto na função temporária não é burocracia.** A sessão parou por 5h40 com a função recém-ativada; ela expirou sozinha (410) e nada ficou aberto. Na volta: token e prazo novos, ensaio, gravação, 410.
+  - **O redator não decide o que a diretriz não diz.** Itens corretos do texto antigo que o documento não sustenta (calculadora de MODY, hipomagnesemia do HNF1B) ficaram de fora em vez de virar "Nota Endodirect": a Diretriz espelha o documento, e os Resumos cobrem o resto.
 - **📄 DIRETRIZES E RESUMOS CHEGAM EM PÁGINAS (2026-10-25).** Preparação para os lotes da auditoria das Diretrizes, sem pedido do professor. `sw.js` v324 → **v325**. Detalhes em [[Dados e Supabase]].
   - **O motivo.** A resposta única de `endodirect_member_resumos` tinha 3,34 MB para o assinante (233 itens). As 72 Diretrizes reescritas pelo documento original, com ~54 KB cada, a levariam a mais de 6 MB, acima do limite empírico de ~5,3 MB em que a resposta deixa de chegar ao celular.
   - **O desenho.** Agora a lista vem em páginas de 20 por `endodirect_member_resumos_pagina`, como as questões. A maior página tem 537 KB.
