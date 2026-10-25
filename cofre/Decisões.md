@@ -8,6 +8,11 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **⚡ CACHE DAS PÁGINAS DOS RESUMOS, SEM DELETE (2026-10-25, ~17h40 UTC).** A pedido do professor ("Corrigir"), feito no uso extra, apesar da pausa. A 1ª versão paginada remontava a lista inteira a cada página e estourou os 8 s do `authenticated` às 12h06 e às 17h38 UTC.
+  - **O cache:** linha por (escopos, página), com chave = versão do acervo + corpo das funções da regra.
+  - **Sem DELETE:** chave nova sobrescreve por `on conflict do update`, então o conector não segura nada e a tabela não cresce.
+  - **Na falta,** a página sai da memória, e a falha ao gravar o cache não derruba a carga.
+  - **Resultado:** 2 ms por página pronta (antes, 0,2–0,35 s cada; 7–8 s com 11 em paralelo).
 - **⏸️ PAUSA PELO LIMITE SEMANAL (2026-10-25, 16h51 UTC).** Veio `rejected` na janela semanal, com a conta já no uso extra. Pela regra dos 90%: parei os dois conferentes (57 e 58), não lancei mais nada e agendei a retomada para 30/10, às 20h05 UTC.
   - **Primeiro passo da retomada:** a correção do erro de carga dos Resumos (11 páginas com 500 às 12h06 UTC, episódio único).
   - **Por que não terminei antes de pausar:** seria no uso extra, e o conector também segurou o ensaio por causa do `delete` no texto.

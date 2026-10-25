@@ -12,8 +12,10 @@
 // falha de rede; (4) servidor sem a função paginada cai na chamada única de antes;
 // (5) troca de conta no meio descarta a carga; (6) lista vazia não apaga o que o
 // aparelho tem; (7) o .sql: mesma lista de `endodirect_member_resumos()` (sem cópia
-// da regra), 20 por página, versão md5, temas só na página 0 e execução para anon,
-// authenticated e service_role; (8) os pontos de entrada do app continuam chamando
+// da regra), 20 por página, versão md5, temas só na página 0, cache por (escopos,
+// página) sobrescrito pela chave nova, sem comando de apagar no texto (o conector do
+// Supabase o segura para confirmação), cache fechado para a API, e execução para
+// anon, authenticated e service_role; (8) os pontos de entrada do app continuam chamando
 // carregarResumos com o nome da RPC antiga (o recurso).
 const fs = require('fs');
 const path = require('path');
@@ -134,10 +136,16 @@ const lista = (n, pref) => Array.from({ length: n }, (_, i) => ({ tema: (pref ||
   const s7 = semComent(sql);
   ok(/create or replace function public\.endodirect_member_resumos_pagina\(p_pagina integer default 0\)/.test(s7), 'sql: define endodirect_member_resumos_pagina(p_pagina integer default 0)');
   ok(/security definer/.test(s7) && /set search_path to 'public'/.test(s7), 'sql: security definer com search_path fixo');
-  ok(/select public\.endodirect_member_resumos\(\) as r/.test(s7) && !/endodirect_acessos_ativos|privado|rascunho/.test(s7), 'sql: a lista é a de endodirect_member_resumos() — a regra de acesso não é copiada');
-  ok(/select 20 as por_pagina/.test(s7), 'sql: 20 itens por página');
-  ok(/'versao',\s+md5\(\(select lista from l\)::text\)/.test(s7), 'sql: versão = md5 da lista inteira');
-  ok(/'diretrizes_temas', case when \(select pagina from k\) = 0/.test(s7), 'sql: temas só na página 0');
+  ok(/v_r\s+:= public\.endodirect_member_resumos\(\);/.test(s7) && !/privado|rascunho|@>/.test(s7), 'sql: a lista é a de endodirect_member_resumos() — a regra de acesso não é copiada');
+  ok(/v_por\s+constant integer := 20;/.test(s7), 'sql: 20 itens por página');
+  ok(/v_versao\s+:= md5\(v_lista::text\);/.test(s7), 'sql: versão = md5 da lista inteira');
+  ok(/v_temas\s+:= case when v_pagina = 0 then/.test(s7) && /case when g = 0 then coalesce\(v_r->'diretrizes_temas'/.test(s7), 'sql: temas só na página 0');
+  // O cache (2ª versão, depois do estouro de 8 s das 12h06 de 25/10).
+  ok(/primary key \(escopos, pagina\)/.test(s7) && /on conflict \(escopos, pagina\) do update/.test(s7), 'sql: cache por (escopos, página), sobrescrito pela chave nova — a tabela não cresce');
+  ok(/unnest\(public\.endodirect_acessos_ativos\(\)\)/.test(s7) && /from public\.endodirect_global_state where id = 'main'/.test(s7) && /'endodirect_member_resumos', 'endodirect_amostra_espalhada'/.test(s7), 'sql: chave = escopos + versão do acervo + corpo das funções da regra');
+  ok(!/\b(delete|drop|truncate)\b/i.test(sql), 'sql: nenhum comando de apagar no texto, nem em comentário (o conector do Supabase segura para confirmação)');
+  ok(/alter table public\.endodirect_resumos_paginas_cache enable row level security;/.test(s7) && /revoke all on table public\.endodirect_resumos_paginas_cache from public, anon, authenticated;/.test(s7), 'sql: o cache não é legível pela API (RLS sem política e sem privilégio para anon/authenticated)');
+  ok(/exception when others then/.test(s7), 'sql: falha ao gravar o cache não derruba a página');
   ok(/grant execute on function public\.endodirect_member_resumos_pagina\(integer\) to anon, authenticated, service_role;/.test(s7) && /revoke all on function public\.endodirect_member_resumos_pagina\(integer\) from public;/.test(s7), 'sql: execução para anon, authenticated e service_role, e nada para public');
 
   // (8) pontos de entrada e chamada paginada
@@ -146,5 +154,5 @@ const lista = (n, pref) => Array.from({ length: n }, (_, i) => ({ tema: (pref ||
   ok((html.match(/carregarResumos\(client,'endodirect_member_resumos'\)/g) || []).length >= 2, 'app: os pontos de entrada seguem chamando carregarResumos com a RPC antiga (o recurso)');
 
   if (falhas.length) { console.error('✗ Diretrizes/Resumos em páginas:\n  - ' + falhas.join('\n  - ')); process.exit(1); }
-  console.log('✓ Diretrizes/Resumos em páginas: juntam na ordem e só com a mesma versão, 3 tentativas por página, recurso à chamada única, conta trocada descartada, lista vazia não apaga, .sql sem cópia da regra');
+  console.log('✓ Diretrizes/Resumos em páginas: juntam na ordem e só com a mesma versão, 3 tentativas por página, recurso à chamada única, conta trocada descartada, lista vazia não apaga, .sql sem cópia da regra, cache por escopos sem comando de apagar e fechado para a API');
 })().catch((e) => { console.error(e); process.exit(1); });

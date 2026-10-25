@@ -11,31 +11,17 @@ atualizado: 2026-10-25
   (`isUsingOverage`), com renovação em 30/10 às 20h00 UTC. Pela regra dos 90%: parei os
   conferentes de 57 e 58, não lancei mais nada e agendei a retomada (`send_later`) para
   20h05 UTC. Na retomada, seguir a regra (agente sentinela primeiro).
-- **1º na retomada: o erro de carga dos Resumos.** Às 12h06 UTC as 11 páginas de um
-  assinante estouraram o `statement_timeout` de 8 s (HTTP 500, 57014). Foi o único
-  episódio: desde a v1 (05h41) foram 17 páginas com 200 (a mais lenta em 2,0 s) e 11 com
-  500, todas às 12h06. Causa: cada página remonta a lista inteira a partir do acervo de
-  17 MB.
-  - Correção: guardar as páginas prontas num cache montado uma vez por chave (escopos +
-    `updated_at` do acervo + corpo das funções da regra).
-  - A 1ª versão do cache apagava as chaves antigas com `delete`, e o conector segurou o
-    ensaio para confirmação (60 s sem resposta, nada executado). É a lição de 19/10 (ver
-    "Dados e Supabase").
-  - Refazer SEM DELETE: chave primária (escopos, página) com `on conflict ... do update`,
-    e devolver a página da lista em memória quando ela faltar no cache. A versão com
-    DELETE ficou só no scratchpad (`ab-pag/resumos-em-paginas-cache.sql`); o
-    `supabase/resumos-em-paginas.sql` do repositório segue igual ao banco (v1).
-  - Antes de aplicar, conferir no corpo de `endodirect_member_resumos` se a lista depende
-    de algo além dos escopos e do acervo (`now()`, `auth.uid()`).
-  - Depois:
-    1. ensaio sem a palavra DELETE no texto;
-    2. migração;
-    3. conferência de `prosrc`, RLS e grants;
-    4. teste por HTTPS como anon;
-    5. testes estáticos de `scripts/test-resumos-em-paginas.js`;
-    6. ci-validate, PR e merge;
-    7. logs, cofre e aviso ao professor.
-- **2º: o lote 2, 2ª parte** (estado na auditoria, abaixo).
+- [x] **Erro de carga dos Resumos: corrigido em 25/10, ~17h40 UTC, a pedido do professor
+  ("Corrigir"), no uso extra.**
+  - Às 12h06 UTC, as 11 páginas de um assinante estouraram o `statement_timeout` de 8 s
+    (HTTP 500, 57014).
+  - Repetiu às 17h38: 10 das 11 páginas falharam, e a nova tentativa, 40 s depois,
+    carregou com ~7 s por página.
+  - Causa: cada página remontava a lista inteira a partir do acervo de 17 MB.
+  - Correção: cache `endodirect_resumos_paginas_cache`, por (escopos, página), sem DELETE
+    (ver "Dados e Supabase").
+  - Medido com o assinante: 358 ms na 1ª página de uma versão nova e 2 ms nas seguintes.
+- **Na retomada: o lote 2, 2ª parte** (estado na auditoria, abaixo).
 
 ## ✅ FEITO (24/10): calculadora "Risco CV e metas — SBC 2025" (pedido de 22/10, com prints da Clarity)
 
