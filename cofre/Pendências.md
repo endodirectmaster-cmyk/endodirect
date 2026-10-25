@@ -201,10 +201,36 @@ completo.
   ~6 MB com as 72 Diretrizes completas. Agora vem em páginas de 20 por
   `endodirect_member_resumos_pagina`, com a maior página em 537 KB para o assinante. Ver
   [[Decisões]] 2026-10-25 e [[Dados e Supabase]].
-- [ ] Lotes por subespecialidade (as outras 70), com conferência independente, pelo mesmo
-  caminho do piloto: agente redator a partir do PDF, agente conferente, prévia com o
-  renderizador do app e gravação pela `gravar-diretriz` (token e prazo novos a cada lote).
-  O DM2 (Manejo do DM2) usa o PDF da SBD 2026 que o professor subiu.
+- [x] **Lote 1, diabetes (25/10, 11h37 UTC):** 6 Diretrizes gravadas pela `gravar-diretriz`,
+  cada uma com backup `main-antes-diretriz-<pos>-lote-2026-10-25`, `at` mantido e `atEdit`
+  novo (1792928151857). Ensaio antes (a guarda barrou as 6 e os md5 do servidor bateram
+  com os locais); depois, conferência independente por SQL: os 6 itens com o md5 novo,
+  25 pts e 25 flashcards cada, um backup por item.
+
+  | pos | tema | documento | md5 novo | resumo |
+  |---|---|---|---|---|
+  | 1 | Tratamento do Diabetes tipo 2 | SBD 2026, Manejo do DM2 (PDF do professor) | `7e3a7fae…` | 34.682 |
+  | 45 | Cetoacidose diabética (CAD) | Consenso ADA/EASD/JBDS/AACE/DTS 2024 | `d46522c1…` | 32.969 |
+  | 46 | MODY (diabetes monogênico) | ISPAD 2022 | `c3bfb93d…` | 34.982 |
+  | 47 | LADA | Painel internacional (Buzzetti) 2020 | `8308a256…` | 29.577 |
+  | 50 | DMPT | Consenso internacional 2024 (Sharif) | `38d66819…` | 34.339 |
+  | 232 | Manejo perioperatório | SBD/SBA/ABESO 2026 | `7161e209…` | 34.997 |
+
+  - Cada uma teve conferente independente; os 2 achados graves do 45 e do 50 eu conferi na
+    fonte antes de aceitar (Fig. 2 do consenso de crises; Tabela S1 e Fig. 2 do DMPT).
+  - Ajuste meu no 45, conferido na imagem da Fig. 4: os 50% do déficit em 8–12 h valem
+    para a hipovolemia grave (depois de 1,0 L/h) e para a leve, não só para a leve.
+  - Assinante: a resposta única dos Resumos foi a 3,62 MB; pelas páginas, a maior tem 583 KB.
+  - [ ] **Conferência de zumbi** do lote 1 (agendada para ~1 h depois da gravação).
+  - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (DM2 nos caps.
+    129 e 227, CAD no 133, monogênico no 224, LADA no 128, perioperatório no 138): só com
+    a orientação do professor, como nos caps. 86 e 89.
+- [ ] **Lote 2, tireoide e adrenal (8):** 7 (ATA 2016), 25 (ATA/ETA 2022), 14 (ESE/ES 2024)
+  e 15 (Pituitary Society 2021) escritas e em conferência; 59 (ATA 2015, CMT) e 36 (ES
+  2018, HAC) em redação; 57 e 58 em seguida.
+- [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
+  documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
+  `gravar-diretriz` (token e prazo novos a cada lote).
 - [ ] Gravação com backup, F5 e conferência de zumbi. Manter o `at` de cada item (o selo
   "Novo" depende dele) e atualizar o `atEdit`.
 - [ ] Cofre e relatório.
@@ -1506,6 +1532,16 @@ o plano.
       chave; `lsSet` engole `QuotaExceeded` e cai em memória. No Safari (~5 MB por
       origem, contado em UTF-16) a cópia local das provas provavelmente nunca existe
       — cada abertura depende da rede. Não medido em aparelho.
+      - **25/10: a auditoria das Diretrizes agrava a cota.** Com as 72 Diretrizes
+        completas, a lista do assinante vai de ~3,3 para ~6 MB, maior que a cota
+        inteira (~5,2 milhões de caracteres no Chromium, medido em `teste-cota.js`).
+        Aí o `lsSet('diretrizes')` falha sempre, e o `setItem` que falha deixa a
+        cópia ANTIGA no aparelho: no boot seguinte o aluno vê as Diretrizes de antes
+        da auditoria até a carga em páginas chegar (ou, sem rede, com o aviso de
+        "última cópia"). A cópia velha também continua ocupando cota.
+      - **Caminho provável:** mover as listas grandes (`diretrizes`, `provas`) para o
+        IndexedDB, ou apagar a chave quando o `setItem` falhar.
+      - Decidir antes de terminar os lotes.
 - [ ] **Dashboard durante falha do `member_resumos`:** a fração "8 de 71" com
       tooltip "A assinatura abre o restante" aparece para um Gold cuja carga caiu.
       Como o `member_content` não manda mais `diretrizes`, a falha da RPC de
