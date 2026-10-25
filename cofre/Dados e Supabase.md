@@ -54,6 +54,12 @@ atualizado: 2026-10-25
 - `CREATE FUNCTION` com `delete from ...` no corpo ficou retido para confirmação e
   expirou em 60 s, duas vezes (apply_migration e execute_sql), sem aplicar nada. A
   mesma função só com SELECT e UPDATE foi criada na hora.
+- **De novo em 25/10, num ensaio.** O ensaio do cache das páginas dos Resumos tinha
+  `delete` dentro de uma função temporária (`pg_temp`), e o `execute_sql` ficou retido e
+  expirou em 60 s sem executar nada.
+  - A regra vale também para ensaio e função temporária: o texto enviado pelo conector
+    não leva DELETE.
+  - Para substituir linhas antigas, usar `on conflict ... do update` sobre uma chave fixa.
 - **Regra:**
   - função nova que precisa apagar linhas não vai pelo conector;
   - quem apaga é o servidor do app (REST com a chave de serviço), pela chave
