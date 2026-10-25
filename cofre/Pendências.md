@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-24
+atualizado: 2026-10-25
 ---
 
 # Pendências
@@ -116,6 +116,7 @@ Pedido do professor em 24/10 (prints do bucket `livros`, pastas Adrenal, Neuroen
 - [x] **Professor aprovou as duas prévias** (esta e a do 2º lote): *"Aprovo tudo."* A fig. 1 do JAMA e a 41.18 do Williams entram com o defeito pequeno que ficou; a fig. 77-5 do Guyton fica como na edição brasileira.
 - [x] Lista no `texto.js`; 48 capítulos reexportados (idênticos às prévias); 135 imagens subidas e conferidas; 12 grupos gravados das 22h17 às 22h29 UTC com backup e md5; conferência final (48 md5, 135 figuras uma vez cada, 334 figuras de livros); professor avisado do F5.
 - [x] **Conferência de zumbi (22h45 UTC):** os 48 md5 seguem os gravados, o acervo segue com 334 figuras de livros e nenhum save entrou desde o g12 (`updated_at` 22h29min21).
+- [x] **2ª conferência de zumbi (23h59 UTC):** tudo igual (o 113 com o md5 novo da HF). Os saves do painel das 23h46 e 23h58 UTC não desfizeram nada.
 
 ## 📋 EM ANDAMENTO (desde 23/10, 19h de Brasília): auditoria das Diretrizes
 
@@ -151,10 +152,54 @@ completo.
     (3) o conferente renderiza as tabelas e os fluxogramas do PDF em imagem, porque o texto
     extraído perde as setas.
   - Em 24/10 o professor perguntou quais são os pontos divergentes, e enviei a lista: 4 do cap. 86 × ATA 2026 (aumento da LT4 ~30% × ~25%; TSH < 2,5 só no 1º trimestre × toda a gestação; platô do T4 total com 20 × 16 semanas; PTU mantido depois de 16 semanas × "não se sabe qual é o preferido") e 4 do cap. 89 × Endocrine Society 2016 (cortisol < 3 confirma e > 18 exclui × só < 5 µg/dL com ACTH, como triagem; ACTH > 100 pg/mL × > 2 vezes o LSN; prednisolona 5 mg × 3–5 mg/dia; hidrocortisona na cirurgia a cada 6–8 h × a cada 6 h). Antes de ajustar, conferir cada ponto no PDF.
-  - [ ] **Professor:** aprovar o formato e a profundidade; decidir se os capítulos 86 e 89 dos
-    Resumos acompanham as diretrizes nos pontos divergentes (listados na prévia); e mandar o
-    PDF da SBD 2026 de tratamento do DM2, que não está no Drive.
-- [ ] Lotes por subespecialidade, com conferência independente.
+  - [x] **Professor (24/10):** formato e profundidade *"aprovados"*; sobre os caps. 86 e 89,
+    *"Siga as orientações da diretrizes mais recentes, por exenplo a ATA 2026"*; e subiu o
+    PDF da SBD 2026 de tratamento do DM2 para `livros/diabetes/` (*Manejo do Diabetes Mellitus
+    Tipo 2.pdf*, 8 páginas), baixado em 25/10 pela `baixar-livros` (depois 410) para
+    `scratchpad/dm2-sbd2026/manejo-dm2.pdf` (fica só na sessão).
+  - [x] **Caps. 86 e 89 alinhados (25/10, 00h23 UTC).** Cada ponto conferido de novo no
+    `fonte.txt` dos pilotos antes de escrever. Backup `main-antes-caps-86-89-diretrizes-2026-10-25`.
+    - **86 × ATA 2026:** LT4 +~25% ao teste positivo (na dose diária ou com 2 comprimidos
+      extras por semana, que a ATA aceita com risco um pouco maior de supertratamento, como
+      TSH pré-gestacional < 1,5 e dose > 100 mcg/dia); no subclínico tratado antes da
+      gestação, aumento pequeno (12,5 mcg/dia) ou ajuste pelo TSH; TSH a cada 4 semanas até a
+      metade da gestação e ao menos uma vez perto de 30 semanas; alvo TSH na referência e
+      < 2,5 em **toda** a gestação; necessidade ~25% até a 12ª semana e ~50% até a 20ª; T4
+      total +5%/semana da 7ª e platô a partir da **16ª**; depois de 16 semanas, **nenhum
+      antitireoidiano preferido** (nem manter o PTU nem trocar é recomendado). Mudou no
+      resumo (11 trechos, inclusive as duas tabelas), pts 1, 3, 5, 7, 11, 19, 20 e 27,
+      flashcards 2, 3 e 5 (só o verso), os 2 ramos do fluxograma, 4 rótulos do mapa e a
+      `fonte` (+ ATA 2026).
+    - **89 × Endocrine Society 2016:** cortisol matinal < 5 µg/dL com ACTH elevado é teste
+      preliminar, e não há corte consensual para excluir (10,3 a 17 µg/dL); o < 3 e o
+      > 15–18 ficaram só como "muitos textos ainda usam", porque não achei a fonte; o teste
+      de estímulo confirma (< 18 µg/dL aos 30 ou 60 min, depende do ensaio); ACTH > 2× o
+      limite superior define a primária; hidrocortisona 15–25 mg/dia em 2–3 tomadas ou
+      prednisolona 3–5 mg/dia; evitar dexametasona (a ES "sugere contra"; "contraindicada"
+      era forte demais); cirurgia pequena 25–75 mg/24 h por 1–2 dias e grande 100 mg IV +
+      200 mg/24 h (ou 50 mg a cada 6 h); na gestação +20–40% **a partir da 24ª semana**
+      (era "20–24"). Mudou no resumo (6 trechos), pts 1 e 2, flashcard 1 (só o verso), 2 nós
+      do fluxograma e a `fonte` (+ Endocrine Society 2016).
+    - **Como foi gravado:** os dois itens inteiros exportados (`exportar-capitulos`, agora
+      devolvendo o item todo; depois 410); trocas em `scratchpad/cap86-89/monta.py`, cada
+      trecho antigo com ocorrência única; prévia dos 17 trechos com o `mdToHtml` do app no
+      celular (claro) e no notebook (escuro), sem marcação crua (`previa-trechos.js`);
+      ensaio no servidor sem gravar; uma instrução só, com guarda do md5 do item **inteiro**
+      (o serializador local reproduz o texto do jsonb do Postgres) e conferência do
+      resultado: item 86 `7a27ef34…`, item 89 `e7136073…` (resumos `543351c5…` e `e8f797e2…`).
+      O `verif/final.sql` das figuras passou a esperar o 89 novo.
+  - [x] **Piloto gravado (25/10, 00h28 UTC):** Diretrizes 18 (`cb6f6d49…`) e 35 (`aab2ef58…`),
+    com o `at` mantido e o `atEdit` novo. Backups `main-antes-diretriz-18-piloto-2026-10-25` e
+    `…-35-…`. Pela função temporária nova `gravar-diretriz` (ver [[Dados e Supabase]]): o item
+    vai por POST e o banco só grava se o item de hoje e o literal novo tiverem os md5
+    informados. Ensaio antes de cada uma (md5 de hoje zerado de propósito: a guarda barra e
+    a função devolve os dois md5 calculados pelo Postgres). Depois, 410 e token apagado.
+  - [ ] **Conferência de zumbi** dos caps. 86 e 89 e das Diretrizes 18 e 35
+    (`scratchpad/cap86-89/confere.sql` e os md5 acima).
+- [ ] Lotes por subespecialidade (as outras 70), com conferência independente, pelo mesmo
+  caminho do piloto: agente redator a partir do PDF, agente conferente, prévia com o
+  renderizador do app e gravação pela `gravar-diretriz` (token e prazo novos a cada lote).
+  O DM2 (Manejo do DM2) usa o PDF da SBD 2026 que o professor subiu.
 - [ ] Gravação com backup, F5 e conferência de zumbi. Manter o `at` de cada item (o selo
   "Novo" depende dele) e atualizar o `atEdit`.
 - [ ] Cofre e relatório.

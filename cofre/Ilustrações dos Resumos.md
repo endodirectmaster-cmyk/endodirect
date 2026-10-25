@@ -515,3 +515,6 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
     escrita no estado global desde as 22h UTC. Um acesso às 22h30 já carregou a versão nova.
   - ✅ **Conferência de zumbi (22h45 UTC):** os 48 md5 seguem os gravados e o acervo segue com
     334 figuras de livros; nenhum save desde o g12.
+  - ✅ **2ª conferência de zumbi (23h59 UTC):** os 48 md5 seguem; o do 113 já é o `85221a96`,
+    da mudança feita de propósito na HF às 23h54. Seguem também as 334 figuras e os 12 backups.
+    Os dois saves do painel (23h46 e 23h58 UTC) já carregaram a versão nova.
