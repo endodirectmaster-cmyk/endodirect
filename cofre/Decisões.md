@@ -8,6 +8,11 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🔒 LEITURA DO ACERVO FECHADA A NÃO-ADMIN (2026-10-30).** A pedido do professor ("apertar as permissões de tabela do acervo", "pode fazer"), e depois de confirmar o furo. A política de SELECT de `endodirect_global_state` era `using (true)` para `authenticated`: qualquer cadastro grátis baixava o acervo inteiro (16,7 MB) pela REST com a chave pública, furando a degustação.
+  - **Conserto:** SELECT passa a exigir `endodirect_is_admin()`; `revoke all` do anon; tira TRUNCATE/REFERENCES/TRIGGER do authenticated. Arquivo `supabase/acervo-leitura-so-admin.sql`.
+  - **Não quebra:** painel lê sob role admin; alunos pelas RPCs definer; servidor por service_role. Escritas já exigiam admin.
+  - **Conferido:** comum 0, admin 1, RPC 28 itens, anon negado.
+  - **Contas de demonstração do index.html:** NÃO removidas. O teste `test-vitrine-conta-real.js` exige que `aluno@` e `admin@` fiquem (decisão de 31/08), e as senhas publicadas não abrem conta real no Supabase (conferido: `admin@` nem existe lá). Removê-las reescreve o teste e tira o login rápido de degustação do professor — fica para decisão dele.
 - **🖼️ FIGURAS DO OPEN-I QUEBRARAM; A DE CAPÍTULO PASSA A SER CÓPIA PRÓPRIA (2026-10-25).** O professor mandou print de duas figuras quebradas nos Resumos (111, hipertrigliceridemias, e 113, hipercolesterolemias). O Open-i estava em manutenção e devolvia HTML no lugar da imagem.
   - **111 (CC BY 4.0):** foi para `endodirect-assets/resumos/pmc/`, com legenda descritiva e a licença.
   - **113 saiu.** O artigo só permite uso não comercial, o que a regra de 16/07 não aceita no produto pago, com ou sem Open-i.

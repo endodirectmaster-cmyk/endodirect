@@ -112,6 +112,26 @@ expira em 60 s. Expiraram todas as tentativas, inclusive com o professor na conv
 funciona: o professor cola o SQL com guarda no editor (SQL Editor → New query → Run).
 Assim saiu a `tmp_estudos_2026` em 17/10.
 
+## 🔒 O acervo só é lido direto por administrador (30/10/2026)
+
+- **Furo fechado.** A política de SELECT de `endodirect_global_state` era
+  `using (true)` para `authenticated`: qualquer usuário logado, mesmo grátis,
+  lia o `payload` inteiro (16,7 MB, 233 diretrizes) direto pela API REST, com a
+  chave pública do index.html — furando a degustação.
+- **Conserto** (`supabase/acervo-leitura-so-admin.sql`, migração
+  `acervo_leitura_so_admin_e_grants`):
+  - a leitura direta passa a exigir `endodirect_is_admin()`;
+  - a política virou `endodirect_global_state_read_admins`;
+  - `revoke all` do anon e tira TRUNCATE/REFERENCES/TRIGGER do authenticated.
+- **Por que não quebra:** só o painel do professor lê o acervo direto (sob
+  `role==='admin'`); os alunos leem pelas RPCs SECURITY DEFINER, que passam por
+  cima da RLS; o servidor usa `service_role`. Escritas já exigiam admin.
+- **Conferido** (trocando o papel no banco): autenticado comum 0 linhas, admin 1,
+  aluno pela RPC 28 itens, anon permissão negada.
+- **Lição:** é a mesma classe do vazamento da vitrine (02/08). Toda leitura do
+  acervo por papel de cliente é larga por padrão — conferir a política, não só o
+  grant.
+
 ## ⚡ Páginas dos Resumos com cache (25/10/2026)
 
 - **A entrega aos alunos.** `endodirect_member_resumos_pagina(p_pagina)` entrega as
