@@ -5212,19 +5212,17 @@ var CALCS=[
 ];
 
 var USERS=[
-  // Demo 1: aluno real em modo DEGUSTAÇÃO (sem pacote) — vê as degustações.
-  {email:'aluno@endodirect.com.br',pass:'Aluno@2026',name:'Aluno Endodirect',role:'aluno',sub:'Residente',acessos:[]},
-  // ⚠️ A VITRINE (alunopro) SAIU DAQUI EM 31/08/2026. Ela era conta LOCAL, com a
-  // senha em texto puro nesta linha — e este arquivo é servido a qualquer um: um
-  // `curl` na home devolvia a senha. Pior, sem sessão no Supabase **nenhum gate
-  // de servidor conseguia distinguir a vitrine de um visitante qualquer**, e foi
-  // por isso que `endodirect_showcase_resumos` ficou aberta a `anon`, entregando
-  // 161 itens privados de assinante a quem pedisse.
-  // Agora ela é conta REAL no Supabase, com `plano:gold` + os três cursos de
-  // vitrine, e entra pelo login normal — acesso revogável, auditável, e sem
-  // senha publicada. Continua FORA das contagens de aluno (a régua de conta de
-  // teste é por e-mail, no servidor). Pendência de 02/08/2026, fechada.
-  {email:'admin@endodirect.com.br',pass:'Admin@2026',name:'Administrador',role:'admin',sub:'Professor'},
+  // Só professores, por login do Google. A régua de admin DE VERDADE é a tabela
+  // endodirect_admins, conferida no servidor (endodirect_is_admin), e a leitura do
+  // acervo passou a exigi-la em 30/10/2026.
+  //
+  // As contas de demonstração locais (aluno@ e admin@, com senha em texto puro) saíram
+  // em 30/10/2026: este arquivo é servido a qualquer um — um `curl` na home devolvia a
+  // senha. Elas não abriam conta real no Supabase (admin@ nem existia lá), mas a senha
+  // publicada é higiene ruim. Sem conta local, todo login passa pelo Supabase.
+  // (Histórico: a vitrine `alunopro` saiu daqui em 31/08 pela mesma razão — era conta
+  // local e nenhum gate de servidor a distinguia de um visitante, o que abriu a
+  // `endodirect_showcase_resumos` a `anon`. Virou conta real, por login normal.)
   {email:'nakamura.epm79@gmail.com',pass:null,name:'Nakamura',role:'admin',sub:'Professor',provider:'google'},
   {email:'rodolphomend@gmail.com',pass:null,name:'Rodolpho Mendonca',role:'admin',sub:'Professor',provider:'google'},
   {email:'drrafaelgiorgi@hotmail.com',pass:null,name:'Rafael Giorgi',role:'admin',sub:'Professor',provider:'google'},
