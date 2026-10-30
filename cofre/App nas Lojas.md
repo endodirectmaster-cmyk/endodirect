@@ -208,6 +208,10 @@ Mac e do App Store Connect em `app-ios/LEIA-ME.md`.
   CDN é bloqueado aqui): o site leva ao mesmo endereço de antes; no iPhone simulado o
   login abre no navegador, a janela do app não navega e os retornos com erro e com
   token inválido aparecem na tela de login, sem erro de JS.
+- ✅ **Produção, 30/10, 21h32 UTC** (PR #926, `sw.js` v327): o `index.html` servido traz
+  o retorno do app e o ouvinte ligado no carregamento, o botão da faixa corrigido e
+  nenhum `onclick="showLoginScreen()"`; `app-ios/LEIA-ME.md`, `capacitor.config.json`
+  e `Info.plist` respondem 404 no site.
 
 ## Caminho técnico
 
