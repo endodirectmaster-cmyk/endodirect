@@ -1631,5 +1631,19 @@ try {
   fail('regressão da exclusão de conta / conta de revisão falhou (lib/excluir-conta.js, lib/conta-revisao.js, api/ai.js):\n' + out);
 }
 
+// 🧨 LOGIN COM GOOGLE NO APP DO IPHONE (30/10/2026). O Google recusa login na
+//     janela embutida do app; no iPhone o login abre no navegador do sistema e
+//     volta por br.com.endodirect.app://login-callback. O site e o Android
+//     seguem no redirect de sempre, e o endereço de retorno, o Info.plist, a
+//     config e os plugins de app-ios/ têm de concordar: uma divergência não dá
+//     erro, o login só não volta para o app.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-login-google-app-ios.js')], { stdio: 'pipe' });
+  ok('login com Google no app do iPhone: site e Android intactos, retorno lido uma vez, navegador fechado e app-ios/ coerente');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do login com Google no app do iPhone falhou (index.html, app-ios/):\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

@@ -1,0 +1,14 @@
+{
+  "appId": "br.com.endodirect.app",
+  "appName": "Endodirect",
+  "webDir": "www",
+  "backgroundColor": "#0b1325",
+  "server": {
+    "url": "https://www.endodirect.com.br/?app=ios",
+    "errorPath": "erro.html"
+  },
+  "ios": {
+    "appendUserAgent": "EndodirectApp/1.0 (ios)",
+    "contentInset": "never"
+  }
+}

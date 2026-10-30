@@ -1,0 +1,19 @@
+{
+  "name": "endodirect-ios",
+  "private": true,
+  "version": "1.0.0",
+  "description": "App do Endodirect para iPhone (Capacitor): abre o site com ?app=ios.",
+  "scripts": {
+    "sync": "cap sync ios",
+    "open": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/app": "8.1.2",
+    "@capacitor/browser": "8.0.5",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3"
+  }
+}

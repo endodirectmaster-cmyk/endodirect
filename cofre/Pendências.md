@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-25
+atualizado: 2026-10-30
 ---
 
 # Pendências
@@ -462,7 +462,8 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
 
 1. [ ] **Professor:**
    - CNPJ → D-U-N-S: **SAIU em 29/10 (e-mail da D&B): número 763009852.** Pedido em 18/10 pela ferramenta da Apple. Falta a Apple recebê-lo (até 2 dias úteis).
-   - Conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano), com o mesmo D-U-N-S, a mesma razão social e o mesmo endereço.
+   - Conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano), com o mesmo D-U-N-S, a mesma razão social e o mesmo endereço. **Próximo passo dele (30/10):** inscrever a empresa no Apple Developer Program como organização, com e-mail @endodirect.com.br.
+   - **Supabase (pode já):** Authentication → URL Configuration → Redirect URLs → acrescentar `br.com.endodirect.app://login-callback`. Sem isso, o login com Google do app do iPhone volta para o site, dentro da folha do Safari.
 2. **Eu, na plataforma** (detalhes em [[App nas Lojas]], seção "Ajustes da plataforma"):
    - [x] exclusão de conta no app, mais a página pública `/excluir-conta` (19/10);
    - [x] política de privacidade e termos: retenção, exclusão, login por e-mail (19/10);
@@ -473,10 +474,13 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
    - [ ] Professor: gerar a senha da conta de revisão quando for preencher os formulários
      das lojas (Google Play: Acesso ao app; App Store: Informações de login).
 3. [ ] **iPhone (Capacitor; o professor tem Mac):**
-   - "Entrar com a Apple";
-   - login do Google pelo navegador do sistema;
-   - notificações nativas (APNs) e o envio pelo servidor;
-   - roteiro do Xcode e do App Store Connect.
+   - [x] projeto do app em `app-ios/` (Capacitor 8.5.3, SPM), abrindo o site com `?app=ios` (30/10);
+   - [x] login do Google pelo navegador do sistema, com volta por `br.com.endodirect.app://login-callback` (30/10);
+   - [x] roteiro do Xcode e do App Store Connect: `app-ios/LEIA-ME.md` (30/10);
+   - [ ] "Entrar com a Apple" (diretriz 4.8; precisa da conta: Services ID, chave e provedor Apple no Supabase);
+   - [ ] notificações nativas (APNs) e o envio pelo servidor (precisa da chave APNs da conta);
+   - [ ] ícone 1024 em alta (o atual é o de 512 ampliado; pedir o original ao designer);
+   - [ ] opcional: ASWebAuthenticationSession ou link universal no lugar da folha do Safari (tira o "Abrir no Endodirect?"; precisa do Team ID).
    - Ver [[App nas Lojas]].
 
 ## 🔤 SOMP no acervo do banco (17/10) — gravado; o que fica

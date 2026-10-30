@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-10-20
+atualizado: 2026-10-30
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -49,6 +49,10 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   copiados aqui porque o repositório é público). Saiu em ~8 dias úteis, dentro do prazo.
   - Próximo: abrir a conta de organização na Apple (US$ 99/ano) e no Google Play
     (US$ 25) com este D-U-N-S, a mesma razão social e o mesmo endereço.
+- **30/10:** o professor perguntou o próximo passo na Apple: inscrever a empresa no Apple
+  Developer Program como organização, com o D-U-N-S, a razão social e um e-mail
+  @endodirect.com.br. Com *"Pode começar"*, montei a parte que não depende da conta
+  (seção "Projeto do app do iPhone" abaixo).
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
@@ -57,8 +61,8 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
 ### 1. Exclusão de conta dentro do app, mais a página pública
 
 - **Onde:** Meu perfil → cartão **Excluir conta**. O aluno digita **EXCLUIR** e confirma.
-  Só aparece para conta real de aluno: professor não se exclui por aqui, e a conta de
-  demonstração local (`aluno@`) não tem o que apagar no servidor.
+  Só aparece para conta real de aluno: professor não se exclui por aqui. (A conta de
+  demonstração local `aluno@`, que não tinha o que apagar no servidor, saiu em 30/10.)
 - **Página pública:** `https://www.endodirect.com.br/excluir-conta` (`excluir-conta.html`).
   É o endereço que vai nos formulários do Google Play (Segurança dos dados → exclusão de
   conta) e da App Store. O botão "Entrar e excluir minha conta" leva a `/#excluir-conta`,
@@ -160,6 +164,51 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       chave apagada de `trial_emails`. Confirma em produção que o cliente copia essa chave
       do servidor ao gravar.
 
+## 📱 Projeto do app do iPhone (30/10/2026)
+
+Pasta `app-ios/` do repositório (fora do site publicado: `.vercelignore`). Roteiro do
+Mac e do App Store Connect em `app-ios/LEIA-ME.md`.
+
+- **Capacitor 8.5.3 com Swift Package Manager** (sem CocoaPods). O `npx cap add ios`
+  roda no Linux; compilar e assinar só no Mac. Plugins: `@capacitor/app` 8.1.2 e
+  `@capacitor/browser` 8.0.5, versões fixas no `package.json`.
+- **Configuração:** `appId` `br.com.endodirect.app`; `server.url`
+  `https://www.endodirect.com.br/?app=ios`; `server.errorPath` `erro.html` (página
+  "Sem conexão" local); `ios.appendUserAgent` `EndodirectApp/1.0 (ios)`; fundo #0b1325.
+- **Projeto:** iOS 15+, iPhone e iPad, versão 1.0 (build 1), assinatura automática
+  sem Team (o professor escolhe a conta da empresa no Xcode).
+- **Info.plist:** esquema `br.com.endodirect.app` (volta do login), pt-BR e
+  `ITSAppUsesNonExemptEncryption = false`.
+- **Ícone e abertura:** 1024×1024 sem transparência, ampliado do `icons/icon-512.png`
+  (provisório: o `Icone - MD.png` da raiz é só o "D", não o ícone inteiro); abertura
+  2732×2732 com a marca no centro.
+- **Login com Google no app** (`index.html`): no iPhone, `startGoogleOAuth` pede ao
+  Supabase só o endereço (`skipBrowserRedirect`, retorno
+  `br.com.endodirect.app://login-callback`) e abre no navegador do sistema
+  (SFSafariViewController, plugin Browser). O `appUrlOpen` do plugin App entrega a
+  volta; `tratarRetornoLoginApp` lê os tokens do "#", faz `setSession` (o `SIGNED_IN`
+  segue o caminho de sempre), libera o `loggingOut` e fecha a folha. O site e o
+  Android não mudam.
+  - **Por que SFSafariViewController e não ASWebAuthenticationSession** (o plano de
+    18/10): o plugin oficial já compilado, sem Swift próprio que eu não consigo
+    compilar aqui. É o padrão da documentação do Supabase (implícito + `setSession`).
+    Custo: o iPhone pode perguntar "Abrir no Endodirect?" na volta. A troca fica para
+    depois do Team ID.
+  - **A página vem do site, sem `@capacitor/core`:** o app injeta os plugins em
+    `window.Capacitor.Plugins` (não há `registerPlugin` na ponte nativa).
+  - **O evento de volta não se perde:** o plugin App guarda o `appUrlOpen` até alguém
+    ouvir (`retainUntilConsumed`). Por isso não uso `getLaunchUrl`, que devolveria o
+    mesmo endereço velho a cada recarga e poderia relogar depois de um "Sair".
+  - **Falta no Supabase:** `br.com.endodirect.app://login-callback` em Redirect URLs
+    (o professor; a ferramenta do Supabase não mexe na configuração do Auth).
+- **Testes:** `scripts/test-login-google-app-ios.js` no CI (site, Android e iPhone sem
+  o plugin no redirect de sempre; iPhone abre o navegador; leitura do retorno; sessão
+  uma vez só; Info.plist, config, plugins e `.vercelignore` combinando). 9 de 9 mutantes
+  pegos. A/B no Chromium com o supabase-js real (2.118.0, servido localmente porque o
+  CDN é bloqueado aqui): o site leva ao mesmo endereço de antes; no iPhone simulado o
+  login abre no navegador, a janela do app não navega e os retornos com erro e com
+  token inválido aparecem na tela de login, sem erro de JS.
+
 ## Caminho técnico
 
 - **Android:** Trusted Web Activity pelo PWABuilder (Bubblewrap), apontando para
@@ -176,7 +225,8 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   - O web push não funciona dentro de app no iPhone: precisa de notificação nativa
     (APNs) e do envio pelo servidor.
   - O Google bloqueia login dentro de WebView: o login do Google abre no navegador do
-    sistema (ASWebAuthenticationSession), com retorno por deep link.
+    sistema (por ora SFSafariViewController; ver "Projeto do app do iPhone"), com
+    retorno por deep link.
 - **As duas lojas exigem:**
   - exclusão de conta dentro do app, que apaga os dados, mais uma página pública;
   - política de privacidade dentro do app;
