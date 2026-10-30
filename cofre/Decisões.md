@@ -8,6 +8,10 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 LOTE 2 DAS DIRETRIZES, 2ª PARTE GRAVADA (2026-10-30).** 36 (HAC, ES 2018), 57 (eutireoideo doente, Fliers & Boelen 2021 + Langouche 2019) e 58 (Tireoidites, ATA 2016 + ETA 2018 + ATA 2026). Retomada depois da pausa pelo limite semanal; conferentes relançados (os de 25/10 morreram na interrupção).
+  - **Ponteiro para outra Diretriz tem de ser genérico.** No 58, o resumo dizia "Endocrinopatias por ICI, ESE 2022" — específico demais e possível atribuição errada (o item 62 no banco segue como Japan ES 2019). Virou "a tireoidite por ICI tem Diretriz própria na plataforma". Regra: ao apontar para outra Diretriz, não nomear diretriz/sociedade/ano — isso muda e vira erro.
+  - **Leitura prática que sai do próprio documento não é Nota.** No 36, a idade óssea anual "a partir dos 2 anos" vem da discussão da ES 2018 (p. 17), não é contexto brasileiro — então não leva "Nota Endodirect".
+  - Gravadas pela `gravar-diretriz` v9 (token/prazo novos), com backup, ensaio e conferência; v10 voltou ao 410. Zumbi ok (lote 2a e piloto intactos; total 233).
 - **🔒 LEITURA DO ACERVO FECHADA A NÃO-ADMIN (2026-10-30).** A pedido do professor ("apertar as permissões de tabela do acervo", "pode fazer"), e depois de confirmar o furo. A política de SELECT de `endodirect_global_state` era `using (true)` para `authenticated`: qualquer cadastro grátis baixava o acervo inteiro (16,7 MB) pela REST com a chave pública, furando a degustação.
   - **Conserto:** SELECT passa a exigir `endodirect_is_admin()`; `revoke all` do anon; tira TRUNCATE/REFERENCES/TRIGGER do authenticated. Arquivo `supabase/acervo-leitura-so-admin.sql`.
   - **Não quebra:** painel lê sob role admin; alunos pelas RPCs definer; servidor por service_role. Escritas já exigiam admin.

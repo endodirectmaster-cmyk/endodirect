@@ -69,7 +69,8 @@ atualizado: 2026-10-25
   (v5) em 2 minutos. **Token e prazo novos a cada ativação; nunca reaproveitar.**
   No lote 2 aconteceu de novo: a v6 foi publicada depois de 4 h de sessão parada, já com o
   prazo vencido; v7 com token e prazo novos (20 min) gravou 7, 14, 15, 25 e 59, e a v8 voltou
-  ao 410. Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
+  ao 410. Em 30/10, a v9 (token e prazo novos, 60 min) gravou 36, 57 e 58, e a v10 voltou ao
+  410, com o token apagado. Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
   depois por bytes, `", "` entre itens e `": "` entre chave e valor. O `pg()` de

@@ -274,21 +274,27 @@ completo.
   - No 25, conferi na Tabela 6 (p. 14) a hemorragia cerebral com teprotumumabe (1–4,9%).
   - **De novo a sessão parou ~4 h com a função a ser ativada:** a v6 saiu já com o prazo
     vencido (410). Reativei com token e prazo novos (v7, 20 min), gravei e voltei ao 410 (v8).
-- [ ] **Lote 2, 2ª parte:** 36 (ES 2018, HAC), 57 (revisões de 2021 e 2019) e 58 (ATA 2016 +
-  ETA 2018 + ATA 2026).
-  - **36:** o redator (`a9a711aaa49b7f3c3`) aplicou os 10 achados da conferência (0 graves)
-    e as 3 omissões, menos uma parte de um achado.
-    - Não rotulou de "Nota Endodirect" a leitura prática da 4.14 (idade óssea anual a partir
-      dos 2 anos), porque ela sai da discussão da própria p. 17.
-    - Deixou a errata no relatório.
-    - Ficou com 34.997 caracteres, e todas as checagens passam.
-    - Falta a minha conferência, inclusive dessa recusa, e a gravação.
-  - **57 e 58:** os conferentes foram parados pela pausa (25/10, 16h51 UTC), os dois já no
-    fim e ainda sem `conferencia.json`.
-    - Retomar por SendMessage: 57 `a0940a0ab59f91c6f`, 58 `a54f6e5f5b08d9fcf`.
-    - Redatores: 57 `aa695aa61786daa09`, 58 `a23be43f866e105d9`.
-    - No 58, o ponteiro de ICI tem de ser genérico.
-  - Gravar as três numa ativação só da `gravar-diretriz`, com token e prazo novos.
+- [x] **Lote 2, 2ª parte GRAVADA (30/10, 20h48 UTC):** 36, 57 e 58, numa ativação só da
+  `gravar-diretriz` (v9, token e prazo novos; v10 voltou ao 410, token apagado). Backup por
+  item, ensaio antes e conferência por SQL depois. `atEdit` 1793392391806.
+
+  | pos | tema | documento | md5 novo | resumo |
+  |---|---|---|---|---|
+  | 36 | HAC (21-hidroxilase) | Endocrine Society 2018 | `2521ebe9…` | 34.997 |
+  | 57 | Síndrome do eutireoideo doente | Fliers & Boelen 2021 + Langouche 2019 | `7172f295…` | 22.766 |
+  | 58 | Tireoidites | ATA 2016 + ETA 2018 + ATA 2026 | `0411e74e…` | 34.898 |
+
+  - Conferentes independentes (relançados em 30/10): 57 com 0 graves (4 menores editoriais,
+    aceitos); 58 com 1 grave — o ponteiro de ICI estava específico demais ("ESE 2022") e
+    possivelmente mal atribuído; deixei-o genérico ("tem Diretriz própria na plataforma") e
+    remontei. Minha conferência confirmou os checadores das três (confere-lote, n-grama só
+    com citações, graus 27/27 na 58, coerência).
+  - **36:** mantida a recusa do redator de rotular a leitura da 4.14 como "Nota Endodirect":
+    confirmei na fonte que *"after 2 years, we advise annual bone age assessment"* é do próprio
+    documento (p. 17), não contexto editorial.
+  - **58:** o campo `url` aponta para a ATA 2016 (documento mais amplo de tireoidites); os
+    três DOIs estão em "Sobre a diretriz". Decisão minha; o professor pode trocar por ETA 2018.
+  - Zumbi conferido: lote 2a (7, 14, 15, 25, 59) e piloto (18, 35) intactos; total 233.
 - [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
   documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
   `gravar-diretriz` (token e prazo novos a cada lote).
