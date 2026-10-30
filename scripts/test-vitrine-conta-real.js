@@ -16,11 +16,11 @@
 // entregando 161 itens PRIVADOS de assinante a quem pedisse. Estava aberto
 // desde 01/08/2026 e o cofre já registrava a causa desde 02/08.
 //
-// Fechado dando identidade de verdade à vitrine. Este teste guarda as três
-// pontas: a senha fora do bundle, a rota especial fora do cliente, e o login
-// caindo no Supabase — sem quebrar as outras contas locais, que dividem o
-// mesmo fluxo (é a ressalva que o cofre faz: o login é compartilhado com o
-// admin).
+// Fechado dando identidade de verdade à vitrine. Em 30/10/2026 saíram também as
+// contas de demonstração aluno@ e admin@: não há mais nenhuma conta local, e
+// todo login passa pelo Supabase. Este teste guarda as três pontas: nenhuma
+// senha no bundle, a rota especial fora do cliente, e todo login caindo no
+// Supabase.
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
@@ -30,20 +30,22 @@ const html = fs.readFileSync(path.join(REPO, 'index.html'), 'utf8');
 const falhas = [];
 const ok = (c, m) => { if (!c) falhas.push(m); };
 
-// ── 1. 🧨 NENHUMA SENHA DA VITRINE NO ARQUIVO SERVIDO ──────────────────────
+// ── 1. 🧨 NENHUMA SENHA LOCAL NO ARQUIVO SERVIDO ───────────────────────────
+// Desde 30/10/2026 não há mais conta local: nem a vitrine (alunopro, saiu em
+// 31/08), nem as contas de demonstração aluno@ e admin@. Este arquivo é servido
+// a qualquer um — um `curl` na home devolvia as senhas.
 {
-  ok(html.indexOf('AlunoPro@2026') < 0,
-    '🧨 a senha da vitrine voltou ao index.html — este arquivo é servido a qualquer um: `curl` na home a devolve');
-  // A entrada inteira tem de sair, não só a senha: enquanto `alunopro` estiver
-  // em USERS, a restauração de `demo_session` a ressuscita como conta local.
+  ['AlunoPro@2026', 'Aluno@2026', 'Admin@2026'].forEach((s) => {
+    ok(html.indexOf(s) < 0, '🧨 a senha de demonstração ' + s + ' voltou ao index.html — este arquivo é servido a qualquer um');
+  });
   const iU = html.indexOf('var USERS=[');
   const users = html.slice(iU, html.indexOf('\n];', iU));
-  ok(users.indexOf('alunopro@endodirect.com.br') < 0,
-    '🧨 `alunopro` voltou para `USERS` — mesmo sem senha, a restauração de `demo_session` a faria entrar como conta LOCAL, sem sessão no servidor');
-  // As demais contas locais continuam: o professor usa `aluno@` (degustação) e
-  // `admin@` no dia a dia, e elas não têm acesso a conteúdo de assinante.
-  ['aluno@endodirect.com.br', 'admin@endodirect.com.br'].forEach((e) => {
-    ok(users.indexOf(e) >= 0, '⚠️ a conta local `' + e + '` sumiu do bundle junto — não era para sair');
+  ok(!/pass:\s*'[^']+'/.test(users),
+    '🧨 alguma conta de USERS voltou a ter senha em texto puro — todo login tem de passar pelo Supabase');
+  // As contas de demonstração não podem voltar: mesmo sem senha, a restauração de
+  // `demo_session` as ressuscitaria como conta LOCAL, sem sessão no servidor.
+  ['alunopro@endodirect.com.br', 'aluno@endodirect.com.br', 'admin@endodirect.com.br'].forEach((e) => {
+    ok(users.indexOf(e) < 0, '🧨 a conta de demonstração `' + e + '` voltou para `USERS` — tem de entrar pelo Supabase, não por atalho local');
   });
 }
 
@@ -58,12 +60,10 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
     'o recarregamento dos Resumos deixou de usar a rota comum de assinante');
 }
 
-// ── 3. 🧨 O LOGIN DA VITRINE CAI NO SUPABASE (e o do admin, não) ───────────
-// O atalho local é `USERS.find(email && pass && pass===digitada)`. Com a
-// vitrine fora da lista ele não casa, e o fluxo segue para
-// `signInWithPassword`. ⚠️ O MESMO TRECHO ATENDE AS CONTAS DE ADMIN — o cofre
-// avisa que mexer aqui é mexer no login delas. Por isso as duas pontas são
-// exercitadas de verdade, não conferidas por texto.
+// ── 3. 🧨 TODO LOGIN CAI NO SUPABASE — NÃO HÁ ATALHO LOCAL ─────────────────
+// O atalho local é `USERS.find(email && pass && pass===digitada)`. Como nenhuma
+// conta de USERS tem mais `pass`, ele nunca casa e o fluxo segue sempre para
+// `signInWithPassword`. Exercitado de verdade, não conferido por texto.
 {
   const iU = html.indexOf('var USERS=[');
   const usersSrc = html.slice(iU, html.indexOf('\n];', iU) + 3);
@@ -90,21 +90,18 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
     return ctx.__res;
   }
 
-  const vitrine = tentar('alunopro@endodirect.com.br', 'AlunoPro@2026');
-  ok(vitrine.local === null,
-    '🧨 a vitrine voltou a entrar por atalho LOCAL, sem sessão no servidor — é a raiz do vazamento: nenhum gate consegue distingui-la de um visitante');
-  ok(vitrine.supabase === 'alunopro@endodirect.com.br',
-    '⚠️ o login da vitrine não chegou ao `signInWithPassword` — ela não conseguiria entrar de jeito nenhum');
+  // Nenhuma conta local sobrou: TODO login cai no Supabase, não há atalho local.
+  [['alunopro@endodirect.com.br', 'AlunoPro@2026'],
+   ['admin@endodirect.com.br', 'Admin@2026'],
+   ['aluno@endodirect.com.br', 'Aluno@2026']].forEach((par) => {
+    const r = tentar(par[0], par[1]);
+    ok(r.local === null,
+      '🧨 ' + par[0] + ' entrou por atalho LOCAL, sem sessão no servidor — era essa a raiz do vazamento');
+    ok(r.supabase === par[0],
+      '⚠️ o login de ' + par[0] + ' não chegou ao `signInWithPassword`');
+  });
 
-  // ⚠️ A OUTRA PONTA: as contas locais que sobraram NÃO podem ter quebrado.
-  const admin = tentar('admin@endodirect.com.br', 'Admin@2026');
-  ok(admin.local === 'admin@endodirect.com.br',
-    '🧨 o login local do ADMIN parou de funcionar — é o risco que o cofre aponta ao mexer neste trecho');
-  ok(admin.supabase === null, 'o login do admin local não devia ir para o Supabase');
-  const degus = tentar('aluno@endodirect.com.br', 'Aluno@2026');
-  ok(degus.local === 'aluno@endodirect.com.br', '⚠️ a conta de degustação parou de entrar');
-
-  // Senha errada não pode virar atalho para ninguém.
+  // Senha errada também cai no Supabase (que a recusa), nunca em atalho local.
   const errada = tentar('admin@endodirect.com.br', 'senha-errada');
   ok(errada.local === null, '🧨 senha errada entrou pelo atalho local');
 }
@@ -120,4 +117,4 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
-console.log('✓ vitrine: conta real (senha fora do bundle, login pelo Supabase), rota aberta desligada e contas locais restantes intactas');
+console.log('✓ vitrine: sem contas locais (nenhuma senha no bundle, todo login pelo Supabase) e rota aberta desligada');
