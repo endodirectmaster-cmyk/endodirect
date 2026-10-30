@@ -42,6 +42,13 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   - **Google:** até 30 dias ou mais. O nome jurídico e o endereço do perfil de pagamentos
     do Google têm de ser iguais aos da D&B.
   - O D-U-N-S é gratuito: não pagar "serviço expresso" nem intermediário.
+- **29/10, 13h11 UTC:** D-U-N-S EMITIDO. E-mail da D&B (não responder): caso 11138655
+  resolvido, "D-U-N-S Number created", "Verified through national registry". Número
+  **763009852**, razão social ENDODIRECT CURSOS EM ENDOCRINOLOGIA E METABOLOGIA LTDA,
+  nome fantasia ENDODIRECT. Endereço e telefone estão no e-mail do professor (não
+  copiados aqui porque o repositório é público). Saiu em ~8 dias úteis, dentro do prazo.
+  - Próximo: abrir a conta de organização na Apple (US$ 99/ano) e no Google Play
+    (US$ 25) com este D-U-N-S, a mesma razão social e o mesmo endereço.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
