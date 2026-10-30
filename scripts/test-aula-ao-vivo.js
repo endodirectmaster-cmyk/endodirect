@@ -153,6 +153,21 @@ for(const [fn,rotulo] of [['lpAoVivoBanner','banner da landing'],['aoVivoAplicar
 ok(/id==='aovivo'&&!AO_VIVO_ATIVO/.test(corpo('goPanel')),
   'goPanel não desvia o painel aovivo com a chave desligada — link/hash antigo abriria uma tela morta');
 
+// 🧨 O BOTÃO DA FAIXA DA LANDING (achado em 30/10/2026, com a chave desligada).
+// "Criar conta e assistir" tinha onclick="showLoginScreen()", mas o código do
+// site roda num IIFE e a função não é global: o clique dava ReferenceError e o
+// visitante sem conta ficava parado. Religar a chave traria o botão morto de
+// volta. Ele vai pela delegação da landing, como os outros botões.
+{
+  const i=html.indexOf('<div id="lp-aovivo"');
+  const faixa=html.slice(i,html.indexOf('</div>',i));
+  ok(i>=0&&!/\sonclick=/.test(faixa),'a faixa da aula ao vivo voltou a usar onclick — as funções do site não são globais, o clique dá ReferenceError');
+  ok(/<button id="lp-aovivo-cta" data-modo="cadastro"/.test(faixa),'o botão da faixa perdeu o id (ou o modo cadastro) que a delegação da landing usa');
+  ok(/closest\('\.lp-cta,#lp-aovivo-cta'\)/.test(html)&&/data-modo'\)==='cadastro'&&window\.__setLoginMode\)window\.__setLoginMode\('cadastro'\)/.test(html),
+    'a delegação da landing não cobre o botão da faixa, ou não abre no cadastro');
+  ok(!/<[^>]*\sonclick="[^"]*showLoginScreen\(/.test(html),'algum botão voltou a chamar showLoginScreen() por onclick — não é global, dá ReferenceError');
+}
+
 if(falhas.length){
   console.error('✗ aula ao vivo:');
   falhas.forEach(f=>console.error('  - '+f));

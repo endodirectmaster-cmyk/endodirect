@@ -2054,18 +2054,18 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
   <div id="lp-aovivo" style="display:none;background:linear-gradient(90deg,#7f1d1d,#b91c1c);color:#fff;padding:.7rem 1rem;text-align:center;font-size:.86rem;line-height:1.5">
     <span class="aovivo-dot" style="vertical-align:middle;margin-right:.4rem"></span>
     <b id="lp-aovivo-txt"></b>
-    <button onclick="showLoginScreen()" style="margin-left:.7rem;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:.35rem .9rem;font-weight:700;font-size:.8rem;cursor:pointer">Criar conta e assistir</button>
+    <button id="lp-aovivo-cta" data-modo="cadastro" style="margin-left:.7rem;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:.35rem .9rem;font-weight:700;font-size:.8rem;cursor:pointer">Criar conta e assistir</button>
   </div>
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
     <div class="lp-brand"><img src="logo.png.png" alt="Endodirect">Endodirect</div>
-    <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
+    <button class="lp-cta">Acessar a plataforma</button>
   </div></div>
   <div class="lp-wrap">
     <section class="lp-hero">
       <h1>A plataforma completa de <span>Endocrinologia</span> e Metabologia</h1>
       <p>Mais de 3 mil questões comentadas, mais de 2 mil flashcards, mapas mentais, simulados, prescrição e um assistente de IA — para quem quer se aprofundar e se manter atualizado. Baseado nas principais diretrizes (SBEM, SBD, ADA).</p>
       <div class="lp-hero-btns">
-        <button class="lp-cta" onclick="showLoginScreen()">Acessar a plataforma</button>
+        <button class="lp-cta">Acessar a plataforma</button>
         <a class="lp-ghost" href="#planos">Ver planos</a>
       </div>
     </section>
@@ -9295,10 +9295,98 @@ function startSupabaseAuthWatcher(){
     }
   });
 }
+// ── LOGIN COM GOOGLE NO APP DO IPHONE (Capacitor, pasta app-ios/) ──
+// ⚠️ POR QUE EXISTE (30/10/2026). O Google recusa login dentro da janela embutida
+// de um app (WKWebView: erro "disallowed_useragent"). No app do iPhone o login
+// abre no navegador do sistema (SFSafariViewController, plugin Browser) e volta
+// para o app pelo endereço próprio abaixo, registrado no Info.plist do app. O
+// Supabase devolve os tokens no "#" desse endereço; o setSession entra, e o
+// SIGNED_IN segue o caminho de sempre (onAuthStateChange → loginFromSupabaseSession).
+// No site (navegador e PWA) e no app do Android nada muda: appNativoIOS() é falso
+// e o startGoogleOAuth faz o redirect de sempre.
+// ⚠️ O endereço tem de estar na allowlist do Supabase (Authentication → URL
+// Configuration → Redirect URLs). Sem ele, o Supabase cai no Site URL e o login
+// acontece dentro do navegador, não no app.
+var APP_IOS_RETORNO_LOGIN='br.com.endodirect.app://login-callback';
+function appNativoIOS(){
+  try{var C=window.Capacitor;return !!(C&&typeof C.isNativePlatform==='function'&&C.isNativePlatform()&&typeof C.getPlatform==='function'&&C.getPlatform()==='ios');}catch(e){return false;}
+}
+// A página vem do site (server.url), sem o @capacitor/core empacotado: o app
+// injeta os plugins prontos em Capacitor.Plugins.
+function pluginNativo(nome){
+  try{var C=window.Capacitor;if(!C||!C.Plugins||!Object.prototype.hasOwnProperty.call(C.Plugins,nome))return null;return C.Plugins[nome]||null;}catch(e){return null;}
+}
+// Parâmetros do retorno do login (no "?" e no "#"). null quando a URL não é o
+// retorno: outros links que abram o app passam direto.
+function lerRetornoLoginApp(url){
+  url=String(url||'');
+  if(url.indexOf(APP_IOS_RETORNO_LOGIN)!==0)return null;
+  var resto=url.slice(APP_IOS_RETORNO_LOGIN.length);
+  if(resto&&resto!=='/'&&!/^\/?[?#]/.test(resto))return null;
+  var p={};
+  [resto.split('#')[0].split('?')[1]||'',resto.split('#')[1]||''].forEach(function(s){
+    try{new URLSearchParams(s).forEach(function(v,k){if(!(k in p))p[k]=v;});}catch(e){}
+  });
+  return p;
+}
+var retornoLoginAppFeito=''; // o mesmo retorno não entra duas vezes
+function tratarRetornoLoginApp(url){
+  var p=lerRetornoLoginApp(url);
+  if(!p)return false;
+  var navegador=pluginNativo('Browser');
+  if(navegador&&typeof navegador.close==='function'){try{Promise.resolve(navegador.close()).catch(function(){});}catch(e){}}
+  if(p.error||p.error_description){
+    showLoginError('Não foi possível entrar com o Google: '+(p.error_description||p.error)+'. Tente de novo ou entre com e-mail e senha.');
+    return true;
+  }
+  if(!p.access_token||!p.refresh_token){
+    showLoginError('O login com o Google não voltou completo. Tente de novo ou entre com e-mail e senha.');
+    return true;
+  }
+  if(retornoLoginAppFeito===p.access_token)return true;
+  retornoLoginAppFeito=p.access_token;
+  var client=getSupabaseClient();
+  if(!client){showLoginError('Supabase ainda nao carregou. Feche e abra o app e tente novamente.');return true;}
+  loggingOut=false; // login deliberado: libera o SIGNED_IN novamente
+  client.auth.setSession({access_token:p.access_token,refresh_token:p.refresh_token}).then(function(res){
+    if(res&&res.error)throw res.error;
+  }).catch(function(e){
+    showLoginError('Não foi possível concluir o login com o Google: '+((e&&e.message)||'tente de novo')+'.');
+    console.warn('setSession (app iOS)',e);
+  });
+  return true;
+}
+// O plugin App guarda o evento até alguém ouvir (retainUntilConsumed): um
+// retorno que chegue antes deste registro não se perde.
+function iniciarRetornoLoginApp(){
+  if(!appNativoIOS())return;
+  var A=pluginNativo('App');
+  if(!A||typeof A.addListener!=='function')return;
+  try{A.addListener('appUrlOpen',function(ev){tratarRetornoLoginApp(ev&&ev.url);});}catch(e){console.warn('appUrlOpen (app iOS)',e);}
+}
 function startGoogleOAuth(){
   var client=getSupabaseClient();
   if(!client){
     showLoginError('Supabase ainda nao carregou. Atualize a pagina (F5) e tente novamente.');
+    return;
+  }
+  // App do iPhone: o login abre no navegador do sistema e volta pelo
+  // APP_IOS_RETORNO_LOGIN (ver acima). Sem o plugin, segue o caminho do site.
+  var navegador=appNativoIOS()?pluginNativo('Browser'):null;
+  if(navegador&&typeof navegador.open==='function'){
+    clearLoginError();
+    client.auth.signInWithOAuth({
+      provider:'google',
+      options:{redirectTo:APP_IOS_RETORNO_LOGIN,skipBrowserRedirect:true,queryParams:{prompt:'select_account'}}
+    }).then(function(res){
+      if(res&&res.error)throw res.error;
+      var url=res&&res.data&&res.data.url;
+      if(!url)throw new Error('o Supabase não devolveu o endereço do login');
+      return navegador.open({url:url});
+    }).catch(function(e){
+      showLoginError('Não foi possível abrir o login com o Google: '+((e&&e.message)||'tente novamente')+'. Você também pode entrar com e-mail e senha.');
+      console.warn('Supabase OAuth error (app iOS)',e);
+    });
     return;
   }
   // Login Google REAL via Supabase, chamado direto. Antes havia um "preflight"
@@ -22412,9 +22500,13 @@ document.addEventListener('DOMContentLoaded',function(){setupOnboardProfileChoic
 document.addEventListener('DOMContentLoaded',function(){
   var _yr=new Date().getFullYear();var lpy=document.getElementById('lp-year');if(lpy)lpy.textContent=_yr;var lgy=document.getElementById('login-year');if(lgy)lgy.textContent=_yr;
   // CTAs da landing: botões de plano (data-checkout) vão para a compra;
-  // os demais ("Acessar a plataforma") vão para o login.
+  // os demais ("Acessar a plataforma") vão para o login. O "Criar conta e
+  // assistir" da faixa da aula ao vivo abre já no cadastro.
+  // ⚠️ Nada de onclick="showLoginScreen()" no HTML: este código roda num IIFE,
+  // a função não é global e o clique dava ReferenceError (o botão da faixa não
+  // fazia nada; achado em 30/10/2026, com a aula ao vivo desligada).
   var lpEl=document.getElementById('landing-screen');
-  if(lpEl)lpEl.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.lp-cta'):null;if(!b)return;e.preventDefault();var co=b.getAttribute('data-checkout');if(co){if(b.getAttribute('data-cycle')==='anual')window.__lpCycle='anual';var cp=b.getAttribute('data-coupon');if(cp)window.__lpCoupon=cp;goCheckout(co);}else{showLoginScreen();}});
+  if(lpEl)lpEl.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('.lp-cta,#lp-aovivo-cta'):null;if(!b)return;e.preventDefault();var co=b.getAttribute('data-checkout');if(co){if(b.getAttribute('data-cycle')==='anual')window.__lpCycle='anual';var cp=b.getAttribute('data-coupon');if(cp)window.__lpCoupon=cp;goCheckout(co);}else{showLoginScreen();if(b.getAttribute('data-modo')==='cadastro'&&window.__setLoginMode)window.__setLoginMode('cadastro');}});
   // Recuperação de senha e retorno de links de e-mail (confirmação de cadastro,
   // magic link) caem na tela de login — nunca na landing. Se o link trouxe sessão,
   // o watcher loga e leva direto ao dashboard; senão, fica no login com aviso.
@@ -22447,6 +22539,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   }catch(e){}
   startSupabaseAuthWatcher();
+  iniciarRetornoLoginApp(); // app do iPhone: retorno do login com Google
   // Restaura sessão de conta demo no reload (logins de teste não têm sessão
   // Supabase). demo_session só fica setado quando o último login foi demo
   // (login real e logout limpam), então restaurar aqui não conflita.

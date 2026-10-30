@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-25
+atualizado: 2026-10-30
 ---
 
 # Decisões
@@ -8,6 +8,12 @@ atualizado: 2026-10-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📱 APP DO IPHONE: PROJETO MONTADO E LOGIN COM GOOGLE PELO NAVEGADOR DO SISTEMA (2026-10-30).** O professor perguntou o próximo passo na Apple (inscrever a empresa no Apple Developer Program, com o D-U-N-S 763009852) e disse *"Pode começar"* para a parte que não depende da conta.
+  - **Projeto:** `app-ios/` (Capacitor 8.5.3, SPM), abre `https://www.endodirect.com.br/?app=ios`, página "Sem conexão" local, ícone e abertura, esquema `br.com.endodirect.app` no Info.plist. Roteiro do Mac e do App Store Connect em `app-ios/LEIA-ME.md`. Fora do site publicado (`.vercelignore`).
+  - **Login com Google:** no iPhone abre no navegador do sistema (plugin Browser) e volta por `br.com.endodirect.app://login-callback`, que vira sessão pelo `setSession`. Site e Android intactos (A/B no Chromium com o supabase-js real). Escolhi SFSafariViewController em vez de ASWebAuthenticationSession: plugin oficial, sem Swift que eu não compilo aqui; o custo é o "Abrir no Endodirect?" na volta.
+  - **Falta do professor:** a URL de retorno nas Redirect URLs do Supabase; a conta da Apple. Depois da conta: "Entrar com a Apple" (4.8), APNs e o ícone em alta.
+  - **Achado de passagem (latente):** o "Criar conta e assistir" da faixa da aula ao vivo na landing tinha `onclick="showLoginScreen()"`, mas a função vive dentro do IIFE do site: o clique dava ReferenceError e não fazia nada. A faixa está desligada desde 07/08 (`AO_VIVO_ATIVO=false`), então ninguém foi afetado; quebraria ao religar. O botão passou para a delegação da landing e abre já no cadastro; os dois "Acessar a plataforma" perderam o `onclick` que só gerava erro. Guarda em `test-aula-ao-vivo.js`. A janela de mapa mental da landing (`lp-mm-modal`) tem o mesmo defeito no "Fechar", mas nada a abre (`showMMModal` sem chamador): ficou como está.
+  - `sw.js` v326→v327.
 - **📋 LOTE 2 DAS DIRETRIZES, 2ª PARTE GRAVADA (2026-10-30).** 36 (HAC, ES 2018), 57 (eutireoideo doente, Fliers & Boelen 2021 + Langouche 2019) e 58 (Tireoidites, ATA 2016 + ETA 2018 + ATA 2026). Retomada depois da pausa pelo limite semanal; conferentes relançados (os de 25/10 morreram na interrupção).
   - **Ponteiro para outra Diretriz tem de ser genérico.** No 58, o resumo dizia "Endocrinopatias por ICI, ESE 2022" — específico demais e possível atribuição errada (o item 62 no banco segue como Japan ES 2019). Virou "a tireoidite por ICI tem Diretriz própria na plataforma". Regra: ao apontar para outra Diretriz, não nomear diretriz/sociedade/ano — isso muda e vira erro.
   - **Leitura prática que sai do próprio documento não é Nota.** No 36, a idade óssea anual "a partir dos 2 anos" vem da discussão da ES 2018 (p. 17), não é contexto brasileiro — então não leva "Nota Endodirect".
