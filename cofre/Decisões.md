@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-10-30
+atualizado: 2026-10-31
 ---
 
 # Decisões
@@ -8,6 +8,11 @@ atualizado: 2026-10-30
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 LOTES 3 E 4 DAS DIRETRIZES GRAVADOS (2026-10-31, 04h26 UTC).** 62 (ICI, ESE 2022), 216 (hipogonadismo masculino, SBEM/SBU/ABEMSS 2026), 30 (POI, ESHRE 2024) e 63 (McCune-Albright, consórcio FD/MAS 2019). O professor pediu poucas para gastar poucos créditos, liberou mais duas e deu permissão total para rodar de madrugada.
+  - **Critério de escolha para economizar:** documento completo já baixado do PMC (texto por `curl`, sem passar pelo contexto) e curto (~10 mil palavras). Ficaram para depois os temas cuja fonte cobre só metade (21: SIADH sem documento) ou só os critérios (19: acromegalia).
+  - **Grave da 63 conferido por mim na Tabela 3:** pamidronato do adulto é 90 mg por dia em 2 dias seguidos (90 mg × 2), não 90 mg no total.
+  - **De novo a função venceu antes de entrar no ar:** a sessão reiniciou entre gerar o token e o deploy. Regra reforçada: token e prazo gerados no minuto do deploy.
+  - Detalhes, tabela e divergências dos capítulos em [[Pendências]].
 - **📱 APP DO IPHONE: PROJETO MONTADO E LOGIN COM GOOGLE PELO NAVEGADOR DO SISTEMA (2026-10-30).** O professor perguntou o próximo passo na Apple (inscrever a empresa no Apple Developer Program, com o D-U-N-S 763009852) e disse *"Pode começar"* para a parte que não depende da conta.
   - **Projeto:** `app-ios/` (Capacitor 8.5.3, SPM), abre `https://www.endodirect.com.br/?app=ios`, página "Sem conexão" local, ícone e abertura, esquema `br.com.endodirect.app` no Info.plist. Roteiro do Mac e do App Store Connect em `app-ios/LEIA-ME.md`. Fora do site publicado (`.vercelignore`).
   - **Login com Google:** no iPhone abre no navegador do sistema (plugin Browser) e volta por `br.com.endodirect.app://login-callback`, que vira sessão pelo `setSession`. Site e Android intactos (A/B no Chromium com o supabase-js real). Escolhi SFSafariViewController em vez de ASWebAuthenticationSession: plugin oficial, sem Swift que eu não compilo aqui; o custo é o "Abrir no Endodirect?" na volta.

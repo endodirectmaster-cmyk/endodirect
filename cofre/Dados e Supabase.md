@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-10-25
+atualizado: 2026-10-31
 ---
 
 # Dados e Supabase
@@ -70,7 +70,11 @@ atualizado: 2026-10-25
   No lote 2 aconteceu de novo: a v6 foi publicada depois de 4 h de sessão parada, já com o
   prazo vencido; v7 com token e prazo novos (20 min) gravou 7, 14, 15, 25 e 59, e a v8 voltou
   ao 410. Em 30/10, a v9 (token e prazo novos, 60 min) gravou 36, 57 e 58, e a v10 voltou ao
-  410, com o token apagado. Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
+  410, com o token apagado. Em 31/10 (lotes 3 e 4) a sessão reiniciou entre a preparação e o
+  deploy: a v11 entrou no ar já vencida (410). A v12, com token e prazo novos gerados no
+  minuto do deploy, gravou 62, 216, 30 e 63 em 30 s, e a v13 voltou ao 410, com o token
+  apagado. **Gerar token e prazo imediatamente antes do deploy, nunca antes de outra etapa.**
+  Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
   depois por bytes, `", "` entre itens e `": "` entre chave e valor. O `pg()` de

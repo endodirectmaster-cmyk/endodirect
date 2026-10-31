@@ -295,6 +295,41 @@ completo.
   - **58:** o campo `url` aponta para a ATA 2016 (documento mais amplo de tireoidites); os
     três DOIs estão em "Sobre a diretriz". Decisão minha; o professor pode trocar por ETA 2018.
   - Zumbi conferido: lote 2a (7, 14, 15, 25, 59) e piloto (18, 35) intactos; total 233.
+- [x] **Lotes 3 e 4 GRAVADOS (31/10, 04h26 UTC):** 62, 216, 30 e 63. Pedido do professor:
+  *"faça poucas, para consumir poucos créditos"* e depois *"se quiser escolher mais 2"*;
+  rodou de madrugada com a permissão dele (*"dou total permissão, pois vou dormir"*).
+  Escolhidas por terem documento completo já baixado do PMC (acesso aberto, CC BY) e serem
+  curtas (~10 mil palavras). Gravação pela `gravar-diretriz` v12 (ver [[Dados e Supabase]]),
+  backup por item (`main-antes-diretriz-<pos>-lote-2026-10-31`), ensaio antes (md5 do
+  servidor = local nos quatro) e conferência por SQL depois. `atEdit` 1793420664761.
+
+  | pos | tema | documento | md5 novo | resumo |
+  |---|---|---|---|---|
+  | 62 | Endocrinopatias por ICI | ESE 2022 (34 recomendações; antes, japonesa 2019) | `efa9af6d…` | 36.730 |
+  | 216 | Hipogonadismo masculino | SBEM/SBU/ABEMSS 2026 (32 recomendações) | `6b759a03…` | 34.552 |
+  | 30 | Insuficiência ovariana prematura | ESHRE/ASRM/CRE/IMS 2024 (145 recomendações) | `107e9d1d…` | 29.421 |
+  | 63 | McCune-Albright | Consórcio FD/MAS 2019 (Delphi, sem graus) | `d35b4fe1…` | 33.098 |
+
+  - Todas com 25 pts, 25 flashcards, mapa de 7 ramos e 3–4 fluxogramas. A 216 não tinha
+    flashcards, mapa nem fluxograma.
+  - Conferentes independentes: 0 graves na 62 (12 menores), na 216 (11) e na 30 (9); na 63,
+    **1 grave**, que conferi na Tabela 3 antes de aceitar: "90 mg em 2 dias seguidos" lia-se
+    como 90 mg no total; o documento dá 90 mg **por dia** em 2 dias seguidos (90 mg × 2), a
+    cada 6 meses. Todos os achados foram aplicados por troca exata, com as frases conferidas
+    na fonte; depois, confere-lote, n-grama, checa_resumo e coerência limpos nas quatro.
+  - Na 62, um parágrafo (orbitopatia) acompanhava o original frase a frase: reescrito com
+    outra estrutura. Na 216 saiu a Nota Endodirect sobre classes e níveis (o documento nem
+    sempre segue o esquema); ficou só o fato de que ele não publica a tabela.
+  - Notas Endodirect mantidas: conversões de unidade na 62; "52mcg" da Figura 3 da ESHRE
+    (o SIU tem 52 mg) na 30; discrepância das doses pediátricas de fosfato na 63.
+  - Zumbi conferido logo depois: as 16 gravadas antes (piloto, lote 1, 2a e 2b) intactas;
+    total 233.
+  - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (só com a
+    orientação do professor): cap. 164 × ESE 2022 (critério de levotiroxina, cortes de
+    cortisol, dose de pulso, suspender o ICI na crise, intervalo do rastreio); caps. 116 e
+    117 × SBEM 2026 (US testicular, alvo 400–700, enantato, PSA anual, PSA alto como
+    contraindicação relativa); cap. 124 × ESHRE 2024 (números sem lastro: gravidez ~5–10%,
+    doses de cálcio e vitamina D; transdérmica "de escolha").
 - [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
   documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
   `gravar-diretriz` (token e prazo novos a cada lote).
