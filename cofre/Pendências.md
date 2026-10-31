@@ -734,11 +734,15 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
    - **150 (desde 17/10):** diz que os receptores de membrana agem "sem depender de
      transcrição", mas na via JAK-STAT a STAT vai ao núcleo.
 4. [ ] **Professor:** dar retorno sobre o estilo das ilustrações.
-5. [ ] **Diretriz 13 (Hiperaldosteronismo primário, ES 2025): proposta ao professor em 31/10.**
+5. ✅ **Diretriz 13 (Hiperaldosteronismo primário, ES 2025): corrigida em 31/10** (professor:
+   *"Deixar conforme orientação da diretriz de 2025"*). Backup
+   `main-antes-diretriz13-rastreio-2026-10-31`; md5 `26cbe01b` → `9867f89a`. Mudaram o parágrafo dos
+   interferentes, o ponto-chave 2, a resposta do flashcard 2 (pergunta mantida) e um rótulo do mapa;
+   o fluxograma já mandava repetir quando o resultado pode ser falso. Antes:
    O texto manda suspender MRA/ENaC/diuréticos por 4 semanas e IECA/BRA por 2 semanas *antes*
    de dosar. A ES 2025 (10.1210/clinem/dgaf284) permite o rastreio inicial **sem suspender**
    (renina suprimida sob fármacos que a elevam já é positivo) e deixa a retirada mínima como
-   alternativa. O cap. 91 já está certo. Esperando aprovação para corrigir a Diretriz.
+   alternativa. O cap. 91 já estava certo.
 
 ## 🧹 Questão do Dia: conteúdo apontado na varredura de jargão (17/10)
 
