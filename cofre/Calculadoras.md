@@ -67,6 +67,19 @@ só as notas dos eventos maiores (seção 1) e dos estratificadores do diabetes 
 v332. Por fim, com print: o subtítulo da esteatose ficou só "sobretudo com fibrose" (saiu "(FIB-4,
 seção 2) ou com fatores cardiometabólicos"). `sw.js` v333.
 
+**Sem hipertensão diagnosticada, sem diálise e sem a linha da DASCV (31/10, depois):** com três
+prints, o professor escreveu *"Retirar"*: a pergunta "Hipertensão arterial (diagnóstico, tratada ou
+não)", a pergunta "Diálise" e a linha "DASCV em 10 anos: X% — é a DASCV que a SBC usa…" embaixo do
+número grande.
+- **Hipertensão:** agora vem do "Usa anti-hipertensivo", como na fórmula original (sim → sim, não →
+  não, não sei → em aberto). A PAS ≥ 140 sem tratamento continua virando pendência no motor.
+- **Diálise:** a pergunta saiu; o motor ainda trata a diálise se um dia ela voltar a ser enviada.
+- **DASCV:** saiu do destaque, que ficou só com o selo e o número da DCV total. A DASCV continua
+  no bloco detalhado do PREVENT, marcada como "o que a SBC usa".
+- `sw.js` v334. Conferido: `test-risco-cv-sbc.js` (perguntas ausentes, hipertensão pelo
+  anti-hipertensivo, destaque sem DASCV), ci-validate e Chromium (computador e celular, sem erro de
+  JS, sem rolagem lateral, categoria igual: alto).
+
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
 testes de "usa estatina"), `test-ldl-martin-hopkins.js` (a de risco CV só com o LDL-c do laudo),

@@ -811,12 +811,20 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   ok(Math.abs(x4.fib4 - 61 * 40 / (200 * Math.sqrt(30))) < 1e-12 && x4.d.fib4 === x4.fib4, '(8) rcvDados calcula o FIB-4 com a idade do formulário');
   ok(/<b>TGO\/TGP:<\/b> 40 \/ 30 U\/L/.test(M.rcvResumoDados(x4)) && /<b>Plaquetas:<\/b> 200 mil\/mm³/.test(M.rcvResumoDados(x4)) && /<b>FIB-4:<\/b> 2,23/.test(M.rcvResumoDados(x4)),
     '(8) o relatório impresso traz TGO, TGP, plaquetas e FIB-4');
-  // O destaque, como a figura: o selo, o risco em 10 anos (DCV total) em número grande
-  // e, logo abaixo, a DASCV, que é o que a SBC usa.
+  // O destaque, como a figura: o selo e o risco em 10 anos (DCV total) em número grande.
+  // A linha da DASCV saiu a pedido do professor (31/10); a DASCV segue no detalhado do PREVENT.
   const dp = M.rcvDestaqueHTML(xn);
   ok(/<span class="tag tag-red rcv-pill">Risco alto<\/span>/.test(dp) && dp.indexOf('<div class="rcv-big rcv-c-red">' + M.sbcN(xn.r.cvd, 1) + '%</div>') > 0
-    && /Risco em 10 anos · doença cardiovascular total \(PREVENT\)/.test(dp) && dp.indexOf('DASCV em 10 anos: <b>' + M.sbcN(xn.r.ascvd, 1) + '%</b>') > 0 && /é a DASCV que a SBC usa para categorizar/.test(dp),
-    '(8) destaque: selo, DCV total em 10 anos em número grande e a DASCV com o aviso de que é ela que a SBC usa');
+    && /Risco em 10 anos · doença cardiovascular total \(PREVENT\)/.test(dp) && !/DASCV/.test(dp) && !/rcv-big2/.test(dp) && !/categorizar/.test(dp),
+    '(8) destaque: selo e DCV total em 10 anos em número grande, sem a linha da DASCV');
+  ok(/DASCV|aterosclerótica/i.test(M.rcvPreventHTML(xn)), '(8) a DASCV continua no resultado detalhado do PREVENT');
+  // Perguntas que saíram a pedido do professor (31/10): diagnóstico de hipertensão e diálise.
+  ok(!/data-rcv-k="has"/.test(f) && !/Hipertensão arterial \(diagnóstico/.test(f) && !/data-rcv-k="dial"/.test(f) && !/>Diálise</.test(f) && /data-rcv-k="ahas"/.test(f),
+    '(8) sem as perguntas de diagnóstico de hipertensão e de diálise; o uso de anti-hipertensivo fica');
+  const semHas = Object.assign({}, PRIM); delete semHas.has;
+  ok(M.rcvDados(Object.assign({}, semHas, { ahas: 'sim' }), 2026).d.has === true && M.rcvDados(Object.assign({}, semHas, { ahas: 'nao' }), 2026).d.has === false
+    && M.rcvDados(Object.assign({}, semHas, { ahas: 'ns' }), 2026).d.has === null,
+    '(8) a hipertensão vem do uso de anti-hipertensivo (sim → sim, não → não, não sei → em aberto)');
   const ds = M.rcvDestaqueHTML(M.rcvDados(SEC, 2026));
   ok(/rcv-pill">Risco extremo</.test(ds) && !/rcv-big"/.test(ds) && !/rcv-big /.test(ds) && /Sem escore: com doença aterosclerótica/.test(ds), '(8) em prevenção secundária, o selo sem número, e o porquê');
   ok(/rcv-pill">Risco intermediário</.test(M.rcvDestaqueHTML(M.rcvDados(Object.assign({}, PRIM, { pcr: '1' }), 2026))) && /rcv-c-gold/.test(M.rcvDestaqueHTML(M.rcvDados(Object.assign({}, PRIM, { pcr: '1' }), 2026))),

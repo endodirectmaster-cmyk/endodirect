@@ -4504,7 +4504,10 @@ function rcvDados(e,ano){
   var est=e.est==='sim'?'sim':(e.est==='nao'?'nao':null);
   // Leitura E-27: conta como hipertensão o diagnóstico informado OU o uso de
   // anti-hipertensivo; PAS alta isolada só vira pendência.
-  var has=(e.has==='sim'||e.ahas==='sim')?true:(e.has==='nao'?false:null);
+  // 31/10/2026 (pedido do professor): sem a pergunta do diagnóstico, a hipertensão vem do uso de
+  // anti-hipertensivo, como na fórmula original; "não usa" conta como "não". A PAS ≥ 140 sem
+  // tratamento continua virando pendência no motor (leitura E-27). `e.has` só se ainda vier.
+  var has=(e.has==='sim'||e.ahas==='sim')?true:((e.has==='nao'||e.ahas==='nao')?false:null);
   var lpa=((e.lpa_un==='mg'||e.lpa_un==='nmol')&&isFinite(n('lpa')))?{v:n('lpa'),un:e.lpa_un}:null;
   var cacFez=e.cac_f==='sim';
   var ag={};
@@ -4522,6 +4525,8 @@ function rcvDados(e,ano){
     ct:ct,hdl:hdl,ldl:ldl,ldlBasal:NaN,apob:n('apob'),
     trat:{estatina:est},ast:ast,alt:alt,plaq:plaq,fib4:fib4,
     lpa:lpa,pcr:n('pcr'),has:has,tabagismo:tri('tab'),tfge:tfge,rac:n('rac'),
+    // A pergunta da diálise saiu do formulário em 31/10/2026 (pedido do professor); o motor e as
+    // telas ainda tratam a diálise se ela vier.
     dialise:e.dial==='hemo'?'hemo':(e.dial==='dp'?'peritoneal':(e.dial==='nao'?'nao':null)),
     hf:tri('hf'),pas:pas,pad:n('pad'),hba1c:n('hba1c'),
     nac:({ausente:'ausente',incipiente:'incipiente',instalada:'instalada'})[e.nac]||null,
@@ -4592,7 +4597,6 @@ function rcvFormHTML(e){
       +'<div class="rcv-campos">'+rcvNum('ast','TGO/AST (U/L)',e)+rcvNum('alt','TGP/ALT (U/L)',e)+rcvNum('plaq','Plaquetas (mil/mm³)',e,'fib4')+'</div>')
     +sec(3,'Tratamentos e hábitos',
       '<div class="rcv-qs">'+rcvSeg('tab','Tabagismo atual',SN,e)
-      +rcvSeg('has','Hipertensão arterial (diagnóstico, tratada ou não)',SNN,e)
       +rcvSeg('ahas','Usa anti-hipertensivo',SN,e)
       +rcvSeg('est','Usa estatina',SN,e)+'</div>')
     +sec(4,'Diabetes',
@@ -4611,7 +4615,7 @@ function rcvFormHTML(e){
       +rcvSeg('obstr','Estenose ≥ 50% em outro território (aorta, ilíacas, membros, renais)',[['na','Não avaliada'],['nao','Não'],['sim','Sim']],e)
       +rcvSeg('aaa','Aneurisma de aorta abdominal',SNN,e)
       +rcvSeg('hf','Hipercolesterolemia familiar (diagnóstico)',SNN,e,'LDL-c ≥ 190 já sobe sozinho')
-      +rcvSeg('dial','Diálise',[['nao','Não'],['hemo','Hemodiálise'],['dp','Diálise peritoneal']],e)+'</div>')
+      +'</div>')
     +sec(6,'Fatores agravantes',
       ag([['ag_hfam','História familiar de DCV prematura','parente de 1º grau: homem &lt; 55, mulher &lt; 65 anos'],['ag_sm','Síndrome metabólica'],
         ['ag_adip','Adiposidade visceral','circunferência abdominal &gt; 80 cm em mulheres e &gt; 94 cm em homens'],['ag_masld','Esteatose hepática (MASLD)','sobretudo com fibrose'],
@@ -4648,8 +4652,8 @@ function rcvSemEscore(x){
 // como o da figura em 10 anos"): o selo da categoria e, em número grande, o risco em
 // 10 anos de doença cardiovascular TOTAL pelo PREVENT — o número que a figura destaca.
 // ⚠️ A SBC categoriza pela DASCV em 10 anos (§4.2; rec. §4, forte/alta), não pela DCV
-// total: a linha de baixo traz a DASCV com esse aviso, para o número grande não ser
-// lido contra o corte de 20%. Sem PREVENT, no lugar do número vai o porquê.
+// total. A linha de baixo com a DASCV saiu a pedido do professor (31/10/2026): a DASCV
+// segue na tabela do PREVENT, marcada "o que a SBC usa". Sem PREVENT, vai o porquê.
 function rcvDestaqueHTML(x){
   var cat=x.cat,r=x.r,k=cat.k,cor=k?SBC_COR[k]:'tag-muted';
   var h='<div class="rcv-dest"><div class="rcv-dest-t">Risco conforme a Diretriz Brasileira de Dislipidemias e Prevenção da Aterosclerose 2025 (SBC)</div>';
@@ -4658,9 +4662,7 @@ function rcvDestaqueHTML(x){
   var sem=rcvSemEscore(x);
   if(sem)return h+'<div class="rcv-big2">'+esc(sem)+'</div></div>';
   return h+'<div class="rcv-big rcv-c-'+cor.replace('tag-','')+'">'+sbcN(r.cvd,1)+'%</div>'
-    +'<div class="rcv-bigl">Risco em 10 anos · doença cardiovascular total (PREVENT)</div>'
-    +'<div class="rcv-big2">DASCV em 10 anos: <b>'+sbcN(r.ascvd,1)+'%</b> — é a DASCV que a SBC usa para categorizar pelo escore (§4.2)'
-    +(cat.temDM?'; com diabetes, a categoria sai das tabelas do DM (§4.1)':'')+'.</div></div>';
+    +'<div class="rcv-bigl">Risco em 10 anos · doença cardiovascular total (PREVENT)</div></div>';
 }
 function rcvCategoriaHTML(x){
   var cat=x.cat,h='<div class="rcv-bloco"><div class="rcv-bt">Categoria e motivo · SBC 2025</div>';
