@@ -4589,14 +4589,12 @@ function rcvFormHTML(e){
       +'<div class="rcv-campos">'+rcvNum('pcr','PCR-us (mg/L)',e)+rcvNum('pas','PA sistólica (mmHg)',e)+rcvNum('pad','PA diastólica (mmHg)',e)
         +rcvNum('cr','Creatinina (mg/dL)',e,'tfge')+rcvNum('rac','RAC urinária (mg/g)',e)+rcvNum('hba1c','HbA1c (%)',e)+'</div>'
       +'<div class="rcv-sub2">Fígado</div>'
-      +'<div class="rcv-campos">'+rcvNum('ast','TGO/AST (U/L)',e)+rcvNum('alt','TGP/ALT (U/L)',e)+rcvNum('plaq','Plaquetas (mil/mm³)',e,'fib4')+'</div>'
-      +'<div class="rcv-dica rcv-bloco-dica">FIB-4 = idade × TGO ÷ (plaquetas × √TGP). Estima a fibrose na esteatose hepática, agravante da seção 6 (sobretudo com fibrose): abaixo de 1,30 (de 2,0 acima de 65 anos), fibrose avançada improvável; acima de 2,67, provável; entre os dois, indeterminado. Sozinho, não faz o diagnóstico de esteatose.</div>')
+      +'<div class="rcv-campos">'+rcvNum('ast','TGO/AST (U/L)',e)+rcvNum('alt','TGP/ALT (U/L)',e)+rcvNum('plaq','Plaquetas (mil/mm³)',e,'fib4')+'</div>')
     +sec(3,'Tratamentos e hábitos',
       '<div class="rcv-qs">'+rcvSeg('tab','Tabagismo atual',SN,e)
       +rcvSeg('has','Hipertensão arterial (diagnóstico, tratada ou não)',SNN,e)
       +rcvSeg('ahas','Usa anti-hipertensivo',SN,e)
-      +rcvSeg('est','Usa estatina',SN,e)+'</div>'
-      +'<div class="rcv-dica rcv-bloco-dica">Em uso de estatina, o LDL-c do laudo já é sob tratamento: a redução que falta é ADICIONAL ao esquema atual.</div>')
+      +rcvSeg('est','Usa estatina',SN,e)+'</div>')
     +sec(4,'Diabetes',
       rcvSeg('dm','Diabetes',[['nao','Não'],['DM2','Tipo 2'],['DM1','Tipo 1'],['ns','Não sei']],e)
       +'<div data-rcv-se="dm=DM2,DM1">'
@@ -4613,8 +4611,7 @@ function rcvFormHTML(e){
       +rcvSeg('obstr','Estenose ≥ 50% em outro território (aorta, ilíacas, membros, renais)',[['na','Não avaliada'],['nao','Não'],['sim','Sim']],e)
       +rcvSeg('aaa','Aneurisma de aorta abdominal',SNN,e)
       +rcvSeg('hf','Hipercolesterolemia familiar (diagnóstico)',SNN,e,'LDL-c ≥ 190 já sobe sozinho')
-      +rcvSeg('dial','Diálise',[['nao','Não'],['hemo','Hemodiálise'],['dp','Diálise peritoneal']],e)+'</div>'
-      +'<div class="rcv-dica rcv-bloco-dica">A doença renal entra pela TFGe e pela RAC da seção 2: no diabetes, pela matriz da T4.7; com um evento maior, TFGe &lt; 60 é condição de alto risco. Fora dessas, ela não define categoria e pesa pelo PREVENT.</div>')
+      +rcvSeg('dial','Diálise',[['nao','Não'],['hemo','Hemodiálise'],['dp','Diálise peritoneal']],e)+'</div>')
     +sec(6,'Fatores agravantes',
       ag([['ag_hfam','História familiar de DCV prematura','parente de 1º grau: homem &lt; 55, mulher &lt; 65 anos'],['ag_sm','Síndrome metabólica'],
         ['ag_adip','Adiposidade visceral','circunferência abdominal &gt; 80 cm em mulheres e &gt; 94 cm em homens'],['ag_masld','Esteatose hepática (MASLD)','sobretudo com fibrose (FIB-4, seção 2) ou com fatores cardiometabólicos'],

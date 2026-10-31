@@ -57,6 +57,12 @@ cm em homens"*. Feito no formulário e no motivo. Esses cortes não estão na SB
 adiposidade por IMC elevado com um parâmetro antropométrico elevado (§4.3.2); são decisão do
 professor (os da IDF para a população europeia, que ela escreve como ≥). `sw.js` v330.
 
+**Três notas a menos no formulário (31/10, depois):** com prints marcando os textos, o professor
+escreveu *"Retirar essas frases"*: a explicação do FIB-4 (seção 2), "Em uso de estatina, o LDL-c
+do laudo já é sob tratamento…" (seção 3) e "A doença renal entra pela TFGe e pela RAC…" (seção
+5). Saíram só as três; ficam as notas dos eventos maiores, dos estratificadores do diabetes e da
+Lp(a)/PCR-us. A conta e a faixa do FIB-4 continuam embaixo das plaquetas. `sw.js` v331.
+
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
 testes de "usa estatina"), `test-ldl-martin-hopkins.js` (a de risco CV só com o LDL-c do laudo),
