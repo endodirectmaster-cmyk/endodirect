@@ -357,7 +357,23 @@ completo.
     recomendação e em PP longos; os 257 itens continuam, um por linha (conferido por script).
     Três encurtamentos do conferente endureciam o verbo ("dificulta", "evitar 'obesidade'",
     "repete o 1.9.12"): voltaram ao sentido do original.
-  - [ ] **Divergências dos capítulos dos Resumos** (só com a orientação do professor): cap. 121
+  - [x] **Capítulos 121 e 92 alinhados às Diretrizes (31/10, 13h08 UTC).** O professor, sobre
+    a lista abaixo: *"Consertar no resumo conforme a informação que consta nas diretrizes"*.
+    Um agente por capítulo (instruções em `scratchpad/diretrizes-lotes/INSTRUCOES-CAPITULO.md`):
+    contradição → corrige pelo documento; atribuição falsa → tira; o que o documento não traz e
+    não contradiz (doses usuais etc.) → fica, sem atribuir. Conferi no `fonte.txt` os números
+    novos (incidência 0,54–0,66/100 mil; inquérito japonês de 1997; penetrâncias RET ~60%, VHL
+    15–20%, SDHB ~22%; hereditários 20–40%; glicemia por 48 h; Tabela 4: 1.2.6, 1.4.4, 4.2.4,
+    5.5.1, 4.7.1, 5.8.1). Corrigi à mão uma frase fora da diretriz e errada no 121 ("90% das
+    mulheres que procuram clínicas de infertilidade" → "cerca de 90% da infertilidade
+    anovulatória"). Gravados pela `gravar-diretriz` v16 (ensaio, backup
+    `main-antes-capitulo-<pos>-2026-10-31`, md5 conferido; v17 voltou ao 410, token apagado):
+    92 `0fea5d12…` (29 trocas no resumo, fluxograma refeito sobre a Fig. 7 da JES, `fonte` +
+    JES 2025) e 121 `8df8c328…` (24 trocas no resumo; ciclo irregular da 1.1.1, FNPO ≥ 20,
+    gonadotrofina como opção de 1ª linha, inositol experimental na infertilidade, flutamida
+    sem atribuição à de 2023). Figuras dos dois capítulos mantidas. O `url` vazio dos dois
+    recebeu o DOI da diretriz (o conferidor recusa vazio).
+  - [x] (lista original) **Divergências dos capítulos dos Resumos**: cap. 121
     × diretriz 2023 (doses de letrozol, clomifeno e FSH que ela não traz; gonadotrofina "só
     após falha"; progestágeno antiandrogênico específico; flutamida 250 mg/dia; inositol;
     definição de ciclo irregular; volume ovariano como critério equivalente); cap. 92 × JES
