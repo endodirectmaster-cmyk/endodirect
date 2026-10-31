@@ -22,9 +22,9 @@
 // (5) entrada inválida → NaN;
 // (6) a calculadora 'ldl': o id mantido, nome, campos, nada de Friedewald, o aviso
 //     e o não-HDL-c na tela, a conta à vista;
-// (7) a calculadora de risco CV: laudo vazio + CT/HDL-c/TG → o estimado entra no
-//     motor e a tela diz; o do laudo vale; TG acima de 800 não estima; o número da tela é
-//     o que decide os cortes; o texto antigo ("o do laudo") saiu;
+// (7) a calculadora de risco CV: desde 31/10/2026 (pedido do professor, como a fórmula
+//     original) ela não pede triglicérides e não estima o LDL-c — vale o do laudo; a
+//     estimativa fica nesta calculadora;
 // (8) mutações que cada asserção tem de pegar;
 // (9) os cartões de Lípides: Friedewald com a Martin/Hopkins e Lp(a) uma vez na vida, com
 //     a frente mantida (o cartão semente casa pela frente).
@@ -94,8 +94,8 @@ const REF = (i, j) => REF_COLUNAS[j][i];
 // test-risco-cv-sbc.js) e a entrada 'ldl' de CALCS, tudo recortado do index.html.
 const FUNCOES = ['ldlMartinHopkins', 'ldlMartinFaixas', 'ldlMartinExtraHTML', 'ckdEpi2021', 'preventRisk', 'sbcN', 'sbcRenalDM', 'sbcEstratifica',
   'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML', 'ldlConduta', 'ldlEsquemaNivel', 'ldlEsquemaPelaReducao', 'ldlDosesHTML', 'sbcAlvoLDL',
-  'ldlCondutaHTML', 'ldlFaixaEscore', 'ldlQuadroHTML', 'ldlAlvoHTML', 'rcvDados', 'rcvLdlEstimadoTxt', 'rcvRegime', 'rcvSeg', 'rcvChips', 'rcvNum',
-  'rcvFormHTML', 'rcvVisivel', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML', 'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio',
+  'ldlCondutaHTML', 'ldlFaixaEscore', 'ldlQuadroHTML', 'ldlAlvoHTML', 'fib4Calc', 'fib4Faixa', 'rcvDados', 'rcvSeg', 'rcvChips', 'rcvNum',
+  'rcvFormHTML', 'rcvVisivel', 'rcvSemEscore', 'rcvDestaqueHTML', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML', 'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio',
   'rcvResultadoHTML', 'rcvResumoDados'];
 function itemLdl(fonte) {
   const src = fonte || html;
@@ -289,64 +289,21 @@ function tg800(W) {
 }
 
 // ───────────────────── (7) a calculadora de risco CV ─────────────────────
-// Um jovem (< 30 anos, sem escore): o LDL-c decide a categoria — 160–189 sobe para
-// intermediário (§4.1).
-const B = { sexo: 'M', idade: '25', peso: '80', altura: '178', pas: '120', cr: '1', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'nao', est: 'nao', lpa_un: 'nd' };
-const ex = (o) => Object.assign({}, B, o);
-function laudoVale(W) {
-  const x = W.rcvDados(ex({ ct: '230', hdl: '40', tg: '150', ldl: '150' }), 2026);
-  return x.d.ldl === 150 && !x.d.ldlEstimado && x.ldlMH === null && x.cat.k === 'baixo';
-}
-function arredondaComoLaudo(W) {
-  const x = W.rcvDados(ex({ ct: '240', hdl: '50', tg: '158' }), 2026);
-  return x.d.ldl === 160 && x.cat.k === 'intermediario';
-}
+// 31/10/2026: a "Risco CV e metas — SBC 2025" ficou como a fórmula original — sem
+// triglicérides e sem estimar o LDL-c. Vale o LDL-c do laudo; a estimativa por
+// Martin/Hopkins continua aqui, na calculadora própria.
 {
-  const x1 = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '150' }), 2026);   // não-HDL-c 190 × TG 147–154 → 5,1 → 160,6
-  ok(x1.d.ldl === 161 && x1.d.ldlEstimado === true && x1.ldlMH && x1.ldlMH.usado && x1.ldlMH.fator === 5.1, '(7) laudo vazio + CT/HDL-c/TG: o LDL-c estimado (161) entra no motor: ' + JSON.stringify(x1.ldlMH));
-  ok(x1.cat.k === 'intermediario' && /LDL-c de 160–189/.test(x1.cat.motivo), '(7) ⚠️ e decide a categoria como o do laudo decidiria (160–189 → intermediário): ' + x1.cat.k + ' · ' + x1.cat.motivo);
-  const h1 = M.rcvResultadoHTML(ex({ ct: '230', hdl: '40', tg: '150' }));
-  ok(/LDL-c estimado por Martin\/Hopkins: <b>161 mg\/dL<\/b> \(CT − HDL-c − TG ÷ 5,1; o laudo não trouxe LDL-c\)\. Com o LDL-c do laudo, vale o do laudo\./.test(h1), '(7) a tela diz que o LDL-c foi estimado, e quanto deu');
-  ok(/<td>LDL-c \(primária\) · estimado por Martin\/Hopkins<\/td><td><b>161<\/b><\/td>/.test(h1), '(7) a linha do LDL-c nas metas diz que é estimado');
-  ok(M.rcvLdlEstimadoTxt(x1, true) === 'estimado por Martin/Hopkins: 161 mg/dL', '(7) a linha embaixo do campo de LDL-c: ' + M.rcvLdlEstimadoTxt(x1, true));
-  ok(/CT\/HDL-c\/LDL-c\/TG:<\/b> 230 \/ 40 \/ 161 \(Martin\/Hopkins\) \/ 150 mg\/dL/.test(M.rcvResumoDados(x1)), '(7) o relatório impresso marca o LDL-c estimado: ' + M.rcvResumoDados(x1));
-  const xt = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '150', est: 'alta' }), 2026);
-  ok(xt.d.ldlEstimado && /<td>LDL-c \(primária\) · estimado por Martin\/Hopkins · sob tratamento<\/td>/.test(M.rcvMetasHTML(xt)), '(7) estimado e sob tratamento: as duas marcas');
-  // O do laudo vale.
-  const x2 = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '150', ldl: '150' }), 2026);
-  ok(laudoVale(M) && M.rcvLdlEstimadoTxt(x2) === '' && M.rcvLdlEstimadoTxt(x2, true) === '' && !/Martin\/Hopkins/.test(M.rcvCategoriaHTML(x2) + M.rcvMetasHTML(x2)),
-    '(7) ⚠️ com LDL-c do laudo, vale o do laudo (150 → baixo), sem estimativa na tela');
-  // TG acima de 800: não estima.
-  const x3 = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '801' }), 2026), h3 = M.rcvResultadoHTML(ex({ ct: '230', hdl: '40', tg: '801' }));
-  ok(Number.isNaN(x3.d.ldl) && !x3.d.ldlEstimado && x3.ldlMH && !x3.ldlMH.usado && x3.ldlMH.tgAlto, '(7) ⚠️ TG 801: sem estimativa (o LDL-c pode estar subestimado)');
-  ok(/LDL-c não estimado: com TG acima de 800 mg\/dL, o LDL-c pela equação de Martin\/Hopkins pode estar subestimado — a SBC 2025 recomenda avaliar o não-HDL-c \(190 mg\/dL\)/.test(h3)
-    && /TG acima de 800 mg\/dL: o LDL-c calculado \(Martin\/Hopkins\) pode estar subestimado; avalie o não-HDL-c/.test(h3), '(7) TG acima de 800: a tela diz por que não estimou e manda olhar o não-HDL-c; o alerta do motor também');
-  ok(/acompanhe pelo não-HDL-c, meta coprimária/.test(h3) && /as estratégias não se marcam: informe o LDL-c do laudo/.test(h3) && M.rcvLdlEstimadoTxt(x3, true) === 'TG > 800: sem estimativa (use o não-HDL-c)',
-    '(7) TG acima de 800: metas, estratégias e o campo dizem o que vale');
-  const x3b = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '800' }), 2026);
-  ok(x3b.ldlMH.usado && x3b.d.ldl === Math.round(190 - 800 / REF(29, 4)) && !x3b.cat.alertas.some((t) => /800/.test(t)), '(7) ⚠️ TG 800 ainda estima (a diretriz diz "acima de 800"), sem o alerta');
-  // Com o LDL-c do laudo e TG acima de 800, o laudo vale e o alerta continua.
-  const x3c = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '900', ldl: '120' }), 2026);
-  ok(x3c.d.ldl === 120 && x3c.ldlMH === null && x3c.cat.alertas.some((t) => /^TG acima de 800 mg\/dL: o LDL-c calculado \(Martin\/Hopkins\) pode estar subestimado/.test(t)), '(7) LDL-c do laudo com TG acima de 800: vale o do laudo, com o alerta');
-  // Estimativa de 0 ou menos: não entra.
-  const x4 = M.rcvDados(ex({ ct: '100', hdl: '70', tg: '600' }), 2026);
-  ok(Number.isNaN(x4.d.ldl) && x4.ldlMH && !x4.ldlMH.usado && !x4.ldlMH.tgAlto && /deu -20 mg\/dL \(TG alto para o colesterol\) — avalie o não-HDL-c \(30 mg\/dL\)/.test(M.rcvLdlEstimadoTxt(x4)),
-    '(7) estimativa ≤ 0 (TG alto para pouco colesterol) não entra no motor: ' + M.rcvLdlEstimadoTxt(x4));
-  // Sem o TG (ou o HDL-c, ou o CT): nada a estimar, e o texto pede o laudo OU os três.
-  for (const o of [{ ct: '230', hdl: '40' }, { ct: '230', tg: '150' }, { hdl: '40', tg: '150' }, { ct: '230', hdl: '240', tg: '150' }]) {
-    const h = M.rcvResultadoHTML(ex(o));
-    ok(M.rcvDados(ex(o), 2026).ldlMH === null && /Informe o LDL-c do laudo — ou CT, HDL-c e triglicérides, para estimá-lo por Martin\/Hopkins — para calcular a redução necessária/.test(h)
-      && /para marcar as estratégias que alcançam a redução necessária/.test(h), '(7) sem os três (' + JSON.stringify(o) + '): sem estimativa, e o texto pede o LDL-c do laudo ou os três');
-  }
-  // O número da tela é o que entra nos cortes: 159,6 vira 160 → 160–189.
-  ok(Math.abs(M.ldlMartinHopkins(240, 50, 158).ldl - 159.615) < 0.001 && arredondaComoLaudo(M), '(7) ⚠️ arredondado como no laudo: 159,6 → 160, e é o 160 da tela que entra no corte de 160–189');
-  // O texto antigo saiu; o formulário diz que estima, e o campo tem a linha da estimativa.
-  const f = M.rcvFormHTML({});
-  ok(!/LDL-c: o do laudo \(a SBC 2025 recomenda/.test(f) && /LDL-c: o do laudo vale\. Sem ele, com CT, HDL-c e triglicérides, a tela estima o LDL-c pela equação de Martin\/Hopkins/.test(f) && /com TG acima de 800 não estima/.test(f),
-    '(7) a dica do formulário: o laudo vale, e sem ele a tela estima (com TG acima de 800, não)');
-  ok(/data-rcv-k="ldl" value=""><span class="rcv-calc" data-rcv-calc="ldlmh"><\/span>/.test(f), '(7) o campo de LDL-c tem a linha da estimativa');
-  ok(/ldlmh:rcvLdlEstimadoTxt\(x,true\)/.test(corpo('rcvAtualiza')), '(7) a linha da estimativa é atualizada a cada campo (rcvAtualiza)');
-  ok(!/Informe o LDL-c do laudo para/.test(html), '(7) nenhum texto pede só o LDL-c do laudo');
+  const B = { sexo: 'M', idade: '25', peso: '80', altura: '178', pas: '120', cr: '1', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'nao', est: 'nao', lpa_un: 'nd' };
+  const ex = (o) => Object.assign({}, B, o);
+  const x1 = M.rcvDados(ex({ ct: '230', hdl: '40', tg: '150' }), 2026);
+  ok(Number.isNaN(x1.d.ldl) && x1.d.ldlEstimado === undefined && x1.ldlMH === undefined, '(7) laudo vazio + CT/HDL-c/TG: a calculadora de risco CV não estima o LDL-c');
+  const x2 = M.rcvDados(ex({ ct: '230', hdl: '40', ldl: '150' }), 2026);
+  ok(x2.d.ldl === 150 && x2.cat.k === 'baixo', '(7) vale o LDL-c do laudo');
+  const f = M.rcvFormHTML({}), h = M.rcvResultadoHTML(ex({ ct: '230', hdl: '40', tg: '150' }));
+  ok(!/data-rcv-k="tg"/.test(f) && !/Martin\/Hopkins|Triglicérides/.test(f + h) && !/data-rcv-calc="ldlmh"/.test(f), '(7) nem o formulário nem o resultado falam em triglicérides ou em Martin/Hopkins');
+  ok(/Informe o LDL-c para calcular a redução necessária/.test(h), '(7) sem LDL-c, a tela pede o LDL-c');
+  const calc = corpo('rcvDados');
+  ok(!/ldlMartinHopkins|ldlMH|n\('tg'\)/.test(calc), '(7) o rcvDados não lê TG nem chama a Martin/Hopkins');
 }
 
 // ───────────────────── (9) os cartões de Lípides (FC_MEMBER) ─────────────────────
@@ -382,8 +339,6 @@ ok(errosFronteira(mutanteVar('MARTIN_TG', null, ',97,101,', ',97,102,')).length 
 ok(errosFronteira(mutante('ldlMartinHopkins', 'tg>=MARTIN_TG[i+1]', 'tg>MARTIN_TG[i+1]')).length > 0, 'MUTAÇÃO: o piso da faixa de TG caindo na faixa de baixo (o erro do LDLcalc) tinha de aparecer');
 ok(errosFronteira(mutante('ldlMartinHopkins', 'nhdl>=MARTIN_NHDL[j]', 'nhdl>MARTIN_NHDL[j]')).length > 0, 'MUTAÇÃO: não-HDL-c 100 caindo em < 100 tinha de aparecer');
 ok(!tg800(mutante('ldlMartinHopkins', 'tgAlto=tg>800', 'tgAlto=tg>=800')), 'MUTAÇÃO: "≥ 800" no lugar de "> 800" (a diretriz diz "acima de 800") tinha de aparecer');
-ok(!laudoVale(mutante('rcvDados', 'if(!isFinite(ldlLaudo)&&ct>0', 'if(ct>0')), 'MUTAÇÃO: estimar mesmo com o LDL-c do laudo tinha de aparecer');
-ok(!arredondaComoLaudo(mutante('rcvDados', 'ldlMH={ldl:Math.round(mh.ldl)', 'ldlMH={ldl:mh.ldl')), 'MUTAÇÃO: o motor usar 159,6 com a tela mostrando 160 tinha de aparecer');
 
 if (falhas.length) { console.error('test-ldl-martin-hopkins: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
-console.log('test-ldl-martin-hopkins: ok (180 fatores e faixas contra a fonte, exemplo publicado e contas à mão, fronteiras, TG acima de 800 com aviso, entrada inválida, calculadora sem Friedewald, estimativa na de risco CV, mutações e os cartões de Lípides)');
+console.log('test-ldl-martin-hopkins: ok (180 fatores e faixas contra a fonte, exemplo publicado e contas à mão, fronteiras, TG acima de 800 com aviso, entrada inválida, calculadora sem Friedewald, a de risco CV só com o LDL-c do laudo, mutações e os cartões de Lípides)');

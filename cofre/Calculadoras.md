@@ -1,9 +1,62 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-10-24
+atualizado: 2026-10-31
 ---
 
 # Calculadoras
+
+## 🫀 RISCO CV E METAS: COMO A FÓRMULA ORIGINAL, COM O RISCO EM 10 ANOS EM DESTAQUE (2026-10-31)
+
+O professor comparou a calculadora com a da Clarity (dois prints: o nosso campo "LDL-c sem
+tratamento, se souber" marcado e o formulário dela) e escreveu: *"Não existe na formula origina;
+não precisa dos triglicerídeos; faltando transaminases e plaquetas na formula; uso de estatina não
+estratifica a intensidade; retirar Intolerância à estatina, Ácido bempedoico, Anti-PCSK9 (anticorpo
+ou inclisirana) e Ezetimiba"*. Depois, com o print do resultado dela: *"mostrar o risco como o da
+figura em 10 anos"*.
+
+**O que mudou no formulário:**
+- **Saíram:** o LDL-c sem tratamento, os triglicérides (e com eles a estimativa de Martin/Hopkins
+  dentro desta calculadora; a calculadora "LDL (Martin/Hopkins)" continua), a ezetimiba, o ácido
+  bempedoico, o anti-PCSK9 e a intolerância. O LDL-c é o do laudo.
+- **Estatina:** só "Usa estatina: Sim / Não". Entra no PREVENT (`pv_est`) e no motor como
+  tratamento (`trat.estatina 'sim'`).
+- **Entraram TGO, TGP e plaquetas** (seção 2, "Fígado"), para o **FIB-4**, com a conta e a faixa
+  embaixo das plaquetas. `fib4Calc`/`fib4Faixa` são a conta e as faixas da calculadora FIB-4, que
+  passou a usar as mesmas funções (< 1,30, ou < 2,0 acima de 65 anos; até 2,67; acima).
+
+**Como o FIB-4 pesa:** a T4.3 da SBC 2025 traz a "esteatose hepática, especialmente formas mais
+graves (por exemplo, com fibrose) ou associada a fatores cardiometabólicos"; a diretriz não cita o
+FIB-4. Então o FIB-4 **qualifica** a esteatose marcada (aparece no motivo: "esteatose hepática
+(MASLD), FIB-4 de 2,10: fibrose indeterminada"), aparece na pendência quando a esteatose está em
+aberto, e **nunca é agravante sozinho**. Com a esteatose marcada "Não" e FIB-4 acima de 2,67, a tela
+avisa que não é agravante e manda investigar a hepatopatia. TGO ou TGP acima de 120 U/L (3× o limite
+usual, "confira o do laboratório") dá o aviso da rec. §9.12: estatina admitida na esteatose com
+enzimas até 3× o limite; contraindicada na doença hepática ativa ou descompensada.
+
+**O destaque (`rcvDestaqueHTML`), como a figura:** título "Risco conforme a Diretriz Brasileira de
+Dislipidemias e Prevenção da Aterosclerose 2025 (SBC)", selo da categoria ("Risco alto"), o risco em
+10 anos em número grande na cor da categoria e "Risco em 10 anos · doença cardiovascular total
+(PREVENT)". ⚠️ **O número grande é a DCV total, como na figura (25,3% = a linha "Doença Cardiovascular
+Total"), mas a SBC categoriza pela DASCV** (§4.2; rec. forte/alta). Por isso a linha de baixo traz a
+DASCV com o aviso "é a DASCV que a SBC usa para categorizar pelo escore". Sem PREVENT (doença
+aterosclerótica, < 30 ou ≥ 80 anos, dado faltando), no lugar do número vai o porquê (`rcvSemEscore`).
+A tabela do PREVENT virou "Resultado detalhado do cálculo de risco", com "Modelo usado: PREVENT +
+HbA1c", os nomes por extenso e duas casas decimais.
+
+**Estratégias (Figura 7.2):** sem estatina, como antes (redução total; a menor estratégia com
+estatina que alcança o alvo sem ficar abaixo da terapia inicial). **Em estatina de intensidade
+desconhecida**, nenhuma linha da figura é dada como suficiente (ela mede a redução a partir do
+LDL-c sem tratamento), e o caminho vem das reduções adicionais do texto (`ldlEsquemaPelaReducao`, o
+mesmo do bloco do PREVENT, que também só pergunta "usa estatina"). Saíram `rcvRegime` (esquema por
+intensidade) e `rcvLdlEstimadoTxt`. O motor (`sbcEstratifica`) ainda aceita LDL-c basal e as
+intensidades, mas nenhum formulário os envia; os alertas de TG saíram.
+
+**Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
+da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
+testes de "usa estatina"), `test-ldl-martin-hopkins.js` (a de risco CV só com o LDL-c do laudo),
+ci-validate e A/B no Chromium contra a versão no ar (computador e celular, sem erro de JS, sem
+rolagem lateral). `sw.js` v328→v329. ⚠️ O `test-risco-cv-sbc.js` proíbe o nome da Clarity no
+`index.html` (marca de terceiros): nos comentários do código ela é "a fórmula original".
 
 ## 🧪 LDL-c POR MARTIN/HOPKINS: A CALCULADORA "LDL" DEIXA O FRIEDEWALD (2026-10-24)
 
