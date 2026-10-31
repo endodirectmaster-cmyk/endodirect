@@ -7,8 +7,8 @@ atualizado: 2026-10-14
 
 ## 🧨 COBRANÇA EM DOBRO DE UM GOLD ANUAL — E O FURO QUE A PERMITIA (2026-10-14)
 
-**O relato (Instagram, 28/09, só visto em 14/10):** Dr. Pedro Ivo Aranas
-(`piaranas@gmail.com`, Sócio-fundador) mandou o print da fatura com **duas compras
+**O relato (Instagram, 28/09, só visto em 14/10):** um assinante
+(sócio-fundador) mandou o print da fatura com **duas compras
 "Pg *endodirect en" de 29/06/2026, "Parcela 02 de 12", R$ 45,00 cada** — dois Gold
 anuais de R$ 540.
 
@@ -50,7 +50,7 @@ o acesso guarda o ID do PEDIDO (`or_…`), que aparece no detalhe do pedido ou b
 `or_wdm1lJJ3TeHAlW20` em Vendas → Pedidos.
 
 **Como estornar (painel do pagar.me), só com o webhook corrigido no ar (seção abaixo):**
-Clientes → `piaranas@gmail.com` (`cus_JqQEk0AsMKh62Lpd`) → manter o pedido
+Clientes → o cliente `cus_JqQEk0AsMKh62Lpd` → manter o pedido
 `or_wdm1lJJ3TeHAlW20` (é o que o acesso aponta) e **estornar o outro pelo valor total**.
 No parcelado, as parcelas já lançadas voltam como crédito na fatura e as futuras deixam
 de ser lançadas; quando isso aparece depende do emissor do cartão.
@@ -143,4 +143,4 @@ API **v5**. Cartão **tokenizado no navegador** (`POST /core/v5/tokens?appId=PUB
 Os valores MENSAIS aparecem em `config.js` (o que a TELA mostra) **e** em `subscribe.js` (o que COBRA). Os env `PAGARME_TIER_*_AMOUNT` **não estão setados**, então cada arquivo usava seu próprio default. Bug encontrado em 2026-06-11: tela mostrava Gold R$99 (`config.js` 9900) mas a assinatura cobrava R$70 (`subscribe.js` 7000). **Corrigido**: defaults do `subscribe.js` alinhados ao `config.js` (6900/9900/13900). O anual (`order.js`) já batia. **Recomendação:** setar `PAGARME_TIER_STANDARD_AMOUNT=6900`, `PAGARME_TIER_GOLD_AMOUNT=9900`, `PAGARME_TIER_PREMIUM_AMOUNT=13900` na Vercel como fonte única.
 
 ## Validação ponta a ponta — FEITA (2026-06-11)
-Compra real (cartão, Gold mensal) por gabysfernandes@gmail.com: acesso liberado em `endodirect_acessos` (`plano:gold`, `active`, `recorrente`, `sub_XO3Rq6hPzH5yWmBe`). Confirma pagar.me LIVE → webhook → provisionamento. Pendente do usuário: **cancelar a assinatura** (recorrente — senão cobra de novo) + **estornar** a 1ª cobrança; ao cancelar, o webhook deve revogar o acesso (validar `subscription.canceled`). ⚠️ Cartões de teste não funcionam em LIVE.
+Compra real (cartão, Gold mensal) por uma aluna (e-mail no pagar.me): acesso liberado em `endodirect_acessos` (`plano:gold`, `active`, `recorrente`, `sub_XO3Rq6hPzH5yWmBe`). Confirma pagar.me LIVE → webhook → provisionamento. Pendente do usuário: **cancelar a assinatura** (recorrente — senão cobra de novo) + **estornar** a 1ª cobrança; ao cancelar, o webhook deve revogar o acesso (validar `subscription.canceled`). ⚠️ Cartões de teste não funcionam em LIVE.

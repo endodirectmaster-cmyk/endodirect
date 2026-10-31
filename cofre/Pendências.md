@@ -699,8 +699,8 @@ ficam em [[Bulário]], caso a ideia volte (por exemplo, com uma base licenciada)
 
 ## 💳 Cobrança em dobro (14/10) — o que fica com o professor
 
-1. ✅ **Estorno da compra duplicada do Dr. Pedro Ivo Aranas feito em 14/10**
-   (`piaranas@gmail.com`; cobrança `Q12T5XANDR`, pedido `or_dWJ0PX1HwltVQ0LD`, valor
+1. ✅ **Estorno da compra duplicada do assinante (sócio-fundador) feito em 14/10**
+   (cobrança `Q12T5XANDR`, pedido `or_dWJ0PX1HwltVQ0LD`, valor
    total), com a correção do webhook já no ar. O Gold dele seguiu ativo (ver
    [[Pagamentos pagar.me]]). ✅ **Respondido no Instagram pelo professor em 15/10**
    (*"ja respondi ao pedro e eduardo"*); o Eduardo também recebeu a resposta sobre o vídeo
@@ -1852,7 +1852,7 @@ Feito como planejado: conta real com `plano:gold` + cursos de vitrine, senha for
 - [ ] **Publicar Diretrizes:** flipar `DIRETRIZES_PUBLICADO=true` no `index.html` quando a curadoria estiver pronta. Hoje os alunos veem "Em breve" (e a **janela de Novidades** no login anuncia Diretrizes como **"EM BREVE"** — #430). Ver [[Arquitetura]].
 - [ ] **Revisão clínica dos flashcards:** ~180 flashcards da biblioteca de membro foram gerados por IA — médico deve revisar antes/depois do lançamento.
 - [ ] **Conta de teste `memed.teste@endodirect.com.br`:** ainda conta como aluno no Analytics (necessária p/ a homologação Memed via `MEMED_ALLOW`). Remover quando a Memed sair de homologação.
-- [x] **Limpeza de contas de teste no Analytics (2026-06-14):** removidas 5 contas (`dudukamura@`, `rgmedicaltda@`, `gabysfernandes@`, `eduardo.teste@`, `teste@`) de `auth.users` + `endodirect_app_state`/`acessos`/`devices`/`assinaturas` (nenhuma tinha assinatura paga). "Alunos cadastrados" caiu de 11 → 6. A contagem vem da RPC `endodirect_admin_overview` (`role='aluno'` em `endodirect_app_state`).
+- [x] **Limpeza de contas de teste no Analytics (2026-06-14):** removidas 5 contas de teste (três pessoais, `eduardo.teste@` e `teste@`) de `auth.users` + `endodirect_app_state`/`acessos`/`devices`/`assinaturas` (nenhuma tinha assinatura paga). "Alunos cadastrados" caiu de 11 → 6. A contagem vem da RPC `endodirect_admin_overview` (`role='aluno'` em `endodirect_app_state`).
 - [x] **Webhook pagar.me — 401 RESOLVIDO (2026-06-11).** Diagnóstico (logs `[whdbg]`): o usuário batia, mas a senha enviada pelo webhook tinha um caractere "fantasma" (15 chars vs 14/12 no Vercel) e **as edições no painel do pagar.me não persistiam** — ele seguia mandando a senha original. **Fix em duas frentes:** (1) **código** — `verifyAuth` agora normaliza Usuário/Senha para **só ASCII visível** (`/[^!-~]/g`) antes de comparar com `timingSafeEqual` (#192→#194); fica imune a espaço/zero-width/BOM colado no painel; (2) **operação** — webhook **recriado do zero** com Usuário `endodirect` / Senha `endohook2026` (digitada na criação) e `PAGARME_WEBHOOK_BASIC_PASS=endohook2026` no Vercel. Validado ponta a ponta: **PIX real** liberou `plano:standard` (active) e o webhook respondeu **200**. Diagnóstico removido após confirmar. Ver [[Pagamentos pagar.me]].
 - [x] **PIX × duração do acesso — OK (2026-06-11).** O PIX da conta de teste cobrou **R$540,00** (= preço anual Standard, 12× R$45) e liberou **1 ano** (`tipo: avulso`, `ENDODIRECT_AVULSO_DIAS=365`). Duração e preço **batem** — PIX é sempre pagamento único anual (não há PIX recorrente). Sem ajuste necessário.
 - [x] **Checkout PIX/boleto libera sozinho (2026-06-11).** Após gerar a cobrança, o front faz polling do estado remoto a cada 5s (`ckStartAutoVerify`) e entra na plataforma automaticamente assim que o webhook provisiona — sem precisar clicar em "Já paguei — verificar" (o botão segue como fallback). Para ao liberar, ao fechar o checkout, ou após ~5 min.
