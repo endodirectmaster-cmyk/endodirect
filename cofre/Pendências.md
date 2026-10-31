@@ -261,9 +261,52 @@ completo.
   - Assinante: a resposta única dos Resumos foi a 3,62 MB; pelas páginas, a maior tem 583 KB.
   - [x] **Conferência de zumbi** do lote 1: às 12h38 e às 16h39 UTC os 6 itens seguiam com o
     md5 gravado, e o `updated_at` só mudou com as minhas gravações.
-  - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (DM2 nos caps.
-    129 e 227, CAD no 133, monogênico no 224, LADA no 128, perioperatório no 138): só com
-    a orientação do professor, como nos caps. 86 e 89.
+  - [x] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (DM2 nos caps.
+    129 e 227, CAD no 133, monogênico no 224, LADA no 128, perioperatório no 138).
+    Resolvidas em 31/10 pela regra do professor (*"ok"*: diretriz de 2025 ou 2026, o capítulo
+    segue a diretriz):
+    - **Alinhados e GRAVADOS em 31/10, por volta de 15h15 UTC:**
+      - 129 e 227: SBD 2026, Manejo do DM2.
+      - 138: SBD/SBA/ABESO 2026, perioperatório.
+      - Gravação: `gravar-diretriz` v22, com ensaio e travas `true`; a v23 voltou ao 410 e o
+        token foi apagado.
+      - Backups: `main-antes-capitulo-{129,227,138}-2026-10-31`.
+      - md5 novos: 129 `3d89deb1…`, 227 `10f9b263…`, 138 `b59f895e…`.
+    - **Ficam como estão, porque a diretriz é anterior a 2025:** 133 (consenso de CAD de 2024),
+      224 (ISPAD 2022) e 128 (consenso de LADA de 2020).
+    - **129, 67 trocas:**
+      - metformina para todo assintomático com TFG ≥ 30 (R5);
+      - dupla com HbA1c ≥ 7,5% (R7);
+      - CGM é a R3, classe IIa;
+      - iSGLT2 pelo RCR, que inclui idade ≥ 50 (homem) ou ≥ 56 (mulher);
+      - AR GLP-1 pelo IMC (R9 e R10);
+      - insulina sem corte de HbA1c (R13 e R14);
+      - tirzepatida −12,8 a −14,7% no SURMOUNT-2;
+      - limites de TFG para iniciar iSGLT2;
+      - os pts R1–R16 reescritos (antes copiavam a diretriz quase palavra por palavra).
+    - **227, 25 trocas:**
+      - metformina até 2.550 mg (XR 2.250) e metade da dose com TFG 30–45;
+      - dupla sem o teto de 9%;
+      - insulina sem o corte de HbA1c > 9%;
+      - tirzepatida de 2,5 a 15 mg;
+      - evogliptina sem ajuste renal;
+      - gliclazida MR preferida.
+    - **138, 33 trocas:**
+      - meta perioperatória de 100–180;
+      - iSGLT2 suspenso só em cirurgia de grande porte ou com restrição calórica;
+      - cetonas pela nota 3;
+      - AR GLP-1 suspenso só com fator de risco (R9 e R10);
+      - pioglitazona, NPH, DM1/LADA, bomba e rastreamento pelo documento.
+      - A figura do fim do capítulo também foi corrigida (PR #947).
+    - Conferido por mim nas linhas e páginas do fonte.txt citadas. Títulos, número de tabelas e
+      frentes dos flashcards iguais; confere-lote ✓.
+    - **Dúvidas que ficaram anotadas para o professor:**
+      - 138: o corte de "basal alta" varia no documento (> 50% ou > 60%); "para a maioria,
+        suspender" o AR GLP-1 saiu.
+      - 129: idoso com IMC < 22, cuidado mantido como vindo de outra fonte; o corte da ADA
+        para insulinizar (HbA1c > 10% ou glicemia ≥ 300) fica como ADA.
+      - 227: no caso 1, com IMC ≥ 30, foi acrescentado que a SBD recomendaria AR GLP-1 ou
+        tirzepatida.
 - [x] **Lote 2, 1ª parte (25/10, 16h39 UTC):** 5 Diretrizes gravadas, com backup por item,
   ensaio antes e conferência por SQL depois. `atEdit` 1792946323126.
 
