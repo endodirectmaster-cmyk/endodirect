@@ -60,6 +60,15 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   (lida em 31/10) recomenda a conta com o e-mail da organização e pede e-mail de trabalho do
   domínio da empresa. Nome da empresa ou apelido no lugar do nome legal atrasa a aprovação.
   Próximo: depois da aprovação e do pagamento, ele me manda o Team ID.
+- **31/10, 11h27 de Brasília (14h27 UTC): INSCRIÇÃO ENVIADA.**
+  - Tipo: Company / Organization. A Apple aceitou o D-U-N-S e puxou da D&B a razão social e o
+    endereço.
+  - E-mail de trabalho: contato@endodirect.com.br, verificado por código. Autoridade:
+    "proprietário/fundador".
+  - Status: "Sua inscrição está sendo processada". O ID de inscrição está no print do
+    professor e não vai para o repositório público.
+  - A Apple ainda confere a autoridade para assinar, por telefone ou pedindo documento. Depois
+    manda o e-mail para aceitar o contrato e pagar US$ 99.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
