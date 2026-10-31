@@ -52,15 +52,15 @@ def build():
     # ---- B: antagonista ----
     px, py = B; cx = px + PW / 2
     o.append(T(cx, py + 24, 'Bloqueiam — antagonista', 14, RED, bold=True))
-    o.append(T(cx, py + 42, 'os ftalatos são antagonistas do receptor androgênico', 11, MUTED))
+    o.append(T(cx, py + 42, 'ocupam o receptor sem ativá-lo', 11, MUTED))
     gx = px + 120; top = py + 104
     o.append(cup(gx, top, 80, 38))
-    o += ftalato(gx + 2, top - 3, 1.2)
-    o.append(T(gx, py + 72, 'ftalato', 11, TEAL_D, italic=True, bold=True))
-    o.append(T(gx, top + 54, 'receptor androgênico', 11, PURPLE_D))
+    o += de_glyph(gx, top - 4, 13)
+    o.append(T(gx, py + 72, 'disruptor', 11, TEAL_D, italic=True, bold=True))
+    o.append(T(gx, top + 54, 'receptor hormonal', 11, PURPLE_D))
     sx, sy = px + 292, py + 100
     o += steroid(sx, sy, 1.05)
-    o.append(T(sx, py + 72, 'andrógeno', 11, AMBER_D, italic=True, bold=True))
+    o.append(T(sx, py + 72, 'hormônio natural', 11, AMBER_D, italic=True, bold=True))
     o.append(P(f'M{f(sx - 24)},{f(sy + 8)} C{f(sx - 50)},{f(sy + 14)} {f(gx + 80)},{f(top + 6)} {f(gx + 58)},{f(top + 4)}',
                AMBER, 2, dash='5 4', marker='i-r'))
     o.append(T(px + 254, top + 34, 'bloqueado', 11.5, RED_D, bold=True, italic=True))
@@ -68,7 +68,7 @@ def build():
     # ---- C: metabolismo ----
     px, py = C; cx = px + PW / 2
     o.append(T(cx, py + 24, 'Alteram o metabolismo hormonal', 14, AMBER, bold=True))
-    o.append(T(cx, py + 42, 'enzimas da síntese ou do catabolismo dos esteroides', 11, MUTED))
+    o.append(T(cx, py + 42, 'enzimas dos esteroides; ex.: ftalatos ↓ síntese de testosterona', 11, MUTED))
     by = py + 84; bh = 36
     b1 = (px + 22, 92); b2 = (px + 254, 98)
     for (bx, bw), (l1, l2) in ((b1, ('enzimas da', 'síntese')), (b2, ('enzimas do', 'catabolismo'))):
