@@ -1,6 +1,6 @@
 ---
 tags: [cofre, conteudo, resumos]
-atualizado: 2026-10-24
+atualizado: 2026-10-31
 ---
 
 # Ilustrações dos Resumos (no meio do capítulo)
@@ -341,7 +341,11 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
 | capítulo | ilustrações | estado |
 |---|---|---|
 | Receptores Hormonais e Transdução de Sinal (posição 150) | GPCR (Gs/Gi/Gq); quinases (insulina × GH, JAK-STAT); nucleares (tipo I × tipo II) | **no ar** (SVG #871; gravado em 17/10, 14h22 UTC — ver abaixo) |
-| Hormônios: Classes, Síntese e Transporte (149) | síntese dos hormônios tireoidianos | SVG no ar (#871); falta o revisor e as outras ilustrações do capítulo |
+| Hormônios: Classes, Síntese e Transporte (149) | transporte no sangue (livre × ligado, regra de ouro); peptídeo C | **no ar** (#949; gravado em 31/10). A SVG da tireoide (#871) não entrou: o capítulo já tem a Williams 11-1 |
+| Fisiologia Endócrina: Eixos e Feedback (151) | nenhuma própria | já tem 9 figuras dos livros cobrindo as seções (feedback, eixos, ciclo, célula beta, tireoide) |
+| Biologia Molecular e Genética (152) | tipos de mutação (perda, ganho, dominante-negativo, CaSR); imprinting (15q11-q13 e GNAS) | **no ar** (#949; gravado em 31/10) |
+| Bases da Avaliação Laboratorial (153) | leitura dentro do eixo; testes basais e dinâmicos; hormônio livre × total | **no ar** (#949; gravado em 31/10) |
+| Disruptores Endócrinos (223) | como agem (agonista, antagonista, enzimas, além do receptor); onde atuam (eixo metabólico e eixos hipotálamo-hipófise) | **no ar** (#949; gravado em 31/10) |
 
 ## Lições
 
@@ -414,6 +418,33 @@ ampliador. O editor do professor preserva a figura ao salvar (ramo `figure` do
   - Monta as trocas por `replace()` no servidor: para ilustração nova, a âncora; para
     ilustração já gravada, a linha da imagem inteira, com a legenda atual.
   - Confere que as trocas reproduzem a prévia (`texto.js`).
+- **Caps. 149, 152, 153 e 223, 31/10/2026 (9 ilustrações próprias).** Pedido do professor:
+  *"fazer semelhante aos demais"*.
+  - **Desenho:** dois agentes (149/152 e 153/223), no estilo das do 150. Geradores em
+    `scratchpad/ilustracoes/eb-2026-10-31/` (o `gera.js` usa o `lib.js`; o 153/223 é em
+    Python, `lib.py` + `fig_*.py`). Os planos (âncora, legenda, frases de apoio) ficaram só
+    na pasta da sessão, porque trazem trechos dos capítulos.
+  - **Conferências:** Chromium sem nenhum alerta (texto sobreposto, traço cortando texto,
+    fora da moldura, fonte mínima de 11 px; também com texto 8% mais largo); cada âncora e
+    cada frase de apoio aparecem uma vez no `resumo`; cada número desenhado está no
+    capítulo. Revisei os 9 PNGs. Ajuste meu: o fecho da figura de alvos do 223 dizia "é um
+    bloco inteiro da aula"; ficou só a pegadinha.
+  - **Legendas curtas** (73 a 105 caracteres), como as do 150.
+  - **Deploy:** PR #949; as 9 SVG conferidas byte a byte em produção antes de gravar.
+  - **Gravação:** uma instrução para os 4 capítulos (`gera-sql-eb.js`, na pasta da sessão):
+    troca `"<âncora>\n"` → `"<âncora>\n\n![legenda](url)\n\n"` por `replace()` no
+    servidor; guardas de md5 de antes, âncora única, figura ainda ausente e `tema`.
+    - Backup: `main-antes-ilustracoes-eb-2026-10-31`.
+    - md5: 149 `b27f4a19` → `d5badb5b`; 152 `6139f714` → `9f9c826b`; 153 `fb932c0f` →
+      `69f3a62b`; 223 `2f928a7c` → `706cbffe`. Comprimentos iguais aos calculados
+      (11829, 16022, 8214, 6097).
+    - Só os 4 `resumo` mudaram (resto dos itens, outros 229 e o estado fora de
+      `diretrizes` idênticos; n = 233).
+    - Render dos trechos com o `mdToHtml` real: figura com legenda logo depois do trecho;
+      as listas em volta (149 e 223) e a lista aninhada do ITT (153) não quebram.
+  - **Sobreposição aceita:** a regra de ouro (livre × total) aparece no 149 (fisiologia) e
+    no 153 (laboratório, com o cálcio corrigido). Cada capítulo é lido sozinho.
+  - **Achados nos textos** (não desenhados, levados ao professor): ver [[Pendências]].
 - **Figuras de diabetes, 19/10/2026, das 00h22 às 00h28 UTC.** 51 figuras em 16
   capítulos, gravadas em 4 instruções de `gera-sql.js` (a de 16 capítulos estourou o
   tempo; ver "Lições").
