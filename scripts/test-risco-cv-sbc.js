@@ -64,17 +64,18 @@ function linhaVar(nome, fonte) {
   if (i < 0) throw new Error('var não encontrada: ' + nome);
   return src.slice(i + 1, src.indexOf('\n', i + 1));
 }
-// 24/10/2026: o LDL-c estimado por Martin/Hopkins quando o laudo não traz LDL-c
-// (`ldlMartinHopkins`, `rcvLdlEstimadoTxt`); o teste dele é test-ldl-martin-hopkins.js.
-const FUNCOES = ['ckdEpi2021', 'ldlMartinHopkins', 'preventRisk', 'sbcN', 'sbcRenalDM', 'sbcEstratifica', 'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML',
+// 31/10/2026: a calculadora deixou de estimar o LDL-c por Martin/Hopkins (sem
+// triglicérides, como a fórmula original); a estimativa segue na calculadora própria,
+// testada em test-ldl-martin-hopkins.js. Entram o FIB-4 (`fib4Calc`, `fib4Faixa`) e o
+// destaque do risco em 10 anos no formato da fórmula original (`rcvDestaqueHTML`, `rcvSemEscore`).
+const FUNCOES = ['ckdEpi2021', 'preventRisk', 'sbcN', 'sbcRenalDM', 'fib4Calc', 'fib4Faixa', 'sbcEstratifica', 'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML',
   'ldlConduta', 'ldlEsquemaNivel', 'ldlEsquemaPelaReducao', 'ldlDosesHTML', 'sbcAlvoLDL', 'ldlCondutaHTML', 'ldlFaixaEscore', 'ldlQuadroHTML', 'ldlAlvoHTML',
-  'rcvDados', 'rcvLdlEstimadoTxt', 'rcvRegime', 'rcvSeg', 'rcvChips', 'rcvNum', 'rcvFormHTML', 'rcvVisivel', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML',
+  'rcvDados', 'rcvSeg', 'rcvChips', 'rcvNum', 'rcvFormHTML', 'rcvVisivel', 'rcvSemEscore', 'rcvDestaqueHTML', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML',
   'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio', 'rcvResultadoHTML', 'rcvResumoDados'];
 function mundo(fonte) {
   const ctx = vm.createContext({});
   vm.runInContext(
     'function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}\n'
-    + linhaVar('MARTIN_TG', fonte) + '\n' + linhaVar('MARTIN_NHDL', fonte) + '\n' + trechoVar('MARTIN_FATOR', '\n];', fonte) + '\n'
     + linhaVar('PREVENT_COEFS', fonte) + '\n' + trechoVar('PREVENT_AUG', '\n};', fonte) + '\n'
     + trechoVar('LDL_METAS', '\n};', fonte) + '\n' + linhaVar('SBC_ORD', fonte) + '\n' + linhaVar('SBC_COR', fonte) + '\n'
     + linhaVar('LDL_FAIXA_F', fonte) + '\n' + linhaVar('LDL_COLS', fonte) + '\n' + trechoVar('LDL_DOSES', '\n];', fonte) + '\n'
@@ -226,7 +227,7 @@ function riscoComSDI(v, sdi) {
   ok(ext.stroke > ext.ascvd, '(1) o perfil extremo de referência deixou de inverter AVC × DASCV — alguém "consertou" a ordem? (AVC ' + ext.stroke.toFixed(1) + ', DASCV ' + ext.ascvd.toFixed(1) + ')');
   const e = { sexo: 'M', idade: '31', peso: '97', altura: '170', ct: '151', hdl: '73', pas: '193', pad: '100', cr: '5.5', tab: 'sim', has: 'sim', ahas: 'sim', est: 'nao', dm: 'nao', ev: 'nao' };
   const x = M.rcvDados(e, 2026), h = M.rcvPreventHTML(x);
-  ok(x.r && x.r.stroke > x.r.ascvd && /fora da ordem esperada/.test(h) && h.indexOf(M.sbcN(x.r.stroke, 1) + '%') > 0,
+  ok(x.r && x.r.stroke > x.r.ascvd && /fora da ordem esperada/.test(h) && h.indexOf(M.sbcN(x.r.stroke, 2) + '%') > 0,
     '(1) com AVC acima da DASCV a tela tem de mostrar os dois números como saem e avisar que a ordem inverteu');
 }
 
@@ -317,7 +318,11 @@ for (const [id, d, k, mot, fonte] of OURO) {
   // LDL-c sob tratamento: piso do basal (leitura E-19).
   ok(E({ sexo: 'M', idade: 50, prevent: 3, ldl: 195, trat: { estatina: 'alta' } }).k === 'alto', '(2) LDL-c de 195 sob estatina prova basal ≥ 190 (o fármaco só baixa)');
   const sob = E({ sexo: 'M', idade: 50, prevent: 3, ldl: 120, trat: { estatina: 'alta' } });
-  ok(sob.k === 'baixo' && sob.pendencias.some((p) => /basal\) desconhecido/.test(p.t)), '(2) LDL-c de 120 sob estatina não prova nada: pendência do basal (E-19)');
+  ok(sob.k === 'baixo' && sob.pendencias.some((p) => p.sobe === 'alto' && /Em uso de hipolipemiante, o LDL-c do laudo é sob tratamento: se o LDL-c antes do tratamento era de 190 ou mais, a categoria é alto \(§4\.1\)/.test(p.t)),
+    '(2) LDL-c de 120 sob estatina não prova nada: pendência do LDL-c de antes do tratamento (E-19)');
+  ok(E({ sexo: 'M', idade: 50, prevent: 3, ldl: 120, trat: { estatina: null } }).pendencias.some((p) => /^Uso de estatina não informado: se o LDL-c antes do tratamento/.test(p.t))
+    && E({ sexo: 'M', idade: 45, dm: 'DM2', dmDuracao: 2, ldl: 120, trat: { estatina: 'sim' } }).pendencias.some((p) => p.sobe === 'muitoalto' && /passava de 190, no diabetes a categoria é muito alto \(T4\.8\)/.test(p.t)),
+    '(2) estatina em branco, e estatina no diabetes (> 190 é muito alto): a pendência diz o corte certo');
   ok(E({ sexo: 'M', idade: 50, prevent: 3, ldl: 120, ldlBasal: 175, trat: { estatina: 'alta' } }).k === 'intermediario', '(2) com o basal informado, é ele que decide 160–189');
   // < 18: fora do escopo (§4.10).
   const ped = E({ sexo: 'F', idade: 15, prevent: 1 });
@@ -473,9 +478,11 @@ for (const [id, d, k, mot, fonte] of OURO) {
   ok(A('baixo', 144, NaN, false, 150).gatilho === false && A('baixo', 145, NaN, false, 150).gatilho === true, '(3) F22: no baixo, o gatilho começa em 145 (meta 115 + 30)');
 }
 {
-  // Estratégias pela Figura 7.2 (A.6), pela tela.
+  // Estratégias pela Figura 7.2 (A.6), pela tela. Desde 31/10/2026 o formulário só
+  // pergunta SE o paciente usa estatina (como a fórmula original): sem intensidade,
+  // ezetimiba, ácido bempedoico, anti-PCSK9 e intolerância.
   const tela = (e) => M.rcvEstrategiasHTML(M.rcvDados(e, 2026));
-  // A linha da estratégia: o rótulo exato, com ou sem as marcas ("em uso", "sugerida"…).
+  // A linha da estratégia: o rótulo exato, com ou sem as marcas ("terapia inicial", "sugerida"…).
   const linha = (h, t) => { const m = h.match(new RegExp('<td>' + t.replace(/[+()]/g, '\\$&') + '(?: <span class="rcv-fonte">[^<]*</span>)?</td>[\\s\\S]*?</tr>')); return m ? m[0] : ''; };
   const B = { sexo: 'M', idade: '55', ct: '230', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'nao', lpa_un: 'nd' };
   const ex = (o) => Object.assign({}, B, o);
@@ -484,16 +491,17 @@ for (const [id, d, k, mot, fonte] of OURO) {
   // F16 (extremo, LDL-c 130): a terapia inicial mínima é EAI + EZE + anti-PCSK9.
   const f16 = tela({ sexo: 'M', idade: '68', ev: 'sim', e_iam: '1', e_2a: 'sim', has: 'sim', ahas: 'sim', tab: 'nao', ldl: '130', est: 'nao', dm: 'nao' });
   ok(/terapia inicial · sugerida/.test(linha(f16, 'EAI + EZE + anti-PCSK9')), '(3) F16 (extremo): EAI + EZE + anti-PCSK9 é a terapia inicial e a sugerida');
-  // Em uso de EAI: o que cada esquema ACRESCENTA é relativo (A.6: EAI → EAI + EZE = 30%; → EAI + anti-PCSK9 = 60%).
-  const t = tela({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao', dm: 'nao', tab: 'nao', has: 'nao' });
-  ok(/\+30%/.test(linha(t, 'EAI + EZE')) && /\+60%/.test(linha(t, 'EAI + anti-PCSK9')) && /em uso/.test(linha(t, 'EAI')),
-    '(3) em uso de EAI, a tabela mostra a redução ADICIONAL (EZE +30%; anti-PCSK9 +60%) — leitura A.6');
-  const t2 = tela({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', est: 'alta', eze: 'sim', abp: 'nao', pcsk9: 'nao', dm: 'nao' });
-  ok(/\+57%/.test(linha(t2, 'EAI + EZE + anti-PCSK9')), '(3) EAI + EZE → + anti-PCSK9 acrescenta 57% (A.6)');
-  // Intolerância: só esquemas sem estatina.
-  const ti = tela(ex({ ldl: '205', est: 'nao', intol: 'sim' }));
-  ok(/intolerância/.test(linha(ti, 'EAI')) && /sugerida/.test(ti.slice(0, ti.indexOf('</tbody>'))) && !/sugerida/.test(linha(ti, 'EAI + EZE')),
-    '(3) na intolerância à estatina, a sugerida tem de ser um esquema sem estatina');
+  // ⚠️ Em uso de estatina, sem a intensidade, a figura (redução sobre o LDL-c sem
+  // tratamento) não diz o que cada esquema acrescenta: nenhuma linha "alcança" nem é
+  // sugerida, e o caminho vem das reduções adicionais do texto (as do bloco do PREVENT).
+  const t = tela({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', est: 'sim', dm: 'nao', tab: 'nao', has: 'nao' });
+  ok(/<b>Em uso de estatina:<\/b> a redução que falta, 44,4%, é ADICIONAL ao esquema atual/.test(t) && /associar <b>anti-PCSK9<\/b>/.test(t) && /nenhuma linha é dada como suficiente/.test(t)
+    && !/sugerida/.test(t) && !/✓ sim/.test(t) && !/<span class="rcv-t3">não<\/span>/.test(t),
+    '(3) ⚠️ em uso de estatina (muito alto, LDL-c 90): redução adicional de 44,4% pelo texto (anti-PCSK9), sem linha da figura dada como suficiente');
+  const t2 = tela({ sexo: 'M', idade: '60', ev: 'nao', carot: 'lt50', ldl: '80', est: 'sim', dm: 'nao', tab: 'nao', has: 'nao' });
+  ok(/a redução que falta, 12,5%,/.test(t2) && /otimizar a estatina para alta intensidade e associar <b>ezetimiba<\/b>/.test(t2), '(3) em estatina, falta pouca redução (12,5%): otimizar a estatina e associar ezetimiba');
+  const semEst = tela({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', dm: 'nao' });
+  ok(/Uso de estatina não informado: a tabela supõe que o paciente não usa/.test(semEst) && /sugerida/.test(semEst) && !/Uso de estatina não informado/.test(f1), '(3) estatina em branco: a tabela avisa que supõe "não usa"');
   // Gestação e diálise sem DCV (em quem ainda não trata): a tabela não sugere esquema.
   const tg = tela(ex({ sexo: 'F', gest: 'sim', ldl: '205', est: 'nao' })), td = tela(ex({ ldl: '205', est: 'nao', dial: 'hemo' }));
   ok(/Na gestação, a conduta muda/.test(tg) && !/sugerida/.test(tg) && /recomenda contra INICIAR estatina/.test(td) && !/sugerida/.test(td),
@@ -504,81 +512,76 @@ for (const [id, d, k, mot, fonte] of OURO) {
     && R['EZE + anti-PCSK9'] === 70 && R['EAI + EZE + ABp'] === 75 && R['EAI + anti-PCSK9'] === 80 && R['EZE + ABp + anti-PCSK9'] === 80 && R['EAI + EZE + anti-PCSK9'] === 85
     && R['EAI + ABp + anti-PCSK9'] === 85 && R['EAI + EZE + ABp + anti-PCSK9'] === 90 && M.RCV_ESTRATEGIAS.length === 15, '(3) as reduções médias saíram da Figura 7.2');
 }
-// ── Revisão de 24/10: alvo e estratégias (A2, B1, B2, B6, M2, M3) ──
+// ── Revisão de 24/10: alvo e estratégias (B1, B2, B6, M2, M3, B7), no formulário de 31/10 ──
 {
   const tela = (e) => M.rcvEstrategiasHTML(M.rcvDados(e, 2026));
   const metas = (e) => M.rcvMetasHTML(M.rcvDados(e, 2026));
   const linha = (h, t) => { const m = h.match(new RegExp('<td>' + t.replace(/[+()]/g, '\\$&') + '(?: <span class="rcv-fonte">[^<]*</span>)?</td>[\\s\\S]*?</tr>')); return m ? m[0] : ''; };
-  // Muito alto por AIT, sem diabetes, para isolar o esquema em uso.
+  // Muito alto por AIT, sem diabetes.
   const AIT = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'sim', e_ait: '1', lpa_un: 'nd' };
   const ait = (o) => Object.assign({}, AIT, o);
   const corpoTab = (h) => h.slice(h.indexOf('<tbody>'), h.indexOf('</tbody>'));
-  // A2 — esquema fora da figura é TRATAMENTO, não "sem tratamento".
-  ok(M.rcvRegime({ estatina: 'moderada', pcsk9: true }) === null && M.rcvRegime({ estatina: 'alta', abp: true }) === null && M.rcvRegime({ estatina: null, eze: true }) === null
-    && M.rcvRegime({ estatina: 'nao', eze: false }).nada && M.rcvRegime({ estatina: 'alta' }).id === 'eai', '(3) A2: rcvRegime — fora da figura (ou estatina em branco com outro fármaco) é null; sem nada, "nada"');
-  const a2 = tela(ait({ ldl: '90', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'sim' }));
-  ok(/O esquema em uso \(EMI \+ anti-PCSK9\) não é uma das combinações da Figura 7\.2/.test(a2) && /Informe o LDL-c sem tratamento/.test(a2) && !/sugerida/.test(a2) && !/✓ sim/.test(a2) && !/Sobre o atual/.test(a2),
-    '(3) ⚠️ A2: em EMI + anti-PCSK9 sem o basal, nenhuma estratégia é dada como suficiente, e a tela pede o LDL-c sem tratamento');
-  const a2b = tela(ait({ ldl: '90', ldlb: '200', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'sim' }));
-  ok(/sugerida/.test(linha(a2b, 'EAI + anti-PCSK9')) && !/sugerida/.test(linha(a2b, 'EAI + EZE')) && /redução observada, 55%/.test(a2b) && /\+56%/.test(linha(a2b, 'EAI + anti-PCSK9')),
-    '(3) ⚠️ A2: com o basal (200 → 90: 55% observados), a sugerida mantém o anti-PCSK9 (EAI + anti-PCSK9), nunca "trocar por EAI + EZE"');
-  // Intensificar não é trocar, também dentro da figura: em anti-PCSK9 isolado, a sugerida mantém o anticorpo.
-  const a2c = tela(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '80', est: 'nao', eze: 'nao', abp: 'nao', pcsk9: 'sim' }));
-  ok(/sugerida/.test(linha(a2c, 'EAI + anti-PCSK9')) && !/sugerida/.test(linha(a2c, 'EAI + EZE')) && /em uso/.test(linha(a2c, 'anti-PCSK9')), '(3) A2: a sugerida contém o esquema atual (não tira o anti-PCSK9 em uso)');
-  // B1 — o LDL-c previsto IGUAL ao alvo estrito não alcança: EMI, LDL-c 140 no muito alto; EAI + EZE + ABp leva a 50 (140 × 0,25/0,70).
-  const b1 = tela(ait({ ldl: '140', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'nao' }));
-  ok(/\+64%/.test(linha(b1, 'EAI + EZE + ABp')) && /não/.test(linha(b1, 'EAI + EZE + ABp')) && !/✓ sim/.test(linha(b1, 'EAI + EZE + ABp')) && /sugerida/.test(linha(b1, 'EAI + anti-PCSK9')),
+  // B1 — o LDL-c previsto IGUAL ao alvo estrito não alcança: sem estatina, LDL-c 200 no
+  // muito alto; EAI + EZE + ABp (75%) leva a exatamente 50 (meta < 50).
+  const b1 = tela(ait({ ldl: '200', est: 'nao' }));
+  ok(/não/.test(linha(b1, 'EAI + EZE + ABp')) && !/✓ sim/.test(linha(b1, 'EAI + EZE + ABp')) && /sugerida/.test(linha(b1, 'EAI + anti-PCSK9')),
     '(3) ⚠️ B1: o esquema que leva o LDL-c a exatamente 50 no muito alto (meta < 50) NÃO alcança; a sugerida é a seguinte (EAI + anti-PCSK9)');
   // B2 — LDL-c igual à meta estrita: fora da meta, sem "Redução necessária: 0,0%".
   const lim = M.sbcAlvoLDL('alto', 70, NaN, true, 90);
   ok(lim.limite && !lim.naMeta && lim.red === 0 && !M.sbcAlvoLDL('alto', 69, NaN, true, 90).limite && !M.sbcAlvoLDL('alto', 75, NaN, true, 90).limite, '(3) B2: sbcAlvoLDL marca o limite (LDL-c = meta estrita)');
-  const b2 = metas(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao' }));
+  const b2 = metas(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'sim' }));
   ok(/<b>LDL-c no limite da meta:<\/b> a meta é estrita \(&lt; 70\)/.test(b2) && !/Redução necessária: 0,0%/.test(b2) && /no limite \(a meta é &lt; 70\)/.test(b2) && !/\+0 acima/.test(b2),
     '(3) ⚠️ B2: LDL-c de 70 no alto, em estatina: "no limite da meta", não "Redução necessária: 0,0%" nem "+0 acima"');
-  ok(/sugerida/.test(corpoTab(tela(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao' })))), '(3) B2: no limite da meta as estratégias ainda sugerem a intensificação');
+  ok(/otimizar a estatina para alta intensidade e associar <b>ezetimiba<\/b>/.test(tela(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'sim' }))), '(3) B2: no limite da meta, em estatina, as estratégias ainda dizem como intensificar');
   // B6 — diálise peritoneal no muito alto: o §9.5 admite iniciar estatina, e o bloco não bloqueia.
   const DPm = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', ev: 'nao', lpa_un: 'nd', dm: 'DM2', dm_ano: '2020', ldl: '120', est: 'nao' };
   const b6 = tela(Object.assign({}, DPm, { dial: 'dp' })), b6h = tela(Object.assign({}, DPm, { dial: 'hemo' }));
   ok(M.rcvDados(Object.assign({}, DPm, { dial: 'dp' }), 2026).cat.k === 'muitoalto' && /Diálise peritoneal no risco muito alto: a diretriz admite iniciar estatina/.test(b6) && /sugerida/.test(corpoTab(b6)) && !/contra INICIAR/.test(b6),
     '(3) ⚠️ B6: diálise peritoneal no muito alto — o bloco de estratégias admite iniciar estatina, como o alerta (§9.5)');
   ok(/recomenda contra INICIAR estatina/.test(b6h) && !/sugerida/.test(corpoTab(b6h)), '(3) B6: na hemodiálise sem DCV, continua sem esquema sugerido (rec. §9.5)');
-  // M2 — o "sem tratamento" menor que o atual não serve de base para a redução mínima.
+  // M2 — o "sem tratamento" menor que o atual não serve de base (a função ainda aceita o
+  // basal, que o formulário não pede mais).
   ok(isNaN(M.sbcAlvoLDL('alto', 120, 100, true, 150).base) && !M.sbcAlvoLDL('alto', 120, 100, true, 150).porPct && M.sbcAlvoLDL('alto', 200, 150, false, 230).base === 200,
     '(3) M2: basal menor que o atual — sob tratamento não serve de base; sem tratamento vale a maior dosagem');
-  ok(/O LDL-c sem tratamento informado é menor que o atual, sob tratamento: não serve de base/.test(metas(ait({ ldl: '120', ldlb: '100', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao' }))), '(3) M2: a tela diz por que a redução mínima ficou sem conferência');
+  const semB = metas(ait({ ldl: '120', est: 'sim' }));
+  ok(/A redução mínima de 50% é sobre o LDL-c de antes do tratamento: confira-a pelo histórico do paciente/.test(semB) && !/LDL-c sem tratamento/.test(semB),
+    '(3) em estatina, a tela diz que a redução mínima se confere pelo histórico (o formulário não pede o LDL-c sem tratamento)');
   // M3 — do alto para cima, não-HDL-c fora da meta não é "manter".
   const nh = M.sbcAlvoLDL('muitoalto', 45, NaN, true, 120);
   ok(nh.naMeta && nh.nhdlAcima && !M.sbcAlvoLDL('muitoalto', 45, NaN, true, 79).nhdlAcima && M.sbcAlvoLDL('muitoalto', 45, NaN, true, 80).nhdlAcima, '(3) M3: sbcAlvoLDL marca o não-HDL-c fora da meta (estrita)');
-  const m3 = ait({ ldl: '45', est: 'alta', eze: 'sim', abp: 'nao', pcsk9: 'nao', ct: '160', hdl: '40' });
+  const m3 = ait({ ldl: '45', est: 'sim', ct: '160', hdl: '40' });
   const m3m = metas(m3), m3e = tela(m3);
   ok(/não manter — intensificar o tratamento/.test(m3m) && !/manter o esquema e reavaliar/.test(m3m) && /§5\.5/.test(m3m), '(3) ⚠️ M3: muito alto com LDL-c 45 e não-HDL-c 120 (meta < 80): a redução diz intensificar, não manter');
   ok(/intensificar o tratamento/.test(m3e) && !/nenhuma estratégia a acrescentar agora/.test(m3e), '(3) ⚠️ M3: as estratégias também não dizem "nada a acrescentar"');
-  ok(/manter o esquema e reavaliar/.test(metas(ait({ ldl: '45', est: 'alta', eze: 'sim', abp: 'nao', pcsk9: 'nao', ct: '110', hdl: '40' }))), '(3) M3: com o não-HDL-c na meta (70 < 80), "manter" continua');
-  // B7 — abaixo da meta, fora dela só pela redução mínima: não é "0 mg/dL acima".
-  const b7 = metas({ sexo: 'M', idade: '55', ct: '170', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'nao', lpa_un: 'nd', ldl: '95', ldlb: '130', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'nao', ag_hfam: 'sim' });
-  ok(/o LDL-c está abaixo da meta \(&lt; 100\), mas sem a redução mínima de 30% sobre o LDL-c sem tratamento \(alvo ≤ 91\)/.test(b7) && !/está 0 mg\/dL acima/.test(b7), '(3) ⚠️ B7: "abaixo da meta, mas sem a redução mínima", não "o LDL-c está 0 mg/dL acima da meta"');
+  ok(/manter o esquema e reavaliar/.test(metas(ait({ ldl: '45', est: 'sim', ct: '110', hdl: '40' }))), '(3) M3: com o não-HDL-c na meta (70 < 80), "manter" continua');
+  // B7 — LDL-c igual à meta sem gatilho: "no limite da meta", não "0 mg/dL acima".
+  const b7x = M.rcvDados({ sexo: 'M', idade: '55', ct: '170', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'nao', lpa_un: 'nd', ldl: '100', est: 'nao', ag_hfam: 'sim' }, 2026);
+  const b7 = M.rcvMetasHTML(b7x);
+  ok(b7x.cat.k === 'intermediario' && /Sem gatilho farmacológico: o LDL-c está no limite da meta \(ela é &lt; 100\)/.test(b7) && !/está 0 mg\/dL acima/.test(b7), '(3) ⚠️ B7: LDL-c igual à meta, sem gatilho: "no limite da meta", não "o LDL-c está 0 mg/dL acima da meta"');
   const b7c = M.ldlCondutaHTML({ k: 'intermediario', lip: { basal: 130, nhdl: 120 } }, M.LDL_METAS.intermediario, 95, true);
   ok(/LDL-c abaixo da meta \(&lt; 100\), mas sem a redução mínima de 30%/.test(b7c) && !/no limite da meta/.test(b7c), '(3) B7: a conduta do PREVENT antigo também não chama de "limite" o LDL-c abaixo da meta');
 }
 
 // ───────────────────── (4) a tela ─────────────────────
-const PRIM = { ev: 'nao', sexo: 'M', idade: '61', peso: '86', altura: '172', ct: '228', hdl: '41', ldl: '148', tg: '190', lpa_un: 'nd', pcr: '2.4', pas: '146', pad: '88', cr: '1.0', rac: '18', hba1c: '5.8',
-  tab: 'sim', has: 'sim', ahas: 'sim', est: 'nao', eze: 'nao', abp: 'nao', pcsk9: 'nao', intol: 'nao', dm: 'nao', cac_f: 'nao', carot: 'na', angio: 'na', obstr: 'na', aaa: 'nao', hf: 'nao', dial: 'nao' };
-const SEC = { ev: 'sim', e_iam: '1', e_sca: '1', e_mais1: 'nao', e_2a: 'sim', e_ldl100: 'ns', sexo: 'M', idade: '67', peso: '92', altura: '175', ct: '168', hdl: '38', ldl: '98', tg: '190', lpa_un: 'mg', lpa: '95',
-  pcr: '3.1', pas: '142', pad: '84', cr: '1.3', rac: '45', hba1c: '7.8', tab: 'nao', has: 'sim', ahas: 'sim', est: 'alta', eze: 'nao', abp: 'nao', pcsk9: 'nao', intol: 'nao', dm: 'DM2', dm_ano: '2014', nac: 'na', retino: 'ausente',
+const PRIM = { ev: 'nao', sexo: 'M', idade: '61', peso: '86', altura: '172', ct: '228', hdl: '41', ldl: '148', lpa_un: 'nd', pcr: '2.4', pas: '146', pad: '88', cr: '1.0', rac: '18', hba1c: '5.8',
+  tab: 'sim', has: 'sim', ahas: 'sim', est: 'nao', dm: 'nao', cac_f: 'nao', carot: 'na', angio: 'na', obstr: 'na', aaa: 'nao', hf: 'nao', dial: 'nao' };
+const SEC = { ev: 'sim', e_iam: '1', e_sca: '1', e_mais1: 'nao', e_2a: 'sim', e_ldl100: 'ns', sexo: 'M', idade: '67', peso: '92', altura: '175', ct: '168', hdl: '38', ldl: '98', lpa_un: 'mg', lpa: '95',
+  pcr: '3.1', pas: '142', pad: '84', cr: '1.3', rac: '45', hba1c: '7.8', tab: 'nao', has: 'sim', ahas: 'sim', est: 'sim', dm: 'DM2', dm_ano: '2014', nac: 'na', retino: 'ausente',
   cac_f: 'nao', carot: 'lt50', angio: 'na', obstr: 'na', aaa: 'nao', hf: 'nao', dial: 'nao' };
 {
   const hp = M.rcvResultadoHTML(PRIM), xp = M.rcvDados(PRIM, 2026);
   ok(xp.cat.k === 'alto' && /escore de 5 a &lt; 20% em 10 anos com agravante \(PCR-us de 2,4 mg\/L\)/.test(hp), '(4) caso de prevenção primária: ALTO por escore 5–20% + PCR-us ≥ 2,0');
-  ok(/PREVENT \(AHA\)/.test(hp) && ['DCV total', 'DASCV (aterosclerótica)', 'Insuficiência cardíaca', 'Doença coronariana (DAC)', 'AVC'].every((t) => hp.indexOf('<td>' + t) >= 0),
-    '(4) a tabela do PREVENT tem os cinco desfechos');
-  ok(/Modelo completo \(\+RAC e HbA1c\)/.test(hp) && /errata de 14\/10\/2026/.test(hp), '(4) a tela diz o modelo usado e a errata');
+  ok(/Resultado detalhado do cálculo de risco · PREVENT \(AHA\)/.test(hp) && ['Doença cardiovascular total', 'DASCV (doença cardiovascular aterosclerótica)', 'Insuficiência cardíaca', 'Doença coronariana', 'AVC (acidente vascular cerebral)'].every((t) => hp.indexOf('<td>' + t) >= 0)
+    && /<th>Tipo de risco<\/th><th>10 anos<\/th><th>30 anos<\/th>/.test(hp),
+    '(4) a tabela do PREVENT tem os cinco desfechos, com os nomes por extenso (como a fórmula original)');
+  ok(/<b>Modelo usado:<\/b> PREVENT \+ RAC \+ HbA1c/.test(hp) && /errata de 14\/10\/2026/.test(hp), '(4) a tela diz o modelo usado e a errata');
+  ok(hp.indexOf('<td>' + M.sbcN(xp.r.cvd, 2) + '%</td>') > 0 && hp.indexOf('<td>' + M.sbcN(xp.r.ascvd, 2) + '%</td>') > 0, '(4) a tabela do PREVENT com duas casas decimais');
   ok(/<td>—<\/td>/.test(hp) && /só vai de 30 a 59 anos/.test(hp), '(4) aos 61 anos o PREVENT de 30 anos não aparece (só 30–59)');
   ok(/Redução necessária: 52,7%<\/b> = \(LDL-c atual − alvo\) ÷ LDL-c atual = \(148 − 70\) ÷ 148/.test(hp), '(4) a redução necessária com a conta à vista');
   const hs = M.rcvResultadoHTML(SEC), xs = M.rcvDados(SEC, 2026);
   ok(xs.cat.k === 'extremo' && /EXTREMO/.test(hs), '(4) caso de prevenção secundária: EXTREMO');
-  ok(/Sem escore: com doença aterosclerótica \(prevenção secundária\)/.test(hs) && !/<td>DCV total/.test(hs), '(4) em prevenção secundária não há tabela do PREVENT, e a tela diz por quê');
-  ok(/É redução ADICIONAL ao esquema atual/.test(hs) && /Sem o LDL-c sem tratamento, não dá para conferir a redução mínima de 50%/.test(hs), '(4) em tratamento sem basal: redução adicional, e o aviso do basal');
+  ok(/Sem escore: com doença aterosclerótica \(prevenção secundária\)/.test(hs) && !/<td>Doença cardiovascular total/.test(hs), '(4) em prevenção secundária não há tabela do PREVENT, e a tela diz por quê');
+  ok(/É redução ADICIONAL ao esquema atual/.test(hs) && /A redução mínima de 50% é sobre o LDL-c de antes do tratamento/.test(hs), '(4) em estatina: redução adicional, e o aviso de que a redução mínima é sobre o LDL-c de antes');
   const jovem = M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '25' }), 2026)), velho = M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '84' }), 2026));
   ok(/menos de 30 anos \(§4\.9\)/.test(jovem) && /vai até 79 anos/.test(velho), '(4) fora de 30–79 a tela diz por que não há escore (§4.8; §4.9)');
   ok(/Faltam para o PREVENT: .*creatinina \(TFGe\)/.test(M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { cr: '' }), 2026))), '(4) sem creatinina, a tela diz o que falta para o PREVENT');
@@ -610,7 +613,8 @@ const SEC = { ev: 'sim', e_iam: '1', e_sca: '1', e_mais1: 'nao', e_2a: 'sim', e_
   // Campo escondido não conta: tipos de evento marcados e depois "Não".
   ok(M.rcvDados({ ev: 'nao', e_iam: '1', e_avc: '1', sexo: 'M', idade: '50' }, 2026).cat.nMaiores === 0, '(4) evento marcado atrás de "Não" não pode contar');
   ok(/Preencha o formulário/.test(M.rcvResultadoHTML({})) && /Imprimir relatório/.test(M.rcvResultadoHTML({})) && !/Imprimir relatório/.test(M.rcvResultadoHTML(PRIM, true)), '(4) tela vazia, botões e folha de impressão sem botões');
-  ok(/TFGe/.test(M.rcvResumoDados(xp)) && /Hipolipemiante:<\/b> nenhum/.test(M.rcvResumoDados(xp)), '(4) o resumo dos dados para o relatório impresso');
+  ok(/TFGe/.test(M.rcvResumoDados(xp)) && /Estatina:<\/b> não usa/.test(M.rcvResumoDados(xp)) && /Estatina:<\/b> usa/.test(M.rcvResumoDados(xs)) && /CT\/HDL-c\/LDL-c:<\/b> 228 \/ 41 \/ 148 mg\/dL/.test(M.rcvResumoDados(xp))
+    && !/TG|sem tratamento|Hipolipemiante/.test(M.rcvResumoDados(xp) + M.rcvResumoDados(xs)), '(4) o resumo dos dados para o relatório impresso (sem TG nem LDL-c sem tratamento)');
   // CKD-EPI 2021 (sem raça): a mesma conta nas duas calculadoras.
   const ck = (cr, idade, fem) => { const k = fem ? 0.7 : 0.9, a = fem ? -0.241 : -0.302; return 142 * Math.pow(Math.min(cr / k, 1), a) * Math.pow(Math.max(cr / k, 1), -1.2) * Math.pow(0.9938, idade) * (fem ? 1.012 : 1); };
   ok([[1, 60, false], [0.6, 40, true], [2.5, 75, false], [1.3, 67, false]].every(([c, i, f]) => Math.abs(M.ckdEpi2021(c, i, f) - ck(c, i, f)) < 1e-9) && isNaN(M.ckdEpi2021(NaN, 50, true)),
@@ -671,7 +675,7 @@ const SEC = { ev: 'sim', e_iam: '1', e_sca: '1', e_mais1: 'nao', e_2a: 'sim', e_
   ok(/não basta manter — intensificar o tratamento/.test(m3) && !/manter o esquema e reavaliar/.test(m3), '(5) ⚠️ M3: no PREVENT antigo, LDL-c na meta com não-HDL-c 160 (meta < 100) pede intensificar');
   // B3: 79,5 anos tem escore; 59,5, o de 30 anos — "até 79" é < 80 e "até 59", < 60.
   const ex = Object.assign({}, PRIM, { idade: '79.5' }), h795 = M.rcvPreventHTML(M.rcvDados(ex, 2026)), h595 = M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '59.5' }), 2026));
-  ok(/<td>DCV total/.test(h795) && !/vai até 79 anos/.test(h795) && /vai até 79 anos/.test(M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '80' }), 2026))), '(5) ⚠️ B3: aos 79,5 anos o PREVENT aparece (antes: vão entre "> 79" e "≥ 80")');
+  ok(/<td>Doença cardiovascular total/.test(h795) && !/vai até 79 anos/.test(h795) && /vai até 79 anos/.test(M.rcvPreventHTML(M.rcvDados(Object.assign({}, PRIM, { idade: '80' }), 2026))), '(5) ⚠️ B3: aos 79,5 anos o PREVENT aparece (antes: vão entre "> 79" e "≥ 80")');
   ok(!/só vai de 30 a 59 anos/.test(h595) && !/<td>—<\/td>/.test(h595), '(5) B3: aos 59,5 anos o PREVENT de 30 anos aparece');
   const h795p = M.ldlAlvoHTML(8, pac({ pv_idade: '79.5' }));
   ok(/CATEGORIA SBC · INTERMEDIÁRIO/.test(h795p) && /por escore de 5 a &lt; 20% em 10 anos/.test(h795p) && !/fora de 30–79 anos o escore não categoriza/.test(h795p) && /fora de 30–79 anos o escore não categoriza/.test(M.ldlAlvoHTML(8, pac({ pv_idade: '80' }))),
@@ -731,12 +735,17 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   ok(Em(mutante('sbcEstratifica', 'if(!dcva&&temIdade&&idade>=80)dispara(', 'if(!temDM&&!dcva&&temIdade&&idade>=80)dispara('), Object.assign({ sexo: 'F', idade: 85, dm: 'DM1', dmDuracao: 10 }, semEAR)).k !== 'alto',
     'MUTAÇÃO B5: a regra dos 80 anos só sem diabetes tinha de deixar o DM1 de 85 anos no intermediário');
   const AIT = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'sim', e_ait: '1', lpa_un: 'nd' };
-  const Wa2 = mutante('rcvEstrategiasHTML', 'var foraFig=reg===null,tratando=foraFig||!reg.nada', 'var foraFig=false,tratando=!!reg&&!reg.nada');
-  ok(/sugerida/.test(Wa2.rcvEstrategiasHTML(Wa2.rcvDados(Object.assign({}, AIT, { ldl: '90', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'sim' }), 2026))),
-    'MUTAÇÃO A2: tratar o esquema fora da figura como "sem tratamento" tinha de voltar a sugerir esquema sem o basal');
-  const Wb1 = mutante('rcvEstrategiasHTML', 'var prev=d.ldl*(1-g/100);', 'var prev=d.ldl*(1-Math.round(g*10)/1000);');
-  const hb1 = Wb1.rcvEstrategiasHTML(Wb1.rcvDados(Object.assign({}, AIT, { ldl: '140', est: 'mod', eze: 'nao', abp: 'nao', pcsk9: 'nao' }), 2026));
-  ok(/✓ sim/.test((hb1.match(/<td>EAI \+ EZE \+ ABp(?: <span class="rcv-fonte">[^<]*<\/span>)?<\/td>[\s\S]*?<\/tr>/) || [''])[0]), 'MUTAÇÃO B1: comparar o ganho arredondado tinha de dar "✓ sim" ao esquema que leva a exatamente 50');
+  const Wa2 = mutante('rcvEstrategiasHTML', "emEst=est==='sim'", 'emEst=false');
+  ok(/sugerida/.test(Wa2.rcvEstrategiasHTML(Wa2.rcvDados(Object.assign({}, AIT, { ldl: '90', est: 'sim' }), 2026))),
+    'MUTAÇÃO: tratar quem usa estatina como "sem tratamento" tinha de voltar a sugerir linha da figura (redução total) a quem já trata');
+  const Wb1 = mutante('rcvEstrategiasHTML', 'prev<a.alvo-1e-9', 'prev<=a.alvo+1e-9');
+  const hb1 = Wb1.rcvEstrategiasHTML(Wb1.rcvDados(Object.assign({}, AIT, { ldl: '200', est: 'nao' }), 2026));
+  ok(/✓ sim/.test((hb1.match(/<td>EAI \+ EZE \+ ABp(?: <span class="rcv-fonte">[^<]*<\/span>)?<\/td>[\s\S]*?<\/tr>/) || [''])[0]), 'MUTAÇÃO B1: igualar o alvo estrito tinha de dar "✓ sim" ao esquema que leva a exatamente 50');
+  const Wd = mutante('rcvDestaqueHTML', 'sbcN(r.cvd,1)', 'sbcN(r.ascvd,1)');
+  const xd = Wd.rcvDados(PRIM, 2026);
+  ok(Wd.rcvDestaqueHTML(xd).indexOf('rcv-c-red">' + M.sbcN(xd.r.cvd, 1) + '%') < 0, 'MUTAÇÃO: o número grande do destaque tem de ser o da DCV total (o da figura), não o da DASCV');
+  const Wf = mutante('fib4Faixa', 'f<=2.67', 'f<2.67');
+  ok(Wf.fib4Faixa(2.67, 50).k !== 'indet', 'MUTAÇÃO: o FIB-4 de 2,67 é indeterminado (acima de 2,67, provável)');
   // B8: mexer no termo da TFGe < 60 (ou na interação com a idade) da DAC, ou no da PAS < 110 do AVC, no modelo base, tinha de tirar os perfis novos da tolerância.
   const lin = linhaVar('PREVENT_COEFS'), W0 = vm.createContext({});
   vm.runInContext(lin + '\nthis.P=PREVENT_COEFS;', W0);
@@ -751,5 +760,73 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
     'MUTAÇÃO B8: os perfis de TFGe < 60 e PAS < 110 tinham de pegar um erro nos termos de DAC e AVC');
 }
 
+// ───────────────────── (8) a fórmula original (31/10/2026) ─────────────────────
+// Pedido do professor: sem o LDL-c sem tratamento e sem triglicérides; estatina só
+// "usa / não usa"; sem ezetimiba, ácido bempedoico, anti-PCSK9 e intolerância; com
+// TGO, TGP e plaquetas; e o risco em 10 anos em destaque, como a figura que ele mandou.
+{
+  const f = M.rcvFormHTML({});
+  ok(!/data-rcv-k="(ldlb|tg|eze|abp|pcsk9|intol)"/.test(f) && !/LDL-c sem tratamento|Triglicérides|Ezetimiba|Ácido bempedoico|Anti-PCSK9|Intolerância à estatina|Martin\/Hopkins/.test(f),
+    '(8) o formulário não pode ter LDL-c sem tratamento, triglicérides, ezetimiba, ácido bempedoico, anti-PCSK9 nem intolerância');
+  const estBotoes = f.match(/data-rcv-k="est" data-rcv-v="[^"]*"/g) || [];
+  ok(/>Usa estatina</.test(f) && estBotoes.join() === 'data-rcv-k="est" data-rcv-v="sim",data-rcv-k="est" data-rcv-v="nao"', '(8) estatina só "Sim / Não", sem intensidade: ' + estBotoes.join());
+  ok(/data-rcv-k="ast"/.test(f) && /data-rcv-k="alt"/.test(f) && /data-rcv-k="plaq"/.test(f) && /data-rcv-calc="fib4"/.test(f) && />TGO\/AST \(U\/L\)</.test(f) && />Plaquetas \(mil\/mm³\)</.test(f),
+    '(8) TGO, TGP e plaquetas no formulário, com o FIB-4 calculado embaixo');
+  ok(/>LDL-c \(mg\/dL\)</.test(f), '(8) o LDL-c é o do laudo, com o rótulo simples');
+  // FIB-4: a conta, a conversão da contagem absoluta e as faixas (as da calculadora FIB-4).
+  ok(Math.abs(M.fib4Calc(55, 40, 30, 200) - 55 * 40 / (200 * Math.sqrt(30))) < 1e-12 && M.fib4Calc(55, 40, 30, 200000) === M.fib4Calc(55, 40, 30, 200)
+    && isNaN(M.fib4Calc(NaN, 40, 30, 200)) && isNaN(M.fib4Calc(55, 40, 0, 200)), '(8) FIB-4 = idade × TGO ÷ (plaquetas × √TGP), com a contagem absoluta convertida');
+  ok(M.fib4Faixa(1.29, 50).k === 'baixo' && M.fib4Faixa(1.3, 50).k === 'indet' && M.fib4Faixa(1.9, 70).k === 'baixo' && M.fib4Faixa(1.9, 65).k === 'indet'
+    && M.fib4Faixa(2.67, 50).k === 'indet' && M.fib4Faixa(2.68, 50).k === 'alto' && M.fib4Faixa(NaN, 50) === null, '(8) faixas do FIB-4: < 1,30 (< 2,0 acima de 65), até 2,67 e acima');
+  const itF = html.slice(html.indexOf("{id:'fib4'"), html.indexOf("{id:'trp'"));
+  ok(/fib4Calc\(/.test(itF) && /fib4Faixa\(/.test(itF) && !/var low=/.test(itF), '(8) a calculadora FIB-4 usa a mesma conta e as mesmas faixas');
+  // No motor: o FIB-4 qualifica a esteatose informada; sozinho, não é agravante.
+  const D = { sexo: 'M', idade: 55, prevent: 8, ldl: 120, ct: 190, hdl: 50, fib4: 2.1 };
+  const comE = E(Object.assign({}, D, { ag: { masld: true } }));
+  ok(comE.k === 'alto' && /esteatose hepática \(MASLD\), FIB-4 de 2,10: fibrose indeterminada/.test(comE.motivo), '(8) esteatose informada com FIB-4: agravante, com o FIB-4 no motivo');
+  const aberto = E(Object.assign({}, D, { ag: {} }));
+  ok(aberto.k === 'intermediario' && aberto.pendencias.some((p) => p.sobe === 'alto' && /esteatose hepática \(MASLD\), FIB-4 de 2,10: fibrose indeterminada/.test(p.t)),
+    '(8) ⚠️ FIB-4 alterado com a esteatose em aberto: pendência "pode subir", nunca agravante sozinho');
+  const nao = E(Object.assign({}, D, { fib4: 3.2, ag: { masld: false } }));
+  ok(nao.k === 'intermediario' && nao.alertas.some((a) => /FIB-4 de 3,20 \(fibrose avançada provável\) com a esteatose hepática marcada como "Não": o FIB-4 sozinho não é agravante/.test(a)),
+    '(8) FIB-4 alto com a esteatose marcada "Não": não é agravante, e a tela avisa');
+  ok(E(Object.assign({}, D, { ag: { masld: true }, fib4: NaN })).motivo.indexOf('esteatose hepática (MASLD)') > 0, '(8) sem FIB-4, a esteatose aparece como antes');
+  // Transaminases acima de 3× o limite usual: o aviso da rec. §9.12.
+  ok(E(Object.assign({}, D, { alt: 130 })).alertas.some((a) => /TGO ou TGP acima de 120 U\/L/.test(a) && /rec\. §9\.12/.test(a)) && !E(Object.assign({}, D, { alt: 120, ast: 90 })).alertas.some((a) => /TGO ou TGP/.test(a)),
+    '(8) TGO ou TGP acima de 120 U/L: aviso de 3× o limite (rec. §9.12)');
+  // rcvDados: a estatina "Sim" entra no PREVENT; campos antigos não pesam; LDL-c só o do laudo.
+  const xs = M.rcvDados(Object.assign({}, PRIM, { est: 'sim' }), 2026), xn = M.rcvDados(PRIM, 2026);
+  ok(xs.d.trat.estatina === 'sim' && xs.cat.lip.emTrat && xs.r && xn.r && xs.r.ascvd !== xn.r.ascvd, '(8) "usa estatina" entra no PREVENT e no motor como tratamento');
+  const leg = M.rcvDados(Object.assign({}, PRIM, { ldl: '', tg: '150', ldlb: '250', est: 'alta', eze: 'sim', intol: 'sim' }), 2026);
+  ok(isNaN(leg.d.ldl) && isNaN(leg.d.ldlBasal) && leg.d.trat.estatina === null && leg.d.tg === undefined && Object.keys(leg.d.trat).join() === 'estatina',
+    '(8) chaves antigas (TG, LDL-c sem tratamento, intensidade, ezetimiba, intolerância) não pesam, e sem o LDL-c do laudo não há estimativa');
+  const x4 = M.rcvDados(Object.assign({}, PRIM, { ast: '40', alt: '30', plaq: '200' }), 2026);
+  ok(Math.abs(x4.fib4 - 61 * 40 / (200 * Math.sqrt(30))) < 1e-12 && x4.d.fib4 === x4.fib4, '(8) rcvDados calcula o FIB-4 com a idade do formulário');
+  ok(/<b>TGO\/TGP:<\/b> 40 \/ 30 U\/L/.test(M.rcvResumoDados(x4)) && /<b>Plaquetas:<\/b> 200 mil\/mm³/.test(M.rcvResumoDados(x4)) && /<b>FIB-4:<\/b> 2,23/.test(M.rcvResumoDados(x4)),
+    '(8) o relatório impresso traz TGO, TGP, plaquetas e FIB-4');
+  // O destaque, como a figura: o selo, o risco em 10 anos (DCV total) em número grande
+  // e, logo abaixo, a DASCV, que é o que a SBC usa.
+  const dp = M.rcvDestaqueHTML(xn);
+  ok(/<span class="tag tag-red rcv-pill">Risco alto<\/span>/.test(dp) && dp.indexOf('<div class="rcv-big rcv-c-red">' + M.sbcN(xn.r.cvd, 1) + '%</div>') > 0
+    && /Risco em 10 anos · doença cardiovascular total \(PREVENT\)/.test(dp) && dp.indexOf('DASCV em 10 anos: <b>' + M.sbcN(xn.r.ascvd, 1) + '%</b>') > 0 && /é a DASCV que a SBC usa para categorizar/.test(dp),
+    '(8) destaque: selo, DCV total em 10 anos em número grande e a DASCV com o aviso de que é ela que a SBC usa');
+  const ds = M.rcvDestaqueHTML(M.rcvDados(SEC, 2026));
+  ok(/rcv-pill">Risco extremo</.test(ds) && !/rcv-big"/.test(ds) && !/rcv-big /.test(ds) && /Sem escore: com doença aterosclerótica/.test(ds), '(8) em prevenção secundária, o selo sem número, e o porquê');
+  ok(/rcv-pill">Risco intermediário</.test(M.rcvDestaqueHTML(M.rcvDados(Object.assign({}, PRIM, { pcr: '1' }), 2026))) && /rcv-c-gold/.test(M.rcvDestaqueHTML(M.rcvDados(Object.assign({}, PRIM, { pcr: '1' }), 2026))),
+    '(8) o número grande tem a cor da categoria');
+  const vazio = M.rcvDestaqueHTML(M.rcvDados({ sexo: 'M', idade: '50' }, 2026));
+  ok(/rcv-pill">Categoria ainda indeterminada</.test(vazio) && /Faltam para o PREVENT/.test(vazio), '(8) sem dados: categoria indeterminada e o que falta para o PREVENT');
+  ok(/Fora do escopo/.test(M.rcvDestaqueHTML(M.rcvDados({ sexo: 'M', idade: '15' }, 2026))), '(8) menos de 18 anos: fora do escopo no destaque');
+  const hr = M.rcvResultadoHTML(PRIM);
+  ok(hr.indexOf('class="rcv-dest"') > 0 && hr.indexOf('class="rcv-dest"') < hr.indexOf('Categoria e motivo') && hr.indexOf('Categoria e motivo') < hr.indexOf('Resultado detalhado do cálculo de risco'),
+    '(8) a ordem da tela: destaque, categoria e motivo, e o resultado detalhado do PREVENT');
+  const css = html.slice(html.indexOf('/* rcv-resultado: início'), html.indexOf('/* rcv-resultado: fim'));
+  ok(/\.rcv-dest\{/.test(css) && /\.tag\.rcv-pill\{/.test(css) && /\.rcv-big\{/.test(css) && /\.rcv-big\.rcv-c-red\{color:var\(--red\)\}/.test(css), '(8) o estilo do destaque fica no trecho que a folha impressa copia');
+  // O calc do formulário: o FIB-4 embaixo das plaquetas (ou o pedido da idade).
+  const at = corpo('rcvAtualiza');
+  ok(/fib4:isFinite\(x\.fib4\)\?'FIB-4 '\+sbcN\(x\.fib4,2\)/.test(at) && /informe a idade para o FIB-4/.test(at) && !/ldlmh/.test(at), '(8) a linha do FIB-4 embaixo das plaquetas');
+  ok(!/function rcvLdlEstimadoTxt|function rcvRegime/.test(html), '(8) as funções do LDL-c estimado e do esquema por intensidade saíram');
+}
+
 if (falhas.length) { console.error('test-risco-cv-sbc: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
-console.log('test-risco-cv-sbc: ok (PREVENT com DAC/AVC e errata contra S12/preventr ±0,05 p.p., motor SBC 2025 nos casos-ouro F1–F27, "não sei" que não derruba, alvo e estratégias da F7.2, tela, fiação e mutações)');
+console.log('test-risco-cv-sbc: ok (PREVENT com DAC/AVC e errata contra S12/preventr ±0,05 p.p., motor SBC 2025 nos casos-ouro F1–F27, "não sei" que não derruba, alvo e estratégias da F7.2, tela, fiação, mutações e a fórmula original: destaque do risco em 10 anos, estatina sim/não e FIB-4)');
