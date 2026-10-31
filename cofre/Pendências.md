@@ -350,7 +350,7 @@ completo.
       2–8 h; testosterona a cada 6–12 meses ou anual; próstata a partir dos 45 ou dos 55 anos).
       O "dosar na metade do intervalo" dos ésteres curtos ficou atribuído à Endocrine Society
       2018: o posicionamento diz "no fim do intervalo" logo depois do de longa ação, e a frase
-      é ambígua.
+      é ambígua. ✅ **Professor, 31/10: "manter assim".**
   - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (só com a
     orientação do professor): cap. 164 × ESE 2022 (critério de levotiroxina, cortes de
     cortisol, dose de pulso, suspender o ICI na crise, intervalo do rastreio); caps. 116 e
