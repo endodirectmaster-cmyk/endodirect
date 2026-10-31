@@ -327,7 +327,30 @@ completo.
     total 233.
   - **Divergências dos capítulos (regra de 31/10 em [[Convenções de Trabalho]]):** 164 × ESE
     2022 e 124 × ESHRE 2024 **ficam** (diretriz anterior a 2025); 116 e 117 × SBEM 2026 **seguem
-    a diretriz** (em andamento em 31/10). Lista original:
+    a diretriz**: ✅ **GRAVADOS em 31/10, 13h56 UTC** (detalhes logo abaixo). Lista original:
+  - [x] **Caps. 116 e 117 alinhados ao posicionamento SBEM/SBU/ABEMSS 2026 (31/10, 13h56 UTC).**
+    - **116 (hipogonadismo), 23 trocas:** US escrotal não é de rotina; RM de sela só na suspeita
+      de causa orgânica (testosterona ≤ 150); função tireoidiana no secundário; doença
+      infiltrativa no secundário; tabela da 3ª etapa com os cortes do posicionamento (< 264;
+      264–350 com testosterona livre calculada, corte 6,5 ng/dL; > 350), e o 230 da ISA/ISSAM
+      2009 como outra fonte; mecanismos da obesidade; sintomas pela Tabela 1.
+    - **117 (TRT), 39 trocas:** alvo 450–600 (400–700 é a faixa da Tabela 3 em que se mantém a
+      dose); sem enantato atribuído ao posicionamento (ele cita cipionato 200 mg e propionato
+      com ésteres 250 mg); PSA > 4 (ou > 3 no alto risco) e nódulo não investigado no "não
+      iniciar"; Ht basal > 48% relativa; relativas (Rec. 19) separadas da cautela (Rec. 20);
+      Ht aos 3, 6 e 12 meses e anual; toque e PSA aos 3 e 12 meses e depois o rastreamento
+      local; DXA "considerar repetir".
+    - Conferido por mim nas linhas citadas do fonte.txt (Tabelas 1 e 2, s7, s9, s13, s18,
+      s25–s27, Rec. 05, 06, 10, 11, 17–20, 30–32). Títulos, nº de tabelas e frentes dos
+      flashcards iguais; confere-lote ✓; o aviso do checa_resumo no 116 já existia.
+    - `gravar-diretriz` v20 (token novo, prazo de 60 min), ensaio com md5 do servidor = local,
+      gravação com todas as travas `true`; v21 de volta ao 410 e token apagado. Backups
+      `main-antes-capitulo-116-2026-10-31` e `main-antes-capitulo-117-2026-10-31`.
+    - Ficou como estava: as inconsistências internas do próprio documento (gel dosado 2–4 h ou
+      2–8 h; testosterona a cada 6–12 meses ou anual; próstata a partir dos 45 ou dos 55 anos).
+      O "dosar na metade do intervalo" dos ésteres curtos ficou atribuído à Endocrine Society
+      2018: o posicionamento diz "no fim do intervalo" logo depois do de longa ação, e a frase
+      é ambígua.
   - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (só com a
     orientação do professor): cap. 164 × ESE 2022 (critério de levotiroxina, cortes de
     cortisol, dose de pulso, suspender o ICI na crise, intervalo do rastreio); caps. 116 e

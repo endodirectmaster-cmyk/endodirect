@@ -388,6 +388,8 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .rcv-tab tr.rcv-eu td{background:var(--s2);color:var(--tx);font-weight:600}
 .rcv-nota{font-size:.68rem;color:var(--t3);line-height:1.5;margin-top:.45rem}
 .rcv-red{font-size:.76rem;color:var(--t2);line-height:1.55;margin:.5rem 0 .35rem}
+.rcv-passos{margin:.2rem 0 .1rem;padding-left:1.15rem;display:grid;gap:.35rem;font-size:.78rem;color:var(--t2);line-height:1.55}
+.rcv-passos li::marker{color:var(--t3);font-weight:700}
 .rcv-conduta{font-size:.76rem;color:var(--t2);line-height:1.55;border-left:3px solid var(--bd);padding-left:.6rem;margin-top:.3rem}
 .rcv-vrd{color:var(--grn);font-weight:600}
 .rcv-ver{color:var(--red);font-weight:600}
@@ -4767,8 +4769,10 @@ function rcvMetasHTML(x){
 // tratamento) não diz o que cada esquema ACRESCENTA: nenhuma linha é dada como
 // suficiente, e o caminho vem das reduções adicionais do texto (`ldlEsquemaPelaReducao`,
 // o mesmo do bloco de metas do PREVENT, que também só pergunta "usa estatina").
-function rcvEstrategiasHTML(x){
-  var cat=x.cat,k=cat.k;if(!k)return '';
+// O que a tela recomenda para o LDL-c: quem precisa de fármaco e a menor estratégia da
+// Figura 7.2 que alcança a redução. Usado pelas estratégias e pela conduta sugerida.
+function rcvPlano(x){
+  var cat=x.cat,k=cat.k;if(!k)return null;
   var d=x.d,a=x.alvo,lip=cat.lip,est=(d.trat||{}).estatina,emEst=est==='sim',gatCat=k==='baixo'||k==='intermediario';
   // Gestação, e diálise sem doença cardiovascular em quem ainda não trata: a conduta é
   // outra (alertas acima), e a tabela não sugere esquema nenhum. ⚠️ Na diálise
@@ -4795,6 +4799,101 @@ function rcvEstrategiasHTML(x){
     for(var i=0;i<RCV_ESTRATEGIAS.length;i++){var s=RCV_ESTRATEGIAS[i];if(elegivel(s)&&alcanca(s)){sug=s;break;}}
     if(!sug){nenhuma=true;sug=RCV_ESTRATEGIAS[RCV_ESTRATEGIAS.length-1];}
   }
+  return {k:k,d:d,a:a,lip:lip,est:est,emEst:emEst,gatCat:gatCat,dial:dial,dpLibera:dpLibera,bloqueio:bloqueio,precisa:precisa,
+    hf190:hf190,minimo:minimo,inicial:inicial,alcanca:alcanca,sug:sug,nenhuma:nenhuma};
+}
+// Conduta sugerida, com fármaco e dose (31/10/2026). Pedido do professor: "Falta dizer a
+// conduta (ex: rosuva 40mg, adicionar ezetimiba 10mg...)". Traduz a estratégia da Figura 7.2
+// (rcvPlano) em prescrição e diz o passo seguinte se a meta não vier, como na rec. §7.13:
+// "se não atingir a meta: acrescentar anti-PCSK9 ou ácido bempedoico". Em quem já usa
+// estatina a intensidade não é perguntada (fórmula original): primeiro a dose máxima tolerada
+// de alta intensidade com ezetimiba (a terapia inicial do alto risco para cima); se a redução
+// que falta passa do que a ezetimiba soma (≈ 24%, §7.4), o anti-PCSK9 entra já para quem
+// estava na dose máxima. Doses: as da tabela LDL_DOSES.
+var RCV_RX={
+  eaiMax:'<b>rosuvastatina 40 mg/dia</b> (ou atorvastatina 80 mg/dia)',
+  eai:'<b>rosuvastatina 20 a 40 mg/dia</b> (ou atorvastatina 40 a 80 mg/dia)',
+  emi:'<b>rosuvastatina 5 a 10 mg/dia</b> (ou atorvastatina 10 a 20 mg/dia)',
+  eze:'<b>ezetimiba 10 mg/dia</b>',
+  abp:'<b>ácido bempedoico 180 mg/dia</b>',
+  pcsk9:'<b>anti-PCSK9</b> (evolocumabe 140 mg SC a cada 2 semanas ou 420 mg ao mês, ou alirocumabe 75 a 150 mg SC a cada 2 semanas; a inclisirana, 284 mg SC no início, aos 3 meses e depois a cada 6 meses, é alternativa)'
+};
+function rcvCondutaHTML(x){
+  var P=rcvPlano(x);if(!P)return '';
+  var k=P.k,a=P.a,emEst=P.emEst,gatCat=P.gatCat;
+  var rx=function(s,max){
+    var p=[];
+    if(s.est==='alta')p.push(max?RCV_RX.eaiMax:RCV_RX.eai);else if(s.est==='mod')p.push(RCV_RX.emi);
+    if(s.eze)p.push(RCV_RX.eze);if(s.abp)p.push(RCV_RX.abp);if(s.pcsk9)p.push(RCV_RX.pcsk9);
+    return p.join(' + ');
+  };
+  var semSaida='conferir a adesão e as causas secundárias de LDL-c elevado';
+  var proximo=function(s){
+    if(s.est==='mod'&&!s.eze)return 'subir para estatina de alta intensidade, '+RCV_RX.eai+', ou adicionar '+RCV_RX.eze;
+    if(s.est==='mod')return 'subir a estatina para alta intensidade, '+RCV_RX.eai;
+    if(!s.eze)return 'adicionar '+RCV_RX.eze;
+    if(!s.pcsk9)return 'acrescentar '+RCV_RX.pcsk9+' ou '+RCV_RX.abp;
+    if(!s.abp)return 'acrescentar '+RCV_RX.abp;
+    return semSaida+': o esquema já é o mais intenso da figura';
+  };
+  var msg='',passos=[],notas=[];
+  var reavaliar='<b>Em cerca de 4 semanas:</b> repetir o perfil lipídico (§7.1).';
+  // Gatilho pelo não-HDL-c com o LDL-c no alvo, ou não-HDL-c fora da meta coprimária do
+  // alto para cima: intensificar, como nas estratégias.
+  var pelaNhdl=!!a&&a.naMeta&&(a.gatNhdl||(!gatCat&&a.nhdlAcima))&&!P.bloqueio;
+  if(x.d.gestante===true)msg='Na gestação, a conduta é outra: veja o alerta acima.';
+  else if(P.bloqueio)msg='Diálise sem doença cardiovascular: <b>não iniciar estatina</b> (rec. §9.5).';
+  else if(!a)msg='Informe o LDL-c para ver a conduta com fármaco e dose.';
+  else if(P.precisa||pelaNhdl){
+    var lead=pelaNhdl?'pelo não-HDL-c fora da meta, ':'';
+    if(emEst){
+      // altoMais: alto, muito alto, extremo, ou HF/LDL-c ≥ 190 — onde a terapia inicial já é
+      // EAI + EZE. No baixo e no intermediário, o anti-PCSK9 não entra na conduta.
+      var red=pelaNhdl?0:(a.limite?1:a.red),altoMais=!gatCat||P.hf190;
+      if(altoMais&&(k==='extremo'||red>55)){
+        passos.push('<b>Agora:</b> '+lead+'estatina na dose máxima tolerada, '+RCV_RX.eaiMax+'; adicionar '+RCV_RX.eze+' e '+RCV_RX.pcsk9+'.');
+        passos.push(reavaliar);
+        passos.push('<b>Se ainda acima da meta:</b> acrescentar '+RCV_RX.abp+'.');
+      }else if(altoMais){
+        passos.push('<b>Agora:</b> '+lead+'estatina na dose máxima tolerada, '+RCV_RX.eaiMax+', e adicionar '+RCV_RX.eze+'.'
+          +(red>24?' Se o paciente já estava nessa dose, a ezetimiba sozinha (≈ 24% a mais) não alcança os '+sbcN(red,1)+'% que faltam: associar já o anti-PCSK9.':''));
+        passos.push(reavaliar);
+        passos.push('<b>Se ainda acima da meta:</b> acrescentar '+RCV_RX.pcsk9+' ou '+RCV_RX.abp+'.');
+      }else if(red>24){
+        passos.push('<b>Agora:</b> '+lead+'subir a estatina para alta intensidade, '+RCV_RX.eai+', e adicionar '+RCV_RX.eze+'.');
+        passos.push(reavaliar);
+        passos.push('<b>Se ainda acima da meta:</b> '+semSaida+'.');
+      }else{
+        passos.push('<b>Agora:</b> '+lead+'subir a estatina para alta intensidade, '+RCV_RX.eai+'; se já estiver na dose máxima tolerada, adicionar '+RCV_RX.eze+'.');
+        passos.push(reavaliar);
+        passos.push('<b>Se ainda acima da meta:</b> adicionar '+RCV_RX.eze+', se ainda não usa.');
+      }
+      notas.push('Os acréscimos valem para o que o paciente ainda não usa.');
+    }else{
+      var s=P.sug;
+      if(!s){var id=gatCat&&!P.hf190?'emi':(P.inicial||'eai');s=RCV_ESTRATEGIAS.filter(function(z){return z.id===id;})[0];}
+      passos.push('<b>Agora:</b> '+lead+(P.nenhuma?'nenhum esquema da figura alcança, em média, a redução necessária; iniciar o mais intenso, ':'iniciar ')+rx(s,P.nenhuma)+'.');
+      passos.push(reavaliar);
+      passos.push('<b>Se ainda acima da meta:</b> '+proximo(s)+'.');
+      if(P.est==null)notas.push('Uso de estatina não informado: a conduta supõe que o paciente não usa.');
+    }
+    notas.push('Intolerância à estatina: '+RCV_RX.abp+' + '+RCV_RX.eze+', ou anti-PCSK9 com ou sem ezetimiba (forte, evidência alta).');
+  }else if(a.naMeta){
+    passos.push('<b>Agora:</b> '+(emEst?'manter o esquema atual':'sem hipolipemiante: o LDL-c já está na meta')+', com o estilo de vida.');
+    passos.push('<b>Seguimento:</b> perfil lipídico anual (§7.1).');
+  }else{
+    passos.push('<b>Agora:</b> '+(emEst?'manter o esquema atual e o estilo de vida':'estilo de vida, sem hipolipemiante por ora')+': o gatilho para '+(emEst?'intensificar':'o fármaco')+' é o LDL-c ou o não-HDL-c 30 mg/dL ou mais acima da meta.');
+    passos.push('<b>Seguimento:</b> repetir o perfil lipídico.');
+  }
+  var h='<div class="rcv-bloco"><div class="rcv-bt">Conduta sugerida · SBC 2025</div>'
+    +(msg?'<div class="rcv-red">'+msg+'</div>':'<ol class="rcv-passos">'+passos.map(function(t){return '<li>'+t+'</li>';}).join('')+'</ol>');
+  if(notas.length)h+='<div class="rcv-nota">'+notas.join(' ')+'</div>';
+  return h+'<div class="rcv-nota">Estilo de vida para todos. Sugestão a partir das reduções médias da diretriz: a decisão é do médico, com o paciente.</div></div>';
+}
+function rcvEstrategiasHTML(x){
+  var P=rcvPlano(x);if(!P)return '';
+  var cat=x.cat,k=P.k,d=P.d,a=P.a,est=P.est,emEst=P.emEst,gatCat=P.gatCat,dial=P.dial,dpLibera=P.dpLibera,bloqueio=P.bloqueio,
+    precisa=P.precisa,minimo=P.minimo,inicial=P.inicial,alcanca=P.alcanca,sug=P.sug,nenhuma=P.nenhuma;
   var h='<div class="rcv-bloco"><div class="rcv-bt">Estratégias · redução média do LDL-c (Figura 7.2)</div>';
   var topo='';
   if(d.gestante===true)topo='Na gestação, a conduta muda: veja o alerta acima.';
@@ -4806,8 +4905,8 @@ function rcvEstrategiasHTML(x){
   else if(a.naMeta&&!gatCat&&a.nhdlAcima)topo='LDL-c no alvo, mas o não-HDL-c não está na meta dele (&lt; '+LDL_METAS[k].nhdl+'), que é coprimária: <b>intensificar o tratamento</b> (terapia da categoria, abaixo). A figura mede a redução do LDL-c, e por isso nenhuma linha é marcada.';
   else if(a.naMeta)topo='LDL-c no alvo: nenhuma estratégia a acrescentar agora.';
   else if(gatCat&&!a.gatilho)topo=(emEst?'Sem gatilho para intensificar (≥ 30 mg/dL acima da meta): manter o esquema e o estilo de vida.':'Sem gatilho farmacológico: estilo de vida.')+' A tabela mostra o que cada estratégia faz, para quando houver indicação.';
-  else if(emEst)topo='<b>Em uso de estatina:</b> a redução que falta'+(a.red>0?', '+sbcN(a.red,1)+'%,':'')+' é ADICIONAL ao esquema atual — pelas reduções adicionais da diretriz, '
-    +ldlEsquemaPelaReducao(a.red>0?a.red:0.1,true,a.inclusivo)+'. A figura dá a redução de cada esquema a partir do LDL-c sem tratamento: sem a intensidade atual, nenhuma linha é dada como suficiente.';
+  // 31/10: o que fazer em quem já usa estatina está na conduta sugerida, acima, com fármaco e dose.
+  else if(emEst)topo='<b>Em uso de estatina:</b> a redução que falta'+(a.red>0?', '+sbcN(a.red,1)+'%,':'')+' é ADICIONAL ao esquema atual (fármacos e doses na conduta sugerida, acima). A figura dá a redução de cada esquema a partir do LDL-c sem tratamento: sem a intensidade atual, nenhuma linha é dada como suficiente.';
   else if(sug)topo=(nenhuma?'Nenhum esquema da figura alcança, em média, a redução necessária; o mais intenso possível é ':'Menor estratégia que alcança a redução necessária'+(minimo?' sem ficar abaixo da terapia inicial da categoria':'')+': ')+'<b>'+sug.t+'</b>.';
   if(dpLibera&&!d.gestante&&!cat.dcva)topo='Diálise peritoneal no risco muito alto: a diretriz admite iniciar estatina (§9.5). '+topo;
   if(est==null&&!bloqueio)topo+=(topo?' ':'')+'Uso de estatina não informado: a tabela supõe que o paciente não usa.';
@@ -4899,7 +4998,7 @@ function rcvResultadoHTML(e,imprimir){
   var acoes=imprimir?'':'<div class="rcv-acoes"><button type="button" class="btn btn-primary btn-sm" data-rcv-acao="imprimir">🖨 Imprimir relatório</button><button type="button" class="btn btn-outline btn-sm" data-rcv-acao="novo">Novo paciente</button></div>';
   if(rcvVazio(e))return acoes+'<div class="rcv-bloco"><div class="rcv-msg">Preencha o formulário: a categoria, o motivo e as metas aparecem aqui e se atualizam a cada campo. "Não sei" é uma resposta: ela nunca rebaixa a categoria, e o que fica em aberto aparece como "pode subir".</div></div>';
   var x=rcvDados(e);
-  return acoes+rcvDestaqueHTML(x)+rcvCategoriaHTML(x)+rcvPreventHTML(x)+rcvMetasHTML(x)+rcvEstrategiasHTML(x)+rcvCartoesHTML(x)+(imprimir?'':acoes);
+  return acoes+rcvDestaqueHTML(x)+rcvCategoriaHTML(x)+rcvPreventHTML(x)+rcvMetasHTML(x)+rcvCondutaHTML(x)+rcvEstrategiasHTML(x)+rcvCartoesHTML(x)+(imprimir?'':acoes);
 }
 // Atualiza a tela inteira a partir do estado: botões marcados, trechos que
 // aparecem conforme a resposta, os números calculados ao lado dos campos e o

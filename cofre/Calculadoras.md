@@ -80,6 +80,30 @@ número grande.
   anti-hipertensivo, destaque sem DASCV), ci-validate e Chromium (computador e celular, sem erro de
   JS, sem rolagem lateral, categoria igual: alto).
 
+**Conduta sugerida, com fármaco e dose (31/10, depois):** com prints do resultado, o professor
+escreveu *"Falta dizer a conduta (ex: rosuva 40mg, adicionar ezetimiba 10mg...)"*. Novo bloco
+"Conduta sugerida · SBC 2025" entre as metas e as estratégias (`rcvCondutaHTML`), em três passos:
+agora, em cerca de 4 semanas (repetir o perfil, §7.1) e se ainda acima da meta.
+- **Sem estatina:** a menor estratégia da Figura 7.2 que alcança, respeitando a terapia inicial
+  da categoria (`rcvPlano`, a mesma conta das estratégias), escrita com dose. Exemplo: alto,
+  iniciar rosuvastatina 20 a 40 mg (ou atorvastatina 40 a 80) + ezetimiba 10 mg.
+- **Em estatina** (a intensidade não é perguntada), do alto para cima ou HF/LDL-c ≥ 190:
+  rosuvastatina 40 mg (ou atorvastatina 80), na dose máxima tolerada, + ezetimiba 10 mg.
+  - Se faltam mais de 24% (o que a ezetimiba soma, §7.4), avisa: quem já estava na dose
+    máxima associa já o anti-PCSK9.
+  - Acima de 55%, ou no extremo, o anti-PCSK9 entra no primeiro passo.
+  - Depois: anti-PCSK9 (evolocumabe, alirocumabe; inclisirana como alternativa) ou ácido
+    bempedoico 180 mg, como na rec. §7.13.
+- **Baixo e intermediário:** estatina de alta intensidade e ezetimiba, sem anti-PCSK9.
+- **Outros casos:** na meta, manter; sem gatilho, estilo de vida; gestação e diálise, a conduta
+  é outra.
+- As doses são as da tabela `LDL_DOSES`. O caminho com fármaco saiu do texto das estratégias
+  ("fármacos e doses na conduta sugerida, acima"). O bloco do PREVENT não mudou.
+- `sw.js` v335. Conferido: `test-risco-cv-sbc.js` (seção 9 nova: o caso do print, sem
+  estatina, redução grande, extremo, intermediário sem anti-PCSK9, na meta, sem gatilho, sem
+  LDL-c, gestação, doses iguais às da tabela, ordem e mutação), `test-ldl-martin-hopkins.js`,
+  ci-validate e Chromium (computador e celular, sem erro de JS, sem rolagem lateral).
+
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
 testes de "usa estatina"), `test-ldl-martin-hopkins.js` (a de risco CV só com o LDL-c do laudo),
