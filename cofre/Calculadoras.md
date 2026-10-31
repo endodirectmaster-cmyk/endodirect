@@ -95,6 +95,9 @@ agora, em cerca de 4 semanas (repetir o perfil, §7.1) e se ainda acima da meta.
   - Depois: anti-PCSK9 (evolocumabe, alirocumabe; inclisirana como alternativa) ou ácido
     bempedoico 180 mg, como na rec. §7.13.
 - **Baixo e intermediário:** estatina de alta intensidade e ezetimiba, sem anti-PCSK9.
+- ✅ **Aprovado pelo professor (31/10, "ok"):** sem a intensidade da estatina atual, o primeiro
+  passo é sempre a dose máxima com ezetimiba; com mais de 55% faltando, ou no extremo, o
+  anti-PCSK9 entra já no primeiro passo.
 - **Outros casos:** na meta, manter; sem gatilho, estilo de vida; gestação e diálise, a conduta
   é outra.
 - As doses são as da tabela `LDL_DOSES`. O caminho com fármaco saiu do texto das estratégias
