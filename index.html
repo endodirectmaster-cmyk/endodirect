@@ -467,6 +467,8 @@ html:not(.app-loja) .so-app{display:none!important}
 .flbl,.fld2 label{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:3px}
 input:not([type]),input[type=text],input[type=search],input[type=number],input[type=email],input[type=date],input[type=password],input[type=tel],input[type=url],select,textarea{background:var(--surface);border:1px solid var(--bd2);border-radius:var(--rs);padding:.44rem .72rem;font-family:var(--font);font-size:.79rem;color:var(--tx);outline:none;width:100%;color-scheme:dark}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.1)}
+/* No toque, 16px nos campos decimais das calculadoras: com letra menor, o iPhone amplia a tela ao focar o campo e a página fica cortada de lado. */
+@media (hover:none) and (pointer:coarse){input[inputmode=decimal]{font-size:16px}}
 textarea{resize:vertical;line-height:1.6}
 .tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-size:.6rem;font-weight:600;white-space:nowrap}
 .tag-blue{background:var(--blue-l);color:var(--blue)}
@@ -4485,7 +4487,8 @@ var rcvEstado={};
 // diabetes) só é lido quando a pergunta que o abre está respondida.
 function rcvDados(e,ano){
   e=e||{};ano=ano||new Date().getFullYear();
-  var n=function(k){var s=String(e[k]==null?'':e[k]).replace(',','.').trim();if(s==='')return NaN;var f=parseFloat(s);return isFinite(f)?f:NaN;};
+  // Vírgula decimal ("6,5"); com vírgula e ponto juntos, o ponto é de milhar ("1.234,5").
+  var n=function(k){var s=String(e[k]==null?'':e[k]).replace(/\s/g,'');if(s.indexOf(',')>=0)s=s.replace(/\./g,'').replace(',','.');if(s==='')return NaN;var f=parseFloat(s);return isFinite(f)?f:NaN;};
   var tri=function(k){return e[k]==='sim'?true:(e[k]==='nao'?false:null);};
   var sexo=(e.sexo==='M'||e.sexo==='F')?e.sexo:'',fem=sexo==='F';
   var idade=n('idade'),peso=n('peso'),alt=n('altura'),pas=n('pas');
@@ -4562,7 +4565,10 @@ function rcvChips(rot,itens,e){
     +'</div></div>';
 }
 function rcvNum(k,rot,e,calc){
-  return '<label class="rcv-num"><span>'+rot+'</span><input type="number" step="any" inputmode="decimal" data-rcv-k="'+k+'" value="'+esc(e[k]==null?'':e[k])+'">'
+  // ⚠️ type="text" com teclado decimal, não type="number" (31/10/2026): no iPhone em
+  // português o teclado decimal traz a vírgula, e o campo numérico a recusa ("A vírgula
+  // não está funcionando no iphone"). A leitura aceita vírgula e ponto (rcvDados).
+  return '<label class="rcv-num"><span>'+rot+'</span><input type="text" inputmode="decimal" autocomplete="off" data-rcv-k="'+k+'" value="'+esc(e[k]==null?'':e[k])+'">'
     // a linha do valor calculado existe em todo campo (vazia quando não há conta):
     // assim os campos da mesma linha da grade ficam alinhados
     +'<span class="rcv-calc"'+(calc?' data-rcv-calc="'+calc+'"':'')+'></span></label>';
@@ -13020,7 +13026,8 @@ function openCalc(id){
     c.fields.map(function(f){
       if(f.type==='select')return'<div class="fld2"><label>'+esc(f.label)+'</label><select data-calc-field="'+f.id+'">'+f.opts.map(function(o,i){return'<option value="'+f.vals[i]+'">'+esc(o)+'</option>';}).join('')+'</select></div>';
       if(f.type==='date')return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="date" data-calc-field="'+f.id+'"></div>';
-      return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="number" step="any" inputmode="decimal" data-calc-field="'+f.id+'" placeholder="0"></div>';
+      // Texto com teclado decimal, como na de risco CV: o campo numérico recusa a vírgula no iPhone.
+      return'<div class="fld2"><label>'+esc(f.label)+'</label><input type="text" inputmode="decimal" autocomplete="off" data-calc-field="'+f.id+'" placeholder="0"></div>';
     }).join('')+
     '<div id="calc-result" style="margin-top:.5rem"></div>'+
     (c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')+
@@ -13036,7 +13043,13 @@ function calcUpdate(){
   var c=CALCS.find(function(x){return x.id===activeCalc;});if(!c||typeof c.render==='function')return;
   var v={};
   var scope=calcRoot||document.getElementById('panel-calc')||document;
-  scope.querySelectorAll('[data-calc-field]').forEach(function(inp){v[inp.dataset.calcField]=inp.value;});
+  // Campo decimal: a vírgula vale como separador decimal ("6,5" → "6.5"); com vírgula e ponto
+  // juntos, o ponto é de milhar ("1.234,5" → "1234.5").
+  scope.querySelectorAll('[data-calc-field]').forEach(function(inp){
+    var val=inp.value;
+    if(inp.getAttribute('inputmode')==='decimal'){val=String(val).replace(/\s/g,'');if(val.indexOf(',')>=0)val=val.replace(/\./g,'').replace(',','.');}
+    v[inp.dataset.calcField]=val;
+  });
   var allEmpty=c.fields.every(function(f){return f.type==='select'||!v[f.id];});
   var res=calcEl('#calc-result');if(!res)return;
   if(allEmpty){res.innerHTML='';return;}
