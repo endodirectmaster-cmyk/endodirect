@@ -702,8 +702,14 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
    backup `main-antes-ilustracoes-eb-2026-10-31`; só os 4 `resumo` mudaram; professor
    avisado do F5). O 151 já tem 9 figuras dos livros e não recebeu ilustração própria.
    Detalhes em [[Ilustrações dos Resumos]].
-3. [ ] **Professor: correções de texto propostas em 31/10 (esperam aprovação; nada foi
-   mudado).** Conferidas nas fontes:
+3. ✅ **Correções de texto aprovadas ("Pode aplicar", 31/10) e gravadas no mesmo dia.**
+   Backups `main-antes-correcoes-texto-149-150-152-2026-10-31` e
+   `main-antes-correcoes-texto-153-223-2026-10-31`; md5 149 `f2f1ef65`, 150 `813d047f`,
+   152 `cad3ec06`, 153 `299f88e8`, 223 `931696b4`. Também corrigidos os pontos-chave (149 nº 7,
+   223 nº 2), a resposta do flashcard 9 do 149 (pergunta mantida) e o mapa do 152 (TRβ passou a
+   "dominante-negativo"). A ilustração dos disruptores mudou junto (PR #951): os ftalatos saíram
+   do painel do antagonista (Parks 2000, 10.1093/toxsci/58.2.339: DEHP e MEHP sem afinidade pelo
+   receptor androgênico). As duas seções "Imprinting genômico" viraram uma. O que era:
    - **152, 17-OHP:** "17-OHP basal >1000 ng/dL é diagnóstico da forma clássica" está
      errado. 1.000 ng/dL (30 nmol/L) é o corte aos 60 min da cortrosina, que confirma a
      21-OHD (em geral a não clássica). A clássica costuma passar de 10.000 ng/dL. Basal
@@ -728,6 +734,11 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
    - **150 (desde 17/10):** diz que os receptores de membrana agem "sem depender de
      transcrição", mas na via JAK-STAT a STAT vai ao núcleo.
 4. [ ] **Professor:** dar retorno sobre o estilo das ilustrações.
+5. [ ] **Diretriz 13 (Hiperaldosteronismo primário, ES 2025): proposta ao professor em 31/10.**
+   O texto manda suspender MRA/ENaC/diuréticos por 4 semanas e IECA/BRA por 2 semanas *antes*
+   de dosar. A ES 2025 (10.1210/clinem/dgaf284) permite o rastreio inicial **sem suspender**
+   (renina suprimida sob fármacos que a elevam já é positivo) e deixa a retirada mínima como
+   alternativa. O cap. 91 já está certo. Esperando aprovação para corrigir a Diretriz.
 
 ## 🧹 Questão do Dia: conteúdo apontado na varredura de jargão (17/10)
 
