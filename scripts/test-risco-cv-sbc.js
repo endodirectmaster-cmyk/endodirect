@@ -776,6 +776,7 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   // 31/10/2026, pedido do professor: sem as notas do FIB-4, da estatina e da doença renal no formulário.
   ok(!/FIB-4 = idade|o LDL-c do laudo já é sob tratamento|A doença renal entra pela TFGe|entram como agravantes pelos valores da seção 2/.test(f) && (f.match(/rcv-bloco-dica/g) || []).length === 2,
     '(8) o formulário não tem as quatro notas que o professor tirou (FIB-4, estatina, doença renal e Lp(a)/PCR-us); ficam as outras duas');
+  ok(/>Esteatose hepática \(MASLD\) <span class="rcv-dica">sobretudo com fibrose<\/span>/.test(f), '(8) o subtítulo da esteatose é só "sobretudo com fibrose" (pedido do professor)');
   // 31/10/2026, pedido do professor: o agravante é a adiposidade visceral, pela circunferência abdominal.
   ok(/>Adiposidade visceral <span class="rcv-dica">circunferência abdominal &gt; 80 cm em mulheres e &gt; 94 cm em homens<\/span>/.test(f)
     && /adiposidade visceral/.test(E({ sexo: 'M', idade: 55, prevent: 8, ldl: 120, ct: 190, hdl: 50, ag: { adip: true } }).motivo), '(8) "Adiposidade visceral", com a circunferência abdominal no subtítulo e no motivo');

@@ -64,7 +64,8 @@ do laudo já é sob tratamento…" (seção 3) e "A doença renal entra pela TFG
 Lp(a)/PCR-us. A conta e a faixa do FIB-4 continuam embaixo das plaquetas. `sw.js` v331. Logo depois, *"retira essas também"*: saiu
 também a nota da Lp(a)/PCR-us (seção 6; os valores continuam entrando como agravante). Ficam
 só as notas dos eventos maiores (seção 1) e dos estratificadores do diabetes (seção 4). `sw.js`
-v332.
+v332. Por fim, com print: o subtítulo da esteatose ficou só "sobretudo com fibrose" (saiu "(FIB-4,
+seção 2) ou com fatores cardiometabólicos"). `sw.js` v333.
 
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
