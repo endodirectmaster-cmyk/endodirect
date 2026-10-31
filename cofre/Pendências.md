@@ -325,6 +325,9 @@ completo.
     (o SIU tem 52 mg) na 30; discrepância das doses pediátricas de fosfato na 63.
   - Zumbi conferido logo depois: as 16 gravadas antes (piloto, lote 1, 2a e 2b) intactas;
     total 233.
+  - **Divergências dos capítulos (regra de 31/10 em [[Convenções de Trabalho]]):** 164 × ESE
+    2022 e 124 × ESHRE 2024 **ficam** (diretriz anterior a 2025); 116 e 117 × SBEM 2026 **seguem
+    a diretriz** (em andamento em 31/10). Lista original:
   - [ ] **Divergências dos capítulos dos Resumos** apontadas pelos redatores (só com a
     orientação do professor): cap. 164 × ESE 2022 (critério de levotiroxina, cortes de
     cortisol, dose de pulso, suspender o ICI na crise, intervalo do rastreio); caps. 116 e
@@ -373,6 +376,12 @@ completo.
     gonadotrofina como opção de 1ª linha, inositol experimental na infertilidade, flutamida
     sem atribuição à de 2023). Figuras dos dois capítulos mantidas. O `url` vazio dos dois
     recebeu o DOI da diretriz (o conferidor recusa vazio).
+  - [x] **Cap. 92, < 10 UH (31/10, 13h38 UTC).** O professor: a JES não diz, mas *"no resumo,
+    pode dizer sim que uma densidade menor do que 10 praticamente exclui o diagnóstico"*. Feito
+    no resumo (Localização, com Canu 2019 e Buitenwerf 2018 conferidos no PubMed; "Quando
+    investigar" voltou a "incidentaloma com densidade > 10 UH") e no pts. A Diretriz 16 ficou
+    como o documento. `gravar-diretriz` v18, backup `main-antes-capitulo-92-uh-2026-10-31`, item
+    `10bd8079…`; v19 voltou ao 410.
   - [x] (lista original) **Divergências dos capítulos dos Resumos**: cap. 121
     × diretriz 2023 (doses de letrozol, clomifeno e FSH que ela não traz; gonadotrofina "só
     após falha"; progestágeno antiandrogênico específico; flutamida 250 mg/dia; inositol;
