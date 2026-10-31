@@ -27,7 +27,7 @@ manda o login para `br.com.endodirect.app://login-callback`, o app recebe, a fol
 fecha e o aluno entra. O iPhone pode perguntar "Abrir no Endodirect?" nessa volta;
 basta tocar em **Abrir**.
 
-## 1. No Supabase (pode ser feito já)
+## 1. No Supabase ✅ feito em 30/10/2026
 
 Supabase → projeto Endodirect → **Authentication** → **URL Configuration** →
 **Redirect URLs** → **Add URL**:
@@ -37,7 +37,8 @@ br.com.endodirect.app://login-callback
 ```
 
 Sem esse endereço na lista, o Supabase devolve o login ao site e o aluno fica logado
-dentro da folha do Safari, não no app. O site não muda com isso.
+dentro da folha do Safari, não no app. O site não muda com isso. Não tire esse
+endereço da lista.
 
 ## 2. No Mac, depois que a Apple aprovar a conta
 

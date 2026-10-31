@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-10-30
+atualizado: 2026-10-31
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -199,8 +199,15 @@ Mac e do App Store Connect em `app-ios/LEIA-ME.md`.
   - **O evento de volta não se perde:** o plugin App guarda o `appUrlOpen` até alguém
     ouvir (`retainUntilConsumed`). Por isso não uso `getLaunchUrl`, que devolveria o
     mesmo endereço velho a cada recarga e poderia relogar depois de um "Sair".
-  - **Falta no Supabase:** `br.com.endodirect.app://login-callback` em Redirect URLs
-    (o professor; a ferramenta do Supabase não mexe na configuração do Auth).
+  - **Supabase:** `br.com.endodirect.app://login-callback` nas Redirect URLs, posto pelo
+    professor em 30/10, 23h06 de Brasília (a ferramenta do Supabase não mexe na
+    configuração do Auth). **Conferido em 31/10, 02h08 UTC:** chamei
+    `/auth/v1/authorize?provider=google` cinco vezes e li `auth.flow_state.referrer`.
+    Os três pedidos com o retorno do app ficaram com
+    `br.com.endodirect.app://login-callback`; os dois com um app inventado
+    (`br.com.outro.app://…`) caíram no Site URL. O Supabase confere a lista já no
+    `authorize` e guarda o retorno ali; o `redirect_to` que ele repassa ao Google é o
+    pedido cru e não serve de prova.
 - **Testes:** `scripts/test-login-google-app-ios.js` no CI (site, Android e iPhone sem
   o plugin no redirect de sempre; iPhone abre o navegador; leitura do retorno; sessão
   uma vez só; Info.plist, config, plugins e `.vercelignore` combinando). 9 de 9 mutantes

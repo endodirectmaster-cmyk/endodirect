@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-30
+atualizado: 2026-10-31
 ---
 
 # Pendências
@@ -463,7 +463,7 @@ a renovação do limite semanal. Processo e números em [[Ilustrações dos Resu
 1. [ ] **Professor:**
    - CNPJ → D-U-N-S: **SAIU em 29/10 (e-mail da D&B): número 763009852.** Pedido em 18/10 pela ferramenta da Apple. Falta a Apple recebê-lo (até 2 dias úteis).
    - Conta de organização no Google Play (US$ 25) e na Apple (US$ 99/ano), com o mesmo D-U-N-S, a mesma razão social e o mesmo endereço. **Próximo passo dele (30/10):** inscrever a empresa no Apple Developer Program como organização, com e-mail @endodirect.com.br.
-   - **Supabase (pode já):** Authentication → URL Configuration → Redirect URLs → acrescentar `br.com.endodirect.app://login-callback`. Sem isso, o login com Google do app do iPhone volta para o site, dentro da folha do Safari.
+   - [x] **Supabase:** `br.com.endodirect.app://login-callback` acrescentado às Redirect URLs pelo professor em 30/10 (23h06 de Brasília). Conferido no servidor: o pedido com esse retorno fica guardado com ele; o de um app inventado cai no site.
 2. **Eu, na plataforma** (detalhes em [[App nas Lojas]], seção "Ajustes da plataforma"):
    - [x] exclusão de conta no app, mais a página pública `/excluir-conta` (19/10);
    - [x] política de privacidade e termos: retenção, exclusão, login por e-mail (19/10);
