@@ -3862,7 +3862,7 @@ function sbcEstratifica(d){
   // que foi informada (e, com ela em aberto, aparece na pendência). Nunca é agravante
   // sozinho.
   var f4=num(d.fib4)?fib4Faixa(d.fib4,idade):null,f4Txt=f4?'FIB-4 de '+sbcN(d.fib4,2)+': '+f4.t:'';
-  var AG=[['hfam','história familiar de DCV prematura'],['sm','síndrome metabólica'],['adip','adiposidade'],['masld','esteatose hepática (MASLD)'+(f4?', '+f4Txt:'')],
+  var AG=[['hfam','história familiar de DCV prematura'],['sm','síndrome metabólica'],['adip','adiposidade visceral'],['masld','esteatose hepática (MASLD)'+(f4?', '+f4Txt:'')],
     ['ar','artrite reumatoide'],['psor','psoríase'],['les','lúpus eritematoso sistêmico'],['dii','doença inflamatória intestinal'],['hiv','infecção crônica pelo HIV'],
     ['tx','transplante de órgão'],['menarca','menarca precoce ou tardia',1],['gest','pré-eclâmpsia, eclâmpsia, hipertensão ou diabetes gestacional',1],
     ['parto','parto prematuro',1],['rciu','restrição de crescimento intrauterino',1],['abortos','abortos de repetição',1],['menop','menopausa precoce',1]];
@@ -3877,7 +3877,7 @@ function sbcEstratifica(d){
   var temAg=agSim.length>0,agTxt=agSim.join('; ');
   // Leitura E-9: a tabela lista adiposidade e esteatose, mas o texto diz que é a SM
   // que reclassifica. Entram por critério clínico, com o aviso.
-  if(ag.adip===true||ag.masld===true)A.push('Adiposidade e esteatose entram como agravante por critério clínico: no texto, a diretriz diz que é a síndrome metabólica o agravante que reclassifica (§4.3.2).');
+  if(ag.adip===true||ag.masld===true)A.push('Adiposidade visceral e esteatose entram como agravante por critério clínico: no texto, a diretriz diz que é a síndrome metabólica o agravante que reclassifica (§4.3.2).');
   if(f4&&f4.k==='alto'&&ag.masld===false)A.push('FIB-4 de '+sbcN(d.fib4,2)+' (fibrose avançada provável) com a esteatose hepática marcada como "Não": o FIB-4 sozinho não é agravante (T4.3). Investigar a causa da hepatopatia.');
 
   // ── Rim: G pela TFGe (diálise = G5), A pela RAC (< 30, 30–299, ≥ 300 mg/g).
@@ -4617,7 +4617,7 @@ function rcvFormHTML(e){
       +'<div class="rcv-dica rcv-bloco-dica">A doença renal entra pela TFGe e pela RAC da seção 2: no diabetes, pela matriz da T4.7; com um evento maior, TFGe &lt; 60 é condição de alto risco. Fora dessas, ela não define categoria e pesa pelo PREVENT.</div>')
     +sec(6,'Fatores agravantes',
       ag([['ag_hfam','História familiar de DCV prematura','parente de 1º grau: homem &lt; 55, mulher &lt; 65 anos'],['ag_sm','Síndrome metabólica'],
-        ['ag_adip','Adiposidade','IMC elevado com cintura, RCQ ou RCA elevada'],['ag_masld','Esteatose hepática (MASLD)','sobretudo com fibrose (FIB-4, seção 2) ou com fatores cardiometabólicos'],
+        ['ag_adip','Adiposidade visceral','circunferência abdominal &gt; 80 cm em mulheres e &gt; 94 cm em homens'],['ag_masld','Esteatose hepática (MASLD)','sobretudo com fibrose (FIB-4, seção 2) ou com fatores cardiometabólicos'],
         ['ag_ar','Artrite reumatoide','sobretudo ativa'],['ag_psor','Psoríase','moderada a grave'],['ag_les','Lúpus eritematoso sistêmico'],
         ['ag_dii','Doença inflamatória intestinal','retocolite ou Crohn'],['ag_hiv','Infecção crônica pelo HIV'],['ag_tx','Transplante de órgão']])
       +'<div data-rcv-se="sexo=F"><div class="rcv-sub2">Da mulher</div>'

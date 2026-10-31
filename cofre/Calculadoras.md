@@ -51,6 +51,12 @@ mesmo do bloco do PREVENT, que também só pergunta "usa estatina"). Saíram `rc
 intensidade) e `rcvLdlEstimadoTxt`. O motor (`sbcEstratifica`) ainda aceita LDL-c basal e as
 intensidades, mas nenhum formulário os envia; os alertas de TG saíram.
 
+**Adiposidade visceral (31/10, depois):** o professor, com print da seção 6: *"No título troca
+para "adiposidade visceral" e no subtítulo para "circunferência abdominal" > 80 cm mulheres e > 94
+cm em homens"*. Feito no formulário e no motivo. Esses cortes não estão na SBC 2025, que define
+adiposidade por IMC elevado com um parâmetro antropométrico elevado (§4.3.2); são decisão do
+professor (os da IDF para a população europeia, que ela escreve como ≥). `sw.js` v330.
+
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
 testes de "usa estatina"), `test-ldl-martin-hopkins.js` (a de risco CV só com o LDL-c do laudo),

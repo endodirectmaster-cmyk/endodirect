@@ -331,6 +331,38 @@ completo.
     117 × SBEM 2026 (US testicular, alvo 400–700, enantato, PSA anual, PSA alto como
     contraindicação relativa); cap. 124 × ESHRE 2024 (números sem lastro: gravidez ~5–10%,
     doses de cálcio e vitamina D; transdérmica "de escolha").
+- [x] **Lote 5 GRAVADO (31/10, 12h30 UTC):** 11 (SOMP) e 16 (feocromocitoma e
+  paraganglioma). Pedido do professor: *"Pode fazer mais 2 diretrizes"*. Mesma via: redator,
+  conferente independente, troca exata dos achados conferidos na fonte, confere-lote,
+  checa_resumo e coerência limpos; `gravar-diretriz` v14 com ensaio (md5 do servidor = local),
+  backup por item e conferência por SQL (as do lote 3–4 intactas; total 233). `atEdit`
+  1793449367037.
+
+  | pos | tema | documento | md5 novo | resumo |
+  |---|---|---|---|---|
+  | 11 | SOMP | Diretriz internacional 2023 (Teede et al., JCEM; 77 EBR, 54 CR, 126 PP na Tabela 4) | `a3a2db33…` | 54.958 |
+  | 16 | Feocromocitoma e paraganglioma | Japan Endocrine Society 2025 (77 declarações; antes, ES 2014 + NEJM 2019) | `d8f1561…` | 34.873 |
+
+  - **16:** 1 grave, conferido por mim na fonte: o nó do mapa "Clonidina: sem tumor, queda
+    < 50%" invertia o critério; no documento, sem tumor as catecolaminas **caem para** menos de
+    50% do basal ou menos de 500 pg/mL. Mais 16 menores aplicados (2º trimestre na cirurgia da
+    gestante; "quase sempre" → "em geral"; MIBG com só a sensibilidade menor; metanálise de PRRT
+    com ¹⁷⁷Lu e ⁹⁰Y; regra da menor dose só para o corticoide; omissões repostas com cortes).
+    O próprio documento se contradiz no corte das catecolaminas urinárias (2× na I-2-3, 3× na
+    Fig. 7 e Tabela 6): o resumo e o mapa mostram os dois.
+  - **11:** 0 graves, 10 menores (antiandrogênico também quando o AOC é contraindicado;
+    "excluídas outras causas"; metformina na gestação "em algumas situações"; congelamento
+    só com risco de SHO). O texto do artigo diz 123 PP e a tabela lista 126: o resumo diz os
+    dois, sem explicar. Resumo de 58,9 mil para 55 mil caracteres com cortes no que não é
+    recomendação e em PP longos; os 257 itens continuam, um por linha (conferido por script).
+    Três encurtamentos do conferente endureciam o verbo ("dificulta", "evitar 'obesidade'",
+    "repete o 1.9.12"): voltaram ao sentido do original.
+  - [ ] **Divergências dos capítulos dos Resumos** (só com a orientação do professor): cap. 121
+    × diretriz 2023 (doses de letrozol, clomifeno e FSH que ela não traz; gonadotrofina "só
+    após falha"; progestágeno antiandrogênico específico; flutamida 250 mg/dia; inositol;
+    definição de ciclo irregular; volume ovariano como critério equivalente); cap. 92 × JES
+    2025 (> 4× nas metanefrinas plasmáticas; clonidina < 40%; dieta com 5 g de sódio; metas do
+    preparo; "< 10 UH exclui", que a JES não afirma).
 - [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
   documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
   `gravar-diretriz` (token e prazo novos a cada lote).

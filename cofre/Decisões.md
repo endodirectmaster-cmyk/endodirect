@@ -8,6 +8,8 @@ atualizado: 2026-10-31
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **📋 LOTE 5 DAS DIRETRIZES GRAVADO (2026-10-31, 12h30 UTC).** 11 (SOMP, diretriz internacional 2023) e 16 (feocromocitoma e paraganglioma, Japan Endocrine Society 2025), a pedido do professor (*"Pode fazer mais 2 diretrizes"*). Um grave na 16, conferido na fonte (o nó da clonidina no mapa invertia o critério). Na 11, o resumo desceu a 55 mil caracteres sem perder nenhum dos 257 itens. Gravadas pela `gravar-diretriz` v14; v15 voltou ao 410. Detalhes em [[Pendências]].
+- **🫀 "ADIPOSIDADE VISCERAL" NA CALCULADORA DE RISCO CV (2026-10-31).** Pedido do professor: título "Adiposidade visceral" e subtítulo "circunferência abdominal > 80 cm em mulheres e > 94 cm em homens". Os cortes são decisão dele: a SBC 2025 não os traz. `sw.js` v330. Ver [[Calculadoras]].
 - **🫀 CALCULADORA DE RISCO CV COMO A FÓRMULA ORIGINAL, COM O RISCO EM 10 ANOS EM DESTAQUE (2026-10-31).** Pedido do professor com prints da Clarity: sem LDL-c sem tratamento e sem triglicérides; estatina só "Sim / Não"; sem ezetimiba, ácido bempedoico, anti-PCSK9 e intolerância; com TGO, TGP e plaquetas; e "mostrar o risco como o da figura em 10 anos".
   - **FIB-4 só qualifica a esteatose:** a SBC 2025 lista "esteatose, especialmente com fibrose" e não cita o FIB-4; sozinho ele não vira agravante (pendência quando a esteatose está em aberto).
   - **Número grande = DCV total, como na figura;** logo abaixo, a DASCV com o aviso de que é ela que a SBC usa na categoria (§4.2). Decidi assim para o professor ver o mesmo número da figura sem o aluno ler a DCV total contra o corte de 20%.
