@@ -43,6 +43,35 @@ atualizado: 2026-10-31
     e "CC BY 4.0".
   - 113 (PMC3513909, Dove 2012, "unrestricted noncommercial use"): a figura saiu.
   - Backup: `main-antes-figuras-openi-2026-10-25`.
+- **Resolvido em 31/10/2026** (pedido do professor: *"resolver"*). O Open-i voltou no
+  mesmo dia, e a dependência dele saiu.
+  - **A licença era lida errado.** O servidor lia `license`/`Rights`, que o Open-i não
+    manda. A licença real vem em `ccLicense` ("by", "byncnd"...) e `licenseURL`, agora
+    lidos por `lib/openi-imagem.js`.
+    - Conferido no espelho do PMC na AWS (`license_code`): das 10 figuras das Questões do
+      Dia, só 3 eram CC BY. Cinco eram NC ou ND e duas não tinham licença aberta.
+  - **Código (PR #945, `sw.js` v337):**
+    - a busca aceita `livres:true` e devolve só CC BY, CC0 ou domínio público;
+    - o editor e a Questão do Dia pedem só livres;
+    - o "Usar" fica desligado para licença não livre.
+    - **Cópia própria:** o servidor baixa (`kind:'openi_imagem'`, só professor, só
+      `https://openi.nlm.nih.gov/imgs/…`, só imagem, até 3 MB) e o navegador do
+      professor sobe para `resumos/pmc/<data>/` com `uploadAdminAsset`. A política do
+      Storage já deixa admin gravar em `endodirect-assets`.
+    - Na Questão do Dia, sem cópia não há figura: nunca volta ao link do Open-i.
+    - Teste: `scripts/test-openi-imagem.js`, no CI.
+    - ⚠️ O upload em si não foi testado aqui, porque precisa da sessão do professor. É o
+      mesmo caminho dos outros uploads do painel.
+  - **Dados (backup `main-antes-qotd-openi-2026-10-31`):**
+    - **As 3 CC BY:** PMC5331061, PMC2903524 e PMC4528900, das Questões 35, 36 e 52.
+      - Subiram pela `subir-figuras-livros` v15 (token novo, 60 min, só as 3 URLs), que
+        voltou ao 410 na v16; o token foi apagado.
+      - Conferidas pela URL pública: PNG válido, sha256 igual ao da gravação.
+      - A referência ganhou "· CC BY".
+    - **As 7 não livres** (posições 26, 40, 49, 51, 53, 59 e 127) ficaram sem figura. Na 40,
+      saiu o "(imagem abaixo)" do enunciado.
+    - Conferido: só os 10 itens mudaram, e neles só `img`/`imgRef` (e o enunciado da 40).
+      Nenhum link do Open-i sobra no banco.
 - **Prazo da função e confirmação do deploy.** O deploy ficou ~25 min esperando a
   confirmação de permissão, e a v12 entrou já vencida, com 20 min de prazo (410
   "expirada", nada gravado). A v13, com 60 min, serviu, e a v14 voltou ao 410.
