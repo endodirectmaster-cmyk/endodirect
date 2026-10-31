@@ -8,6 +8,7 @@ atualizado: 2026-10-31
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-10
+- **🧮 CARTÕES DAS CALCULADORAS SEM SUBTÍTULO (2026-10-31).** O professor, com print da tela: *"Retirar esses subtítulos de cada calculadora (ex: triagem de fibrose hepática, etc)"*. O cartão ficou com nome, unidade do resultado e "Abrir" (aluno e painel do professor usam o mesmo `calcCardHTML`). A descrição segue no texto de busca: "fibrose" ainda acha o FIB-4. Altura mínima do cartão de 7,4 para 5,4 rem, para não sobrar vão. Conferido no Chromium (24 cartões, nenhum subtítulo, busca ok, sem erro de JS, computador e celular); `test-calc-grade.js` prende a ausência. `sw.js` v327→v328.
 - **📋 LOTES 3 E 4 DAS DIRETRIZES GRAVADOS (2026-10-31, 04h26 UTC).** 62 (ICI, ESE 2022), 216 (hipogonadismo masculino, SBEM/SBU/ABEMSS 2026), 30 (POI, ESHRE 2024) e 63 (McCune-Albright, consórcio FD/MAS 2019). O professor pediu poucas para gastar poucos créditos, liberou mais duas e deu permissão total para rodar de madrugada.
   - **Critério de escolha para economizar:** documento completo já baixado do PMC (texto por `curl`, sem passar pelo contexto) e curto (~10 mil palavras). Ficaram para depois os temas cuja fonte cobre só metade (21: SIADH sem documento) ou só os critérios (19: acromegalia).
   - **Grave da 63 conferido por mim na Tabela 3:** pamidronato do adulto é 90 mg por dia em 2 dias seguidos (90 mg × 2), não 90 mg no total.

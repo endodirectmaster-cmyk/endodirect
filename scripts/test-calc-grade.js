@@ -2,13 +2,14 @@
 //
 // Pedido do professor, olhando a tela: "Melhora o layout pra deixar mais bonito
 // e organizado". O que entrou: colunas que seguem a largura da tela (auto-fill,
-// em vez de 3 cartões esticados), cartão com nome, descrição, a unidade do
-// resultado e o convite "Abrir", régua ao lado do título de cada grupo, busca
-// por nome ao lado das abas e acesso por teclado.
+// em vez de 3 cartões esticados), cartão com nome, a unidade do resultado e o
+// convite "Abrir", régua ao lado do título de cada grupo, busca por nome ao lado
+// das abas e acesso por teclado. Em 31/10/2026 o professor pediu "Retirar esses
+// subtítulos de cada calculadora": a descrição saiu do cartão e ficou só na busca.
 //
 // 🧨 O QUE ESTE TESTE PRENDE: (1) as colunas por auto-fill, e o colapso em uma
-// coluna no celular continua; (2) o cartão tem as três partes e a unidade (ou a
-// marca de ferramenta oficial); (3) a busca existe, é sem acento e sem caixa, e
+// coluna no celular continua; (2) o cartão tem nome e rodapé, com a unidade (ou a
+// marca de ferramenta oficial), e não mostra a descrição; (3) a busca existe, é sem acento e sem caixa, e
 // esconde cartão e grupo sem redesenhar; (4) Enter e espaço abrem o cartão;
 // (5) a mensagem de busca vazia; (6) o que já valia (classe de cor, data-calc,
 // borda com fallback) segue valendo.
@@ -36,7 +37,9 @@ ok(/\.calc-area-grid \.calc-card\{display:flex;flex-direction:column/.test(SRC) 
 // (2) o cartão
 const card = corpo('calcCardHTML');
 ok(/class="card calc-card'\+meta\.card\+'" data-calc="'\+c\.id\+'" role="button" tabindex="0"/.test(card), '(2) o cartão perdeu a classe de cor, o data-calc ou o papel de botão');
-ok(/class="calc-card-nm">'\+esc\(c\.name\)/.test(card) && /class="calc-card-ds">'\+esc\(c\.desc\)/.test(card), '(2) nome e descrição não estão nas partes do cartão');
+ok(/class="calc-card-nm">'\+esc\(c\.name\)/.test(card), '(2) o nome não está no cartão');
+ok(!/calc-card-ds/.test(card) && !/esc\(c\.desc\)\+'<\/div>/.test(card), '(2) a descrição voltou ao cartão: o professor pediu para tirar os subtítulos (31/10/2026)');
+ok(!/\.calc-card-ds\{/.test(SRC), '(2) o CSS da descrição do cartão voltou sem uso');
 ok(/c\.external\?'<span class="calc-unit calc-ext">Ferramenta oficial ↗<\/span>'/.test(card), '(2) a ferramenta externa não é marcada');
 ok(/c\.unit\?'<span class="calc-unit" title="Resultado em '\+esc\(c\.unit\)\+'">'\+esc\(c\.unit\)\+'<\/span>'/.test(card), '(2) a unidade do resultado não aparece no cartão');
 ok(/<span class="calc-go">Abrir →<\/span>/.test(card), '(2) o convite "Abrir" sumiu');
