@@ -95,7 +95,7 @@ const REF = (i, j) => REF_COLUNAS[j][i];
 const FUNCOES = ['ldlMartinHopkins', 'ldlMartinFaixas', 'ldlMartinExtraHTML', 'ckdEpi2021', 'preventRisk', 'sbcN', 'sbcRenalDM', 'sbcEstratifica',
   'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML', 'ldlConduta', 'ldlEsquemaNivel', 'ldlEsquemaPelaReducao', 'ldlDosesHTML', 'sbcAlvoLDL',
   'ldlCondutaHTML', 'ldlFaixaEscore', 'ldlQuadroHTML', 'ldlAlvoHTML', 'fib4Calc', 'fib4Faixa', 'rcvDados', 'rcvSeg', 'rcvChips', 'rcvNum',
-  'rcvFormHTML', 'rcvVisivel', 'rcvSemEscore', 'rcvDestaqueHTML', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML', 'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio',
+  'rcvFormHTML', 'rcvVisivel', 'rcvSemEscore', 'rcvDestaqueHTML', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML', 'rcvPlano', 'rcvCondutaHTML', 'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio',
   'rcvResultadoHTML', 'rcvResumoDados'];
 function itemLdl(fonte) {
   const src = fonte || html;
@@ -112,7 +112,7 @@ function mundo(fonte) {
     + linhaVar('PREVENT_COEFS', fonte) + '\n' + trechoVar('PREVENT_AUG', '\n};', fonte) + '\n'
     + trechoVar('LDL_METAS', '\n};', fonte) + '\n' + linhaVar('SBC_ORD', fonte) + '\n' + linhaVar('SBC_COR', fonte) + '\n'
     + linhaVar('LDL_FAIXA_F', fonte) + '\n' + linhaVar('LDL_COLS', fonte) + '\n' + trechoVar('LDL_DOSES', '\n];', fonte) + '\n'
-    + trechoVar('RCV_ESTRATEGIAS', '\n];', fonte) + '\n' + linhaVar('RCV_META_PA', fonte) + '\n'
+    + trechoVar('RCV_ESTRATEGIAS', '\n];', fonte) + '\n' + trechoVar('RCV_RX', '\n};', fonte) + '\n' + linhaVar('RCV_META_PA', fonte) + '\n'
     + FUNCOES.map((n) => corpo(n, fonte)).join('\n')
     + '\nvar LDLC=' + itemLdl(fonte) + ';'
     + '\nthis.MARTIN_TG=MARTIN_TG;this.MARTIN_NHDL=MARTIN_NHDL;this.MARTIN_FATOR=MARTIN_FATOR;this.LDLC=LDLC;', ctx);

@@ -53,6 +53,13 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   Developer Program como organização, com o D-U-N-S, a razão social e um e-mail
   @endodirect.com.br. Com *"Pode começar"*, montei a parte que não depende da conta
   (seção "Projeto do app do iPhone" abaixo).
+- **31/10, ~14h UTC:** o professor começou a inscrição no Apple Developer Program. A Conta
+  Apple usada para pedir o D-U-N-S foi a pessoal (Gmail). Orientei a criar uma Conta Apple nova
+  com e-mail @endodirect.com.br, com o nome legal dele e a verificação em duas etapas, e a
+  escolher **Organização**. O D-U-N-S é da empresa e vale com qualquer conta. A página da Apple
+  (lida em 31/10) recomenda a conta com o e-mail da organização e pede e-mail de trabalho do
+  domínio da empresa. Nome da empresa ou apelido no lugar do nome legal atrasa a aprovação.
+  Próximo: depois da aprovação e do pagamento, ele me manda o Team ID.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 

@@ -71,7 +71,7 @@ function linhaVar(nome, fonte) {
 const FUNCOES = ['ckdEpi2021', 'preventRisk', 'sbcN', 'sbcRenalDM', 'fib4Calc', 'fib4Faixa', 'sbcEstratifica', 'sbcDadosDoPrevent', 'sbcCategoria', 'sbcPendenciasHTML',
   'ldlConduta', 'ldlEsquemaNivel', 'ldlEsquemaPelaReducao', 'ldlDosesHTML', 'sbcAlvoLDL', 'ldlCondutaHTML', 'ldlFaixaEscore', 'ldlQuadroHTML', 'ldlAlvoHTML',
   'rcvDados', 'rcvSeg', 'rcvChips', 'rcvNum', 'rcvFormHTML', 'rcvVisivel', 'rcvSemEscore', 'rcvDestaqueHTML', 'rcvCategoriaHTML', 'rcvPreventHTML', 'rcvMetasHTML',
-  'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio', 'rcvResultadoHTML', 'rcvResumoDados'];
+  'rcvPlano', 'rcvCondutaHTML', 'rcvEstrategiasHTML', 'rcvCartoesHTML', 'rcvVazio', 'rcvResultadoHTML', 'rcvResumoDados'];
 function mundo(fonte) {
   const ctx = vm.createContext({});
   vm.runInContext(
@@ -79,7 +79,7 @@ function mundo(fonte) {
     + linhaVar('PREVENT_COEFS', fonte) + '\n' + trechoVar('PREVENT_AUG', '\n};', fonte) + '\n'
     + trechoVar('LDL_METAS', '\n};', fonte) + '\n' + linhaVar('SBC_ORD', fonte) + '\n' + linhaVar('SBC_COR', fonte) + '\n'
     + linhaVar('LDL_FAIXA_F', fonte) + '\n' + linhaVar('LDL_COLS', fonte) + '\n' + trechoVar('LDL_DOSES', '\n];', fonte) + '\n'
-    + trechoVar('RCV_ESTRATEGIAS', '\n];', fonte) + '\n' + linhaVar('RCV_META_PA', fonte) + '\n'
+    + trechoVar('RCV_ESTRATEGIAS', '\n];', fonte) + '\n' + trechoVar('RCV_RX', '\n};', fonte) + '\n' + linhaVar('RCV_META_PA', fonte) + '\n'
     + FUNCOES.map((n) => corpo(n, fonte)).join('\n')
     + '\nthis.PREVENT_AUG=PREVENT_AUG;this.LDL_METAS=LDL_METAS;this.SBC_ORD=SBC_ORD;this.SBC_COR=SBC_COR;this.RCV_ESTRATEGIAS=RCV_ESTRATEGIAS;', ctx);
   return ctx;
@@ -495,11 +495,18 @@ for (const [id, d, k, mot, fonte] of OURO) {
   // tratamento) não diz o que cada esquema acrescenta: nenhuma linha "alcança" nem é
   // sugerida, e o caminho vem das reduções adicionais do texto (as do bloco do PREVENT).
   const t = tela({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', est: 'sim', dm: 'nao', tab: 'nao', has: 'nao' });
-  ok(/<b>Em uso de estatina:<\/b> a redução que falta, 44,4%, é ADICIONAL ao esquema atual/.test(t) && /associar <b>anti-PCSK9<\/b>/.test(t) && /nenhuma linha é dada como suficiente/.test(t)
-    && !/sugerida/.test(t) && !/✓ sim/.test(t) && !/<span class="rcv-t3">não<\/span>/.test(t),
-    '(3) ⚠️ em uso de estatina (muito alto, LDL-c 90): redução adicional de 44,4% pelo texto (anti-PCSK9), sem linha da figura dada como suficiente');
+  ok(/<b>Em uso de estatina:<\/b> a redução que falta, 44,4%, é ADICIONAL ao esquema atual/.test(t) && /conduta sugerida, acima/.test(t) && /nenhuma linha é dada como suficiente/.test(t)
+    && !/sugerida<\/span>/.test(t) && !/✓ sim/.test(t) && !/<span class="rcv-t3">não<\/span>/.test(t),
+    '(3) ⚠️ em uso de estatina (muito alto, LDL-c 90): redução adicional de 44,4%, sem linha da figura dada como suficiente; fármacos na conduta sugerida');
+  // 31/10: o caminho com fármaco e dose saiu das estratégias e foi para a conduta sugerida.
+  const condE = (e) => M.rcvCondutaHTML(M.rcvDados(e, 2026));
+  const tc = condE({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', est: 'sim', dm: 'nao', tab: 'nao', has: 'nao' });
+  ok(/estatina na dose máxima tolerada, <b>rosuvastatina 40 mg\/dia<\/b>/.test(tc) && /adicionar <b>ezetimiba 10 mg\/dia<\/b>/.test(tc) && /os 44,4% que faltam: associar já o anti-PCSK9/.test(tc),
+    '(3) em estatina, 44,4% a mais: rosuvastatina 40 mg + ezetimiba 10 mg, e anti-PCSK9 já se estava na dose máxima');
   const t2 = tela({ sexo: 'M', idade: '60', ev: 'nao', carot: 'lt50', ldl: '80', est: 'sim', dm: 'nao', tab: 'nao', has: 'nao' });
-  ok(/a redução que falta, 12,5%,/.test(t2) && /otimizar a estatina para alta intensidade e associar <b>ezetimiba<\/b>/.test(t2), '(3) em estatina, falta pouca redução (12,5%): otimizar a estatina e associar ezetimiba');
+  const tc2 = condE({ sexo: 'M', idade: '60', ev: 'nao', carot: 'lt50', ldl: '80', est: 'sim', dm: 'nao', tab: 'nao', has: 'nao' });
+  ok(/a redução que falta, 12,5%,/.test(t2) && /<b>rosuvastatina 40 mg\/dia<\/b>/.test(tc2) && /<b>ezetimiba 10 mg\/dia<\/b>/.test(tc2) && !/associar já o anti-PCSK9/.test(tc2),
+    '(3) em estatina, falta pouca redução (12,5%): dose máxima de estatina e ezetimiba, sem anti-PCSK9 de saída');
   const semEst = tela({ sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ldl: '90', dm: 'nao' });
   ok(/Uso de estatina não informado: a tabela supõe que o paciente não usa/.test(semEst) && /sugerida/.test(semEst) && !/Uso de estatina não informado/.test(f1), '(3) estatina em branco: a tabela avisa que supõe "não usa"');
   // Gestação e diálise sem DCV (em quem ainda não trata): a tabela não sugere esquema.
@@ -532,7 +539,9 @@ for (const [id, d, k, mot, fonte] of OURO) {
   const b2 = metas(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'sim' }));
   ok(/<b>LDL-c no limite da meta:<\/b> a meta é estrita \(&lt; 70\)/.test(b2) && !/Redução necessária: 0,0%/.test(b2) && /no limite \(a meta é &lt; 70\)/.test(b2) && !/\+0 acima/.test(b2),
     '(3) ⚠️ B2: LDL-c de 70 no alto, em estatina: "no limite da meta", não "Redução necessária: 0,0%" nem "+0 acima"');
-  ok(/otimizar a estatina para alta intensidade e associar <b>ezetimiba<\/b>/.test(tela(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'sim' }))), '(3) B2: no limite da meta, em estatina, as estratégias ainda dizem como intensificar');
+  // 31/10: o como intensificar, com fármaco e dose, saiu das estratégias para a conduta sugerida.
+  const cb2 = M.rcvCondutaHTML(M.rcvDados(ait({ ev: 'nao', e_ait: '', carot: 'lt50', ldl: '70', est: 'sim' }), 2026));
+  ok(/<b>rosuvastatina 40 mg\/dia<\/b>/.test(cb2) && /adicionar <b>ezetimiba 10 mg\/dia<\/b>/.test(cb2), '(3) B2: no limite da meta, em estatina, a conduta ainda diz como intensificar');
   // B6 — diálise peritoneal no muito alto: o §9.5 admite iniciar estatina, e o bloco não bloqueia.
   const DPm = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', ev: 'nao', lpa_un: 'nd', dm: 'DM2', dm_ano: '2020', ldl: '120', est: 'nao' };
   const b6 = tela(Object.assign({}, DPm, { dial: 'dp' })), b6h = tela(Object.assign({}, DPm, { dial: 'hemo' }));
@@ -735,10 +744,10 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   ok(Em(mutante('sbcEstratifica', 'if(!dcva&&temIdade&&idade>=80)dispara(', 'if(!temDM&&!dcva&&temIdade&&idade>=80)dispara('), Object.assign({ sexo: 'F', idade: 85, dm: 'DM1', dmDuracao: 10 }, semEAR)).k !== 'alto',
     'MUTAÇÃO B5: a regra dos 80 anos só sem diabetes tinha de deixar o DM1 de 85 anos no intermediário');
   const AIT = { sexo: 'M', idade: '60', ct: '200', hdl: '50', pas: '120', cr: '1', peso: '80', altura: '178', tab: 'nao', ahas: 'nao', has: 'nao', dm: 'nao', ev: 'sim', e_ait: '1', lpa_un: 'nd' };
-  const Wa2 = mutante('rcvEstrategiasHTML', "emEst=est==='sim'", 'emEst=false');
+  const Wa2 = mutante('rcvPlano', "emEst=est==='sim'", 'emEst=false');
   ok(/sugerida/.test(Wa2.rcvEstrategiasHTML(Wa2.rcvDados(Object.assign({}, AIT, { ldl: '90', est: 'sim' }), 2026))),
     'MUTAÇÃO: tratar quem usa estatina como "sem tratamento" tinha de voltar a sugerir linha da figura (redução total) a quem já trata');
-  const Wb1 = mutante('rcvEstrategiasHTML', 'prev<a.alvo-1e-9', 'prev<=a.alvo+1e-9');
+  const Wb1 = mutante('rcvPlano', 'prev<a.alvo-1e-9', 'prev<=a.alvo+1e-9');
   const hb1 = Wb1.rcvEstrategiasHTML(Wb1.rcvDados(Object.assign({}, AIT, { ldl: '200', est: 'nao' }), 2026));
   ok(/✓ sim/.test((hb1.match(/<td>EAI \+ EZE \+ ABp(?: <span class="rcv-fonte">[^<]*<\/span>)?<\/td>[\s\S]*?<\/tr>/) || [''])[0]), 'MUTAÇÃO B1: igualar o alvo estrito tinha de dar "✓ sim" ao esquema que leva a exatamente 50');
   const Wd = mutante('rcvDestaqueHTML', 'sbcN(r.cvd,1)', 'sbcN(r.ascvd,1)');
@@ -841,6 +850,58 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   const at = corpo('rcvAtualiza');
   ok(/fib4:isFinite\(x\.fib4\)\?'FIB-4 '\+sbcN\(x\.fib4,2\)/.test(at) && /informe a idade para o FIB-4/.test(at) && !/ldlmh/.test(at), '(8) a linha do FIB-4 embaixo das plaquetas');
   ok(!/function rcvLdlEstimadoTxt|function rcvRegime/.test(html), '(8) as funções do LDL-c estimado e do esquema por intensidade saíram');
+}
+
+// ───────────────────── (9) Conduta sugerida, com fármaco e dose ─────────────────────
+// 31/10/2026, pedido do professor: "Falta dizer a conduta (ex: rosuva 40mg, adicionar
+// ezetimiba 10mg...)". A conduta traduz a estratégia em prescrição e diz o passo seguinte.
+{
+  const cond = (e) => M.rcvCondutaHTML(M.rcvDados(e, 2026));
+  const passos = (h) => (h.match(/<li>[\s\S]*?<\/li>/g) || []).map((l) => l.replace(/<[^>]+>/g, ''));
+  const DM = { ev: 'nao', sexo: 'M', idade: '64', peso: '80', altura: '178', ct: '234', hdl: '34', ldl: '102', pas: '130', pad: '95', cr: '1.0', hba1c: '6.5', tab: 'nao', ahas: 'sim', dm: 'DM2', dm_ano: '2020' };
+  // O caso do print do professor: DM2 (alto), em estatina, LDL-c 102, meta < 70.
+  const pr = cond(Object.assign({}, DM, { est: 'sim' })), pp = passos(pr);
+  ok(/Conduta sugerida · SBC 2025/.test(pr) && pp.length === 3 && /^Agora: estatina na dose máxima tolerada, rosuvastatina 40 mg\/dia \(ou atorvastatina 80 mg\/dia\), e adicionar ezetimiba 10 mg\/dia\./.test(pp[0])
+    && /os 31,4% que faltam: associar já o anti-PCSK9/.test(pp[0]) && /^Em cerca de 4 semanas: repetir o perfil lipídico/.test(pp[1])
+    && /^Se ainda acima da meta: acrescentar anti-PCSK9 \(evolocumabe 140 mg SC/.test(pp[2]) && /ou ácido bempedoico 180 mg\/dia\.$/.test(pp[2]),
+    '(9) print do professor (alto, em estatina, LDL-c 102): rosuvastatina 40 mg + ezetimiba 10 mg, reavaliar em 4 semanas e depois anti-PCSK9 ou ácido bempedoico: ' + pp.join(' | '));
+  // Sem estatina, no alto: a terapia inicial da categoria, com dose.
+  const ps = passos(cond(Object.assign({}, DM, { est: 'nao' })));
+  ok(/^Agora: iniciar rosuvastatina 20 a 40 mg\/dia \(ou atorvastatina 40 a 80 mg\/dia\) \+ ezetimiba 10 mg\/dia\.$/.test(ps[0]) && /anti-PCSK9/.test(ps[2]),
+    '(9) alto sem estatina: iniciar rosuvastatina 20 a 40 mg + ezetimiba 10 mg: ' + ps[0]);
+  // Em estatina com redução grande (> 55%): anti-PCSK9 já no primeiro passo.
+  const pg = passos(cond(Object.assign({}, DM, { est: 'sim', ldl: '180' })));
+  ok(/adicionar ezetimiba 10 mg\/dia e anti-PCSK9/.test(pg[0]) && /^Se ainda acima da meta: acrescentar ácido bempedoico 180 mg\/dia\.$/.test(pg[2]), '(9) em estatina, 61% a mais: ezetimiba e anti-PCSK9 já; depois ácido bempedoico');
+  // Extremo (F16), sem estatina: EAI + EZE + anti-PCSK9 desde o início.
+  const pf = passos(cond({ sexo: 'M', idade: '68', ev: 'sim', e_iam: '1', e_2a: 'sim', ahas: 'sim', tab: 'nao', ldl: '130', est: 'nao', dm: 'nao' }));
+  ok(/^Agora: iniciar rosuvastatina 20 a 40 mg\/dia .*\+ ezetimiba 10 mg\/dia \+ anti-PCSK9/.test(pf[0]) && /ácido bempedoico 180 mg\/dia/.test(pf[2]), '(9) extremo sem estatina: tripla desde o início; depois ácido bempedoico: ' + pf[0].slice(0, 120));
+  // Intermediário: sem anti-PCSK9 na conduta.
+  const INT = { ev: 'nao', sexo: 'M', idade: '55', ct: '240', hdl: '45', ldl: '160', pas: '135', pad: '85', cr: '1', tab: 'nao', ahas: 'nao', dm: 'nao' };
+  ok(M.rcvDados(Object.assign({}, INT, { est: 'nao' }), 2026).cat.k === 'intermediario', '(9) o caso de referência é intermediário');
+  const pi = passos(cond(Object.assign({}, INT, { est: 'nao' }))), pie = passos(cond(Object.assign({}, INT, { est: 'sim' })));
+  ok(/^Agora: iniciar rosuvastatina/.test(pi[0]) && /^Se ainda acima da meta: adicionar ezetimiba 10 mg\/dia\.$/.test(pi[2]) && !/PCSK9/.test(pi.join()) && !/PCSK9/.test(pie.join())
+    && /^Agora: subir a estatina para alta intensidade, rosuvastatina 20 a 40 mg\/dia .*e adicionar ezetimiba 10 mg\/dia\.$/.test(pie[0]),
+    '(9) intermediário: estatina e ezetimiba, sem anti-PCSK9: ' + pi.concat(pie).join(' | '));
+  // Na meta, sem gatilho, sem LDL-c e gestação.
+  const META = { sexo: 'M', idade: '60', ev: 'sim', e_ait: '1', ct: '120', hdl: '50', ldl: '40', est: 'sim', dm: 'nao', tab: 'nao' };
+  ok(/^Agora: manter o esquema atual/.test(passos(cond(META))[0]) && /perfil lipídico anual/.test(passos(cond(META))[1]), '(9) na meta: manter o esquema e perfil lipídico anual');
+  const SG = { ev: 'nao', sexo: 'M', idade: '45', peso: '75', altura: '178', ct: '190', hdl: '55', ldl: '120', pas: '120', pad: '80', cr: '1', tab: 'nao', ahas: 'nao', est: 'nao', dm: 'nao', lpa_un: 'nd' };
+  const sg = cond(SG);
+  ok(M.rcvDados(SG, 2026).cat.k === 'baixo', '(9) o caso sem gatilho é baixo risco: ' + M.rcvDados(SG, 2026).cat.k);
+  ok(/sem hipolipemiante por ora/.test(sg) && /30 mg\/dL ou mais acima da meta/.test(sg) && !/<b>rosuvastatina/.test(sg), '(9) sem gatilho: estilo de vida, sem fármaco');
+  ok(/Informe o LDL-c para ver a conduta/.test(cond(Object.assign({}, DM, { est: 'sim', ldl: '' }))) && !/<ol/.test(cond(Object.assign({}, DM, { est: 'sim', ldl: '' }))), '(9) sem LDL-c: pede o LDL-c, sem lista de passos');
+  ok(/Na gestação, a conduta é outra/.test(cond({ sexo: 'F', gest: 'sim', idade: '30', ldl: '205', est: 'nao' })) && !/<b>rosuvastatina/.test(cond({ sexo: 'F', gest: 'sim', idade: '30', ldl: '205', est: 'nao' })), '(9) gestação: sem estatina na conduta');
+  // As doses são as da tabela de doses (LDL_DOSES) da própria tela.
+  const doses = M.ldlDosesHTML();
+  ok(/rosuvastatina 20–40 mg/.test(doses) && /atorvastatina 40–80 mg/.test(doses) && /10 mg\/dia, junto da estatina/.test(doses) && /180 mg\/dia/.test(doses) && /284 mg SC no início, aos 3 meses e depois a cada 6 meses/.test(doses)
+    && /evolocumabe 140 mg SC a cada 2 semanas ou 420 mg ao mês/.test(doses) && /alirocumabe 75–150 mg SC a cada 2 semanas/.test(doses), '(9) as doses da conduta batem com a tabela de doses');
+  // Ordem: a conduta vem depois das metas e antes das estratégias.
+  const tela9 = M.rcvResultadoHTML(Object.assign({}, DM, { est: 'sim' }));
+  const iM = tela9.indexOf('Metas lipídicas'), iC = tela9.indexOf('Conduta sugerida'), iE = tela9.indexOf('Estratégias · redução média');
+  ok(iM > 0 && iC > iM && iE > iC, '(9) a conduta sugerida fica entre as metas e as estratégias');
+  // Mutação: sem o aviso dos > 24%, o print do professor tem de falhar.
+  const W9 = mutante('rcvCondutaHTML', "(red>24?", '(false?');
+  ok(!/associar já o anti-PCSK9/.test(W9.rcvCondutaHTML(W9.rcvDados(Object.assign({}, DM, { est: 'sim' }), 2026))), 'MUTAÇÃO: sem o aviso dos > 24%, a conduta do print deixaria de dizer o anti-PCSK9');
 }
 
 if (falhas.length) { console.error('test-risco-cv-sbc: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
