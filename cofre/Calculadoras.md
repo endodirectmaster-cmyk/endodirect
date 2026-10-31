@@ -104,6 +104,24 @@ agora, em cerca de 4 semanas (repetir o perfil, §7.1) e se ainda acima da meta.
   LDL-c, gestação, doses iguais às da tabela, ordem e mutação), `test-ldl-martin-hopkins.js`,
   ci-validate e Chromium (computador e celular, sem erro de JS, sem rolagem lateral).
 
+**Vírgula no iPhone (31/10, depois):** o professor, com print do teclado do iPhone: *"A vírgula
+não está funcionando no iphone"*.
+- **Causa:** os campos eram `type="number"`. O teclado decimal do iPhone em português traz a
+  vírgula, e o WebKit não aceita vírgula nesse tipo de campo.
+- **Correção:** todos os campos numéricos das calculadoras passaram a `type="text"
+  inputmode="decimal"`, tanto a de risco CV (`rcvNum`) quanto as geradas (`openCalc`). O
+  teclado continua o decimal.
+- **Leitura:** vírgula vale como decimal ("6,5" → 6,5). Com vírgula e ponto juntos, o ponto é
+  de milhar ("1.234,5" → 1234,5). Fica em `rcvDados` e em `calcUpdate`, que normaliza os
+  campos decimais antes de `c.calc(v)`.
+- **Zoom:** com toque (`hover:none` e `pointer:coarse`), os campos decimais ficam com 16px. Com
+  letra menor, o iPhone ampliava a tela ao focar o campo, e a página ficava cortada de lado,
+  como no print.
+- `sw.js` v336. Conferido: `test-risco-cv-sbc.js` (seção 10), ci-validate e Chromium no
+  computador e no celular simulado. Digitando "6,5" e "1,2" na de risco CV e "80,5" no IMC,
+  a vírgula fica no campo e a conta sai certa (IMC 25,41). Não há iPhone aqui: a confirmação
+  final é a do professor no aparelho.
+
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
 testes de "usa estatina"), `test-ldl-martin-hopkins.js` (a de risco CV só com o LDL-c do laudo),

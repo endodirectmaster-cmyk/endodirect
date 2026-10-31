@@ -904,5 +904,27 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   ok(!/associar já o anti-PCSK9/.test(W9.rcvCondutaHTML(W9.rcvDados(Object.assign({}, DM, { est: 'sim' }), 2026))), 'MUTAÇÃO: sem o aviso dos > 24%, a conduta do print deixaria de dizer o anti-PCSK9');
 }
 
+// ───────────────────── (10) Vírgula decimal (iPhone) ─────────────────────
+// 31/10/2026, o professor: "A vírgula não está funcionando no iphone". O teclado decimal do
+// iPhone em português traz a vírgula, e o campo type="number" a recusa. Os campos passam a
+// texto com teclado decimal, e a leitura aceita vírgula e ponto.
+{
+  const f = M.rcvFormHTML({});
+  const campos = f.match(/<input [^>]*data-rcv-k="[^"]*"[^>]*>/g) || [];
+  ok(campos.length >= 15 && campos.every((c) => /type="text"/.test(c) && /inputmode="decimal"/.test(c)) && !/type="number"/.test(f),
+    '(10) os campos numéricos da calculadora são texto com teclado decimal, sem type="number": ' + campos.length);
+  const xv = M.rcvDados({ sexo: 'M', idade: '64', hba1c: '6,5', cr: '1,0', ldl: '102,4', plaq: '284.997', ast: '1.234,5' }, 2026);
+  ok(xv.d.hba1c === 6.5 && Math.abs(xv.d.ldl - 102.4) < 1e-9 && isFinite(xv.tfge) && Math.abs(xv.d.ast - 1234.5) < 1e-9,
+    '(10) "6,5", "1,0" e "102,4" valem 6,5, 1,0 e 102,4; "1.234,5" vale 1234,5: ' + [xv.d.hba1c, xv.d.ldl, xv.d.ast].join(' '));
+  ok(Math.abs(M.rcvDados({ sexo: 'M', idade: '64', hba1c: '6.5' }, 2026).d.hba1c - 6.5) < 1e-9, '(10) o ponto continua valendo');
+  // As outras calculadoras (campos gerados em openCalc) também.
+  const gen = html.slice(html.indexOf("if(f.type==='date')return'"), html.indexOf("if(f.type==='date')return'") + 600);
+  ok(/<input type="text" inputmode="decimal"[^>]*data-calc-field=/.test(gen) && !/type="number"[^>]*data-calc-field/.test(html),
+    '(10) os campos das outras calculadoras também são texto com teclado decimal');
+  const cu = corpo('calcUpdate');
+  ok(/getAttribute\('inputmode'\)==='decimal'/.test(cu) && /replace\(',','\.'\)/.test(cu), '(10) calcUpdate troca a vírgula por ponto nos campos decimais');
+  ok(/@media \(hover:none\) and \(pointer:coarse\)\{input\[inputmode=decimal\]\{font-size:16px\}\}/.test(html), '(10) no toque, 16px nos campos decimais (o iPhone não amplia a tela ao focar)');
+}
+
 if (falhas.length) { console.error('test-risco-cv-sbc: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
 console.log('test-risco-cv-sbc: ok (PREVENT com DAC/AVC e errata contra S12/preventr ±0,05 p.p., motor SBC 2025 nos casos-ouro F1–F27, "não sei" que não derruba, alvo e estratégias da F7.2, tela, fiação, mutações e a fórmula original: destaque do risco em 10 anos, estatina sim/não e FIB-4)');
