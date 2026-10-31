@@ -23,18 +23,24 @@ atualizado: 2026-10-31
   - Medido com o assinante: 358 ms na 1ª página de uma versão nova e 2 ms nas seguintes.
 - **Na retomada: o lote 2, 2ª parte** (estado na auditoria, abaixo).
 
-## 🖼️ Open-i em manutenção (25/10): o que ainda depende dele
+## ✅ Open-i em manutenção (25/10): resolvido em 31/10
 
 - [x] Figuras de capítulo:
   - 111 passou para cópia própria (CC BY 4.0);
   - 113 saiu (só uso não comercial);
   - nenhum link do Open-i sobra nos Resumos do aluno.
-- [ ] Os 10 links de `ig_stories` (stories do Instagram, só do professor) ficam quebrados
-  enquanto o Open-i estiver fora.
-- [ ] O buscador de imagem do editor de Resumos e a imagem automática da Questão do Dia
-  buscam no Open-i e não acham nada enquanto ele estiver fora.
-- [ ] Melhoria proposta, a aprovar: o botão "Usar" do buscador copiar a imagem para
-  `resumos/pmc/` em vez de ligar direto, para uma queda do Open-i não quebrar o capítulo.
+- [x] **RESOLVIDO em 31/10** (professor: *"resolver"*; o Open-i voltou no mesmo dia). Detalhes em
+  [[Dados e Supabase]]:
+  - **As 10 Questões do Dia com figura do Open-i.** Eram 9 publicadas e 1 na fila; 7 delas
+    tinham licença não livre (5 NC/ND e 2 sem licença).
+    - As 3 CC BY viraram cópia própria em `resumos/pmc/`, com "· CC BY" na referência.
+    - As outras 7 ficaram sem figura. Na 40 saiu também o "(imagem abaixo)" do enunciado; nas
+      outras, o achado já está descrito no texto.
+    - Backup: `main-antes-qotd-openi-2026-10-31`.
+  - **Buscador e imagem automática:** só licença livre (CC BY, CC0 ou domínio público), e
+    sempre em cópia própria.
+  - **Melhoria aprovada e feita:** o "Usar" copia para `resumos/pmc/` antes de anexar
+    (PR #945, `sw.js` v337).
 
 ## ✅ FEITO (24/10): calculadora "Risco CV e metas — SBC 2025" (pedido de 22/10, com prints da Clarity)
 
