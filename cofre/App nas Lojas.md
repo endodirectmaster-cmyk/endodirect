@@ -69,6 +69,18 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     professor e não vai para o repositório público.
   - A Apple ainda confere a autoridade para assinar, por telefone ou pedindo documento. Depois
     manda o e-mail para aceitar o contrato e pagar US$ 99.
+- **31/10, 11h30 de Brasília: a Apple pediu documentos** (e-mail "Review your Apple Developer
+  Program enrollment"). Ela não conseguiu verificar a identidade dele nem o vínculo com a
+  empresa. Pede:
+  - documento oficial com foto;
+  - comprovação do vínculo com a empresa;
+  - um documento da empresa: contrato social, cartão CNPJ ou contrato de constituição.
+  - **Envio:** em developer.apple.com/contact/file-upload/. Português do Brasil é aceito, sem
+    tradução.
+  - **Orientei:** CNH ou passaporte; contrato social consolidado com ele como
+    sócio-administrador (é o vínculo); cartão CNPJ atualizado, do site da Receita. O nome tem
+    de ser igual no documento, na Conta Apple e no contrato social. Os documentos não passam
+    por mim.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
