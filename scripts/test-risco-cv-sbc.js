@@ -773,6 +773,9 @@ ok(Math.abs(mutante('sbcAlvoLDL', 'var porPct=teto<m.ldl', 'var porPct=false').s
   ok(/data-rcv-k="ast"/.test(f) && /data-rcv-k="alt"/.test(f) && /data-rcv-k="plaq"/.test(f) && /data-rcv-calc="fib4"/.test(f) && />TGO\/AST \(U\/L\)</.test(f) && />Plaquetas \(mil\/mm³\)</.test(f),
     '(8) TGO, TGP e plaquetas no formulário, com o FIB-4 calculado embaixo');
   ok(/>LDL-c \(mg\/dL\)</.test(f), '(8) o LDL-c é o do laudo, com o rótulo simples');
+  // 31/10/2026, pedido do professor: o agravante é a adiposidade visceral, pela circunferência abdominal.
+  ok(/>Adiposidade visceral <span class="rcv-dica">circunferência abdominal &gt; 80 cm em mulheres e &gt; 94 cm em homens<\/span>/.test(f)
+    && /adiposidade visceral/.test(E({ sexo: 'M', idade: 55, prevent: 8, ldl: 120, ct: 190, hdl: 50, ag: { adip: true } }).motivo), '(8) "Adiposidade visceral", com a circunferência abdominal no subtítulo e no motivo');
   // FIB-4: a conta, a conversão da contagem absoluta e as faixas (as da calculadora FIB-4).
   ok(Math.abs(M.fib4Calc(55, 40, 30, 200) - 55 * 40 / (200 * Math.sqrt(30))) < 1e-12 && M.fib4Calc(55, 40, 30, 200000) === M.fib4Calc(55, 40, 30, 200)
     && isNaN(M.fib4Calc(NaN, 40, 30, 200)) && isNaN(M.fib4Calc(55, 40, 0, 200)), '(8) FIB-4 = idade × TGO ÷ (plaquetas × √TGP), com a contagem absoluta convertida');

@@ -74,6 +74,8 @@ atualizado: 2026-10-31
   deploy: a v11 entrou no ar já vencida (410). A v12, com token e prazo novos gerados no
   minuto do deploy, gravou 62, 216, 30 e 63 em 30 s, e a v13 voltou ao 410, com o token
   apagado. **Gerar token e prazo imediatamente antes do deploy, nunca antes de outra etapa.**
+  Lote 5 (31/10, 12h30 UTC): v14 (token e prazo de 60 min gerados no minuto do deploy) gravou
+  11 e 16, e a v15 voltou ao 410; token apagado.
   Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
