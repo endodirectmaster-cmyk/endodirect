@@ -122,6 +122,9 @@ run(`
     if(String(url).indexOf('/figuras/resumos/textos.json')>=0){__textosPedidos++;return __textosFalha?Promise.reject(new Error('rede')):Promise.resolve({ok:true,json:function(){return Promise.resolve(__textos);}});}
     __fetch.push(JSON.parse(opt.body));return Promise.resolve({ok:true,json:function(){return Promise.resolve({ok:true,items:__openiItems});}});
   };
+  // 31/10/2026: a figura do Open-i vai para o nosso bucket antes de entrar (oiCopiaPropria).
+  var __copias=[];
+  oiCopiaPropria=function(u){__copias.push(u);return Promise.resolve({url:'https://x.supabase.co/storage/v1/object/public/endodirect-assets/resumos/pmc/'+String(u).split('/').pop()});};
 `);
 function attach(q, resp, extra) {
   run('__ia=[];__fetch=[];__iaErro=' + (!!(extra && extra.erro)) + ';__iaResp=' + JSON.stringify(resp) + ';__openiItems=' + JSON.stringify((extra && extra.openi) || []) + ';');
@@ -159,10 +162,15 @@ casos.push(() => attach(QG, { id: 'r9-9', busca: '' }).then(({ q }) => {
 casos.push(() => attach(QG, { id: '[r0-0]', busca: '' }).then(({ q }) => {
   ok(q.expImg === LIVRO + 'vilar-31-4-padroes.png', 'o id entre colchetes ("[r0-0]", como vem na lista) não foi reconhecido');
 }));
-const OPENI_GRAVES = [{ img: 'https://openi.nlm.nih.gov/imgs/512/1/2/graves.png', title: 'Thyroid scintigraphy in hyperthyroidism', caption: 'Thyroid scintigraphy showing diffuse increased uptake in Graves disease.', authors: 'Silva A, Souza B', journal: 'Thyroid Res', date: '2019', pmid: '123' }];
+const OPENI_GRAVES = [{ img: 'https://openi.nlm.nih.gov/imgs/512/1/2/graves.png', title: 'Thyroid scintigraphy in hyperthyroidism', caption: 'Thyroid scintigraphy showing diffuse increased uptake in Graves disease.', authors: 'Silva A, Souza B', journal: 'Thyroid Res', date: '2019', pmid: '123', license: 'CC BY', livre: true }];
 casos.push(() => attach(QG, { id: '', busca: 'thyroid scintigraphy Graves diffuse uptake' }, { openi: OPENI_GRAVES }).then(({ q, fetch }) => {
-  ok(fetch.length === 1 && fetch[0].kind === 'openi', 'sem candidata que sirva e sem figura no enunciado, a busca no PubMed não foi feita');
-  ok(q.expImg === OPENI_GRAVES[0].img && q.expImgOrigem === 'pubmed' && /PMID 123/.test(q.expImgRef || ''), 'a figura do PubMed não entrou com a minirreferência: ' + JSON.stringify([q.expImg, q.expImgRef]));
+  ok(fetch.length === 1 && fetch[0].kind === 'openi' && fetch[0].livres === true, 'sem candidata que sirva e sem figura no enunciado, a busca no PubMed (só licença livre) não foi feita');
+  ok(q.expImg === 'https://x.supabase.co/storage/v1/object/public/endodirect-assets/resumos/pmc/graves.png' && q.expImgOrigem === 'pubmed' && /PMID 123/.test(q.expImgRef || '') && /CC BY/.test(q.expImgRef || ''),
+    'a figura do PubMed não entrou como cópia própria, com a minirreferência e a licença: ' + JSON.stringify([q.expImg, q.expImgRef]));
+}));
+// Licença não livre (NC/ND, ou sem licença): não entra, nem que o servidor a deixe passar.
+casos.push(() => attach(QG, { id: '', busca: 'thyroid scintigraphy Graves diffuse uptake' }, { openi: [Object.assign({}, OPENI_GRAVES[0], { license: 'CC BY-NC-ND', livre: false })] }).then(({ q }) => {
+  ok(!q.expImg, '⚠️ figura de licença não livre (CC BY-NC-ND) entrou no comentário: ' + JSON.stringify(q.expImg));
 }));
 casos.push(() => attach(Object.assign({}, QG, { img: 'https://openi.nlm.nih.gov/imgs/512/9/9/caso.png' }), { id: '', busca: 'thyroid scintigraphy Graves diffuse uptake' }, { openi: OPENI_GRAVES }).then(({ q, fetch, ia }) => {
   ok(fetch.length === 0 && !q.expImg, '⚠️ com figura no enunciado, o comentário recebeu OUTRA figura do PubMed');

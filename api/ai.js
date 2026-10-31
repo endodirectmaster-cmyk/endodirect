@@ -44,6 +44,7 @@ const { fetchArticleText } = require('../lib/fetch-article');
 const { sendSupportEmail, storeSupportTicket, listSupportTickets, listMyTickets, replySupportTicket } = require('../lib/support');
 const { sendToEmail } = require('../lib/push');
 const { adminFromReq, userFromReq } = require('../lib/admin-auth');
+const { licencaOpeni, baixarImagemOpeni } = require('../lib/openi-imagem');
 // Exclusão de conta pelo aluno e conta de revisão das lojas (módulos lib/).
 const { excluirConta } = require('../lib/excluir-conta');
 const { contaRevisao } = require('../lib/conta-revisao');
@@ -99,15 +100,21 @@ const OPENI_TIPOS = 'x,c,m,u,p';
 // 18/10: casos clínicos com imagem). Nunca entra no balde de exames: o cliente só
 // pede foto para sinal da lista IG_IMG_SINAIS e confere a legenda (igImgRelevante).
 const OPENI_TIPOS_FOTO = 'ph';
-async function openiSearch(query, n, tipo) {
+// `livres` (31/10/2026): só devolve figura de licença livre (CC BY, CC0 ou domínio
+// público), a única que pode entrar no produto. Como o filtro descarta muitas, pede
+// mais candidatas ao Open-i e corta em `n` depois. A licença vem de `ccLicense` e
+// `licenseURL` (lib/openi-imagem.js); `license`/`Rights` o Open-i não manda.
+async function openiSearch(query, n, tipo, livres) {
   const OPENI = 'https://openi.nlm.nih.gov';
-  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(Math.max(1, Math.min(n || 4, 8))), it: tipo === 'foto' ? OPENI_TIPOS_FOTO : OPENI_TIPOS });
+  const nPedido = Math.max(1, Math.min(n || 4, 8));
+  const qs = new URLSearchParams({ query: String(query || '').slice(0, 300), m: '1', n: String(livres ? Math.min(nPedido * 4, 30) : nPedido), it: tipo === 'foto' ? OPENI_TIPOS_FOTO : OPENI_TIPOS });
   const abs = function (p) { p = String(p || ''); return p && p.charAt(0) === '/' ? OPENI + p : p; };
   const r = await fetch(OPENI + '/api/search?' + qs.toString(), { headers: { Accept: 'application/json' } });
   if (!r.ok) return [];
   const d = await r.json().catch(() => null);
   const list = d && Array.isArray(d.list) ? d.list : [];
-  return list.map(function (it) {
+  const itens = list.map(function (it) {
+    const lic = licencaOpeni(it);
     return {
       img: abs(it.imgLarge || it.imgGrid150 || it.imgThumb || ''),
       thumb: abs(it.imgThumb || it.imgGrid150 || it.imgLarge || ''),
@@ -118,10 +125,12 @@ async function openiSearch(query, n, tipo) {
       pmid: String(it.pmid || '').slice(0, 20),
       pmcid: String(it.pmcid || '').slice(0, 30),
       articleUrl: String(it.article_URL || '').slice(0, 500),
-      license: String(it.license || it.Rights || it.rights || (it.image && it.image.license) || '').slice(0, 80),
+      license: lic.licenca,
+      livre: lic.livre,
       caption: String((it.image && it.image.caption) || '').slice(0, 600)
     };
-  }).filter(function (x) { return x.img; });
+  }).filter(function (x) { return x.img && (!livres || x.livre); });
+  return livres ? itens.slice(0, nPedido) : itens;
 }
 
 // Base clínica PROFUNDA por subespecialidade (lib/ → não conta como função
@@ -229,11 +238,21 @@ module.exports = async function handler(req, res) {
       const q = String(sbody.query || '').trim().slice(0, 300);
       if (!q) return json(res, 400, { ok: false, error: 'query vazia' });
       try {
-        const items = await openiSearch(q, sbody.n, sbody.tipo === 'foto' ? 'foto' : 'exame');
+        const items = await openiSearch(q, sbody.n, sbody.tipo === 'foto' ? 'foto' : 'exame', sbody.livres === true);
         return json(res, 200, { ok: true, items });
       } catch (e) {
         return json(res, 200, { ok: true, items: [] });
       }
+    }
+    // (e2) PROFESSOR copia uma figura do Open-i para o nosso bucket: o servidor baixa
+    // (o navegador não alcança o Open-i, por CORS) e devolve em base64; o navegador
+    // sobe com a sessão do professor. Ver lib/openi-imagem.js.
+    if (sbody && sbody.kind === 'openi_imagem') {
+      const admin = await adminFromReq(req);
+      if (!admin) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
+      const r = await baixarImagemOpeni(sbody.url);
+      res.setHeader('Cache-Control', 'no-store');
+      return json(res, r.ok ? 200 : (r.code || 400), r.ok ? { ok: true, tipo: r.tipo, base64: r.base64 } : { ok: false, error: r.error });
     }
   }
 
