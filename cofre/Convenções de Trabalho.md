@@ -1,9 +1,23 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-17
+atualizado: 2026-10-31
 ---
 
 # Convenções de Trabalho
+
+## 📚 CAPÍTULO × DIRETRIZ: QUANDO O RESUMO SEGUE A DIRETRIZ (2026-10-31)
+
+Regra do professor, sobre as divergências entre os capítulos dos Resumos e as Diretrizes:
+*"se a diretriz for inferior a 2025, pode deixar essa discrepância em relação ao resumo. Porém,
+se a diretriz for de 2025, mas sobretudo 2026, atualizar o resumo baseado nas referências, nas
+informações das diretrizes"*. Ou seja:
+- **diretriz de 2025 ou 2026:** o capítulo passa a seguir a diretriz;
+- **diretriz anterior a 2025:** a divergência fica; o capítulo pode estar mais atualizado que ela.
+
+**Evidência mais nova vence a diretriz no capítulo.** Exemplo, no feocromocitoma (cap. 92): a JES
+2025 não diz que < 10 UH exclui. O professor mandou deixar a Diretriz como o documento e pôr no
+capítulo que densidade < 10 UH praticamente exclui. Base: Canu et al., JCEM 2019, e Buitenwerf
+et al., EJE 2018.
 
 ## 🇧🇷 TUDO EM PORTUGUÊS COM O PROFESSOR (2026-10-17)
 
