@@ -122,8 +122,8 @@ não está funcionando no iphone"*.
   como no print.
 - `sw.js` v336. Conferido: `test-risco-cv-sbc.js` (seção 10), ci-validate e Chromium no
   computador e no celular simulado. Digitando "6,5" e "1,2" na de risco CV e "80,5" no IMC,
-  a vírgula fica no campo e a conta sai certa (IMC 25,41). Não há iPhone aqui: a confirmação
-  final é a do professor no aparelho.
+  a vírgula fica no campo e a conta sai certa (IMC 25,41). ✅ Confirmado pelo professor no
+  iPhone (31/10): *"ficou sim"*.
 
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
