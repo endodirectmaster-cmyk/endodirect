@@ -698,13 +698,36 @@ baralhos foi junto (sw v314). Detalhes em [[Decisões]].
    - Backup: `main-antes-ilustracoes-cap150-2026-10-17`.
    - Só o `resumo` mudou.
    - Professor avisado do F5.
-2. [ ] **Capítulo 149:**
-   - revisor independente da ilustração da tireoide;
-   - novas ilustrações: modos de ação, síntese dos peptídeos, StAR/CYP11A1, transporte e regra de ouro.
-3. [ ] Capítulos 151, 152, 153 e 223.
-4. [ ] **Professor:**
-   - dar retorno sobre o estilo;
-   - receber a sugestão de ajuste no texto do 150 ("sem depender de transcrição" × via JAK-STAT).
+2. ✅ **Caps. 149, 152, 153 e 223: 9 ilustrações próprias gravadas em 31/10** (PR #949;
+   backup `main-antes-ilustracoes-eb-2026-10-31`; só os 4 `resumo` mudaram; professor
+   avisado do F5). O 151 já tem 9 figuras dos livros e não recebeu ilustração própria.
+   Detalhes em [[Ilustrações dos Resumos]].
+3. [ ] **Professor: correções de texto propostas em 31/10 (esperam aprovação; nada foi
+   mudado).** Conferidas nas fontes:
+   - **152, 17-OHP:** "17-OHP basal >1000 ng/dL é diagnóstico da forma clássica" está
+     errado. 1.000 ng/dL (30 nmol/L) é o corte aos 60 min da cortrosina, que confirma a
+     21-OHD (em geral a não clássica). A clássica costuma passar de 10.000 ng/dL. Basal
+     <200 torna improvável; 200–1.000 pede cortrosina. Fonte: Speiser, Endocrine Society
+     2018 (10.1210/jc.2018-01865), lida por Jha & Turcu 2021 (10.1016/j.ecl.2020.10.008).
+   - **152, M918T:** a ATA 2015 diz "in the first year of life, perhaps even in the first
+     months of life"; o texto diz "primeiros 6 meses". C634/A883F "at or before 5 years" está
+     certo (10.1089/thy.2014.0335).
+   - **152, RTHβ:** listada como perda de função "que costuma ser recessiva", e depois como
+     dominante-negativo. A RTHβ é autossômica dominante (dominante-negativo); a recessiva
+     é rara (deleção completa do THRB). Pappa & Refetoff 2021 (10.3389/fendo.2021.656551).
+     Correção mínima: tirar da lista de recessivas.
+   - **152, título duplicado:** "## Imprinting genômico" aparece duas vezes; juntar.
+   - **149, gravidez:** "T4 total e cortisol total sobem com fração livre normal". O
+     cortisol livre também sobe (plasmático ~1,6×, UFC ~3× no 3º trimestre; Jung 2011,
+     10.1210/jc.2010-2395). Fração livre normal vale para o anticoncepcional oral. O T4
+     livre pode ficar "normal", mas cai no 2º/3º trimestre (faixas por trimestre).
+   - **Menores:** 153 põe "cirrose" entre as causas de carreadora baixa (reduz albumina e
+     CBG, mas aumenta a SHBG); 223 diz que os ftalatos são "antagonistas do receptor
+     androgênico" (o efeito antiandrogênico vem sobretudo da queda da síntese testicular).
+     Se o texto do 223 mudar, o painel "Bloqueiam — antagonista" da ilustração muda junto.
+   - **150 (desde 17/10):** diz que os receptores de membrana agem "sem depender de
+     transcrição", mas na via JAK-STAT a STAT vai ao núcleo.
+4. [ ] **Professor:** dar retorno sobre o estilo das ilustrações.
 
 ## 🧹 Questão do Dia: conteúdo apontado na varredura de jargão (17/10)
 
