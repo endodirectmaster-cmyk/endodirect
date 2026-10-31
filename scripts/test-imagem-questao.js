@@ -221,7 +221,7 @@ ok(/it:\s*tipo === 'foto' \? OPENI_TIPOS_FOTO : OPENI_TIPOS/.test(ai),'o parâme
 // Foto clínica (18/10): balde à parte, só fotografia — nunca gráfico nem microscopia.
 const tiposFoto=(ai.match(/OPENI_TIPOS_FOTO\s*=\s*'([^']*)'/)||[])[1];
 ok(tiposFoto==='ph','o tipo da foto clínica tem de ser só "ph" (fotografia), e veio '+JSON.stringify(tiposFoto));
-ok(/openiSearch\(q, sbody\.n, sbody\.tipo === 'foto' \? 'foto' : 'exame'\)/.test(ai),
+ok(/openiSearch\(q, sbody\.n, sbody\.tipo === 'foto' \? 'foto' : 'exame', sbody\.livres === true\)/.test(ai),
    'o handler tem de repassar o tipo pedido (foto ou exame) à busca');
 
 // --- (E) FOTO CLÍNICA de sinal visível (pedido do professor, 18/10) -------------

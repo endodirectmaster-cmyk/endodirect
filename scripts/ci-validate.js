@@ -1631,6 +1631,19 @@ try {
   fail('regressão da exclusão de conta / conta de revisão falhou (lib/excluir-conta.js, lib/conta-revisao.js, api/ai.js):\n' + out);
 }
 
+// 🧨 OPEN-I: LICENÇA LIVRE E CÓPIA PRÓPRIA (31/10/2026). O Open-i saiu do ar de 25 a
+//     31/10 e quebrou as figuras ligadas direto a ele; e a licença era lida de campos
+//     que ele não manda (7 das 10 figuras das Questões do Dia eram NC/ND ou sem
+//     licença). O "Usar" e a Questão do Dia só aceitam CC BY, CC0 ou domínio público,
+//     e sempre em cópia no nosso bucket.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-openi-imagem.js')], { stdio: 'pipe' });
+  ok('Open-i: só licença livre (CC BY/CC0/domínio público), download conferido, só professor, e cópia própria no "Usar" e na Questão do Dia');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Open-i (lib/openi-imagem.js, api/ai.js, admOpenImgUse/igFetchExamImage no index.html) falhou:\n' + out);
+}
+
 // 🧨 LOGIN COM GOOGLE NO APP DO IPHONE (30/10/2026). O Google recusa login na
 //     janela embutida do app; no iPhone o login abre no navegador do sistema e
 //     volta por br.com.endodirect.app://login-callback. O site e o Android

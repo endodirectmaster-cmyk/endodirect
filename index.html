@@ -16329,24 +16329,52 @@ function igImgNotaFoto(query,it){
 // Busca uma imagem de exame complementar (PubMed Central via Open-i) p/ ilustrar a
 // questão. Best-effort: qualquer falha — ou nenhum candidato relevante — devolve
 // null e a questão fica sem imagem.
+// 31/10/2026: só figura de licença livre (CC BY, CC0 ou domínio público, `livres`)
+// e sempre em cópia própria no nosso bucket (`igImgCopia`): a Questão do Dia não
+// fica presa ao Open-i, que saiu do ar de 25 a 31/10. Sem cópia, sem imagem.
 function igFetchExamImage(query,stem,tipo){
   query=String(query||'').trim();if(!query)return Promise.resolve(null);
   // tipo 'foto' busca fotografia clínica; o resto, exame de imagem (api/ai.js)
-  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6,tipo:(tipo==='foto'?'foto':'exame')})})
+  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'openi',query:query,n:6,tipo:(tipo==='foto'?'foto':'exame'),livres:true})})
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){
       if(!d||!d.ok||!d.items||!d.items.length)return null;
       var melhor=null,nm=1e9;
       for(var i=0;i<d.items.length;i++){
         var it=d.items[i];
-        if(!(it&&it.img&&igImgRelevante(query,it,stem,tipo)))continue;
-        if(tipo!=='foto')return {img:it.img,imgRef:igFormatImgRef(it)};   // exame: a 1ª aprovada
+        if(!(it&&it.img&&it.livre&&igImgRelevante(query,it,stem,tipo)))continue;
+        if(tipo!=='foto')return igImgCopia(it);   // exame: a 1ª aprovada
         var n=igImgNotaFoto(query,it);
         if(n<nm){nm=n;melhor=it;}
       }
-      return melhor?{img:melhor.img,imgRef:igFormatImgRef(melhor)}:null;
+      return melhor?igImgCopia(melhor):null;
     })
     .catch(function(){return null;});
+}
+// A figura escolhida vai para o nosso bucket; a referência ganha a licença.
+function igImgCopia(it){
+  return oiCopiaPropria(it.img).then(function(up){
+    return {img:up.url,imgRef:igFormatImgRef(it)+(it.license?' · '+it.license:'')};
+  }).catch(function(){return null;});
+}
+// Copia uma imagem do Open-i para `endodirect-assets/resumos/pmc/`. O servidor baixa
+// (o navegador não alcança o Open-i, por CORS) e devolve em base64; o navegador do
+// professor sobe com a própria sessão (uploadAdminAsset). Ver lib/openi-imagem.js.
+function oiCopiaPropria(url){
+  return admSupportToken().then(function(token){
+    if(!token)throw new Error('Sua sessão expirou. Entre de novo.');
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'openi_imagem',url:url})});
+  }).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){
+      if(!r.ok||!d||!d.ok||!d.base64)throw new Error((d&&d.error)||'Não consegui baixar a imagem do Open-i.');
+      return d;
+    });
+  }).then(function(d){
+    var bin=atob(d.base64),u=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    var nome=(String(url).split('?')[0].split('/').pop()||'figura').replace(/[^A-Za-z0-9._-]/g,'_');
+    return uploadAdminAsset(new File([u],nome,{type:d.tipo}),'resumos/pmc');
+  });
 }
 // Monta a minirreferência (ABREVIADA) exibida abaixo da imagem:
 // "1º autor et al. · Revista(sigla) · Ano · Open-i · PMID". A revista usa só a
@@ -18330,7 +18358,7 @@ function admOpenImgSuggestQuery(){
   return String(admRefTema||'').split(/\s+/).slice(0,2).join(' ');
 }
 function admOiFetch(q,n){
-  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({kind:'openi',query:q,n:n||8})})
+  return fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({kind:'openi',query:q,n:n||8,livres:true})})
     .then(function(r){return r.json().catch(function(){return{};});})
     .then(function(d){return (d&&d.items)?d.items:[];});
 }
@@ -18373,15 +18401,15 @@ function admOpenImgRenderResults(){
   var el=document.getElementById('adm-oi-results');if(!el)return;
   if(admOpenImgBusy){el.innerHTML='<div style="font-size:.72rem;color:var(--t3)">Buscando no PubMed Central…</div>';return;}
   if(admOpenImgErr){el.innerHTML='<div style="font-size:.7rem;color:var(--red)">Erro na busca — tente novamente em instantes.</div>';return;}
-  if(!admOpenImgResults.length){el.innerHTML='<div style="font-size:.68rem;color:var(--t3)">Nenhuma imagem para esse termo. Use <b>1–2 palavras em inglês</b> (ex.: <i>xanthoma, xanthelasma, goiter, acromegaly, acanthosis nigricans</i>).</div>';return;}
+  if(!admOpenImgResults.length){el.innerHTML='<div style="font-size:.68rem;color:var(--t3)">Nenhuma imagem de licença livre (CC BY, CC0 ou domínio público) para esse termo. Use <b>1–2 palavras em inglês</b> (ex.: <i>xanthoma, xanthelasma, goiter, acromegaly, acanthosis nigricans</i>).</div>';return;}
   el.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem">'+admOpenImgResults.map(function(it,i){
     var meta=[it.authors?String(it.authors).split(/[;,]/)[0].trim()+' et al.':'',it.journal||'',(it.date||'').slice(0,4)].filter(Boolean).join(' · ');
     var art=it.articleUrl?'<a href="'+esc(it.articleUrl)+'" target="_blank" rel="noopener" style="font-size:.62rem">artigo ↗</a>':'';
-    var lic=it.license?'<div style="font-size:.6rem;color:var(--grn)">licença: '+esc(it.license)+'</div>':'<div style="font-size:.6rem;color:#b45309">licença: verificar no artigo</div>';
+    var lic=it.livre?'<div style="font-size:.6rem;color:var(--grn)">licença: '+esc(it.license)+'</div>':'<div style="font-size:.6rem;color:var(--red)">licença '+esc(it.license||'não informada')+': não pode entrar</div>';
     return '<div style="border:1px solid var(--bd);border-radius:8px;padding:.4rem;font-size:.66rem;color:var(--t2)">'
       +'<img src="'+esc(it.thumb||it.img)+'" referrerpolicy="no-referrer" onerror="this.style.opacity=.3" style="width:100%;height:88px;object-fit:cover;border-radius:5px;margin-bottom:.3rem;background:var(--s2)">'
       +'<div style="line-height:1.35;min-height:2.4em">'+esc(meta||'—')+'</div>'+lic
-      +'<div style="display:flex;gap:.3rem;align-items:center;margin-top:.35rem">'+art+'<button class="btn btn-primary btn-sm" style="margin-left:auto;padding:.2rem .55rem" data-adm-oi-use="'+i+'">Usar</button></div>'
+      +'<div style="display:flex;gap:.3rem;align-items:center;margin-top:.35rem">'+art+'<button class="btn btn-primary btn-sm" style="margin-left:auto;padding:.2rem .55rem" data-adm-oi-use="'+i+'"'+(it.livre?'':' disabled')+'>Usar</button></div>'
       +'</div>';
   }).join('')+'</div>';
   el.querySelectorAll('[data-adm-oi-use]').forEach(function(b){b.addEventListener('click',function(){admOpenImgUse(parseInt(b.dataset.admOiUse));});});
@@ -18405,10 +18433,22 @@ function admOpenImgAttach(ti,fig,msg){
   diretrizes[ti].figuras=[fig];persistDiretrizes();
   admOpenImgResults=[];if(msg)notify(msg,'ok');admOpenImgRepaint();
 }
+// 31/10/2026 (aprovado pelo professor): o "Usar" copia a imagem para o nosso bucket
+// (`resumos/pmc/`) antes de anexar, para uma queda do Open-i não quebrar o capítulo,
+// e só aceita licença livre (CC BY, CC0 ou domínio público).
+var admOpenImgCopiando=false;
 function admOpenImgUse(idx){
   var it=admOpenImgResults[idx];if(!it||!it.img){notify('Imagem sem URL.','err');return;}
+  if(!it.livre){notify('Licença '+(it.license||'não informada')+': só imagens CC BY, CC0 ou de domínio público entram nos Resumos.','err');return;}
   var ti=admOpenImgTargetIdx();if(ti<0){notify('Crie o resumo deste capítulo antes de anexar a imagem.','err');return;}
-  admOpenImgAttach(ti,{titulo:admRefTema,url:it.img,fonte:admOiFonte(it)},'Imagem anexada. Confirme a licença no artigo. 🖼️');
+  if(admOpenImgCopiando)return;
+  admOpenImgCopiando=true;notify('Copiando a imagem para o nosso servidor…','info');
+  var tema=admRefTema;
+  oiCopiaPropria(it.img).then(function(up){
+    admOpenImgAttach(ti,{titulo:tema,url:up.url,fonte:admOiFonte(it)+(it.license?' · '+it.license:'')},'Imagem copiada e anexada. 🖼️');
+  }).catch(function(e){
+    notify('Não consegui copiar a imagem: '+((e&&e.message)||e)+' Tente de novo.','err');
+  }).then(function(){admOpenImgCopiando=false;});
 }
 function admOpenImgRemove(){
   var ti=admOpenImgTargetIdx();if(ti<0)return;
