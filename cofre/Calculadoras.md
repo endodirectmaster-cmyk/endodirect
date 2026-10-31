@@ -61,7 +61,10 @@ professor (os da IDF para a população europeia, que ela escreve como ≥). `sw
 escreveu *"Retirar essas frases"*: a explicação do FIB-4 (seção 2), "Em uso de estatina, o LDL-c
 do laudo já é sob tratamento…" (seção 3) e "A doença renal entra pela TFGe e pela RAC…" (seção
 5). Saíram só as três; ficam as notas dos eventos maiores, dos estratificadores do diabetes e da
-Lp(a)/PCR-us. A conta e a faixa do FIB-4 continuam embaixo das plaquetas. `sw.js` v331.
+Lp(a)/PCR-us. A conta e a faixa do FIB-4 continuam embaixo das plaquetas. `sw.js` v331. Logo depois, *"retira essas também"*: saiu
+também a nota da Lp(a)/PCR-us (seção 6; os valores continuam entrando como agravante). Ficam
+só as notas dos eventos maiores (seção 1) e dos estratificadores do diabetes (seção 4). `sw.js`
+v332.
 
 **Conferência:** `test-risco-cv-sbc.js` (seção 8 nova: formulário, FIB-4, motor, destaque, ordem
 da tela, impressão e mutações do destaque e do FIB-4; os testes de esquema por intensidade viraram
