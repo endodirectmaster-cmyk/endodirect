@@ -81,6 +81,10 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     sócio-administrador (é o vínculo); cartão CNPJ atualizado, do site da Receita. O nome tem
     de ser igual no documento, na Conta Apple e no contrato social. Os documentos não passam
     por mim.
+- **31/10, 11h34 de Brasília: documentos enviados** pelo formulário da Apple. Foram o acordo
+  de sócios, o contrato social registrado, a 2ª alteração contratual, o cartão CNPJ e o
+  passaporte. Tela da Apple: "Your documents are being processed". Agora é esperar a resposta
+  (dias úteis); se ela pedir mais, o professor manda o print.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
