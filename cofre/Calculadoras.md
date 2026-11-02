@@ -1,9 +1,41 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-10-31
+atualizado: 2026-11-02
 ---
 
 # Calculadoras
+
+## 💉 SEMAGLUTIDA: DOSE EM CLIQUES (2026-11-02)
+
+Pedido do professor, com print e link de uma calculadora de outro site: *"Consegue colocar esta
+calculadora na plataforma?"*. A nossa é **própria** (código e visual da casa, sem a marca nem o código
+do outro site), entrada `id:'cliques'` em `CALCS`, área **Obesidade**, tela própria (`cliqRender`).
+
+**Canetas (`CLIQ_CANETAS`):** as cinco da bula brasileira do Wegovy (v. 2.0, 2026, baixada da bula
+hospedada pela Panvel e lida com pdf.js): 0,25 mg (0,68 mg/mL, 1,5 mL), 0,5 mg (1,34 mg/mL, 1,5 mL),
+1 mg (1,34 mg/mL, 3 mL), 1,7 mg (2,27 mg/mL, 3 mL) e 2,4 mg (3,2 mg/mL, 3 mL), todas com 4 doses. O
+Ozempic® usa as mesmas de 1,34 mg/mL (0,25/0,5 mg em 1,5 mL e 1 mg em 3 mL). Poviztra® e Extensior®
+são as versões da Eurofarma (parceria com a Novo Nordisk, lançadas em 06/10/2025). A Ozempic® 2 mg
+(2,68 mg/mL) ficou de fora: não achei como apresentação brasileira.
+
+**A conta:** cliques da dose marcada = **volume da dose da bula ÷ 0,01 mL** (0,37 mL → 37; 0,74 → 74;
+0,75 → 75), e mg por clique = dose ÷ esses cliques. ⚠️ Pelo volume da bula, não por dose ÷
+concentração: a caneta de 1 mg daria 75 (1 ÷ 1,34 = 0,746 mL), e a prática clínica fala em 74. O
+seletor **para na dose da caneta** (bula: "gire o seletor de dose até o contador de dose parar"), por
+isso nenhuma caneta passa da própria dose por aplicação; pedir mais avisa e manda trocar de caneta.
+O rendimento conta as 4 doses da caneta (4 × cliques da dose marcada).
+
+**⚠️ Uso fora da bula, e a tela diz isso:** a Novo Nordisk orienta selecionar só as doses marcadas e
+não informa o volume de cada clique (material da ADEA, Austrália). Não achei estudo que tenha medido
+o volume do clique (PubMed e web); os números de sites se contradizem (0,25 mg = 9, 18 ou 19
+cliques). A premissa de 0,01 mL por clique é a da prática e a da calculadora de referência. O aviso
+também diz que vale só para as canetas da Novo Nordisk e da Eurofarma (não para Ozivy/EMS e outras
+semaglutidas nacionais, aprovadas depois do fim da patente, em 03/2026).
+
+**Conferido:** `scripts/test-calc-cliques.js` (passo no CI; canetas, cliques pelo volume, 0,25 mg na
+caneta de 1,34 mg/mL = 19 cliques, máximo por caneta, rendimento, vírgula, aviso), mapa de áreas do
+`test-painel-professor.js` (25 calculadoras) e Chromium com o CSS e o código reais (computador,
+celular claro e escuro: sem erro, sem estourar a largura). `sw.js` v338.
 
 ## 🫀 RISCO CV E METAS: COMO A FÓRMULA ORIGINAL, COM O RISCO EM 10 ANOS EM DESTAQUE (2026-10-31)
 
