@@ -18,9 +18,12 @@ Ozempic® usa as mesmas de 1,34 mg/mL (0,25/0,5 mg em 1,5 mL e 1 mg em 3 mL). Po
 são as versões da Eurofarma (parceria com a Novo Nordisk, lançadas em 06/10/2025). A Ozempic® 2 mg
 (2,68 mg/mL) ficou de fora: não achei como apresentação brasileira.
 
-**A conta:** cliques da dose marcada = **volume da dose da bula ÷ 0,01 mL** (0,37 mL → 37; 0,74 → 74;
-0,75 → 75), e mg por clique = dose ÷ esses cliques. ⚠️ Pelo volume da bula, não por dose ÷
-concentração: a caneta de 1 mg daria 75 (1 ÷ 1,34 = 0,746 mL), e a prática clínica fala em 74. O
+**A conta:** a dose marcada fica em **37 cliques nas canetas de 1,5 mL e em 74 nas de 3 mL**, e mg por
+clique = dose ÷ esses cliques. ⚠️ **74 em todas as de 3 mL (1; 1,7 e 2,4 mg)**, corrigido no mesmo
+dia: a 1ª versão dava 75 nas de 1,7 e 2,4 (2,4 ÷ 3,2 = 0,75 mL ÷ 0,01). O professor mandou as tabelas
+de outro site (*"So pra dar mais exemplos"*), que usam 74 nas três; o mecanismo de 3 mL é o mesmo, a
+dose sai em ~0,75 mL nas três (0,746; 0,749; 0,75) e a diferença é menor que meio clique. A bula não
+dá o volume por dose do Wegovy. O volume mostrado é dose ÷ concentração. O
 seletor **para na dose da caneta** (bula: "gire o seletor de dose até o contador de dose parar"), por
 isso nenhuma caneta passa da própria dose por aplicação; pedir mais avisa e manda trocar de caneta.
 O rendimento conta as 4 doses da caneta (4 × cliques da dose marcada).
@@ -32,10 +35,22 @@ cliques). A premissa de 0,01 mL por clique é a da prática e a da calculadora d
 também diz que vale só para as canetas da Novo Nordisk e da Eurofarma (não para Ozivy/EMS e outras
 semaglutidas nacionais, aprovadas depois do fim da patente, em 03/2026).
 
-**Conferido:** `scripts/test-calc-cliques.js` (passo no CI; canetas, cliques pelo volume, 0,25 mg na
-caneta de 1,34 mg/mL = 19 cliques, máximo por caneta, rendimento, vírgula, aviso), mapa de áreas do
-`test-painel-professor.js` (25 calculadoras) e Chromium com o CSS e o código reais (computador,
-celular claro e escuro: sem erro, sem estourar a largura). `sw.js` v338.
+**Segunda rodada (02/11, depois das tabelas do outro site):**
+- **A mesma dose em outra caneta** (`cliqComparaHTML`): cliques e dose entregue nas outras quatro, ou
+  "passa da dose da caneta" / "abaixo de 1 clique". Faz o papel do "modo comparativo" e das tabelas
+  "Ozempic 1 mg → Wegovy 1,7/2,4 mg" de lá.
+- **Tabela de cliques da caneta** (`cliqTabelaHTML`), de 1 até a dose marcada, com a escolhida em
+  destaque, e **"Imprimir tabela"** (`cliqImprimir`, folha limpa como a do risco CV) com o aviso.
+- **Semanas:** o rendimento diz também "N semanas de uso semanal".
+- **Sem nomes comerciais embaixo de cada dose** (professor, com print: *"Retirar nomes comerciais em
+  baixo de cada dose"*): o cartão ficou com dose, concentração e volume; a folha impressa também
+  não traz marca. As marcas ficam só no aviso (a quais canetas a conta vale) e na descrição.
+
+**Conferido:** `scripts/test-calc-cliques.js` (passo no CI: canetas, 37/74 cliques, 0,25 mg na
+caneta de 1,34 mg/mL = 19 cliques, 2,4 mg: 8 cliques = 0,259 mg, máximo por caneta, rendimento e
+semanas, outra caneta, tabela, folha impressa sem marca, cartões sem marca, vírgula, aviso), mapa de
+áreas do `test-painel-professor.js` (25 calculadoras) e Chromium com o CSS e o código reais
+(computador, celular claro e escuro: sem erro, sem estourar a largura). `sw.js` v338 → **v339**.
 
 ## 🫀 RISCO CV E METAS: COMO A FÓRMULA ORIGINAL, COM O RISCO EM 10 ANOS EM DESTAQUE (2026-10-31)
 
