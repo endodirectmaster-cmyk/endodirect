@@ -46,11 +46,19 @@ semaglutidas nacionais, aprovadas depois do fim da patente, em 03/2026).
   baixo de cada dose"*): o cartão ficou com dose, concentração e volume; a folha impressa também
   não traz marca. As marcas ficam só no aviso (a quais canetas a conta vale) e na descrição.
 
+**Terceira rodada (02/11, v340), com dois prints:** *"retirar"* (o quadro "Uso fora da bula"
+selecionado) e *"retirar o campo de editar os cliques"*. Saíram o quadro de aviso (da tela e da folha
+impressa) e o campo "Cliques": a dose entra pela faixa ou pelo campo em mg, e os cliques aparecem no
+resultado e na tabela. ⚠️ A ressalva continua só na nota ℹ️ da calculadora ("Estimativa sem
+validação do fabricante"), que o professor não marcou. Decisão dele: o aviso explícito de que o
+fabricante não recomenda contar cliques não está mais na tela.
+
 **Conferido:** `scripts/test-calc-cliques.js` (passo no CI: canetas, 37/74 cliques, 0,25 mg na
 caneta de 1,34 mg/mL = 19 cliques, 2,4 mg: 8 cliques = 0,259 mg, máximo por caneta, rendimento e
-semanas, outra caneta, tabela, folha impressa sem marca, cartões sem marca, vírgula, aviso), mapa de
+semanas, outra caneta, tabela, folha impressa sem marca e sem aviso, cartões sem marca, sem campo de
+cliques, vírgula, ressalva na nota), mapa de
 áreas do `test-painel-professor.js` (25 calculadoras) e Chromium com o CSS e o código reais
-(computador, celular claro e escuro: sem erro, sem estourar a largura). `sw.js` v338 → **v339**.
+(computador, celular claro e escuro: sem erro, sem estourar a largura). `sw.js` v338 → v339 → **v340**.
 
 ## 🫀 RISCO CV E METAS: COMO A FÓRMULA ORIGINAL, COM O RISCO EM 10 ANOS EM DESTAQUE (2026-10-31)
 
