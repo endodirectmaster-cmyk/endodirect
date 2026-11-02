@@ -398,6 +398,29 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .rcv-card{border:1px solid var(--bd);border-radius:var(--r);padding:.6rem .7rem;min-width:0}
 .rcv-card-t{font-size:.74rem;font-weight:800;color:var(--tx);margin-bottom:.3rem}
 .rcv-card-l{display:flex;justify-content:space-between;gap:.5rem;font-size:.72rem;color:var(--t3)}
+/* Semaglutida em cliques (02/11/2026): tela própria, com as seções e os campos da de risco CV
+   (`.rcv-sec`, `.rcv-num`). Só o que é dela vem aqui: os cartões das canetas, a faixa e o resultado. */
+.clq{display:grid;grid-template-columns:minmax(0,1fr);gap:.2rem;min-width:0;max-width:46rem}
+.clq>*{min-width:0}
+.clq-canetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.2rem,1fr));gap:.5rem}
+.clq-caneta{border:1px solid var(--bd2);background:var(--surface);color:var(--tx);font-family:var(--font);border-radius:var(--r);padding:.6rem .45rem .55rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.18rem;text-align:center;min-width:0}
+.clq-caneta:hover{border-color:var(--blue2)}
+.clq-caneta[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-l);box-shadow:inset 0 0 0 1px var(--blue)}
+.clq-caneta:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.clq-dose{font-size:.95rem;font-weight:800;font-variant-numeric:tabular-nums}
+.clq-conc{font-size:.66rem;color:var(--t2);font-variant-numeric:tabular-nums}
+.clq-marca{font-size:.6rem;color:var(--t3);line-height:1.3}
+.clq-info{font-size:.74rem;color:var(--t2);line-height:1.5;margin:.6rem 0 .55rem;border-left:3px solid var(--blue);padding:.35rem .6rem;background:var(--s2);border-radius:0 var(--rs) var(--rs) 0;font-variant-numeric:tabular-nums}
+.clq-faixa{width:100%;accent-color:var(--blue);margin:.2rem 0 0}
+.clq-escala{display:flex;justify-content:space-between;font-size:.62rem;color:var(--t3);font-variant-numeric:tabular-nums;margin-bottom:.4rem}
+.clq-res{border:1px solid var(--bd);border-radius:var(--r);background:var(--s2);padding:.85rem .9rem .7rem;display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;align-items:end;margin-bottom:.75rem}
+.clq-rot{font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.clq-big{font-size:2.1rem;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--tx)}
+.clq-un{font-size:.72rem;color:var(--t3)}
+.clq-dir{text-align:right}
+.clq-det{grid-column:1/-1;border-top:1px solid var(--bd);padding-top:.5rem;font-size:.72rem;color:var(--t2);line-height:1.6;font-variant-numeric:tabular-nums}
+.clq-alerta{grid-column:1/-1;font-size:.76rem;line-height:1.5;color:var(--red);font-weight:600}
+.clq-aviso{border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:var(--r);padding:.55rem .7rem;font-size:.7rem;color:var(--t2);line-height:1.55}
 .rcv-card-l b{color:var(--tx);text-align:right}
 .rcv-card-tag{margin:.3rem 0}
 .rcv-card-c{font-size:.72rem;color:var(--t2);line-height:1.5;margin-top:.25rem}
@@ -5100,6 +5123,105 @@ function rcvImprimir(){
   if(!w){notify('Permita pop-ups para gerar o relatório de impressão.','err');return;}
   w.document.write(doc);w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},400);
 }
+// SEMAGLUTIDA EM CLIQUES (02/11/2026). Pedido do professor, a partir de uma calculadora de outro
+// site ("Consegue colocar esta calculadora na plataforma?"); a nossa é própria, não cópia.
+// ⚠️ Uso fora da bula: a Novo Nordisk orienta selecionar só as doses marcadas e não informa o
+// volume de cada clique. A conta é a da prática clínica: a dose marcada sai em 0,37, 0,74 ou
+// 0,75 mL (bula/RCM), e 1 clique ≈ 0,01 mL, ajustado para que a dose marcada caia no número
+// inteiro de cliques (37, 74 ou 75). O seletor PARA na dose da caneta (bula do Wegovy, "Selecione
+// a dose"), então nenhuma caneta passa da própria dose por aplicação. Concentrações e volumes da
+// bula brasileira do Wegovy (v. 2.0, 2026); Ozempic® pelo RCM (a de 2 mg, 2,68 mg/mL, não consta
+// como apresentação brasileira e ficou de fora). Poviztra® e Extensior® são as versões da
+// Eurofarma, em parceria com a Novo Nordisk, das mesmas canetas.
+var CLIQ_CANETAS=[
+  {id:'c025',dose:0.25,conc:'0,68',vol:'1,5',mlDose:0.37,cor:'#0f9fb0',marcas:'Wegovy® · Poviztra®'},
+  {id:'c05',dose:0.5,conc:'1,34',vol:'1,5',mlDose:0.37,cor:'#d6457a',marcas:'Wegovy® · Poviztra® · Ozempic® e Extensior® 0,25/0,5 mg'},
+  {id:'c1',dose:1,conc:'1,34',vol:'3',mlDose:0.74,cor:'#8a5a2b',marcas:'Wegovy® · Poviztra® · Ozempic® · Extensior®'},
+  {id:'c17',dose:1.7,conc:'2,27',vol:'3',mlDose:0.75,cor:'#1f3f8a',marcas:'Wegovy® · Poviztra®'},
+  {id:'c24',dose:2.4,conc:'3,2',vol:'3',mlDose:0.75,cor:'#55595f',marcas:'Wegovy® · Poviztra®'}
+];
+var cliqEstado={caneta:'c025',n:37};
+function cliqCaneta(id){for(var i=0;i<CLIQ_CANETAS.length;i++)if(CLIQ_CANETAS[i].id===id)return CLIQ_CANETAS[i];return CLIQ_CANETAS[0];}
+// cliques da dose marcada (= máximo por aplicação) e mg por clique
+function cliqPadrao(c){return Math.round(c.mlDose*100);}
+function cliqMgClique(c){return c.dose/cliqPadrao(c);}
+function cliqDeDose(c,mg){return mg>0?Math.round(mg/cliqMgClique(c)):NaN;}
+// n cliques na caneta c: dose, volume, se passa do máximo e quantas aplicações a caneta rende
+// (4 doses marcadas por caneta; a verificação de fluxo de cada caneta nova gasta um pouco a mais).
+function cliqResultado(c,n){
+  var p=cliqPadrao(c);
+  return {n:n,mg:n*cliqMgClique(c),ml:n*c.mlDose/p,max:p,acima:n>p,rende:n>0?Math.floor(4*p/n):0,sobra:n>0?(4*p)%n:0};
+}
+function cliqN(x,d){return isFinite(x)?x.toFixed(d).replace('.',','):'—';}
+function cliqMg(x){return cliqN(x,3);}
+function cliqRot(c){return String(c.dose).replace('.',',');}
+function cliqLe(t){var v=String(t==null?'':t).trim().replace(/\s/g,'');if(v.indexOf(',')>=0)v=v.replace(/\./g,'').replace(',','.');return v===''?NaN:Number(v);}
+function cliqInfoHTML(c){
+  var p=cliqPadrao(c);
+  return '<b>Caneta de '+cliqRot(c)+' mg</b> · '+c.conc+' mg/mL · '+c.vol+' mL com 4 doses. Dose marcada: <b>'+cliqRot(c)+' mg = '+p+' cliques</b> ('+cliqN(c.mlDose,2)+' mL) · 1 clique ≈ '+cliqN(cliqMgClique(c),4)+' mg.';
+}
+function cliqResHTML(c,n,alvo){
+  if(!(n>=1))return '<div><div class="clq-rot">Cliques</div><div class="clq-big">—</div></div>'
+    +'<div class="clq-alerta">'+(alvo>0?'Essa dose fica abaixo de 1 clique nesta caneta. Escolha uma caneta de dose menor.':'Escolha a dose ou o número de cliques.')+'</div>';
+  var r=cliqResultado(c,n);
+  if(r.acima)return '<div><div class="clq-rot">Cliques</div><div class="clq-big">—</div></div>'
+    +'<div class="clq-alerta">A caneta de '+cliqRot(c)+' mg para em '+r.max+' cliques ('+cliqRot(c)+' mg) por aplicação. Para essa dose, escolha uma caneta de dose maior.</div>';
+  var difAlvo=alvo>0&&Math.abs(r.mg-alvo)>0.0005;
+  return '<div><div class="clq-rot">Cliques</div><div class="clq-big">'+n+'</div><div class="clq-un">'+(n===r.max?'é a dose marcada da caneta':'cliques no seletor de dose')+'</div></div>'
+    +'<div class="clq-dir"><div class="clq-rot">Dose</div><div class="clq-big">'+cliqMg(r.mg)+'</div><div class="clq-un">mg</div></div>'
+    +'<div class="clq-det">'+(difAlvo?'Pedido: '+cliqMg(alvo)+' mg → o clique inteiro mais próximo entrega <b>'+cliqMg(r.mg)+' mg</b>.<br>':'')
+    +'Volume ≈ '+cliqN(r.ml,2)+' mL · 1 clique ≈ '+cliqN(cliqMgClique(c),4)+' mg.<br>'
+    +'Rendimento: a caneta traz '+(4*r.max)+' cliques (4 doses de '+cliqRot(c)+' mg), o bastante para cerca de <b>'+r.rende+' aplicações</b> desta dose'+(r.sobra?' (sobram ~'+r.sobra+' cliques)':'')+'. A verificação de fluxo de cada caneta nova consome um pouco.</div>';
+}
+function cliqRender(root){
+  var cards=CLIQ_CANETAS.map(function(c){
+    return '<button type="button" class="clq-caneta" data-clq-caneta="'+c.id+'" aria-pressed="false">'
+      +'<span aria-hidden="true" style="width:.6rem;height:.6rem;border-radius:50%;background:'+c.cor+'"></span>'
+      +'<span class="clq-dose">'+cliqRot(c)+' mg</span><span class="clq-conc">'+c.conc+' mg/mL · '+c.vol+' mL</span><span class="clq-marca">'+c.marcas+'</span></button>';
+  }).join('');
+  root.innerHTML='<div class="clq">'
+    +'<section class="rcv-sec"><div class="rcv-sec-t">1 · Caneta</div><div class="clq-canetas" role="group" aria-label="Caneta">'+cards+'</div><div class="clq-info" data-clq-info></div></section>'
+    +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Dose</div>'
+      +'<input type="range" class="clq-faixa" data-clq-faixa min="1" step="1" aria-label="Cliques">'
+      +'<div class="clq-escala" data-clq-escala></div>'
+      +'<div class="rcv-campos"><label class="rcv-num"><span>Dose (mg)</span><input type="text" inputmode="decimal" autocomplete="off" data-clq-mg></label>'
+      +'<label class="rcv-num"><span>Cliques</span><input type="text" inputmode="numeric" autocomplete="off" data-clq-n></label></div></section>'
+    +'<div class="clq-res" data-clq-res aria-live="polite"></div>'
+    +'<div class="clq-aviso">⚠️ <b>Uso fora da bula.</b> A Novo Nordisk orienta selecionar apenas as doses marcadas e não informa o volume de cada clique. '
+      +'A conta supõe 1 clique ≈ 0,01 mL, ajustado para que a dose marcada caia no número de cliques correspondente (0,37 mL = 37; 0,74 mL = 74; 0,75 mL = 75): é uma estimativa, sem validação do fabricante. '
+      +'Vale só para as canetas de semaglutida da Novo Nordisk e da Eurofarma (Wegovy®, Ozempic®, Poviztra® e Extensior®), não para as de outros fabricantes. '
+      +'Faça a verificação de fluxo de cada caneta nova e conte os cliques devagar, olhando o seletor.</div>'
+    +'</div>';
+  var q=function(sel){return root.querySelector(sel);};
+  var alvo=NaN;
+  function pinta(origem){
+    var c=cliqCaneta(cliqEstado.caneta),p=cliqPadrao(c),n=cliqEstado.n;
+    root.querySelectorAll('[data-clq-caneta]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-clq-caneta')===c.id?'true':'false');});
+    q('[data-clq-info]').innerHTML=cliqInfoHTML(c);
+    var fx=q('[data-clq-faixa]');fx.max=String(p);
+    if(origem!=='faixa')fx.value=String(n>=1?Math.min(n,p):1);
+    q('[data-clq-escala]').innerHTML='<span>1 clique · '+cliqMg(cliqMgClique(c))+' mg</span><span>'+p+' cliques · '+cliqRot(c)+' mg</span>';
+    if(origem!=='mg')q('[data-clq-mg]').value=n>=1?cliqMg(n*cliqMgClique(c)):'';
+    if(origem!=='n')q('[data-clq-n]').value=n>=1?String(n):'';
+    q('[data-clq-res]').innerHTML=cliqResHTML(c,n,origem==='mg'?alvo:NaN);
+  }
+  root.addEventListener('click',function(ev){
+    var b=ev.target.closest('[data-clq-caneta]');if(!b||!root.contains(b))return;
+    var antes=cliqCaneta(cliqEstado.caneta),mg=cliqEstado.n*cliqMgClique(antes);
+    cliqEstado.caneta=b.getAttribute('data-clq-caneta');
+    // a dose que a pessoa quer continua a mesma; muda o número de cliques
+    var c=cliqCaneta(cliqEstado.caneta);
+    if(mg>0){cliqEstado.n=cliqDeDose(c,mg);alvo=mg;pinta('mg');q('[data-clq-mg]').value=cliqMg(mg);}
+    else pinta();
+  });
+  root.addEventListener('input',function(ev){
+    var t=ev.target,c=cliqCaneta(cliqEstado.caneta);
+    if(t.hasAttribute('data-clq-faixa')){cliqEstado.n=parseInt(t.value,10);pinta('faixa');}
+    else if(t.hasAttribute('data-clq-mg')){alvo=cliqLe(t.value);cliqEstado.n=cliqDeDose(c,alvo);pinta('mg');}
+    else if(t.hasAttribute('data-clq-n')){var v=cliqLe(t.value);cliqEstado.n=v>0?Math.round(v):NaN;pinta('n');}
+  });
+  pinta();
+}
 var CALCS=[
   // Risco CV e metas — SBC 2025 (24/10/2026). ⚠️ ANTES do PREVENT: a ordem de CALCS
   // define a ordem das áreas, e Lípides tem de continuar sendo a primeira. Tela
@@ -5233,6 +5355,11 @@ var CALCS=[
    calc:function(v){var f=fib4Calc(parseFloat(v.fib_age),parseFloat(v.fib_ast),parseFloat(v.fib_alt),parseFloat(v.fib_plt));return isFinite(f)?f:0;},
    interp:function(s,v){if(!(s>0))return{t:'Preencha idade, AST, ALT e plaquetas.',c:'tag-gold'};var fx=fib4Faixa(s,parseFloat(v.fib_age)||0);if(fx.k==='baixo')return{t:'Baixo risco de fibrose avançada (F3–F4 improvável)',c:'tag-grn'};if(fx.k==='indet')return{t:'Indeterminado — avaliar com elastografia (FibroScan) ou ELF',c:'tag-gold'};return{t:'Alto risco de fibrose avançada — encaminhar/investigar',c:'tag-red'};},
    unit:'',note:'FIB-4 = (idade × AST) ÷ (plaquetas × √ALT). Plaquetas em ×10⁹/L (ex.: 200; se digitar a contagem absoluta 200000 o app converte). Triagem não invasiva de fibrose hepática avançada na doença hepática esteatótica metabólica (MASLD/DHGM), comum em diabetes e obesidade. Corte inferior <1,30 (use <2,0 se idade >65 anos); ≥2,67 = alto risco; entre eles, zona indeterminada → prosseguir com elastografia/ELF. Não usar na hepatite aguda.'},
+  // Semaglutida em cliques (02/11/2026): tela própria (`render`); ver CLIQ_CANETAS.
+  {id:'cliques',name:'Semaglutida: dose em cliques',area:'Obesidade',unit:'cliques',
+   desc:'Converte a dose de semaglutida em cliques da caneta (Wegovy®, Ozempic®, Poviztra®, Extensior®) e vice-versa',
+   render:function(root){cliqRender(root);},
+   note:'Concentrações e volumes: bula brasileira do Wegovy® (2026: 0,68 mg/mL em 1,5 mL; 1,34 mg/mL em 1,5 e 3 mL; 2,27 e 3,2 mg/mL em 3 mL; 4 doses por caneta) e RCM do Ozempic® (1,34 mg/mL). A dose marcada sai em 0,37 mL (canetas de 0,25 e 0,5 mg), 0,74 mL (1 mg) ou 0,75 mL (1,7 e 2,4 mg); o seletor para na dose da caneta. Cliques = volume ÷ 0,01 mL, estimativa da prática clínica sem validação do fabricante. A Ozempic® 2 mg (2,68 mg/mL) não entrou por não constar como apresentação brasileira.'},
   {id:'trp',name:'Reabsorção tubular de fósforo (TRP)',area:'Osteometabolismo',desc:'Fração de reabsorção tubular de fosfato',
    fields:[{id:'trp_sp',label:'Fósforo sérico (mg/dL)',type:'num'},{id:'trp_up',label:'Fósforo urinário (mg/dL)',type:'num'},{id:'trp_scr',label:'Creatinina sérica (mg/dL)',type:'num'},{id:'trp_ucr',label:'Creatinina urinária (mg/dL)',type:'num'}],
    calc:function(v){var sp=parseFloat(v.trp_sp)||0,up=parseFloat(v.trp_up)||0,scr=parseFloat(v.trp_scr)||0,ucr=parseFloat(v.trp_ucr)||0;if(sp<=0||ucr<=0)return 0;return (1-((up*scr)/(sp*ucr)))*100;},

@@ -142,7 +142,7 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
 
   const esperado = {
     riscocv: 'Lípides', prevent: 'Lípides', prevent30: 'Lípides', ldl: 'Lípides',
-    imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade',
+    imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade', cliques: 'Obesidade',
     bsa: 'Endocrinologia Pediátrica', alvo: 'Endocrinologia Pediátrica', zha: 'Endocrinologia Pediátrica',
     velcresc: 'Endocrinologia Pediátrica', idcorr: 'Endocrinologia Pediátrica',
     ckdepi: 'Diabetes', drc: 'Diabetes', homa: 'Diabetes',
@@ -154,7 +154,8 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
     ok('"' + id + '" está em ' + esperado[id], areaDe[id] === esperado[id], String(areaDe[id]));
   });
   // 24 desde 24/10/2026: entrou "Risco CV e metas — SBC 2025" (riscocv), em Lípides.
-  ok('as 24 calculadoras estão mapeadas', Object.keys(areaDe).length === 24, String(Object.keys(areaDe).length));
+  // 25 desde 02/11/2026: entrou "Semaglutida: dose em cliques" (cliques), em Obesidade.
+  ok('as 25 calculadoras estão mapeadas', Object.keys(areaDe).length === 25, String(Object.keys(areaDe).length));
   ['Risco cardiovascular', 'Antropometria', 'Lipidologia', 'Função renal', 'Fígado (MASLD)', 'Crescimento'].forEach(function (velha) {
     ok('nenhuma calculadora ficou em "' + velha + '"',
        Object.keys(areaDe).every(function (id) { return areaDe[id] !== velha; }));

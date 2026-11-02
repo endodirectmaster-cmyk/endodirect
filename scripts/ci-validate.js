@@ -997,6 +997,18 @@ try {
   fail('regressão da calculadora de risco CV (SBC 2025) falhou:\n' + out);
 }
 
+// 17c-undecies-n. SEMAGLUTIDA EM CLIQUES (02/11/2026). Pedido do professor. Canetas da bula
+//      brasileira do Wegovy e do RCM do Ozempic; cliques pelo VOLUME da dose da bula (0,37/0,74/
+//      0,75 mL), seletor que para na dose marcada, rendimento das 4 doses e o aviso de uso fora
+//      da bula (o fabricante não recomenda contar cliques).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-calc-cliques.js')], { stdio: 'pipe' });
+  ok('semaglutida em cliques: canetas da bula, cliques pelo volume da dose, máximo por caneta e aviso de uso fora da bula');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da calculadora de cliques da semaglutida falhou:\n' + out);
+}
+
 // 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
 //      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
 //      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,
