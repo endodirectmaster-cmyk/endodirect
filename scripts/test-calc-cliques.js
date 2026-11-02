@@ -7,7 +7,7 @@
 //      (0,75 mL ÷ 0,01); as tabelas da prática usam 74 para as três;
 //   3. nenhuma caneta passa da própria dose por aplicação (o seletor para na dose marcada);
 //   4. o rendimento conta as 4 doses da caneta;
-//   5. o aviso de uso fora da bula está na tela;
+//   5. sem o quadro de aviso nem o campo de cliques (pedidos do professor, 02/11); a ressalva fica na nota;
 //   6. a mesma dose nas outras canetas, a tabela de cliques e a folha impressa;
 //   7. sem nome comercial embaixo de cada dose (pedido do professor, 02/11).
 'use strict';
@@ -93,8 +93,8 @@ ctx.window = { open: () => ({ document: { write: (d) => { doc = d; }, close() {}
 ctx.notify = () => {};
 ctx.setTimeout = () => {};
 K.cliqImprimir(c05);
-ok('a folha impressa traz a tabela inteira, a caneta, o aviso e nenhum nome comercial',
-   /caneta de 0,5 mg/.test(doc) && (doc.match(/<td class="n">/g) || []).length === 37 && /Uso fora da bula/.test(doc) && !/Wegovy|Ozempic|Poviztra|Extensior/.test(doc), doc.slice(0, 300));
+ok('a folha impressa traz a tabela inteira e a caneta, sem o aviso e sem nome comercial',
+   /caneta de 0,5 mg/.test(doc) && (doc.match(/<td class="n">/g) || []).length === 37 && !/Uso fora da bula/.test(doc) && !/class="aviso"/.test(doc) && !/Wegovy|Ozempic|Poviztra|Extensior/.test(doc), doc.slice(0, 300));
 
 ok('lê vírgula e ponto', K.cliqLe('0,25') === 0.25 && K.cliqLe('0.25') === 0.25 && K.cliqLe(' 1,7 ') === 1.7 && isNaN(K.cliqLe('')));
 
@@ -104,10 +104,10 @@ const iP = SRC.indexOf("\n  {id:'", iE + 5);
 ok('a calculadora está no CALCS, em Obesidade, com tela própria', iE > 0 && /area:'Obesidade'/.test(SRC.slice(iE, iP)) && /render:function\(root\)\{cliqRender\(root\);\}/.test(SRC.slice(iE, iP)));
 const tela = SRC.slice(SRC.indexOf('function cliqRender('), i1);
 ok('campo de dose em texto com teclado decimal (vírgula no iPhone)', /inputmode="decimal"[^>]*data-clq-mg/.test(tela));
-ok('o aviso de uso fora da bula está na tela', /Uso fora da bula/.test(tela) && /não informa o volume de cada clique/.test(tela) && /outros fabricantes/.test(tela) && /verificação de fluxo/.test(tela) && /37 cliques nas canetas de 1,5 mL e em 74 nas de 3 mL/.test(tela));
-ok('o aviso não fala mais em 75 cliques', !/= 75/.test(tela) && !/0,75 mL = 75/.test(tela));
+ok('o quadro de aviso saiu da tela ("retirar")', !/clq-aviso/.test(tela) && !/Uso fora da bula/.test(tela));
+ok('sem campo para editar os cliques; a dose entra pela faixa ou em mg', !/data-clq-n\b/.test(tela) && /data-clq-faixa/.test(tela) && /data-clq-mg/.test(tela));
 ok('o cartão da caneta não tem nome comercial', !/clq-marca/.test(tela) && !/c\.marcas/.test(tela));
-ok('a nota cita a bula brasileira, os 74 cliques das de 3 mL e deixa a Ozempic 2 mg de fora', /bula brasileira do Wegovy/.test(SRC.slice(iE, iP)) && /74 nas de 3 mL/.test(SRC.slice(iE, iP)) && /Ozempic® 2 mg/.test(SRC.slice(iE, iP)));
+ok('a nota cita a bula brasileira, os 74 cliques das de 3 mL, a falta de validação do fabricante e deixa a Ozempic 2 mg de fora', /sem validação do fabricante/.test(SRC.slice(iE, iP)) && /bula brasileira do Wegovy/.test(SRC.slice(iE, iP)) && /74 nas de 3 mL/.test(SRC.slice(iE, iP)) && /Ozempic® 2 mg/.test(SRC.slice(iE, iP)));
 
 if (bad) { console.log('test-calc-cliques: ' + bad + ' falha(s)'); process.exit(1); }
-console.log('test-calc-cliques: ok (canetas da bula, 37/74 cliques, seletor que para na dose marcada, rendimento em semanas, outra caneta, tabela e folha impressa, sem nome comercial nos cartões, aviso de uso fora da bula)');
+console.log('test-calc-cliques: ok (canetas da bula, 37/74 cliques, seletor que para na dose marcada, rendimento em semanas, outra caneta, tabela e folha impressa, sem nome comercial nos cartões, sem aviso nem campo de cliques, ressalva na nota)');
