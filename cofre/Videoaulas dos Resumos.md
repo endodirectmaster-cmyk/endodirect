@@ -42,6 +42,8 @@ inserir aos poucos pequenos vídeos (como o exemplo em anexo) de no máx 15 min 
   o vídeo real servido localmente: abas, player, capítulo sem vídeo e editor, no notebook e no
   celular, sem rolagem lateral. O Chromium do Playwright não tem H.264 (dá erro 4 no `<video>`),
   então a reprodução em si só se confere num navegador de verdade.
+- **Reprodução confirmada pelo professor (03/11):** *"Está rodando sim! Ja testei agora"*, com o
+  vídeo do cap. 91 em produção.
 
 ## Vídeos gravados
 
