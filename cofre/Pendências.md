@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-10-31
+atualizado: 2026-11-03
 ---
 
 # Pendências
@@ -981,6 +981,29 @@ Os 26 fatos que restituem o núcleo foram relidos e selados de novo
 **Auditoria trimestral.** Rotina "Auditoria trimestral do acervo Endodirect"
 (`trig_011i6yP2PuRFyg98ZpoWSzdT`): dia 5 de janeiro, abril, julho e outubro,
 às 8h47 de Brasília, com aviso por push e e-mail; a próxima é em 05/01/2027.
+
+## 📊 Convite de feedback: 6ª verificação (2026-11-03)
+
+**Feedback:** nenhum novo. O último é de 02/10. Desde 01/09 são 6, com média 4,33 (notas 5, 3,
+5, 5, 5, 3).
+
+**Alcance:** 51 assinantes ativos (2 novos desde 20/10), 43 com mais de 30 dias, 35 com o
+convite aberto e 8 que já responderam. A conta de revisão das lojas não entra na conta.
+
+**Continuam iguais:**
+- o EndoTEEM 2026 invisível a todo aluno real (68 de 106 aulas, `tier` nulo, slug em
+  `SHOWCASE_ONLY_CURSOS`, última mudança no curso em 02/09);
+- os flashcards em 533 desde 01/07 e os mapas em 82 desde 21/07.
+
+**Diretrizes públicas:**
+- Pelo critério de 06/10, 25 de 72 são de 2022 ou antes. Eram 22, e subiram sem envelhecer
+  nada: a auditoria corrigiu o campo `ano` de 15, 36 e 57 para o ano do documento original
+  (2025→2021, "2018 (atual.: …)"→2018, "2019–2020"→2021).
+- Pelo ano mais recente do campo, continuam 30 de 72. Nenhuma está sem ano; 15 são de 2026
+  (eram 14).
+- A última edição pública foi em 31/10 (Diretriz 13), pelos lotes da auditoria.
+
+Próxima verificação em 17/11 (`trig_01QDCDys7z6fKKDJLVuhGYmZ`).
 
 ## 📊 Convite de feedback: 5ª verificação (2026-10-20)
 
