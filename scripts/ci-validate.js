@@ -1010,6 +1010,18 @@ try {
   fail('regressão da calculadora de cliques da semaglutida falhou:\n' + out);
 }
 
+// 17c-undecies-o. VIDEOAULAS NOS RESUMOS (02/11/2026). Pedido do professor: botão "Videoaulas" ao
+//      lado de "Mapas mentais", com vídeos curtos (até 15 min). Campo `videos` do item; para o aluno
+//      a aba só aparece nos capítulos dos Resumos que têm vídeo; no painel, em todos, com upload
+//      retomável (resumos/videos) ou link (Bunny .m3u8, YouTube, Vimeo).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-videoaulas.js')], { stdio: 'pipe' });
+  ok('videoaulas: player (Storage, HLS, YouTube, Vimeo) com escape, aba só com vídeo para o aluno, editor no painel, upload retomável e confirmação acima de 15 min');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das videoaulas falhou:\n' + out);
+}
+
 // 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
 //      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
 //      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,

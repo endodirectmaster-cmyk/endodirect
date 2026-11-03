@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-02
+atualizado: 2026-11-03
 ---
 
 # Decisões
@@ -8,6 +8,18 @@ atualizado: 2026-11-02
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 VIDEOAULAS NOS CAPÍTULOS DOS RESUMOS (2026-11-02).**
+  - **Pedido:** *"Insira ao lado de 'Mapas mentais' o botão de 'Videoaulas' (...) pequenos vídeos (...) de no máx 15 min cada"*.
+  - **Dado:** campo `videos` do item.
+  - **Aluno:** a aba "🎬 Videoaulas" vem depois de "Mapas mentais" e só aparece nos capítulos dos Resumos que têm vídeo.
+  - **Professor:** vê a aba em todos os capítulos, com:
+    - upload retomável para `resumos/videos/`;
+    - ou link (Bunny `.m3u8`, YouTube ou Vimeo);
+    - confirmação acima de 15 min.
+  - **1º vídeo:** rastreio do HAP no cap. 91 (11:13). Enviado por URL assinada da `subir-figuras-livros` (token novo, 60 min; depois 410).
+  - **Backup:** `main-antes-videoaula-cap91-2026-11-02`.
+  - **Publicação:** sw v341.
+  - Detalhes em [[Videoaulas dos Resumos]].
 - **💉 CALCULADORA "SEMAGLUTIDA: DOSE EM CLIQUES" (2026-11-02).** Pedido do professor (print de calculadora de outro site). Feita do zero no estilo da casa, em Obesidade: cinco canetas da bula brasileira do Wegovy (Ozempic®, Poviztra® e Extensior® nas de 1,34 mg/mL), dose ↔ cliques, dose real, volume, rendimento. Cliques pelo volume da dose da bula ÷ 0,01 mL; o seletor para na dose da caneta. Aviso de uso fora da bula na tela: o fabricante não recomenda contar cliques e não informa o volume do clique. `sw.js` v338. **Mesmo dia, v339:** 74 cliques em todas as canetas de 3 mL (a 1ª versão dava 75 nas de 1,7 e 2,4), a mesma dose em outra caneta, tabela de cliques com impressão, semanas no rendimento e, a pedido do professor, sem nomes comerciais embaixo de cada dose. **v340:** sem o quadro "Uso fora da bula" (tela e folha impressa) e sem o campo de editar cliques, a pedido do professor; a ressalva fica só na nota. Ver [[Calculadoras]].
 
 ## 2026-10

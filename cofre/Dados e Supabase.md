@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-10-31
+atualizado: 2026-11-03
 ---
 
 # Dados e Supabase
@@ -18,6 +18,7 @@ atualizado: 2026-10-31
   - Protegidas por token: só o hash fica no código, o token fica num arquivo da sessão.
   - As duas estão desativadas (410), porque a ferramenta do Supabase não apaga função.
   - A `subir-figuras-livros` voltou a funcionar em 19/10, com token novo e prazo, para as 51 de diabetes. Depois voltou ao 410 (versão 5), e o token foi apagado.
+  - Em 02/11 (v17) ela entregou só uma URL assinada de envio (`createSignedUploadUrl`, sem sobrescrever) para o vídeo do rastreio do HAP. O arquivo de 26,5 MB foi por `PUT` direto ao Storage, sem passar pela função. A v18 voltou ao 410 e o token foi apagado. Esse é o caminho para arquivo grande, que não cabe no corpo da função. Ver [[Videoaulas dos Resumos]].
 - **⚠️ Chave de serviço na função:** use `createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` do supabase-js. Com `fetch` direto e `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>`, o Storage respondeu 403 "Invalid Compact JWS" (18/10).
 
 ## 🖼️ Open-i fora do ar: figura de artigo fica em cópia própria (25/10/2026)
