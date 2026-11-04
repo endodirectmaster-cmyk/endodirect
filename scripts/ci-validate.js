@@ -953,6 +953,19 @@ try {
   fail('radar de notícias com comportamento errado:\n' + out);
 }
 
+// ⚠️ ANVISA SEM FEED PRÓPRIO (04/11/2026). "Anvisa aprova primeiro medicamento de
+// GLP-1 oral para obesidade" não entrou no mural: o gov.br virou página React sem
+// RSS (404 desde 10/10). A ANVISA chega por três buscas presas à allowlist, e o
+// título da busca (com o sufixo do veículo) é comparado com o do mural, para que a
+// notícia lançada à mão pelo professor não volte como card repetido.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-radar-anvisa.js')], { stdio: 'pipe' });
+  ok('radar: ANVISA por buscas presas à allowlist, uma vez só, e sem repetir o card lançado à mão');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('radar da ANVISA com comportamento errado:\n' + out);
+}
+
 // ⚠️ META DE LDL NO PREVENT (27/08/2026). A Diretriz Brasileira de Dislipidemias
 // 2025 elege o PREVENT como ferramenta preferencial, então a meta entra na tela
 // do escore. A armadilha: o escore dá o PISO da categoria, não a categoria —

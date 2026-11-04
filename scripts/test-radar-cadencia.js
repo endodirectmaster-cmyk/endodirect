@@ -105,7 +105,10 @@ if (m) ok(parseInt(m[1], 10) >= 1,
 // As fontes regulatórias que sustentam o caso não podem sumir da lista.
 [['anvisa.gov.br', 'domínio da ANVISA'], ['gov.br', 'domínio gov.br'], ["'anvisa'", 'nome ANVISA']]
   .forEach(([t, nome]) => ok(news.includes(t), 'sumiu ' + nome + ' das fontes confiáveis de lib/news.js'));
-ok(/gov\.br\/anvisa[^'"]*RSS/i.test(news), 'sumiu o feed oficial da ANVISA de lib/news.js');
+// 04/11/2026: o gov.br virou página React sem RSS (o feed oficial dava 404 desde
+// 10/10). A ANVISA passou a chegar por buscas presas à allowlist; a que vai direto
+// ao gov.br não pode sumir (ver scripts/test-radar-anvisa.js).
+ok(/gnews\('Anvisa site:gov\.br'/.test(news), 'sumiu a busca da ANVISA presa ao gov.br de lib/news.js');
 
 if (falhas.length) {
   console.error('✗ cadência do radar:');
