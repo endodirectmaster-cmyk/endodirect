@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-10-16
+atualizado: 2026-11-04
 ---
 
 # Newsletter e Radar
@@ -169,6 +169,45 @@ oficial em 8 semanas. `lib/push-breaking.js`, chamado por `runRadar` logo
   → o item volta como `fresh` no run seguinte e pode ser notificado de novo.
 
 Prova: `scripts/test-push-breaking-oficial.js` (no `ci-validate`).
+
+## 🧨 ANVISA SEM FEED PRÓPRIO: O GOV.BR VIROU REACT (2026-11-04)
+
+O professor mandou o print de *"Anvisa aprova primeiro medicamento de GLP-1 oral para
+obesidade"* (gov.br, 04/11, 05h06 BRT) e disse: *"Não capturou essa notícia. Tive que
+implantar manualmente."* Ele lançou o card às 11h37 UTC (em `adm_avisos`).
+
+**A causa:**
+- O gov.br migrou para uma página React (Volto), sem RSS. O feed `.../assuntos/noticias/RSS`
+  responde **404 desde 10/10**, e o `portal.anvisa.gov.br` nem resolve mais.
+- O alerta de feed mudo funcionou: avisou em 10/10, assinatura
+  `ANVISA oficial|http404;ANVISA portal|http403;Eli Lilly|http403`. Só que, desde então, a
+  ANVISA tinha **uma rota só**, a busca "ANVISA aprova medicamento" no Google News, e ela não
+  trouxe a notícia a tempo da rodada das 10h45 UTC.
+- Daqui não dá para conferir o Google News: o host é bloqueado na sessão.
+
+**Rotas oficiais testadas, nenhuma serve:**
+- `++api++` devolve HTML (a busca responde "Estamos em manutenção");
+- a pasta `noticias-anvisa/2026` traz só os 25 primeiros itens (de janeiro) e não pagina
+  (`b_start` e `page` ignorados);
+- o `sitemap.xml.gz` (13 partes, 24 s cada) não lista as notícias de 2026.
+
+**O que mudou em `lib/news.js`:**
+- Os dois feeds mortos saíram da lista.
+- A ANVISA ganhou três buscas: "ANVISA aprova medicamento", "Anvisa aprova" e
+  "Anvisa site:gov.br". Todas passam pela allowlist (domínio gov.br ou anvisa.gov.br, ou o
+  nome "Anvisa").
+- Novo `tituloComparavel()`: o título da busca vem com o sufixo
+  " - Agência Nacional de Vigilância Sanitária - Anvisa", e por isso não batia com o card
+  lançado à mão. Agora a comparação é feita sem o sufixo, sem acento e sem pontuação, contra
+  todos os títulos do mural, e também entre as três buscas. Assim a notícia entra uma vez só
+  e não repete a do professor.
+- Teste `scripts/test-radar-anvisa.js` (no ci-validate); o `test-radar-cadencia.js` passou a
+  exigir a busca presa ao gov.br no lugar do feed RSS.
+
+**O que vai acontecer:**
+- Na próxima rodada, a assinatura dos feeds mudos muda para só `Eli Lilly|http403`, e o
+  alerta manda **um** e-mail.
+- O feed oficial da Lilly segue com 403. A Lilly tem a busca como 2ª rota desde 28/08.
 
 ## 🧨 FEED OFICIAL MUDO: ZERO ITEM DA LILLY EM 1.019 (2026-08-28)
 
