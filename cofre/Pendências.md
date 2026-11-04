@@ -503,6 +503,16 @@ completo.
     diretriz** na parte do anaplásico: biópsia (PAAF guiada por US como 1ª escolha, com core),
     TP53 40–80%, origem folicular, traqueostomia eletiva não é rotina, números epidemiológicos sem
     lastro no consenso.
+  - [x] **Cap. 84 alinhado ao LATS 2026 (04/11, 00h21 UTC), só na parte do anaplásico.** 21 trocas
+    (agente com `INSTRUCOES-CAPITULO.md`), conferidas por mim no fonte.txt: PAAF guiada por US como
+    1ª escolha (sensibilidade 100%, VPP 89%) com core junto; TP53 40–80% e TERT 30–75%; origem
+    folicular (PAX8 em 40–60%); traqueostomia eletiva não é rotina (R23; a de urgência por obstrução
+    tem mortalidade de 17,6% em 30 dias); tratamento pela Figura 1 e R17–R34 (retomar o DT após a
+    cirurgia pós-neoadjuvância; pembrolizumabe recomendado com o DT, R34); SG histórica de 21% em
+    12 meses. A parte do medular ficou com o mesmo texto (só 3 negritos partidos em duas linhas
+    foram juntados; HTML renderizado idêntico). Os números 2%, 20–50% e ~70 anos ficaram, sem
+    atribuição ao consenso. `url` vazio recebeu o DOI do LATS. `gravar-diretriz` v26 (ensaio,
+    backup `main-antes-capitulo-84-2026-11-04`), item `2bd5456f…`; v27 voltou ao 410, token apagado.
 - [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
   documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
   `gravar-diretriz` (token e prazo novos a cada lote).
