@@ -8,6 +8,14 @@ atualizado: 2026-11-04
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎓 ENQUETE EMC: TEMAS SUGERIDOS DENTRO DA SUBESPECIALIDADE (2026-11-04).**
+  - **Pedido:** *"Quando for rodar a enquete para os alunos, quando ele clicar na subespecialidade, abre uma opção de temas sugeridos. Por exemplo, ao clicar em endocrinologia feminina --> SOMP, menopausa, falência ovariana, etc"*.
+  - **O que o aluno vê:** ao marcar uma subespecialidade, abre logo abaixo um bloco com os temas dela (`CME_SUBTEMAS`, tirados dos capítulos dos Resumos com nome curto). Marcar tema é opcional, com até 3 por subespecialidade (`CME_SUB_MAX`). Ao desmarcar a subespecialidade, o bloco some com os temas dela.
+  - **Como grava:** os temas marcados ficam em rascunho (`cmeSubSel`, fora de `DB`), como os chips de subespecialidade. O Enviar grava `enquete_cme.subtemas = {sub: [temas]}`, só das subespecialidades que continuam marcadas.
+  - **Apuração:** a RPC `endodirect_admin_enquete_cme` ganhou `subtemas` [{tema, subtema, votos, votos_gold}]. Só conta tema de subespecialidade que está no voto e com até 80 caracteres. Arquivo: `supabase/enquete-cme-subtemas.sql`; aplicada e conferida (continua recusando quem não é admin).
+  - **Painel do professor:** cada barra mostra os temas pedidos com a contagem Gold.
+  - **Testes e publicação:** `test-enquete-cme.js` ganhou o bloco 4b; sw v342.
+  - **Quem já votou:** os 20 que já responderam não veem a janela de novo (regra de 30/08: *"depois que responder, não abrir novamente"*). Reabrir para eles depende do professor.
 - **📰 RADAR: ANVISA POR BUSCAS, SEM O FEED MORTO (2026-11-04).** O professor teve de lançar à mão a aprovação do GLP-1 oral pela Anvisa. O gov.br virou React sem RSS (404 desde 10/10); os 2 feeds oficiais da ANVISA saíram e entraram 3 buscas do Google News presas à allowlist, com comparação de título sem o sufixo do veículo (não duplica o card manual). Detalhes em [[Newsletter e Radar]].
 - **📋 LOTE 6 DAS DIRETRIZES GRAVADO (2026-11-03, 20h43 UTC).** 10 (prolactinoma, Pituitary Society 2023), 40 (dumping, consenso Delphi 2020), 42 (Paget, diretriz internacional 2019, no lugar da ES 2014) e 60 (anaplásico, consenso LATS 2026, no lugar da mistura ATA 2021 + revisões), a pedido do professor (*"Faça mais 4 diretrizes"*). Um grave no 60, conferido por mim na Figura 1 (após neoadjuvância e cirurgia, retomar o dabrafenibe + trametinibe). Gravadas pela `gravar-diretriz` v24; v25 voltou ao 410. Pela regra de 31/10, o cap. 84 passou a seguir o LATS 2026 na parte do anaplásico (gravado em 04/11, 21 trocas; o medular ficou como estava); os caps. 97, 165, 108 e 75 ficam. Detalhes em [[Pendências]].
 - **🎬 VIDEOAULAS NOS CAPÍTULOS DOS RESUMOS (2026-11-02).**

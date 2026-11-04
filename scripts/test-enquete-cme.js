@@ -118,6 +118,61 @@ ok(SUBS >= 10, 'DIR_SUBS não foi lido do index.html (veio ' + SUBS + ')');
   ok(/registrada/i.test(el.textContent), 'depois de enviar, o card devia confirmar o registro');
 }
 
+// ── 4b. TEMAS SUGERIDOS DENTRO DA SUBESPECIALIDADE (04/11/2026) ─────────────
+// Pedido do professor: "quando ele clicar na subespecialidade, abre uma opção de
+// temas sugeridos. Por exemplo, ao clicar em endocrinologia feminina --> SOMP,
+// menopausa, falência ovariana, etc". Marcar tema também é rascunho (não grava),
+// tem teto de 3 por subespecialidade e some quando a subespecialidade é desmarcada.
+{
+  const doc = dom.window.document;
+  const host = () => doc.getElementById('cme-card-modal');
+  const clica = (b) => b && b.dispatchEvent(new dom.window.Event('click', { bubbles: true }));
+  const chipSub = (sub) => chips(host()).find((b) => b.getAttribute('data-cme-tema') === sub);
+  const subChips = (sub) => [...host().querySelectorAll('[data-cme-subtema]')].filter((b) => b.getAttribute('data-cme-sub') === sub);
+  monta(['plano:gold'], null);
+  ok(host().querySelectorAll('[data-cme-subtema]').length === 0, 'temas sugeridos aparecem antes de escolher a subespecialidade');
+  const SUBT = vm.runInContext('JSON.stringify(CME_SUBTEMAS)', ctx);
+  const mapa = JSON.parse(SUBT);
+  const subsDaCasa = JSON.parse(vm.runInContext('JSON.stringify(DIR_SUBS)', ctx));
+  ok(subsDaCasa.every((sub) => Array.isArray(mapa[sub]) && mapa[sub].length >= 4), 'toda subespecialidade da enquete precisa de temas sugeridos (mínimo 4)');
+  ok(Object.keys(mapa).every((k) => subsDaCasa.indexOf(k) >= 0), 'há temas sugeridos para subespecialidade que não está em DIR_SUBS');
+  const fem = mapa['Endocrinologia Feminina'] || [];
+  ok(fem.indexOf('SOMP') >= 0 && fem.some((t) => /menopausa/i.test(t)) && fem.some((t) => /falência ovariana/i.test(t)),
+    'Endocrinologia Feminina tem de sugerir SOMP, menopausa e falência ovariana (o exemplo do professor)');
+
+  clica(chipSub('Endocrinologia Feminina'));
+  ok(subChips('Endocrinologia Feminina').length === fem.length, 'ao marcar Endocrinologia Feminina, os temas sugeridos dela não abriram');
+  ok(/temas sugeridos/i.test(host().textContent), 'o bloco não diz que são temas sugeridos');
+  // marca 4: o teto segura em 3
+  for (let i = 0; i < 4; i++) {
+    const livre = subChips('Endocrinologia Feminina').find((b) => !b.hasAttribute('disabled') && !/^✓/.test(b.textContent));
+    clica(livre);
+  }
+  const marc = subChips('Endocrinologia Feminina').filter((b) => b.className.includes(' on'));
+  ok(marc.length === 3, 'o teto de 3 temas por subespecialidade não segurou: ' + marc.length);
+  ok(vm.runInContext('__persists', ctx) === 0 && vm.runInContext('DB.enqueteCme==null', ctx), '⚠️ marcar tema sugerido gravou alguma coisa antes do Enviar');
+
+  // marca Diabetes e um tema dele; depois desmarca Diabetes: os temas dele somem
+  clica(chipSub('Diabetes'));
+  clica(subChips('Diabetes')[0]);
+  ok(subChips('Diabetes').some((b) => b.className.includes(' on')), 'não deu para marcar tema de Diabetes');
+  clica(chipSub('Diabetes'));
+  ok(subChips('Diabetes').length === 0, 'desmarcar Diabetes não fechou os temas dele');
+
+  clica(host().querySelector('[id^="cme-enviar-"]'));
+  const v = JSON.parse(vm.runInContext('JSON.stringify(DB.enqueteCme||null)', ctx));
+  ok(!!v && Array.isArray(v.temas) && v.temas.length === 1 && v.temas[0] === 'Endocrinologia Feminina', 'o voto não ficou só com Endocrinologia Feminina: ' + JSON.stringify(v));
+  ok(!!v && v.subtemas && Array.isArray(v.subtemas['Endocrinologia Feminina']) && v.subtemas['Endocrinologia Feminina'].length === 3, 'os 3 temas de Endocrinologia Feminina não foram com o voto: ' + JSON.stringify(v));
+  ok(!!v && v.subtemas && !('Diabetes' in v.subtemas), '⚠️ foram temas de Diabetes, que o aluno desmarcou');
+  ok(/Endocrinologia Feminina \(/.test(host().textContent), 'a confirmação não mostra os temas escolhidos dentro da subespecialidade');
+
+  // Alterar reabre com os temas marcados
+  clica(host().querySelector('[id^="cme-editar"]'));
+  ok(subChips('Endocrinologia Feminina').filter((b) => b.className.includes(' on')).length === 3, 'ao alterar o voto, os temas já escolhidos não voltaram marcados');
+}
+const codigoAdm = html.slice(html.indexOf('function admCmeHTML('), html.indexOf('function renderAdmSec('));
+ok(/d\.subtemas/.test(codigoAdm) && /adm-cme-sub/.test(codigoAdm), 'o painel do professor não mostra os temas pedidos dentro de cada subespecialidade');
+
 // ── 5. quem já votou volta e vê a confirmação, não a enquete em branco ──────
 {
   const el = monta(['plano:gold'], { temas: ['Diabetes', 'Tireoide'], outro: 'Nódulo adrenal', em: 1 });
@@ -192,4 +247,4 @@ if (falhas.length) {
   falhas.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ enquete EMC: só Gold enxerga, teto de 3 respeitado, marcar não grava, Enviar grava uma vez e o voto trafega até o servidor');
+console.log('✓ enquete EMC: só Gold enxerga, teto de 3 respeitado, temas sugeridos por subespecialidade (teto de 3, somem ao desmarcar), marcar não grava, Enviar grava uma vez e o voto trafega até o servidor');
