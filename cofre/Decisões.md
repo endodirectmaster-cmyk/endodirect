@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-03
+atualizado: 2026-11-04
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-03
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📋 LOTE 6 DAS DIRETRIZES GRAVADO (2026-11-03, 20h43 UTC).** 10 (prolactinoma, Pituitary Society 2023), 40 (dumping, consenso Delphi 2020), 42 (Paget, diretriz internacional 2019, no lugar da ES 2014) e 60 (anaplásico, consenso LATS 2026, no lugar da mistura ATA 2021 + revisões), a pedido do professor (*"Faça mais 4 diretrizes"*). Um grave no 60, conferido por mim na Figura 1 (após neoadjuvância e cirurgia, retomar o dabrafenibe + trametinibe). Gravadas pela `gravar-diretriz` v24; v25 voltou ao 410. Pela regra de 31/10, o cap. 84 segue o LATS 2026 na parte do anaplásico; os caps. 97, 165, 108 e 75 ficam. Detalhes em [[Pendências]].
 - **🎬 VIDEOAULAS NOS CAPÍTULOS DOS RESUMOS (2026-11-02).**
   - **Pedido:** *"Insira ao lado de 'Mapas mentais' o botão de 'Videoaulas' (...) pequenos vídeos (...) de no máx 15 min cada"*.
   - **Dado:** campo `videos` do item.
