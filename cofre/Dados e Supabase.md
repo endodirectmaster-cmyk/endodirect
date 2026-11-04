@@ -108,6 +108,7 @@ atualizado: 2026-11-04
   11 e 16, e a v15 voltou ao 410; token apagado. Às 13h08, v16 gravou os capítulos 92 e 121 (mesmo array; o
   backup e o motivo dizem "capítulo", pelo `ferramentas/grava_cap.py`), e a v17 voltou ao 410.
   Lote 6 (03/11): v24 gravou 10, 40, 42 e 60 às 20h43 UTC. A sessão reiniciou entre gerar o token e o deploy (36 min) e de novo antes de desligar; o prazo de 60 min desligou a função sozinho às 21h06, e a v25 (410) entrou à 00h05 de 04/11, com o token apagado. O `grava_lote.py` agora usa a data do lote no id do backup (`DATA_LOTE`, padrão 2026-11-03).
+  Em 04/11, v26 gravou o capítulo 84 (alinhado ao LATS 2026) pelo `grava_cap.py`, que agora usa `DATA_CAP` no id do backup e cita a regra de 31/10 no motivo; v27 voltou ao 410, token apagado.
   Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
