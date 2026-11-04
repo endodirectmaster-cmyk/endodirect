@@ -152,26 +152,48 @@ ok(SUBS >= 10, 'DIR_SUBS não foi lido do index.html (veio ' + SUBS + ')');
   ok(marc.length === 3, 'o teto de 3 temas por subespecialidade não segurou: ' + marc.length);
   ok(vm.runInContext('__persists', ctx) === 0 && vm.runInContext('DB.enqueteCme==null', ctx), '⚠️ marcar tema sugerido gravou alguma coisa antes do Enviar');
 
+  // "OUTROS" EM CADA SUBESPECIALIDADE (04/11/2026): "Deixa também em cada
+  // subespecialidade a opção 'outros'. Daí quando clica, o aluno descreve".
+  const outroBtn = (sub) => host().querySelector('[data-cme-suboutro="' + sub + '"]');
+  const outroIn = (sub) => host().querySelector('[data-cme-suboutro-in="' + sub + '"]');
+  const digita = (inp, txt) => { inp.value = txt; inp.dispatchEvent(new dom.window.Event('input', { bubbles: true })); };
+  ok(!!outroBtn('Endocrinologia Feminina'), 'falta o "Outros" no bloco de Endocrinologia Feminina');
+  ok(!outroIn('Endocrinologia Feminina'), 'o campo de "Outros" não pode aparecer antes do clique');
+  clica(outroBtn('Endocrinologia Feminina'));
+  ok(!!outroIn('Endocrinologia Feminina'), 'clicar em "Outros" não abriu o campo para o aluno descrever');
+  ok(!outroBtn('Endocrinologia Feminina').hasAttribute('disabled'), '"Outros" não pode ficar bloqueado pelo teto de 3 temas');
+  if (outroIn('Endocrinologia Feminina')) digita(outroIn('Endocrinologia Feminina'), 'Contracepção em endocrinopatias');
+  ok(vm.runInContext('__persists', ctx) === 0, '⚠️ digitar em "Outros" gravou antes do Enviar');
+
   // marca Diabetes e um tema dele; depois desmarca Diabetes: os temas dele somem
   clica(chipSub('Diabetes'));
+  ok(outroIn('Endocrinologia Feminina') && outroIn('Endocrinologia Feminina').value === 'Contracepção em endocrinopatias',
+    'o texto de "Outros" se perdeu ao marcar outra subespecialidade');
   clica(subChips('Diabetes')[0]);
   ok(subChips('Diabetes').some((b) => b.className.includes(' on')), 'não deu para marcar tema de Diabetes');
+  clica(outroBtn('Diabetes'));
+  if (outroIn('Diabetes')) digita(outroIn('Diabetes'), 'Diabetes tipo 3c');
   clica(chipSub('Diabetes'));
-  ok(subChips('Diabetes').length === 0, 'desmarcar Diabetes não fechou os temas dele');
+  ok(subChips('Diabetes').length === 0 && !outroIn('Diabetes'), 'desmarcar Diabetes não fechou os temas e o "Outros" dele');
 
   clica(host().querySelector('[id^="cme-enviar-"]'));
   const v = JSON.parse(vm.runInContext('JSON.stringify(DB.enqueteCme||null)', ctx));
   ok(!!v && Array.isArray(v.temas) && v.temas.length === 1 && v.temas[0] === 'Endocrinologia Feminina', 'o voto não ficou só com Endocrinologia Feminina: ' + JSON.stringify(v));
   ok(!!v && v.subtemas && Array.isArray(v.subtemas['Endocrinologia Feminina']) && v.subtemas['Endocrinologia Feminina'].length === 3, 'os 3 temas de Endocrinologia Feminina não foram com o voto: ' + JSON.stringify(v));
   ok(!!v && v.subtemas && !('Diabetes' in v.subtemas), '⚠️ foram temas de Diabetes, que o aluno desmarcou');
+  ok(!!v && v.subOutros && v.subOutros['Endocrinologia Feminina'] === 'Contracepção em endocrinopatias', 'o "Outros" de Endocrinologia Feminina não foi com o voto: ' + JSON.stringify(v && v.subOutros));
+  ok(!!v && v.subOutros && !('Diabetes' in v.subOutros), '⚠️ foi o "Outros" de Diabetes, que o aluno desmarcou');
+  ok(/Outros: Contracepção em endocrinopatias/.test(host().textContent), 'a confirmação não mostra o "Outros" descrito');
   ok(/Endocrinologia Feminina \(/.test(host().textContent), 'a confirmação não mostra os temas escolhidos dentro da subespecialidade');
 
   // Alterar reabre com os temas marcados
   clica(host().querySelector('[id^="cme-editar"]'));
   ok(subChips('Endocrinologia Feminina').filter((b) => b.className.includes(' on')).length === 3, 'ao alterar o voto, os temas já escolhidos não voltaram marcados');
+  ok(outroIn('Endocrinologia Feminina') && outroIn('Endocrinologia Feminina').value === 'Contracepção em endocrinopatias', 'ao alterar o voto, o "Outros" descrito não voltou');
 }
 const codigoAdm = html.slice(html.indexOf('function admCmeHTML('), html.indexOf('function renderAdmSec('));
 ok(/d\.subtemas/.test(codigoAdm) && /adm-cme-sub/.test(codigoAdm), 'o painel do professor não mostra os temas pedidos dentro de cada subespecialidade');
+ok(/d\.subtemas_outros/.test(codigoAdm) && /adm-cme-outros/.test(codigoAdm), 'o painel do professor não mostra o "Outros" descrito em cada subespecialidade');
 
 // ── 5. quem já votou volta e vê a confirmação, não a enquete em branco ──────
 {
@@ -247,4 +269,4 @@ if (falhas.length) {
   falhas.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ enquete EMC: só Gold enxerga, teto de 3 respeitado, temas sugeridos por subespecialidade (teto de 3, somem ao desmarcar), marcar não grava, Enviar grava uma vez e o voto trafega até o servidor');
+console.log('✓ enquete EMC: só Gold enxerga, teto de 3 respeitado, temas sugeridos por subespecialidade (teto de 3, "Outros" descrito, somem ao desmarcar), marcar não grava, Enviar grava uma vez e o voto trafega até o servidor');
