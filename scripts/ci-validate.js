@@ -966,6 +966,17 @@ try {
   fail('radar da ANVISA com comportamento errado:\n' + out);
 }
 
+// LEMBRETE DA ENQUETE EMC (04/11/2026). "Acho que vale a pena uma nova cobrança" —
+// e quem já respondeu "não precisa responder novamente". Lista decidida no banco
+// (RPC só do service_role), uma vez por campanha (ledger protegido pelo gatilho).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-enquete-lembrete.js')], { stdio: 'pipe' });
+  ok('lembrete da enquete: só pendentes Gold, só na janela da campanha, uma vez, com descadastro');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('lembrete da enquete com comportamento errado:\n' + out);
+}
+
 // ⚠️ META DE LDL NO PREVENT (27/08/2026). A Diretriz Brasileira de Dislipidemias
 // 2025 elege o PREVENT como ferramenta preferencial, então a meta entra na tela
 // do escore. A armadilha: o escore dá o PISO da categoria, não a categoria —

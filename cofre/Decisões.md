@@ -8,6 +8,13 @@ atualizado: 2026-11-04
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📣 NOVA COBRANÇA DA ENQUETE EMC: E-MAIL + CELULAR AOS GOLD QUE NÃO VOTARAM (2026-11-04).**
+  - **Pedido do professor:** *"Os 20 alunos que já responderam não precisam responder novamente. Deixe essa mudança a partir de agora para os novos alunos [...] essa enquete já está rolando para os demais alunos que ainda não responderam. Acho que vale a pena uma nova cobrança."*
+  - **Quem recebe:** os 28 Gold ativos sem voto (medido em 04/11), sem teste, admin nem descadastrado. A lista sai da RPC `endodirect_enquete_cme_pendentes()`, só service_role (`supabase/enquete-lembrete.sql`).
+  - **Como e quando sai:** e-mail ("Faltam só os seus temas…", com botão para a plataforma, onde a janela da enquete abre sozinha) mais push nos aparelhos desses alunos. Sai pelo cron diário a partir de 05/11 (07h30 BRT), uma única vez: campanha `enquete-cme-2026-11-05`, janela até 12/11.
+  - **Registro do envio:** `payload.enquete_lembrete_sent`, chave acrescentada ao gatilho `endodirect_global_preserve_server_keys`. Conferido que o corpo do gatilho só mudou na lista de chaves (md5 normalizado igual).
+  - **Prévia ao professor:** a imagem do e-mail foi mostrada antes, com o dia seguinte para ele vetar.
+  - **Testes:** `scripts/test-enquete-lembrete.js` (no ci-validate).
 - **🎓 ENQUETE EMC: TEMAS SUGERIDOS DENTRO DA SUBESPECIALIDADE (2026-11-04).**
   - **Pedido:** *"Quando for rodar a enquete para os alunos, quando ele clicar na subespecialidade, abre uma opção de temas sugeridos. Por exemplo, ao clicar em endocrinologia feminina --> SOMP, menopausa, falência ovariana, etc"*.
   - **O que o aluno vê:** ao marcar uma subespecialidade, abre logo abaixo um bloco com os temas dela (`CME_SUBTEMAS`, tirados dos capítulos dos Resumos com nome curto). Marcar tema é opcional, com até 3 por subespecialidade (`CME_SUB_MAX`). Ao desmarcar a subespecialidade, o bloco some com os temas dela.

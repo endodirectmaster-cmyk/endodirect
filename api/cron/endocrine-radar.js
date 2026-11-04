@@ -7,6 +7,7 @@ const { refreshPodcastsFromFeed } = require('../../lib/podcasts');
 const { sendTrialEmails, sendWinbackNovidades, sendReengajamento, sendRenovacao, REENG_CEDO_DIAS, REENG_CEDO_COOLDOWN, REENG_CEDO_CHAVE } = require('../../lib/trial-emails');
 const { sendIgDailyNotice, autoPostDailyQotd } = require('../../lib/instagram');
 const { sendAvisoAoVivo } = require('../../lib/aovivo');
+const { sendLembreteEnquete } = require('../../lib/enquete-lembrete');
 // Dá a partida na cadeia de discussões: uma requisição ao próprio backend, que
 // gera um artigo por invocação e chama a próxima. Não espera a resposta — o que
 // importa é a primeira invocação ter começado.
@@ -113,6 +114,12 @@ module.exports = async function handler(req, res) {
     let aovivo = { ok: true, skipped: 'nao rodou' };
     try { aovivo = await sendAvisoAoVivo(); }
     catch (e) { console.error('[cron-radar] aula ao vivo erro:', (e && e.stack) || e); aovivo = { ok: false, error: 'error' }; }
+    // Lembrete da ENQUETE de Educação Médica Continuada aos Gold que ainda não
+    // votaram (04/11/2026, pedido do professor). Uma vez por campanha (ledger em
+    // payload.enquete_lembrete_sent). Fail-safe.
+    let enqueteLembrete = { ok: true, skipped: 'nao rodou' };
+    try { enqueteLembrete = await sendLembreteEnquete(); }
+    catch (e) { console.error('[cron-radar] lembrete da enquete erro:', (e && e.stack) || e); enqueteLembrete = { ok: false, error: 'error' }; }
     // Lembrete diário do Story "Questão do Dia" (Instagram). Acoplado ao cron do
     // radar (plano limita o nº de crons). Fail-safe: nunca derruba o cron.
     let igStory = { sent: false, reason: 'skipped' };
@@ -138,7 +145,7 @@ module.exports = async function handler(req, res) {
     let discussoes = { partida: false };
     try { discussoes = { partida: await dispararCadeia() }; }
     catch (e) { console.error('[cron-radar] cadeia discussoes erro:', (e && e.stack) || e); discussoes = { partida: false }; }
-    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, novidades, reengajamento, aovivo, igStory, discussoes });
+    return json(res, 200, { ok: true, ...result, qotd, newsletter, podcasts, trialEmails, novidades, reengajamento, aovivo, enqueteLembrete, igStory, discussoes });
   } catch (error) {
     console.error('[cron-radar] erro:', (error && error.stack) || error);
     try { await sendAlert('Radar diário falhou', ['O cron endocrine-radar lançou erro e NÃO atualizou o mural hoje.', 'Erro: ' + ((error && error.message) || error)]); } catch (_) {}

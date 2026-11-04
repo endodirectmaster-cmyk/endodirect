@@ -257,6 +257,7 @@ Todos pegam carona no cron diário do radar (10:30 UTC) — o plano limita o nú
 | Degustação: aviso + win-back | quem está/esteve em degustação | chave por pessoa no ledger `trial_emails` |
 | Campanha "o que entrou desde a sua degustação" | ex-degustação | chave única `novidades_2026_08` — dispara uma vez e acabou |
 | **Reengajamento (14+ dias parado)** | **assinante pagante** | **cooldown de 30 dias na RPC** |
+| Lembrete da enquete EMC (04/11/2026) | Gold ativo que ainda não votou (RPC `endodirect_enquete_cme_pendentes`, só service_role) | ledger `enquete_lembrete_sent[<campanha>]`, chave protegida pelo gatilho; janela da campanha (`CAMPANHAS` em `lib/enquete-lembrete.js`) |
 
 **⚠️ O reengajamento é o único cuja condição NÃO expira sozinha.** Nos outros, a pessoa sai do público naturalmente (assinou, a degustação acabou, a campanha já foi). Aqui, quem está parado hoje continua parado amanhã: **sem o cooldown, o mesmo grupo receberia o mesmo e-mail todo dia** até marcar como spam — e aí o domínio de envio inteiro paga o preço. A regra e o cooldown vivem em `endodirect_reengajamento_alvos(p_dias, p_cooldown)`; o envio grava a data em `trial_emails[email].reengajamento`.
 
