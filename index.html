@@ -1000,6 +1000,16 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .cme-chip.on{background:var(--gold-l);border-color:var(--gold);color:var(--gold)}
 .cme-chip[disabled]{opacity:.45;cursor:not-allowed}
 .cme-chip[disabled]:hover{border-color:var(--bd)}
+.cme-sub{border:1px dashed var(--gold);border-radius:12px;padding:.55rem .65rem;margin:-.2rem 0 .7rem;background:var(--s1,transparent)}
+.cme-sub-t{font-size:.74rem;color:var(--t2);margin-bottom:.4rem}
+.cme-sub-t b{color:var(--gold)}
+.cme-sub-t span{color:var(--t3)}
+.cme-sub-chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.cme-chip-sub{font-size:.72rem;padding:.32rem .6rem}
+.adm-cme-subs{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem}
+.adm-cme-sub{font-size:.68rem;color:var(--t2);background:var(--s2);border:1px solid var(--bd);border-radius:999px;padding:.12rem .5rem}
+.adm-cme-sub b{color:var(--gold)}
+.adm-cme-sub i{font-style:normal;color:var(--t3)}
 .qa-body{padding:0 .85rem .85rem}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
@@ -10626,6 +10636,29 @@ function renderAtivacaoEm(alvoId){
 // de marcar-quantos-quiser tende a "todo mundo marca tudo" e não produz ordem de
 // prioridade — que é justamente o que o professor precisa para montar o calendário.
 var CME_MAX = 3;
+// TEMAS SUGERIDOS POR SUBESPECIALIDADE (04/11/2026). Pedido do professor: "quando
+// ele clicar na subespecialidade, abre uma opção de temas sugeridos. Por exemplo,
+// ao clicar em endocrinologia feminina --> SOMP, menopausa, falência ovariana,
+// etc". Os temas são os capítulos dos Resumos de cada área, com nome curto. Marcar
+// tema é OPCIONAL e tem o mesmo teto de 3 por subespecialidade, pelo mesmo motivo:
+// o professor precisa de ordem de prioridade, não de "tudo".
+var CME_SUB_MAX = 3;
+var CME_SUBTEMAS = {
+  'Endocrinologia Básica': ['Hormônios e receptores', 'Eixos e feedback', 'Genética em endocrinologia', 'Avaliação laboratorial e interferências', 'Disruptores endócrinos'],
+  'Diabetes': ['DM1 e LADA', 'Tratamento do DM2', 'Insulinoterapia', 'CGM e tecnologia', 'Complicações crônicas', 'CAD e EHH', 'Hipoglicemia', 'Diabetes na gestação', 'Diabetes no idoso', 'Hiperglicemia hospitalar', 'MODY e diabetes monogênico'],
+  'Tireoide': ['Hipotireoidismo', 'Graves e tireotoxicose', 'Nódulo tireoidiano', 'Câncer de tireoide', 'Tireoidites', 'Tireoide na gestação', 'Emergências tireoidianas', 'Orbitopatia de Graves'],
+  'Adrenal': ['Insuficiência adrenal', 'Síndrome de Cushing', 'Hiperaldosteronismo primário', 'Feocromocitoma e paraganglioma', 'Incidentaloma adrenal', 'Hiperplasia adrenal congênita', 'Carcinoma adrenocortical'],
+  'Obesidade': ['Tratamento farmacológico', 'Cirurgia bariátrica', 'Pós-bariátrica e suplementação', 'Obesidade monogênica e sindrômica', 'Esteatose hepática (DHEM/MASH)', 'Dieta e exercício', 'Ganho de peso por fármacos', 'Lipodistrofias'],
+  'Lípides': ['Metabolismo das lipoproteínas', 'Hipercolesterolemia familiar', 'Hipertrigliceridemias', 'Dislipidemias secundárias', 'Distúrbios do HDL', 'Risco cardiovascular e metas de LDL'],
+  'Osteometabolismo': ['Osteoporose', 'Hiperparatireoidismo primário', 'Hipoparatireoidismo e hipocalcemia', 'Hipercalcemia', 'Vitamina D', 'Doença de Paget', 'Osteomalácia e raquitismo'],
+  'Neuroendocrinologia': ['Hipopituitarismo', 'Prolactinoma', 'Acromegalia', 'Adenoma não funcionante e incidentaloma', 'Apoplexia e hipofisite', 'Deficiência de AVP (diabetes insípido)', 'SIADH e hiponatremia', 'Craniofaringioma'],
+  'Endocrinologia Feminina': ['SOMP', 'Menopausa e terapia hormonal', 'Insuficiência ovariana prematura (falência ovariana)', 'Hirsutismo e hiperandrogenismo', 'Amenorreia', 'Infertilidade feminina'],
+  'Endocrinologia Masculina': ['Hipogonadismo masculino', 'Reposição de testosterona', 'Ginecomastia', 'Infertilidade masculina', 'Disfunção erétil'],
+  'Transgeneridade': ['Princípios do cuidado de afirmação', 'Hormonização feminilizante', 'Hormonização masculinizante', 'Adolescentes e bloqueio puberal', 'Monitorização e riscos'],
+  'Endocrinologia Pediátrica': ['Baixa estatura e GH', 'Puberdade precoce', 'Atraso puberal', 'Hipotireoidismo congênito', 'Hiperplasia adrenal congênita', 'Distúrbios da diferenciação sexual', 'Obesidade infantil', 'Raquitismo', 'Diabetes na infância'],
+  'Endocrinologia do Esporte': ['Adaptações endócrinas ao exercício', 'RED-S e tríade da mulher atleta', 'Anabolizantes', 'Doping hormonal', 'Diabetes e exercício', 'Osso no atleta', 'Overtraining'],
+  'Endocrinopatias': ['Lítio', 'Amiodarona', 'Glicocorticoides', 'Imunoterapia (checkpoint)', 'Psicofármacos', 'Síndromes paraneoplásicas', 'Outras causas iatrogênicas']
+};
 // ⚠️ A seleção EM ANDAMENTO vive aqui, fora de `DB`. Na primeira versão eu a
 // guardava em `DB.enqueteCme` com uma marca `parcial:true` — e isso é uma
 // armadilha: `persist()` é chamado por dezenas de outras ações do app (responder
@@ -10633,6 +10666,18 @@ var CME_MAX = 3;
 // sem o aluno ter clicado em Enviar, e entraria na apuração como se fosse voto.
 // Só o botão Enviar escreve em `DB`.
 var cmeSel = null, cmeEditando = false, cmeOutroRascunho = '';
+// Temas marcados dentro de cada subespecialidade, também rascunho (fora de `DB`).
+var cmeSubSel = null;
+function cmeSubtemasDe(v){
+  var o = (v && v.subtemas && typeof v.subtemas === 'object' && !Array.isArray(v.subtemas)) ? v.subtemas : {};
+  var r = {};
+  Object.keys(o).forEach(function(k){ if (Array.isArray(o[k])) r[k] = o[k].filter(function(x){ return typeof x === 'string' && x; }).slice(0, CME_SUB_MAX); });
+  return r;
+}
+function cmeRotuloVoto(v){
+  var st = cmeSubtemasDe(v);
+  return v.temas.map(function(t){ return (st[t] && st[t].length) ? t + ' (' + st[t].join(', ') + ')' : t; }).join(' · ');
+}
 function cmeVoto(){
   var v = DB.enqueteCme;
   if (!v || typeof v !== 'object') return null;
@@ -10664,15 +10709,29 @@ function renderEnqueteCmeEm(alvoId){
       + '<span style="font-weight:800;color:var(--gold);font-size:.9rem">🎓 Educação Médica Continuada</span>'
       + '<button type="button" class="btn btn-ghost btn-sm" id="cme-editar-' + alvoId + '">Alterar</button></div>'
       + '<div style="margin-top:.5rem;font-size:.8rem;color:var(--t2);line-height:1.55">Sua indicação foi registrada: <b style="color:var(--tx)">'
-      + esc(voto.temas.join(' · ')) + '</b>'
+      + esc(cmeRotuloVoto(voto)) + '</b>'
       + (voto.outro ? '<div style="margin-top:.3rem">Sugestão livre: <b style="color:var(--tx)">' + esc(voto.outro) + '</b></div>' : '')
       + '</div></div>';
     var be = el.querySelector('[id^="cme-editar"]');
-    if (be) be.addEventListener('click', function(){ cmeEditando = true; cmeSel = null; renderEnqueteCme(); });
+    if (be) be.addEventListener('click', function(){ cmeEditando = true; cmeSel = null; cmeSubSel = null; renderEnqueteCme(); });
     return;
   }
   if (!cmeSel) cmeSel = (voto && voto.temas.slice(0, CME_MAX)) || [];
   var sel = cmeSel;
+  if (!cmeSubSel) cmeSubSel = cmeSubtemasDe(voto);
+  var subSel = cmeSubSel;
+  // Um bloco de temas sugeridos para cada subespecialidade marcada, na ordem em que
+  // o aluno marcou. Some quando ele desmarca a subespecialidade.
+  var sugestoes = sel.filter(function(t){ return Array.isArray(CME_SUBTEMAS[t]) && CME_SUBTEMAS[t].length; }).map(function(t){
+    var marc = subSel[t] || [];
+    return '<div class="cme-sub" data-cme-bloco="' + esc(t) + '">'
+      + '<div class="cme-sub-t"><b>' + esc(t) + '</b>: temas sugeridos <span>(opcional, até ' + CME_SUB_MAX + ')</span></div>'
+      + '<div class="cme-sub-chips">' + CME_SUBTEMAS[t].map(function(st){
+        var on = marc.indexOf(st) >= 0, bloq = !on && marc.length >= CME_SUB_MAX;
+        return '<button type="button" class="cme-chip cme-chip-sub' + (on ? ' on' : '') + '"' + (bloq ? ' disabled' : '')
+          + ' data-cme-sub="' + esc(t) + '" data-cme-subtema="' + esc(st) + '">' + (on ? '✓ ' : '') + esc(st) + '</button>';
+      }).join('') + '</div></div>';
+  }).join('');
   var chips = DIR_SUBS.map(function(s){
     var on = sel.indexOf(s) >= 0;
     var bloq = !on && sel.length >= CME_MAX;
@@ -10685,6 +10744,7 @@ function renderEnqueteCmeEm(alvoId){
     + 'Serão aulas <b>mensais</b> de atualização e aperfeiçoamento nos diversos temas de endocrinologia, <b>exclusivas do plano Gold</b>. '
     + 'Indique <b>até ' + CME_MAX + ' temas</b> que você quer ver primeiro.</div>'
     + '<div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem">' + chips + '</div>'
+    + sugestoes
     + '<input type="text" id="cme-outro-' + alvoId + '" maxlength="120" placeholder="Outro tema que não está na lista (opcional)" '
     + 'value="' + esc(cmeOutroRascunho || (voto && voto.outro) || '') + '" style="width:100%;margin-bottom:.6rem">'
     + '<div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">'
@@ -10695,8 +10755,19 @@ function renderEnqueteCmeEm(alvoId){
     b.addEventListener('click', function(){
       if (b.hasAttribute('disabled')) return;
       var t = b.getAttribute('data-cme-tema'), i = sel.indexOf(t);
-      if (i >= 0) sel.splice(i, 1); else if (sel.length < CME_MAX) sel.push(t);
+      if (i >= 0) { sel.splice(i, 1); delete subSel[t]; } else if (sel.length < CME_MAX) sel.push(t);
       // guarda o texto já digitado para não perdê-lo no redesenho
+      var cx = el.querySelector('[id^="cme-outro-"]');
+      cmeOutroRascunho = cx ? cx.value : cmeOutroRascunho;
+      cmeEditando = true; renderEnqueteCme();
+    });
+  });
+  el.querySelectorAll('[data-cme-subtema]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (b.hasAttribute('disabled')) return;
+      var t = b.getAttribute('data-cme-sub'), st = b.getAttribute('data-cme-subtema');
+      var lista = subSel[t] || (subSel[t] = []), i = lista.indexOf(st);
+      if (i >= 0) lista.splice(i, 1); else if (lista.length < CME_SUB_MAX) lista.push(st);
       var cx = el.querySelector('[id^="cme-outro-"]');
       cmeOutroRascunho = cx ? cx.value : cmeOutroRascunho;
       cmeEditando = true; renderEnqueteCme();
@@ -10707,9 +10778,12 @@ function renderEnqueteCmeEm(alvoId){
     var cx = el.querySelector('[id^="cme-outro-"]');
     var outro = cx ? String(cx.value || '').trim().slice(0, 120) : '';
     if (!sel.length && !outro) { alert('Selecione ao menos um tema ou escreva uma sugestão.'); return; }
-    DB.enqueteCme = { temas: sel.slice(), outro: outro, em: Date.now(), plano: currentPlanKey() };
+    // Só vão os temas de subespecialidade que continua marcada.
+    var subtemas = {};
+    sel.forEach(function(t){ if (subSel[t] && subSel[t].length) subtemas[t] = subSel[t].slice(0, CME_SUB_MAX); });
+    DB.enqueteCme = { temas: sel.slice(), subtemas: subtemas, outro: outro, em: Date.now(), plano: currentPlanKey() };
     try { persist(); } catch (e) {}
-    cmeEditando = false; cmeSel = null; cmeOutroRascunho = '';
+    cmeEditando = false; cmeSel = null; cmeSubSel = null; cmeOutroRascunho = '';
     renderEnqueteCme();
     // "Depois que responder, não abrir novamente": a janela fecha no envio, e o
     // `cmeVoto()` que acabou de nascer já impede a fila de reabri-la — aqui e,
@@ -18033,6 +18107,9 @@ function renderAdmCme(){
 function admCmeHTML(d){
   var rank=Array.isArray(d.ranking)?d.ranking:[];
   var sug=Array.isArray(d.sugestoes_livres)?d.sugestoes_livres:[];
+  // Temas pedidos dentro de cada subespecialidade (04/11/2026), na ordem da RPC.
+  var subPor={};
+  (Array.isArray(d.subtemas)?d.subtemas:[]).forEach(function(x){if(x&&x.tema&&x.subtema)(subPor[x.tema]=subPor[x.tema]||[]).push(x);});
   var totalG=Number(d.votantes_gold||0),eleg=Number(d.gold_elegiveis||0);
   var adesao=eleg?Math.round(totalG/eleg*100):0;
   var topo=Math.max.apply(null,[1].concat(rank.map(function(r){return Number(r.votos_gold||0);})));
@@ -18055,6 +18132,7 @@ function admCmeHTML(d){
       +'<span style="font-weight:600;color:var(--tx)">'+esc(r.tema)+'</span>'
       +'<span style="color:var(--t3)"><b style="color:var(--gold)">'+g+'</b>'+(t>g?' <span title="inclui quem não é mais Gold">(+'+(t-g)+')</span>':'')+'</span></div>'
       +'<div style="height:8px;border-radius:5px;background:var(--s2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--gold)"></div></div>'
+      +((subPor[r.tema]||[]).length?'<div class="adm-cme-subs">'+subPor[r.tema].map(function(x){var xg=Number(x.votos_gold||0),xt=Number(x.votos||0);return '<span class="adm-cme-sub">'+esc(x.subtema)+' <b>'+xg+'</b>'+(xt>xg?' <i title="inclui quem não é mais Gold">(+'+(xt-xg)+')</i>':'')+'</span>';}).join('')+'</div>':'')
       +'</div>';
   }).join('');
   var livres=sug.length?'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sugestões livres ('+sug.length+')</span></div>'
