@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-03
+atualizado: 2026-11-04
 ---
 
 # Pendências
@@ -460,6 +460,49 @@ completo.
     definição de ciclo irregular; volume ovariano como critério equivalente); cap. 92 × JES
     2025 (> 4× nas metanefrinas plasmáticas; clonidina < 40%; dieta com 5 g de sódio; metas do
     preparo; "< 10 UH exclui", que a JES não afirma).
+- [x] **Lote 6 GRAVADO (03/11, 20h43 UTC):** 10 (prolactinoma), 40 (dumping), 42 (Paget) e 60
+  (carcinoma anaplásico). Pedido do professor: *"Faça mais 4 diretrizes"*. Escolhidas entre as que
+  têm o documento completo à mão (PDF no Drive do professor ou pacote de acesso aberto do PMC).
+  Mesma via: redator, conferente independente, achados conferidos por mim na fonte antes de
+  aplicar, confere-lote, ngram e checa_resumo limpos; `gravar-diretriz` v24 com ensaio (md5 do
+  servidor = local nas quatro), backup por item (`main-antes-diretriz-<pos>-lote-2026-11-03`) e
+  conferência por SQL. `atEdit` 1793736382843.
+
+  | pos | tema | documento | md5 novo | resumo |
+  |---|---|---|---|---|
+  | 10 | Hiperprolactinemia e prolactinoma | Pituitary Society 2023 (Petersenn; 151 recomendações graduadas, 100 fortes e 51 fracas) | `3f4886f0…` | 41.334 |
+  | 40 | Síndrome de dumping | Consenso internacional Delphi 2020 (Scarpellini; 62 declarações, 33 endossadas) | `e42dd177…` | 35.488 |
+  | 42 | Doença de Paget óssea | Diretriz internacional 2019 (Ralston; 25 tabelas de recomendação; antes, ES 2014) | `2d45c2aa…` | 36.208 |
+  | 60 | Carcinoma anaplásico | Consenso LATS 2026 (Arch Endocrinol Metab; R1–R37; antes, ATA 2021 + revisões) | `6b85a303…` | 35.646 |
+
+  - **60:** 1 grave, conferido por mim na Figura 1: o fluxograma da doença locorregional levava o
+    operado depois da neoadjuvância com dabrafenibe + trametinibe à RTE obrigatória com taxano,
+    sem retomar o DT. A figura diz "cirurgia, considerar RTE, retomar DT". Refeito: R24–R25 só no
+    caminho da cirurgia primária. Mais 14 menores (traqueostomia, "pode ser considerada" na
+    imunoterapia, BRAF em até 24 h quando há terapia-alvo, flashcards 10 e 11). Nota Endodirect com
+    os estádios IVA/IVB/IVC do AJCC 8ª ed., que o consenso usa sem definir. As divergências
+    internas do documento (intervalo de reavaliação 1–3 meses × 4–6 semanas × 2–4 semanas;
+    ≥ 60 × > 60 Gy; R25 × "± quimioterapia") ficaram escritas nos nós.
+  - **10:** 0 graves, 12 menores. As 151 graduações foram conferidas uma a uma pelo conferente.
+    Resumo enxugado de 45,7 mil para 41,3 mil sem perder graduação (sequência conferida por
+    script). Fig. 3b com rótulo trocado no original ("Microprolactinoma after 3 months"), lida
+    pelo texto.
+  - **42:** 0 graves, 9 menores (série do sangramento só com etidronato; denosumabe "4 vezes por
+    semana" na versão publicada × "a cada 4 semanas" no manuscrito; 5 prioridades do grupo;
+    osteotomia "recomendada" na Fig. 3 × condicional nas Tabelas 26 e 28; trecho de genética
+    reescrito). Nota Endodirect: preparo com cálcio e vitamina D antes do zoledrônico (bula).
+  - **40:** 0 graves, 5 menores (tríade de Whipple como sugestão da literatura; contradição do
+    Quadro 3 com a declaração 55; 7 de 8 estudos contra placebo). `fonte` sem nomes de autores.
+  - Zumbi conferido logo depois: as 22 gravadas antes (piloto e lotes 1 a 5) intactas; total 233.
+    A janela de 20 itens mais pesada da entrega ficou em ~790 mil caracteres.
+  - **A sessão reiniciou duas vezes no meio:** entre gerar o token (20h06) e o deploy (20h42), e
+    entre gravar e desligar. O prazo de 60 min fez a função se desligar sozinha às 21h06; a v25
+    (410) entrou à 00h05 de 04/11 e o token foi apagado.
+  - **Divergências dos capítulos (regra de 31/10):** 97 e 165 × Pituitary Society 2023, 108 ×
+    Paget 2019 e 75 × dumping 2020 **ficam** (diretriz anterior a 2025). **84 × LATS 2026 segue a
+    diretriz** na parte do anaplásico: biópsia (PAAF guiada por US como 1ª escolha, com core),
+    TP53 40–80%, origem folicular, traqueostomia eletiva não é rotina, números epidemiológicos sem
+    lastro no consenso.
 - [ ] Demais lotes por subespecialidade, pelo mesmo caminho: agente redator a partir do
   documento, agente conferente, conferidor automático (`confere-lote.js`) e gravação pela
   `gravar-diretriz` (token e prazo novos a cada lote).
