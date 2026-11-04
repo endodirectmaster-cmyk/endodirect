@@ -10,6 +10,10 @@
 --
 -- Só conta tema de subespecialidade que está no próprio voto (`temas`), e só texto
 -- de até 80 caracteres: o voto vem do cliente.
+--
+-- 04/11/2026, 2ª versão: cada subespecialidade ganhou a opção "Outros", em que o
+-- aluno descreve o tema (`subOutros`: { "<subespecialidade>": "<texto>" }, até 120
+-- caracteres). A RPC devolve `subtemas_outros`: [{tema, texto, email, em}].
 create or replace function public.endodirect_admin_enquete_cme()
 returns jsonb
 language plpgsql
@@ -55,6 +59,13 @@ begin
       cross join lateral jsonb_array_elements_text(case when jsonb_typeof(k.value) = 'array' then k.value else '[]'::jsonb end) st(subtema)
      where length(st.subtema) between 1 and 80
        and exists (select 1 from jsonb_array_elements_text(v.voto->'temas') t(x) where t.x = k.key)
+  ),
+  sub_outros as (
+    select v.email, v.votado_em, k.key as tema, trim(k.value) as texto
+      from votos v
+      cross join lateral jsonb_each_text(case when jsonb_typeof(v.voto->'subOutros') = 'object' then v.voto->'subOutros' else '{}'::jsonb end) k
+     where length(trim(k.value)) between 1 and 120
+       and exists (select 1 from jsonb_array_elements_text(v.voto->'temas') t(x) where t.x = k.key)
   )
   select jsonb_build_object(
     'ranking', coalesce((
@@ -66,6 +77,10 @@ begin
       select jsonb_agg(jsonb_build_object('tema', tema, 'subtema', subtema, 'votos', n, 'votos_gold', n_gold) order by tema, n_gold desc, n desc, subtema)
         from (select tema, subtema, count(*) as n, count(*) filter (where eh_gold) as n_gold
                 from sub_marcados group by tema, subtema) s
+    ), '[]'::jsonb),
+    'subtemas_outros', coalesce((
+      select jsonb_agg(jsonb_build_object('tema', tema, 'texto', texto, 'email', email, 'em', votado_em) order by tema, votado_em desc)
+        from sub_outros
     ), '[]'::jsonb),
     'sugestoes_livres', coalesce((
       select jsonb_agg(jsonb_build_object('texto', v.voto->>'outro', 'email', v.email, 'em', v.votado_em) order by v.votado_em desc)

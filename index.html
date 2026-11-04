@@ -1006,10 +1006,14 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .cme-sub-t span{color:var(--t3)}
 .cme-sub-chips{display:flex;flex-wrap:wrap;gap:.35rem}
 .cme-chip-sub{font-size:.72rem;padding:.32rem .6rem}
+.cme-chip-outro{border-style:dashed}
+.cme-sub-outro-in{width:100%;margin-top:.45rem;font-size:.78rem}
 .adm-cme-subs{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem}
 .adm-cme-sub{font-size:.68rem;color:var(--t2);background:var(--s2);border:1px solid var(--bd);border-radius:999px;padding:.12rem .5rem}
 .adm-cme-sub b{color:var(--gold)}
 .adm-cme-sub i{font-style:normal;color:var(--t3)}
+.adm-cme-outros{font-size:.7rem;color:var(--t2);margin-top:.3rem;line-height:1.5}
+.adm-cme-outros b{color:var(--gold);font-weight:700}
 .qa-body{padding:0 .85rem .85rem}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
@@ -10668,6 +10672,17 @@ var CME_SUBTEMAS = {
 var cmeSel = null, cmeEditando = false, cmeOutroRascunho = '';
 // Temas marcados dentro de cada subespecialidade, também rascunho (fora de `DB`).
 var cmeSubSel = null;
+// "Outros" de cada subespecialidade (04/11/2026, pedido do professor: "Deixa também
+// em cada subespecialidade a opção 'outros'. Daí quando clica, o aluno descreve").
+// Rascunho { sub: texto }: a chave existir = o campo está aberto. Não conta no teto
+// de 3 temas, porque é texto livre, e só vai no voto se tiver texto.
+var cmeSubOutro = null, CME_OUTRO_MAX = 120;
+function cmeSubOutrosDe(v){
+  var o = (v && v.subOutros && typeof v.subOutros === 'object' && !Array.isArray(v.subOutros)) ? v.subOutros : {};
+  var r = {};
+  Object.keys(o).forEach(function(k){ var t = String(o[k] == null ? '' : o[k]).trim().slice(0, CME_OUTRO_MAX); if (t) r[k] = t; });
+  return r;
+}
 function cmeSubtemasDe(v){
   var o = (v && v.subtemas && typeof v.subtemas === 'object' && !Array.isArray(v.subtemas)) ? v.subtemas : {};
   var r = {};
@@ -10675,8 +10690,22 @@ function cmeSubtemasDe(v){
   return r;
 }
 function cmeRotuloVoto(v){
-  var st = cmeSubtemasDe(v);
-  return v.temas.map(function(t){ return (st[t] && st[t].length) ? t + ' (' + st[t].join(', ') + ')' : t; }).join(' · ');
+  var st = cmeSubtemasDe(v), ou = cmeSubOutrosDe(v);
+  return v.temas.map(function(t){
+    var partes = (st[t] || []).slice();
+    if (ou[t]) partes.push('Outros: ' + ou[t]);
+    return partes.length ? t + ' (' + partes.join(', ') + ')' : t;
+  }).join(' · ');
+}
+// Guarda o que já foi digitado (sugestão livre geral e os "Outros" abertos) antes de
+// redesenhar, para nada se perder ao marcar outro chip.
+function cmeGuardaDigitado(el){
+  var cx = el.querySelector('[id^="cme-outro-"]');
+  if (cx) cmeOutroRascunho = cx.value;
+  el.querySelectorAll('[data-cme-suboutro-in]').forEach(function(i){
+    var t = i.getAttribute('data-cme-suboutro-in');
+    if (cmeSubOutro && Object.prototype.hasOwnProperty.call(cmeSubOutro, t)) cmeSubOutro[t] = String(i.value || '').slice(0, CME_OUTRO_MAX);
+  });
 }
 function cmeVoto(){
   var v = DB.enqueteCme;
@@ -10713,13 +10742,15 @@ function renderEnqueteCmeEm(alvoId){
       + (voto.outro ? '<div style="margin-top:.3rem">Sugestão livre: <b style="color:var(--tx)">' + esc(voto.outro) + '</b></div>' : '')
       + '</div></div>';
     var be = el.querySelector('[id^="cme-editar"]');
-    if (be) be.addEventListener('click', function(){ cmeEditando = true; cmeSel = null; cmeSubSel = null; renderEnqueteCme(); });
+    if (be) be.addEventListener('click', function(){ cmeEditando = true; cmeSel = null; cmeSubSel = null; cmeSubOutro = null; renderEnqueteCme(); });
     return;
   }
   if (!cmeSel) cmeSel = (voto && voto.temas.slice(0, CME_MAX)) || [];
   var sel = cmeSel;
   if (!cmeSubSel) cmeSubSel = cmeSubtemasDe(voto);
   var subSel = cmeSubSel;
+  if (!cmeSubOutro) cmeSubOutro = cmeSubOutrosDe(voto);
+  var subOutro = cmeSubOutro;
   // Um bloco de temas sugeridos para cada subespecialidade marcada, na ordem em que
   // o aluno marcou. Some quando ele desmarca a subespecialidade.
   var sugestoes = sel.filter(function(t){ return Array.isArray(CME_SUBTEMAS[t]) && CME_SUBTEMAS[t].length; }).map(function(t){
@@ -10730,7 +10761,14 @@ function renderEnqueteCmeEm(alvoId){
         var on = marc.indexOf(st) >= 0, bloq = !on && marc.length >= CME_SUB_MAX;
         return '<button type="button" class="cme-chip cme-chip-sub' + (on ? ' on' : '') + '"' + (bloq ? ' disabled' : '')
           + ' data-cme-sub="' + esc(t) + '" data-cme-subtema="' + esc(st) + '">' + (on ? '✓ ' : '') + esc(st) + '</button>';
-      }).join('') + '</div></div>';
+      }).join('')
+      + (function(){ var ab = Object.prototype.hasOwnProperty.call(subOutro, t);
+          return '<button type="button" class="cme-chip cme-chip-sub cme-chip-outro' + (ab ? ' on' : '') + '" data-cme-suboutro="' + esc(t) + '">' + (ab ? '✓ ' : '') + 'Outros</button>'; })()
+      + '</div>'
+      + (Object.prototype.hasOwnProperty.call(subOutro, t)
+        ? '<input type="text" class="cme-sub-outro-in" data-cme-suboutro-in="' + esc(t) + '" maxlength="' + CME_OUTRO_MAX + '" placeholder="Descreva o tema que você quer em ' + esc(t) + '" value="' + esc(subOutro[t] || '') + '">'
+        : '')
+      + '</div>';
   }).join('');
   var chips = DIR_SUBS.map(function(s){
     var on = sel.indexOf(s) >= 0;
@@ -10755,10 +10793,9 @@ function renderEnqueteCmeEm(alvoId){
     b.addEventListener('click', function(){
       if (b.hasAttribute('disabled')) return;
       var t = b.getAttribute('data-cme-tema'), i = sel.indexOf(t);
-      if (i >= 0) { sel.splice(i, 1); delete subSel[t]; } else if (sel.length < CME_MAX) sel.push(t);
       // guarda o texto já digitado para não perdê-lo no redesenho
-      var cx = el.querySelector('[id^="cme-outro-"]');
-      cmeOutroRascunho = cx ? cx.value : cmeOutroRascunho;
+      cmeGuardaDigitado(el);
+      if (i >= 0) { sel.splice(i, 1); delete subSel[t]; delete subOutro[t]; } else if (sel.length < CME_MAX) sel.push(t);
       cmeEditando = true; renderEnqueteCme();
     });
   });
@@ -10768,10 +10805,22 @@ function renderEnqueteCmeEm(alvoId){
       var t = b.getAttribute('data-cme-sub'), st = b.getAttribute('data-cme-subtema');
       var lista = subSel[t] || (subSel[t] = []), i = lista.indexOf(st);
       if (i >= 0) lista.splice(i, 1); else if (lista.length < CME_SUB_MAX) lista.push(st);
-      var cx = el.querySelector('[id^="cme-outro-"]');
-      cmeOutroRascunho = cx ? cx.value : cmeOutroRascunho;
+      cmeGuardaDigitado(el);
       cmeEditando = true; renderEnqueteCme();
     });
+  });
+  el.querySelectorAll('[data-cme-suboutro]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var t = b.getAttribute('data-cme-suboutro');
+      cmeGuardaDigitado(el);
+      var abrindo = !Object.prototype.hasOwnProperty.call(subOutro, t);
+      if (abrindo) subOutro[t] = ''; else delete subOutro[t];
+      cmeEditando = true; renderEnqueteCme();
+      if (abrindo) { var inp = el.querySelector('[data-cme-suboutro-in="' + t.replace(/"/g, '\\"') + '"]'); if (inp) try { inp.focus(); } catch (e) {} }
+    });
+  });
+  el.querySelectorAll('[data-cme-suboutro-in]').forEach(function(i){
+    i.addEventListener('input', function(){ var t = i.getAttribute('data-cme-suboutro-in'); if (Object.prototype.hasOwnProperty.call(subOutro, t)) subOutro[t] = String(i.value || '').slice(0, CME_OUTRO_MAX); });
   });
   var bt = el.querySelector('[id^="cme-enviar-"]');
   if (bt) bt.addEventListener('click', function(){
@@ -10779,11 +10828,16 @@ function renderEnqueteCmeEm(alvoId){
     var outro = cx ? String(cx.value || '').trim().slice(0, 120) : '';
     if (!sel.length && !outro) { alert('Selecione ao menos um tema ou escreva uma sugestão.'); return; }
     // Só vão os temas de subespecialidade que continua marcada.
-    var subtemas = {};
-    sel.forEach(function(t){ if (subSel[t] && subSel[t].length) subtemas[t] = subSel[t].slice(0, CME_SUB_MAX); });
-    DB.enqueteCme = { temas: sel.slice(), subtemas: subtemas, outro: outro, em: Date.now(), plano: currentPlanKey() };
+    cmeGuardaDigitado(el);
+    var subtemas = {}, subOutros = {};
+    sel.forEach(function(t){
+      if (subSel[t] && subSel[t].length) subtemas[t] = subSel[t].slice(0, CME_SUB_MAX);
+      var tx = String(subOutro[t] || '').trim().slice(0, CME_OUTRO_MAX);
+      if (tx) subOutros[t] = tx;
+    });
+    DB.enqueteCme = { temas: sel.slice(), subtemas: subtemas, subOutros: subOutros, outro: outro, em: Date.now(), plano: currentPlanKey() };
     try { persist(); } catch (e) {}
-    cmeEditando = false; cmeSel = null; cmeSubSel = null; cmeOutroRascunho = '';
+    cmeEditando = false; cmeSel = null; cmeSubSel = null; cmeSubOutro = null; cmeOutroRascunho = '';
     renderEnqueteCme();
     // "Depois que responder, não abrir novamente": a janela fecha no envio, e o
     // `cmeVoto()` que acabou de nascer já impede a fila de reabri-la — aqui e,
@@ -18110,6 +18164,9 @@ function admCmeHTML(d){
   // Temas pedidos dentro de cada subespecialidade (04/11/2026), na ordem da RPC.
   var subPor={};
   (Array.isArray(d.subtemas)?d.subtemas:[]).forEach(function(x){if(x&&x.tema&&x.subtema)(subPor[x.tema]=subPor[x.tema]||[]).push(x);});
+  // "Outros" descritos pelos alunos dentro de cada subespecialidade.
+  var outPor={};
+  (Array.isArray(d.subtemas_outros)?d.subtemas_outros:[]).forEach(function(x){if(x&&x.tema&&x.texto)(outPor[x.tema]=outPor[x.tema]||[]).push(x);});
   var totalG=Number(d.votantes_gold||0),eleg=Number(d.gold_elegiveis||0);
   var adesao=eleg?Math.round(totalG/eleg*100):0;
   var topo=Math.max.apply(null,[1].concat(rank.map(function(r){return Number(r.votos_gold||0);})));
@@ -18133,6 +18190,7 @@ function admCmeHTML(d){
       +'<span style="color:var(--t3)"><b style="color:var(--gold)">'+g+'</b>'+(t>g?' <span title="inclui quem não é mais Gold">(+'+(t-g)+')</span>':'')+'</span></div>'
       +'<div style="height:8px;border-radius:5px;background:var(--s2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--gold)"></div></div>'
       +((subPor[r.tema]||[]).length?'<div class="adm-cme-subs">'+subPor[r.tema].map(function(x){var xg=Number(x.votos_gold||0),xt=Number(x.votos||0);return '<span class="adm-cme-sub">'+esc(x.subtema)+' <b>'+xg+'</b>'+(xt>xg?' <i title="inclui quem não é mais Gold">(+'+(xt-xg)+')</i>':'')+'</span>';}).join('')+'</div>':'')
+      +((outPor[r.tema]||[]).length?'<div class="adm-cme-outros"><b>Outros ('+outPor[r.tema].length+'):</b> '+outPor[r.tema].map(function(x){return '<span title="'+esc(x.email||'')+'">'+esc(x.texto)+'</span>';}).join(' · ')+'</div>':'')
       +'</div>';
   }).join('');
   var livres=sug.length?'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sugestões livres ('+sug.length+')</span></div>'
