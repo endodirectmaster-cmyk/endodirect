@@ -8997,10 +8997,12 @@ function isAuthCallbackUrl(){
 // ("#access_token=…") nunca casa com o padrão.
 // `#excluir-conta` vem da página pública /excluir-conta (19/10/2026): abre o Meu
 // perfil já no cartão de exclusão. Não é painel do menu.
-var LINK_PAINEIS={qotd:1,mural:1,aovivo:1,'excluir-conta':1};
+// `#cursos/<curso>-<at>` vem da notificação de aula nova da Educação Médica Continuada
+// (07/11/2026): abre o curso já na subespecialidade da aula (ver cursoLinkPendente).
+var LINK_PAINEIS={qotd:1,mural:1,aovivo:1,'excluir-conta':1,cursos:1};
 var LINK_PAINEL_KEY='endo_link_painel';
 function lerLinkDoEndereco(){
-  var m=/^#(qotd|mural|aovivo|excluir-conta)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
+  var m=/^#(qotd|mural|aovivo|excluir-conta|cursos)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
   return m?{p:m[1],arg:m[2]||''}:null;
 }
 function guardarLinkPainel(){
@@ -9021,6 +9023,7 @@ function abrirPainelDoLink(l){
   if(l&&l.p==='excluir-conta'){perfilRolarExclusao=true;goPanel('perfil');return true;}
   if(!l||!LINK_PAINEIS[l.p]||!canSeePanel(l.p))return false;
   if(l.p==='qotd'&&l.arg){qotdArchOpen=l.arg;qotdArchAuto=false;qotdArchRolar=true;}
+  if(l.p==='cursos'){var cm=/^([a-z0-9_]{1,40}?)(?:-(\d{10,15}))?$/.exec(l.arg||'');cursoLinkPendente=cm?{slug:cm[1],at:+cm[2]||0}:null;}
   goPanel(l.p);
   return true;
 }
@@ -9036,6 +9039,7 @@ function abrirLinkNoPainelDoProfessor(l){
   if(l.p==='excluir-conta'){notify('Conta de professor não é excluída pelo perfil. Fale com o suporte.','info');return false;}
   if(l.p==='qotd'){admQotdArchSub='';admQotdArchOpen=l.arg||null;admQotdArchRolar=!!l.arg;renderAdmSec('qotdarq');return true;}
   if(l.p==='mural'){renderAdmSec('mural');return true;}
+  if(l.p==='cursos'){admCursoSubtab='ver';renderAdmSec('cursos');return true;}
   return false;
 }
 guardarLinkPainel();
@@ -12424,6 +12428,17 @@ function renderPodcasts(){
 // ── CURSOS (aluno) ──
 var cursoFilter='';
 var cursoMod=''; // subespecialidade (módulo) selecionada dentro do curso
+// Link da notificação de aula nova (#cursos/<curso>-<at>). No app recém-aberto, os
+// acessos e as aulas chegam DEPOIS do painel; o pedido espera aqui e vale uma vez:
+// abre o curso e, se a aula já chegou e é liberada para o aluno, a subespecialidade dela.
+var cursoLinkPendente=null;
+function aplicarCursoLinkPendente(){
+  var p=cursoLinkPendente;if(!p)return;
+  if(!(cursoAcessivel(p.slug)||cursoTemLiberada(p.slug))){if(!acessosPendentes())cursoLinkPendente=null;return;}
+  cursoLinkPendente=null;cursoFilter=p.slug;cursoMod='';
+  var a=p.at?(Array.isArray(admCursos)?admCursos:[]).filter(function(c){return c&&c.curso===p.slug&&+c.at===p.at;})[0]:null;
+  if(a&&aulaLiberada(a))cursoMod=(a.modulo||'Geral').trim()||'Geral';
+}
 var cursoCatPedido=false; // já tentamos buscar o catálogo nesta sessão (ver renderCursosAluno)
 // Conta de demonstração (vitrine): vê todos os cursos, mesmo os ocultos ao público.
 function isTestShowcase(){return String((currentUser&&currentUser.email)||'').toLowerCase()==='alunopro@endodirect.com.br';}
@@ -12632,6 +12647,7 @@ function cursoCapaHTML(nome,slug,capaUrl,altura,cinza){
     +'</div>';
 }
 function renderCursosAluno(){
+  try{aplicarCursoLinkPendente();}catch(e){}
   var data=Array.isArray(admCursos)?admCursos:[];
   var frow=document.getElementById('curso-filter-row');
   var cnt={};data.forEach(function(c){if(c.curso&&aulaLiberada(c))cnt[c.curso]=(cnt[c.curso]||0)+1;});
@@ -18560,6 +18576,33 @@ function admSendPush(payload){
     return fetch('/api/admin/refresh-radar',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'push'},payload||{}))});
   }).then(function(r){return r.json().catch(function(){return{ok:false,error:'Resposta inválida do servidor.'};});});
 }
+// AULA NOVA DE EDUCAÇÃO MÉDICA CONTINUADA → NOTIFICAÇÃO NO CELULAR (07/11/2026).
+// Pedido do professor: "Quando tiver uma aula nova de educação médica continuada,
+// avisar os alunos como post de notificação no celular." Mesmo canal dos avisos do
+// mural (admSendPush → api/admin/refresh-radar, action 'push': todos os celulares
+// inscritos). Sai só DEPOIS de a aula estar gravada no servidor, para quem toca a
+// notificação na hora já encontrar a aula. O link abre Cursos › Educação Médica
+// Continuada na subespecialidade da aula (#cursos/emc-<at>, ver cursoLinkPendente);
+// quem não é Gold cai no curso com a aula-amostra e o convite para assinar.
+var EMC_SLUG='emc';
+function emcPushPayload(aula){
+  aula=aula||{};
+  return {title:'🎓 Nova aula · Educação Médica Continuada',body:String(aula.title||'Uma aula nova acabou de entrar no programa.').slice(0,200),url:'https://www.endodirect.com.br/#cursos/'+EMC_SLUG+(aula.at?'-'+aula.at:'')};
+}
+function avisarAulaEmc(aula,btn){
+  if(!aula)return Promise.resolve(false);
+  if(btn)btn.disabled=true;
+  return admSendPush(emcPushPayload(aula)).then(function(r){
+    if(!(r&&r.ok)){notify('O aviso no celular não saiu: '+((r&&r.error)||'erro no servidor')+'. Tente de novo pelo botão 🔔 da aula.','err');return false;}
+    var n=(r.push&&r.push.sent)||0;
+    aula.pushAt=Date.now();persistCursos();
+    // Repinta o card ("Avisada em") só na lista: no formulário apagaria o que está sendo digitado.
+    try{if(admCurrentSec==='cursos'&&admCursoSubtab==='ver')renderAdmSec('cursos');}catch(e){}
+    notify('🔔 Aviso da aula enviado a '+n+' celular'+(n===1?'':'es')+'.','ok');
+    return true;
+  }).catch(function(e){notify('O aviso no celular não saiu: '+((e&&e.message)||e)+'. Tente de novo pelo botão 🔔 da aula.','err');return false;})
+    .then(function(x){if(btn)btn.disabled=false;return x;});
+}
 function admSupportNewCount(){return (admSupportTickets||[]).filter(function(t){return t&&t.status!=='answered';}).length;}
 function updateAdmSupportBadge(){
   var b=document.getElementById('adm-support-badge');if(!b)return;
@@ -20241,9 +20284,10 @@ function admCursosHTML(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Tema da aula (p/ a trilha de questões — opcional)</label><input type="text" id="adm-curso-tema" value="'+(ed?esc(ed.tema||''):'')+'" placeholder="Ex: Cetoacidose, Hipotireoidismo…"></div><div class="fld2" style="margin:0"><label>PDF do resumo (link opcional)</label><input type="text" id="adm-curso-pdf" value="'+(ed?esc(ed.pdfUrl||''):'')+'" placeholder="URL de um PDF (opcional)"></div></div>'
     +'<div class="fld2"><label>Resumo da aula (o aluno lê e pode baixar em PDF)</label><textarea id="adm-curso-resumo" rows="5" placeholder="Resumo em tópicos da aula…">'+(ed?esc(ed.resumo||''):'')+'</textarea><div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" id="btn-adm-curso-airesumo" type="button">✨ Gerar resumo com IA</button> <span style="font-size:.66rem;color:var(--t3)">A IA rascunha a partir do título/descrição/módulo — revise antes de salvar.</span></div></div>'
     +'<div class="upload-status" id="adm-curso-upload-status"></div>'
+    +(ed?'':'<label id="adm-curso-push-row" style="display:'+((admCursoFiltro||'')===EMC_SLUG?'flex':'none')+';align-items:center;gap:.5rem;margin:0 0 .8rem;font-size:.8rem;color:var(--tx);cursor:pointer"><input type="checkbox" id="adm-curso-push" checked> 🔔 Avisar os alunos no celular quando a aula for salva</label>')
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-addcurso">'+(ed?'💾 Salvar alterações':'+ Adicionar aula')+'</button>'+(ed?'<button class="btn btn-ghost" id="btn-adm-cancelcurso">Cancelar</button>':'')+'</div></div>';
 
-  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+(c.free?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-freecurso="'+i+'" title="Liberar/retirar como amostra grátis para a degustação"'+(c.free?' style="color:var(--gold);border-color:var(--gold)"':'')+'>'+(c.free?'🎁 Amostra ✓':'🎁 Tornar amostra')+'</button><button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
+  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+(c.free?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-freecurso="'+i+'" title="Liberar/retirar como amostra grátis para a degustação"'+(c.free?' style="color:var(--gold);border-color:var(--gold)"':'')+'>'+(c.free?'🎁 Amostra ✓':'🎁 Tornar amostra')+'</button>'+(c.curso===EMC_SLUG?'<button class="btn btn-outline btn-sm" data-adm-pushcurso="'+i+'" title="Manda a notificação desta aula para os celulares dos alunos"'+(c.pushAt?' style="color:var(--grn);border-color:var(--grn)"':'')+'>'+(c.pushAt?'🔔 Avisada em '+new Date(c.pushAt).toLocaleDateString('pt-BR'):'🔔 Avisar no celular')+'</button>':'')+'<button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
   // Navegação igual às Diretrizes: curso → subespecialidade → aula.
   var verHTML;
   if(!admCursoFiltro){
@@ -20592,13 +20636,24 @@ function bindAdmSec(sec){
         admCursoEditIdx=null;
         persistCursos();notify('Aula atualizada!','ok');
       }else{
-        admCursos.push(Object.assign({at:Date.now()},dados));
+        var nova=Object.assign({at:Date.now()},dados);
+        admCursos.push(nova);
         persistCursos();notify('Videoaula adicionada!','ok');
+        // Educação Médica Continuada: notificação no celular, depois de gravar no servidor.
+        var pushEl=document.getElementById('adm-curso-push');
+        if(nova.curso===EMC_SLUG&&pushEl&&pushEl.checked){
+          Promise.resolve(queueRemoteStateSave(true)).then(function(salvo){
+            if(salvo)return avisarAulaEmc(nova);
+            notify('A aula ainda não chegou ao servidor, então o aviso no celular não saiu. Quando aparecer “Salvo”, use o botão 🔔 Avisar no celular no card da aula.','err');
+          });
+        }
       }
       admCursoSubtab='ver';admCursoAddMod='';
       renderAdmSec('cursos');
       renderCursosAluno();
     });
+    var cSelCurso=document.getElementById('adm-curso-curso'),cPushRow=document.getElementById('adm-curso-push-row');
+    if(cSelCurso&&cPushRow)cSelCurso.addEventListener('change',function(){cPushRow.style.display=cSelCurso.value===EMC_SLUG?'flex':'none';});
     var cCancelCurso=document.getElementById('btn-adm-cancelcurso');
     if(cCancelCurso)cCancelCurso.addEventListener('click',function(){admCursoEditIdx=null;admCursoSubtab='ver';admCursoAddMod='';renderAdmSec('cursos');});
     var aiResumoBtn=document.getElementById('btn-adm-curso-airesumo');
@@ -20626,6 +20681,7 @@ function bindAdmSec(sec){
     var nsFocus=document.getElementById('curso-newsub');if(nsFocus){nsFocus.focus();nsFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bc=document.getElementById('btn-curso-newsub-create');if(bc)bc.click();}});}
     main.querySelectorAll('[data-adm-openaula]').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('button'))return;admPlayCursoAula(parseInt(el.dataset.admOpenaula));});});
     main.querySelectorAll('[data-adm-freecurso]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFreecurso);var c=admCursos[i];if(!c)return;c.free=!c.free;persistCursos();renderAdmSec('cursos');try{renderCursosAluno();}catch(e){}notify(c.free?('Aula liberada como amostra grátis (degustação). ✓'):('Aula não é mais amostra grátis.'),'ok');});});
+    main.querySelectorAll('[data-adm-pushcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admPushcurso)];if(!c)return;if(c.pushAt&&!confirm('Esta aula já foi avisada em '+new Date(c.pushAt).toLocaleDateString('pt-BR')+'. Mandar a notificação de novo?'))return;avisarAulaEmc(c,b);});});
     main.querySelectorAll('[data-adm-delcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admDelcurso)];if(!confirm('Excluir a videoaula "'+((c&&c.title)||'')+'"? Esta ação não pode ser desfeita.'))return;admCursos.splice(parseInt(b.dataset.admDelcurso),1);persistCursos();renderAdmSec('cursos');renderCursosAluno();});});
   }
 
