@@ -8,6 +8,7 @@ atualizado: 2026-11-07
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 CARTÃO DA AULA (CURSOS) SEM DESCRIÇÃO E SEM DURAÇÃO (2026-11-07).** Pedido do professor, com print da Educação Médica Continuada: *"Retirar descrição da aula e tempo de duração. Aparecer descrição apenas quando clicar na aula"*. Em todos os cursos, o `lessonCard` do aluno mostra só o título, "🎁 Amostra grátis", "✓ concluída" e o botão. A descrição continua no player, embaixo do vídeo (`renderAulaPlayer`). O painel do professor não muda. Prova: `scripts/test-navegacao-cursos.js` (bloco 5, que antes exigia a duração no cartão).
 - **🎓🔔 AULA NOVA DA EDUCAÇÃO MÉDICA CONTINUADA VAI PARA O CELULAR (2026-11-07).** Pedido do professor: *"Quando tiver uma aula nova de educação médica continuada, avisar os alunos como post de notificação no celular."* O aviso sai pelo mesmo canal dos avisos do mural (todos os celulares inscritos), depois de a aula ser gravada no servidor. O link abre o curso na subespecialidade da aula. O painel tem uma caixa no formulário (marcada por padrão) e um botão 🔔 de reenvio no card. Detalhes em [[Newsletter e Radar]].
 - **🎬 VIDEOAULAS: GOLD VÊ TODAS; DEGUSTAÇÃO, UMA POR SUBESPECIALIDADE (2026-11-07).**
   - **Pedido do professor:** *"Para o pessoal do plano Gold, obviamente, eles terão acesso a todas essas videoaulas. [...] Para o pessoal do modo degustação, a ideia é que eles tenham acesso a uma videoaula de cada subespecialidade."*
