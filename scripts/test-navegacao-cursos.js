@@ -104,5 +104,23 @@ const render = corpo('renderCursosAluno');
     '⚠️ os selos sumiram também do cartão do PROFESSOR — ali eles não foram pedidos');
 }
 
+// ── 6. Aula aberta: só a aula na tela, a volta em cima (07/11/2026) ──────
+// Pedido do professor: "tirar essas aulas do campo inferior e jogar o botão de retornar
+// educação médica continuada para o canto superior esquerdo".
+{
+  const fatia = (nome) => { const i = html.indexOf('function ' + nome + '('); return i < 0 ? '' : html.slice(i, html.indexOf('\n}', i)); };
+  ok(/box\.style\.display='block';cursoMostrarLista\(false\);renderAulaPlayer\(\);/.test(fatia('playCursoAluno')),
+    '🧨 abrir a aula voltou a deixar a lista de aulas embaixo do player');
+  const mostra = fatia('cursoMostrarLista');
+  ok(/fr\.style\.display=mostrar\?'flex':'none'/.test(mostra) && /li\.style\.display=mostrar\?'':'none'/.test(mostra),
+    '⚠️ cursoMostrarLista não esconde/mostra a grade e a lista de aulas');
+  const pl = fatia('renderAulaPlayer');
+  ok(/box\.innerHTML='<button class="dir-back" id="curso-player-back"[^>]*>← '\+esc\(cursoNomeBySlug\(c\.curso\)\)\+'<\/button>'\s*\+'<div class="card">'/.test(pl),
+    '🧨 a volta "← <curso>" saiu de cima do player (o professor pediu no canto superior esquerdo)');
+  const fecha = fatia('fecharAulaAluno');
+  ok(/if\(voltarAoCurso\)cursoMod='';/.test(fecha) && /cursoMostrarLista\(true\);/.test(fecha) && /renderCursosAluno\(\)/.test(fecha),
+    '⚠️ fechar a aula não devolve a lista (ou a volta não leva às subespecialidades do curso)');
+}
+
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
 console.log('✓ navegação de cursos: nível 0 só a grade, nível 1 as subespecialidades do curso aberto, nível 2 as aulas — cada degrau com a sua volta');

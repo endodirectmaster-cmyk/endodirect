@@ -12436,6 +12436,8 @@ function aplicarCursoLinkPendente(){
   var p=cursoLinkPendente;if(!p)return;
   if(!(cursoAcessivel(p.slug)||cursoTemLiberada(p.slug))){if(!acessosPendentes())cursoLinkPendente=null;return;}
   cursoLinkPendente=null;cursoFilter=p.slug;cursoMod='';
+  // Uma aula aberta fecha (e para o vídeo): o link leva ao curso, e a lista volta a aparecer.
+  try{var pb=document.getElementById('curso-player');if(pb&&pb.style.display!=='none'){aulaSoltarHls();pb.style.display='none';pb.innerHTML='';}cursoMostrarLista(true);}catch(e){}
   var a=p.at?(Array.isArray(admCursos)?admCursos:[]).filter(function(c){return c&&c.curso===p.slug&&+c.at===p.at;})[0]:null;
   if(a&&aulaLiberada(a))cursoMod=(a.modulo||'Geral').trim()||'Geral';
 }
@@ -12725,7 +12727,25 @@ function playCursoAluno(i){
   if(!aulaLiberada(data[i])){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
   curAulaIdx=i;curAulaTab='aula';
   var box=document.getElementById('curso-player');if(!box)return;
-  box.style.display='block';renderAulaPlayer();
+  box.style.display='block';cursoMostrarLista(false);renderAulaPlayer();
+  var panel=document.getElementById('panel-cursos');if(panel)panel.scrollTop=0;
+}
+// AULA ABERTA = SÓ A AULA NA TELA (07/11/2026). Pedido do professor, com print da aula aberta e
+// a lista embaixo: "tirar essas aulas do campo inferior e jogar o botão de retornar educação
+// médica continuada para o canto superior esquerdo". Com a aula aberta, a grade e a lista de
+// aulas somem; a volta "← <curso>" fica acima do player e leva às subespecialidades do curso.
+// "✕ Fechar" volta para a lista de aulas de onde o aluno veio. Os dois PARAM o vídeo.
+function cursoMostrarLista(mostrar){
+  var fr=document.getElementById('curso-filter-row'),li=document.getElementById('curso-list');
+  if(fr)fr.style.display=mostrar?'flex':'none';
+  if(li)li.style.display=mostrar?'':'none';
+}
+function fecharAulaAluno(voltarAoCurso){
+  aulaSoltarHls();
+  var box=document.getElementById('curso-player');if(box){box.style.display='none';box.innerHTML='';}
+  if(voltarAoCurso)cursoMod='';
+  cursoMostrarLista(true);
+  try{renderCursosAluno();}catch(e){}
   var panel=document.getElementById('panel-cursos');if(panel)panel.scrollTop=0;
 }
 // Player da aula em ABAS: ▶ Aula (vídeo) · 📝 Resumo (ler + Baixar PDF) · 🧠 Questões (trilha por tema).
@@ -12740,11 +12760,13 @@ function renderAulaPlayer(){
   else if(curAulaTab==='quest')body='<div id="aula-quest-box"></div>';
   else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+aulaCapsHTML(c)+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+'<div style="margin-top:.8rem"><button class="btn '+(done?'btn-outline':'btn-primary')+' btn-sm" id="aula-done">'+(done?'✓ Concluída (desfazer)':'Marcar como concluída')+'</button></div>';
   aulaSoltarHls();
-  box.innerHTML='<div class="card">'+head+tabs+'<div id="aula-tab-body">'+body+'</div></div>';
+  box.innerHTML='<button class="dir-back" id="curso-player-back" style="margin-bottom:.6rem">← '+esc(cursoNomeBySlug(c.curso))+'</button>'
+    +'<div class="card">'+head+tabs+'<div id="aula-tab-body">'+body+'</div></div>';
   if(curAulaTab==='aula'){montarAulaHls(box);ligarAulaCaps(box);}
   box.querySelectorAll('[data-aulatab]').forEach(function(b){b.addEventListener('click',function(){curAulaTab=b.getAttribute('data-aulatab');renderAulaPlayer();});});
   // Fechar tem de PARAR o vídeo: esconder a caixa deixava o áudio tocando.
-  var cl=document.getElementById('curso-player-close');if(cl)cl.addEventListener('click',function(){aulaSoltarHls();box.style.display='none';box.innerHTML='';});
+  var cl=document.getElementById('curso-player-close');if(cl)cl.addEventListener('click',function(){fecharAulaAluno(false);});
+  var bk=document.getElementById('curso-player-back');if(bk)bk.addEventListener('click',function(){fecharAulaAluno(true);});
   var dn=document.getElementById('aula-done');if(dn)dn.addEventListener('click',function(){toggleAulaDone(c);});
   var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
   if(curAulaTab==='quest')renderAulaQuest(c);
