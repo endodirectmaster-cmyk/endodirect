@@ -1046,6 +1046,17 @@ try {
   fail('regressão das videoaulas falhou:\n' + out);
 }
 
+// 17c-undecies-p. VIDEOAULAS NA DEGUSTAÇÃO (07/11/2026). Pedido do professor: o Gold vê todas; a
+//      degustação, UMA por subespecialidade, escolhida no painel (🎁 Liberar na degustação). O
+//      servidor só entrega à degustação o vídeo liberado (supabase/videoaulas-degustacao.sql).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-videoaulas-degustacao.js')], { stdio: 'pipe' });
+  ok('videoaulas na degustação: só o vídeo liberado, um por subespecialidade, item só de vídeo fora da lista de capítulos, painel desmarca o anterior da área, .sql sem conteúdo no item só de vídeo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das videoaulas na degustação falhou:\n' + out);
+}
+
 // 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
 //      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
 //      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,

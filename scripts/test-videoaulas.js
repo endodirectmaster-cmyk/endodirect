@@ -33,7 +33,7 @@ function extrai(nome) {
   return '';
 }
 
-const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML', 'dirVideosHTML'];
+const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML', 'dirVideoLiberado', 'dirVideosHTML'];
 const ctx = { String, Math, Array };
 vm.createContext(ctx);
 vm.runInContext(NOMES.map(extrai).join('\n'), ctx);
@@ -75,13 +75,13 @@ ok('capítulo com vídeo: um bloco por vídeo válido', (ctx.dirVideosHTML(cap).
 
 // ---- 4. a aba do aluno ---------------------------------------------------------------------
 const view = extrai('diretrizesViewHTML');
-ok('aluno: aba só nos Resumos, fora dos artigos e só com vídeo', /var _temVideo=refPrivadoMode&&!_ehArtigo&&list\.some\(function\(x\)\{return dirVideosDe\(x\.d\)\.length>0;\}\);/.test(view));
+ok('aluno: aba só nos Resumos, fora dos artigos e só com vídeo', /var _temVideo=refPrivadoMode&&!_ehArtigo&&list\.some\(function\(x\)\{return _vidsDe\(x\.d\)\.length>0;\}\);/.test(view) && view.indexOf('var _vidsDe=function(d){var v=dirVideosDe(d);return _degFmt?v.filter(dirVideoLiberado):v;};') > 0);
 ok('aluno: sem vídeo, o formato volta para o resumo', view.indexOf("if(refFormat==='video'&&!_temVideo)refFormat='resumo';") > 0);
-ok('aluno: o botão entra depois de Mapas mentais', /\['mapa','🧠 Mapas mentais'\]\];\s*if\(_temVideo\)fmts\.push\(\['video','🎬 Videoaulas'\]\);/.test(view));
+ok('aluno: o botão entra depois de Mapas mentais', /\['mapa','🧠 Mapas mentais'\]\];\s*if\(_temVideo\|\|_vidTrancado\)fmts\.push\(\['video','🎬 Videoaulas'\]\);/.test(view));
 ok('aluno: a aba de vídeo fica ativa quando escolhida', view.indexOf("refFormat==='video')?refFormat:'resumo'") > 0);
-ok('degustação: o aviso cita as videoaulas quando o capítulo tem vídeo', /_temVideo\?'<b>Flashcards<\/b>, <b>mapas mentais<\/b> e <b>videoaulas<\/b>'/.test(view));
+ok('degustação: o aviso cita as videoaulas quando o capítulo só tem vídeo trancado', /_vidTrancado\?'<b>Flashcards<\/b>, <b>mapas mentais<\/b> e <b>videoaulas<\/b>'/.test(view));
 const card = extrai('dirCardHTML');
-ok('o card mostra as videoaulas no formato video', card.indexOf("}else if(refFormat==='video'){\n    body=dirVideosHTML(d);") > 0);
+ok('o card mostra as videoaulas no formato video', card.indexOf("}else if(refFormat==='video'){\n    body=dirVideosHTML(d,refVideoSoLiberado);") > 0);
 
 // ---- 5. o painel ---------------------------------------------------------------------------
 const adm = extrai('admRefSecHTML');

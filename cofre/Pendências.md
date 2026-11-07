@@ -1,9 +1,16 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-04
+atualizado: 2026-11-07
 ---
 
 # Pendências
+
+## 🎬 Videoaulas e o plano Standard (07/11): decisão do professor
+
+- [ ] O professor disse "Gold: todas" e "degustação: uma por subespecialidade". O Standard
+  (1 assinante em 07/11) segue vendo todas, porque o servidor libera por `plano`. Perguntado
+  no relatório de 07/11; se for "só Gold", mudar o ramo das privadas em
+  `endodirect_member_resumos` (ver [[Videoaulas dos Resumos]]).
 
 ## ⏸️ PAUSA (25/10, 16h51 UTC): limite semanal esgotado; retomada em 30/10, 20h05 UTC
 

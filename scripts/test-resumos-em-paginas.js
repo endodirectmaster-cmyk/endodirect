@@ -37,7 +37,7 @@ function corpo(nome) {
   throw new Error('chaves não fecham em ' + nome);
 }
 
-const FUNCOES = ['carregarResumos', 'funcaoAusente', 'carregarPaginaResumos', 'carregarResumosPaginas', 'aplicarResumos', 'tentarResumos', 'erroDeRede', 'mesmaContaQue', 'contaAtual'];
+const FUNCOES = ['carregarResumos', 'funcaoAusente', 'carregarPaginaResumos', 'carregarResumosPaginas', 'separarSoVideo', 'aplicarResumos', 'tentarResumos', 'erroDeRede', 'mesmaContaQue', 'contaAtual'];
 
 // Servidor de mentira: a lista inteira, fatiada em páginas de 20 como o .sql.
 function servidor(lista, opc) {
@@ -72,7 +72,7 @@ function caixa(extra) {
     dirMigrateSub: (s) => s,
   }, extra || {});
   vm.createContext(c);
-  vm.runInContext('var sessaoEncerrada=false;var resumosErro=false;var RESUMOS_PAGINADA=' + JSON.stringify((html.match(/var RESUMOS_PAGINADA='([^']+)'/) || [])[1]) + ';var diretrizes=[{tema:"semente"}];\n'
+  vm.runInContext('var sessaoEncerrada=false;var resumosErro=false;var dirVideosAmostra=[];var RESUMOS_PAGINADA=' + JSON.stringify((html.match(/var RESUMOS_PAGINADA='([^']+)'/) || [])[1]) + ';var diretrizes=[{tema:"semente"}];\n'
     + FUNCOES.map(corpo).join('\n') + '\n;this.__get=function(){return {diretrizes:diretrizes,resumosErro:resumosErro};};', c);
   return c;
 }

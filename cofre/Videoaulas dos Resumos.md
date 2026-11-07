@@ -1,6 +1,6 @@
 ---
 tags: [cofre, resumos, video]
-atualizado: 2026-11-03
+atualizado: 2026-11-07
 ---
 
 # Videoaulas dos Resumos
@@ -14,9 +14,9 @@ inserir aos poucos pequenos vídeos (como o exemplo em anexo) de no máx 15 min 
 - **Dado:** campo `videos` do item em `payload.diretrizes[pos]`, lista de
   `{titulo, src, dur?, path?, at}`. `dur` em segundos, `path` é o caminho no Storage (quando o
   arquivo foi enviado para lá) e `at` é a data em ms. Entrada sem `src` é ignorada.
-- **Entrega ao aluno:** `endodirect_member_resumos` devolve o item inteiro, então o campo
-  chega sem mudança no servidor. Vale a regra de sempre: o assinante vê todos os capítulos; quem
-  não assina vê um capítulo de amostra por subespecialidade, e nele a aba aparece com 🔒.
+- **Entrega ao aluno:** `endodirect_member_resumos` devolve o item inteiro ao assinante
+  (Standard ou Gold). Quem não assina recebe só a videoaula liberada de cada subespecialidade: ver
+  "Degustação: uma videoaula por subespecialidade" abaixo (desde 07/11/2026).
 - **Aba do aluno (`diretrizesViewHTML`):**
   - aparece só na aba **Resumos**, fora dos artigos;
   - aparece só quando o capítulo tem ao menos um vídeo;
@@ -65,6 +65,50 @@ inserir aos poucos pequenos vídeos (como o exemplo em anexo) de no máx 15 min 
   - guardas: md5 do item, tema, sem `videos` antes e 233 itens;
   - conferido que só `videos` mudou no item e que os outros itens e o resto do payload ficaram
     iguais.
+
+## Degustação: uma videoaula por subespecialidade (07/11/2026)
+
+Pedido do professor: *"Para o pessoal do plano Gold, obviamente, eles terão acesso a todas essas
+videoaulas. Lá nos resumos. Para o pessoal do modo degustação, a ideia é que eles tenham acesso a
+uma videoaula de cada subespecialidade. Então, por exemplo, pode escolher uma videoaula de
+obesidade para deixar liberado para eles. E também assim das outras subespecialidades."*
+
+- **Dado:** `degustacao: true` no vídeo (`diretrizes[pos].videos[j]`).
+- **Painel:**
+  - cada vídeo do editor tem o botão **🎁 Liberar na degustação**;
+  - liberar um desmarca o que estava liberado **na mesma subespecialidade**, e clicar de novo tira
+    da degustação (`admRefVideoAcao('deg', …)`);
+  - o topo do editor diz qual está liberado na área (`admVideoLiberadoDaSub`).
+- **Servidor (`endodirect_member_resumos`, `supabase/videoaulas-degustacao.sql`, migração
+  `videoaulas_degustacao_uma_por_sub`):**
+  - com plano: tudo, como antes (conferido: saída idêntica à da versão anterior);
+  - sem plano: no máximo **um** vídeo liberado por subespecialidade (o do 1º tema em ordem
+    alfabética, se houver dois marcados);
+  - no capítulo-amostra, `videos` vem só com o liberado (ou vazio) e `videos_total` traz quantos o
+    capítulo tem;
+  - o liberado de outro capítulo vem como item **só de vídeo**:
+    `{sub, tema, titulo, tipo, privado, so_video: true, videos: [o liberado]}`, sem resumo,
+    pontos-chave, flashcards, mapa, figuras ou referências;
+  - nenhum outro `src` de vídeo chega à degustação. O `src` é público no Storage, então não
+    entregar o link é o que impede de assistir.
+- **Cliente:**
+  - `separarSoVideo` tira os itens só de vídeo de `diretrizes` (não viram tema, contagem nem
+    busca) e os guarda em `dirVideosAmostra`;
+  - `dirVideoAmostraDaSub(sub)` acha o liberado no capítulo-amostra ou no item só de vídeo;
+  - na grade, a área com vídeo liberado mostra "🎬 1 videoaula liberada";
+  - na lista de temas, o bloco "🎁 Videoaula liberada na degustação" traz o player e o capítulo
+    de origem;
+  - no capítulo-amostra, a aba **🎬 Videoaulas** abre só com o liberado e avisa "Mais N
+    videoaulas neste capítulo, para assinantes". Sem vídeo liberado, a aba fica com 🔒.
+- **Escolha inicial** (o professor pediu que eu escolhesse; ele troca no painel):
+  - **Adrenal:** "Carcinoma adrenocortical", que fica no capítulo que a degustação já abre;
+  - **Obesidade:** "Obesidade clínica x pré-clínica", o capítulo de avaliação e diagnóstico;
+  - **Endocrinologia Masculina:** "Hipogonadismo masculino", a única da área;
+  - **Lípides:** "Lipoproteína (a)", a única da área.
+- **Standard (aberto):** o professor falou do Gold e da degustação. O Standard (1 assinante em
+  07/11) continua vendo todas, porque o portão do servidor é `plano`. Se ele quiser só no Gold,
+  é trocar `@> array['plano']` por um teste de `plano:gold` no ramo das privadas.
+- **Teste:** `scripts/test-videoaulas-degustacao.js`, no ci-validate.
 
 ## Pontos de atenção
 
