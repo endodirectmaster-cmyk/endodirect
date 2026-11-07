@@ -88,7 +88,7 @@ ok('aula sem título ainda tem corpo', run(`emcPushPayload({}).body`).length > 1
   ok('editar aula não avisa', add.indexOf("persistCursos();notify('Aula atualizada!','ok');") > 0 && add.indexOf('avisarAulaEmc') > add.indexOf("notify('Aula atualizada!','ok')"));
   const form = extrai('admCursosHTML');
   ok('formulário: caixa 🔔 só para aula nova, marcada, visível quando o curso é a EMC',
-    form.indexOf(`+(ed?'':'<label id="adm-curso-push-row" style="display:'+((admCursoFiltro||'')===EMC_SLUG?'flex':'none')`) > 0 && form.indexOf('<input type="checkbox" id="adm-curso-push" checked>') > 0);
+    form.indexOf(`+(ed?'':'<div id="adm-curso-push-row" style="display:'+((admCursoFiltro||'')===EMC_SLUG?'flex':'none')`) > 0 && form.indexOf('<input type="checkbox" id="adm-curso-push" checked>') > 0);
   ok('formulário: trocar o curso mostra/esconde a caixa', SRC.indexOf("cSelCurso.addEventListener('change',function(){cPushRow.style.display=cSelCurso.value===EMC_SLUG?'flex':'none';});") > 0);
 
   // ---- 3. o botão no card ---------------------------------------------------------------

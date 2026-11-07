@@ -8,6 +8,20 @@ atualizado: 2026-11-07
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📝 RESUMO AUTOMÁTICO DAS AULAS DA EMC, NO MODELO DA 1ª AULA (2026-11-07).** Pedido do professor: *"Sempre que for inserida uma nova aula no curso de Educação Médica Continuada, já introduz automaticamente um resumo conforme modelo aula anterior que foi dado por mim"*.
+  - **No painel:** ao adicionar uma aula da EMC com o campo Resumo vazio, a caixa "📝 Gerar o resumo da aula no modelo da 1ª aula" (marcada por padrão) dispara `gerarResumoAulaEmc`.
+    - **Modelo:** o resumo da aula mais antiga da EMC que não foi gerado automaticamente (a de massa magra). Entra no pedido como exemplo de estrutura e de registro.
+    - **Base:** a transcrição do Bunny, quando a biblioteca gera legenda (trilha do HLS ou `captions/<idioma>.vtt`); sem ela, título, descrição e capítulos. Nos dois casos entram as diretrizes de referência (`groundSys`) e 4 artigos do PubMed, com a busca em inglês feita por uma chamada curta ao Haiku.
+    - **Regras do pedido:** número só com fonte; regras de registro da 1ª aula.
+    - **Gravação:** só entra se tiver o formato (3 ou mais seções, 1.500 ou mais caracteres, itens com "• "). Fica publicado e marcado (`resumoAuto`) para revisão; nunca sobrescreve um resumo existente.
+    - **Card:** "📝 Gerar resumo" quando a aula não tem resumo; "📝 Resumo automático · refazer" troca o texto só quando o novo chega.
+    - **Prova:** `scripts/test-emc-resumo-auto.js` (17c-undecies-r).
+  - ⚠️ **TRANSCRIÇÃO:** o Bunny só entrega legenda se a transcrição automática estiver ligada na biblioteca. O CDN do Bunny é inalcançável deste ambiente, então não deu para conferir se as aulas já têm legenda. Sem ela, o resumo segue o título, a descrição e os capítulos, como o da 1ª aula.
+  - **As duas aulas já publicadas sem resumo ganharam o seu agora**, escritos aqui no modelo, com cada número conferido no PubMed:
+    - **GLP-1 no DM1 (`adm_cursos[106]`):** ADJUNCT ONE (doi 10.2337/dc16-0691), ADJUST-T1D (doi 10.1056/EVIDoa2500173), o post hoc da dose de insulina (doi 10.2337/dc25-2249) e a extensão após a suspensão (doi 10.1111/dom.71287); metanálises (doi 10.1007/s42000-025-00704-9, 10.1002/dmrr.70111, 10.1111/dom.15979); retinopatia com tirzepatida (doi 10.1177/15209156261468108).
+    - **Metformina (`adm_cursos[107]`):** UKPDS 34 (Lancet 1998;352:854), VERIFY (doi 10.1016/S0140-6736(19)32131-2) e o SMARTEST: desenho e análise basal (doi 10.1111/dom.70320).
+    - 🧨 **O resultado final do SMARTEST não está no PubMed.** O texto diz que os dados são do desenho e da análise basal; nenhum número de desfecho foi inventado.
+    - Gravação: backup `main-antes-resumos-emc-glp1dm1-metformina-2026-11-07`; guardas: md5 do payload, título e resumo vazio. Conferido: md5 de cada resumo igual ao arquivo local, e o payload sem os dois resumos idêntico ao backup.
 - **🎬 AULA ABERTA = SÓ A AULA NA TELA (2026-11-07).** Pedido do professor, com print da aula aberta e a lista embaixo: *"tirar essas aulas do campo inferior e jogar o botão de retornar educação médica continuada para o canto superior esquerdo"*.
   - Com a aula aberta, a grade e a lista de aulas somem (`cursoMostrarLista(false)` em `playCursoAluno`).
   - A volta "← <curso>" fica acima do player, à esquerda, e leva às subespecialidades do curso. "✕ Fechar" volta à lista de aulas. Os dois param o vídeo (`fecharAulaAluno`).

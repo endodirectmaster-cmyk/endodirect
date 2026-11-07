@@ -18628,6 +18628,151 @@ function avisarAulaEmc(aula,btn){
   }).catch(function(e){notify('O aviso no celular não saiu: '+((e&&e.message)||e)+'. Tente de novo pelo botão 🔔 da aula.','err');return false;})
     .then(function(x){if(btn)btn.disabled=false;return x;});
 }
+// RESUMO AUTOMÁTICO DA AULA DA EMC (07/11/2026). Pedido do professor: "Sempre que for
+// inserida uma nova aula no curso de Educação Médica Continuada, já introduz
+// automaticamente um resumo conforme modelo aula anterior que foi dado por mim".
+// MODELO: o resumo da aula mais antiga da EMC que não foi gerado aqui (a 1ª aula,
+// "Como mitigar perda de massa magra…"). Ele entra no pedido como exemplo de
+// ESTRUTURA e REGISTRO; o conteúdo vem de outra aula e não é reaproveitado.
+// BASE: (1) a transcrição do Bunny, quando a biblioteca gera legenda (o resumo segue o
+// que o professor falou); (2) senão, título, descrição e capítulos; nos dois casos,
+// as diretrizes de referência (groundSys) e 4 artigos do PubMed (grounding do
+// /api/ai, com a busca em inglês tirada do título). Número só com fonte.
+// O resumo entra publicado e marcado (`resumoAuto`) para o professor revisar; nunca
+// sobrescreve um resumo que já exista.
+var EMC_SECOES=['FUNDAMENTAÇÃO','DEFINIÇÕES','EVIDÊNCIA CLÍNICA','ESTRATIFICAÇÃO DE RISCO','CONDUTA','PERSPECTIVAS'];
+var emcResumoEmCurso={};
+function emcModeloResumo(exceto){
+  var cands=(Array.isArray(admCursos)?admCursos:[]).filter(function(c){return c&&c!==exceto&&c.curso===EMC_SLUG&&String(c.resumo||'').trim()&&!c.resumoAuto;});
+  cands.sort(function(a,b){return (+a.at||0)-(+b.at||0);});
+  return cands.length?String(cands[0].resumo).trim():'';
+}
+// Legenda (WebVTT) → texto corrido, sem tempos, números de deixa nem repetição.
+function vttParaTexto(vtt){
+  var out=[],ult='';
+  String(vtt||'').split(/\r?\n/).forEach(function(l){
+    l=l.trim();
+    if(!l||/^WEBVTT/.test(l)||l.indexOf('-->')>=0||/^\d+$/.test(l)||/^(NOTE|STYLE|REGION)\b/.test(l))return;
+    l=l.replace(/<[^>]+>/g,'').trim();if(!l||l===ult)return;ult=l;out.push(l);
+  });
+  return out.join(' ').replace(/\s+/g,' ').trim();
+}
+// Transcrição pelo Bunny (best-effort, nunca rejeita): a trilha de legenda do HLS ou
+// captions/<idioma>.vtt ao lado do playlist. Sem legenda (ou sem CORS): ''.
+function emcTranscricaoBunny(src){
+  src=String(src||'');
+  if(!/\.m3u8(\?|$)/i.test(src)||typeof fetch!=='function')return Promise.resolve('');
+  var base=src.replace(/[^\/]*$/,'');
+  function pega(u){
+    var ctrl=(typeof AbortController!=='undefined')?new AbortController():null,to=ctrl?setTimeout(function(){ctrl.abort();},15000):null;
+    return fetch(u,{signal:ctrl?ctrl.signal:undefined}).then(function(r){if(to)clearTimeout(to);return r.ok?r.text():'';}).catch(function(){if(to)clearTimeout(to);return '';});
+  }
+  function abs(u,de){try{return new URL(u,de).href;}catch(e){return '';}}
+  function vttDe(u){
+    return pega(u).then(function(t){
+      if(!t)return '';
+      if(/^\s*WEBVTT/.test(t))return vttParaTexto(t);
+      if(/#EXTM3U/.test(t)){
+        var segs=t.split(/\r?\n/).filter(function(l){return l&&l.charAt(0)!=='#';}).slice(0,400).map(function(l){return abs(l.trim(),u);}).filter(Boolean);
+        return Promise.all(segs.map(pega)).then(function(ps){return vttParaTexto(ps.join('\n'));});
+      }
+      return '';
+    });
+  }
+  return pega(src).then(function(m){
+    var uris=[];
+    String(m||'').split(/\r?\n/).forEach(function(l){
+      if(!/TYPE=SUBTITLES/i.test(l))return;
+      var u=(/URI="([^"]+)"/i.exec(l)||[])[1],lg=((/LANGUAGE="([^"]+)"/i.exec(l)||[])[1]||'').toLowerCase();
+      if(u)uris[lg.indexOf('pt')===0?'unshift':'push'](abs(u,src));
+    });
+    ['pt','pt-BR','pt-br','por'].forEach(function(lg){uris.push(base+'captions/'+lg+'.vtt');});
+    var i=0;
+    function prox(){if(i>=uris.length)return Promise.resolve('');var u=uris[i++];return vttDe(u).then(function(t){return t&&t.length>200?t:prox();});}
+    return prox();
+  }).then(function(t){return String(t||'').slice(0,120000);}).catch(function(){return '';});
+}
+function emcResumoPrompt(aula,modelo,transcricao){
+  var caps=(Array.isArray(aula.caps)?aula.caps:[]).map(function(c){var t=Math.round(+c.t||0);return Math.floor(t/60)+':'+(t%60<10?'0':'')+(t%60)+' '+String(c.titulo||'');}).join('; ');
+  var sys=CLINICAL_AUTHORING+'\n\n'
+    +'TAREFA: escrever o RESUMO DE ESTUDO de uma aula do Programa de Educação Médica Continuada do Endodirect, que o médico lê depois de assistir.\n'
+    +'FORMATO (texto puro, como o MODELO):\n'
+    +'- Seções em linha própria, em maiúsculas, nesta ordem: '+EMC_SECOES.join(', ')+'. Omita a seção que não se aplicar ao tema; não crie seção com outro nome.\n'
+    +'- Subtítulos em linha própria, sem marcador (nome do estudo, do parâmetro, do grupo de pacientes).\n'
+    +'- Itens iniciados por "• ", um conteúdo por item, em frases completas.\n'
+    +'- Linha em branco entre as seções. Sem markdown (#, **, _), sem emoji, sem título da aula no topo, sem lista de referências no fim.\n'
+    +'REGISTRO: técnico e formal, terceira pessoa impessoal, cabeçalhos nominais. Sem "você", sem metáfora, sem intensificador vazio (crucial, fundamental, poderoso, robusto), sem ênfase em caixa alta no meio da frase.\n'
+    +'PRECISÃO: número (percentual, n, risco relativo, dose, ponto de corte, duração de estudo) só quando constar da TRANSCRIÇÃO, das FONTES do PubMed recebidas ou das diretrizes de referência. Na dúvida, descreva o achado sem o número. Nunca invente estudo, ano, autor ou resultado.\n'
+    +'EXTENSÃO: entre 3.500 e 6.000 caracteres.\n'
+    +(transcricao
+      ?'BASE: a TRANSCRIÇÃO da aula é a fonte principal — o resumo segue o que o professor apresentou, na ordem dos capítulos. Use as FONTES do PubMed e as diretrizes para conferir números e completar o que a fala deixou implícito.\n'
+      :'BASE: não há transcrição. O título, a descrição e os capítulos definem o escopo e a ordem; o conteúdo vem das diretrizes de referência e das FONTES do PubMed.\n')
+    +'MODELO (siga a estrutura e o registro; o CONTEÚDO é de outra aula e não deve ser reaproveitado):\n<<<\n'+String(modelo||'').slice(0,9000)+'\n>>>';
+  var usr='AULA: '+String(aula.title||'')+'\n'
+    +'SUBESPECIALIDADE: '+String(aula.modulo||'—')+'\n'
+    +(aula.tema?'TEMA: '+String(aula.tema)+'\n':'')
+    +'DESCRIÇÃO: '+(String(aula.desc||'').trim()||'—')+'\n'
+    +'CAPÍTULOS: '+(caps||'—')+'\n\n'
+    +(transcricao?'TRANSCRIÇÃO DA AULA:\n'+transcricao+'\n\n':'')
+    +'Escreva o resumo no formato pedido.';
+  return {sys:groundSys(sys),usr:usr};
+}
+// Limpa o que a IA devolve: markdown, emoji, marcadores trocados e o título repetido.
+function emcLimpaResumo(txt,titulo){
+  var t=String(txt||'').replace(/\r/g,'').replace(/^```[a-z]*\n?|```$/gm,'');
+  try{t=t.replace(/\p{Extended_Pictographic}️?/gu,'');}catch(e){}
+  var tit=String(titulo||'').trim().toLowerCase();
+  t=t.split('\n').map(function(l){
+    l=l.replace(/\*\*|__/g,'').replace(/^#+\s*/,'').replace(/\s+$/,'');
+    l=l.replace(/^\s*[-*–]\s+/,'• ').replace(/^\s*•\s*/,'• ');
+    return l;
+  }).filter(function(l){return !(tit&&l.trim().toLowerCase()===tit);}).join('\n');
+  return t.replace(/\n{3,}/g,'\n\n').trim();
+}
+function emcResumoValido(t){
+  t=String(t||'');
+  var n=EMC_SECOES.filter(function(h){return new RegExp('(^|\\n)'+h+'\\s*(\\n|$)').test(t);}).length;
+  return n>=3&&t.length>=1500&&t.indexOf('• ')>=0;
+}
+function emcAchaAula(aula){
+  var at=+(aula&&aula.at)||0;
+  return (Array.isArray(admCursos)?admCursos:[]).filter(function(c){return c&&c.curso===EMC_SLUG&&+c.at===at;})[0]||null;
+}
+// `forcar` (botão "refazer"): substitui o resumo automático atual; o texto antigo só
+// sai quando o novo chegar e passar no formato.
+function gerarResumoAulaEmc(aula,btn,forcar){
+  if(!aula||aula.curso!==EMC_SLUG)return Promise.resolve(false);
+  var chave=String(aula.at||'');
+  if(emcResumoEmCurso[chave])return emcResumoEmCurso[chave];
+  var modelo=emcModeloResumo(aula);
+  if(!modelo){notify('Não achei o resumo-modelo (1ª aula da Educação Médica Continuada). O resumo desta aula não foi gerado.','err');return Promise.resolve(false);}
+  if(btn)btn.disabled=true;
+  notify('📝 Gerando o resumo da aula "'+String(aula.title||'')+'" (cerca de 1 minuto)…','info');
+  var transcricao='';
+  var p=emcTranscricaoBunny(aula.src).then(function(t){
+    transcricao=t||'';
+    return callAI('Você converte o tema de uma aula de endocrinologia em termos de busca do PubMed, em inglês.','Aula: '+String(aula.title||'')+(aula.desc?'\nDescrição: '+aula.desc:'')+'\nResponda SOMENTE com a busca: 3 a 8 termos em inglês, sem aspas, sem operadores, em uma linha.',80,'claude-haiku-4-5')
+      .then(function(q){return String(q||'').split('\n')[0].replace(/["'`]/g,'').trim().slice(0,200);}).catch(function(){return '';});
+  }).then(function(busca){
+    var pr=emcResumoPrompt(aula,modelo,transcricao);
+    return callAI(pr.sys,pr.usr,6000,AI_MODEL_CLINICO,busca||String(aula.title||''));
+  }).then(function(raw){
+    var txt=emcLimpaResumo(raw,aula.title);
+    if(!emcResumoValido(txt))throw new Error('o texto da IA não veio no formato do modelo');
+    var alvo=emcAchaAula(aula)||aula;
+    if(!forcar&&String(alvo.resumo||'').trim()){notify('A aula já ganhou um resumo enquanto o automático era gerado. Mantive o que estava lá.','info');return false;}
+    alvo.resumo=txt;alvo.resumoAuto={at:Date.now(),base:transcricao?'transcricao':'titulo'};
+    persistCursos();
+    try{if(admCurrentSec==='cursos'&&admCursoSubtab==='ver')renderAdmSec('cursos');}catch(e){}
+    try{renderCursosAluno();}catch(e){}
+    notify('📝 Resumo da aula publicado ('+(transcricao?'a partir da transcrição da aula':'a partir do título, da descrição e dos capítulos')+'). Revise na trilha da aula.','ok');
+    return true;
+  }).catch(function(e){
+    notify('O resumo automático não saiu: '+((e&&e.message)||e)+'. Use o botão 📝 Gerar resumo no card da aula.','err');return false;
+  }).then(function(x){delete emcResumoEmCurso[chave];if(btn)btn.disabled=false;return x;});
+  emcResumoEmCurso[chave]=p;
+  return p;
+}
 function admSupportNewCount(){return (admSupportTickets||[]).filter(function(t){return t&&t.status!=='answered';}).length;}
 function updateAdmSupportBadge(){
   var b=document.getElementById('adm-support-badge');if(!b)return;
@@ -20309,10 +20454,12 @@ function admCursosHTML(){
     +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Tema da aula (p/ a trilha de questões — opcional)</label><input type="text" id="adm-curso-tema" value="'+(ed?esc(ed.tema||''):'')+'" placeholder="Ex: Cetoacidose, Hipotireoidismo…"></div><div class="fld2" style="margin:0"><label>PDF do resumo (link opcional)</label><input type="text" id="adm-curso-pdf" value="'+(ed?esc(ed.pdfUrl||''):'')+'" placeholder="URL de um PDF (opcional)"></div></div>'
     +'<div class="fld2"><label>Resumo da aula (o aluno lê e pode baixar em PDF)</label><textarea id="adm-curso-resumo" rows="5" placeholder="Resumo em tópicos da aula…">'+(ed?esc(ed.resumo||''):'')+'</textarea><div style="margin-top:.4rem"><button class="btn btn-outline btn-sm" id="btn-adm-curso-airesumo" type="button">✨ Gerar resumo com IA</button> <span style="font-size:.66rem;color:var(--t3)">A IA rascunha a partir do título/descrição/módulo — revise antes de salvar.</span></div></div>'
     +'<div class="upload-status" id="adm-curso-upload-status"></div>'
-    +(ed?'':'<label id="adm-curso-push-row" style="display:'+((admCursoFiltro||'')===EMC_SLUG?'flex':'none')+';align-items:center;gap:.5rem;margin:0 0 .8rem;font-size:.8rem;color:var(--tx);cursor:pointer"><input type="checkbox" id="adm-curso-push" checked> 🔔 Avisar os alunos no celular quando a aula for salva</label>')
+    +(ed?'':'<div id="adm-curso-push-row" style="display:'+((admCursoFiltro||'')===EMC_SLUG?'flex':'none')+';flex-direction:column;gap:.45rem;margin:0 0 .8rem;font-size:.8rem;color:var(--tx)">'
+      +'<label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox" id="adm-curso-push" checked> 🔔 Avisar os alunos no celular quando a aula for salva</label>'
+      +'<label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox" id="adm-curso-autoresumo" checked> 📝 Gerar o resumo da aula no modelo da 1ª aula (se o campo Resumo ficar vazio)</label></div>')
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-addcurso">'+(ed?'💾 Salvar alterações':'+ Adicionar aula')+'</button>'+(ed?'<button class="btn btn-ghost" id="btn-adm-cancelcurso">Cancelar</button>':'')+'</div></div>';
 
-  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+(c.free?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-freecurso="'+i+'" title="Liberar/retirar como amostra grátis para a degustação"'+(c.free?' style="color:var(--gold);border-color:var(--gold)"':'')+'>'+(c.free?'🎁 Amostra ✓':'🎁 Tornar amostra')+'</button>'+(c.curso===EMC_SLUG?'<button class="btn btn-outline btn-sm" data-adm-pushcurso="'+i+'" title="Manda a notificação desta aula para os celulares dos alunos"'+(c.pushAt?' style="color:var(--grn);border-color:var(--grn)"':'')+'>'+(c.pushAt?'🔔 Avisada em '+new Date(c.pushAt).toLocaleDateString('pt-BR'):'🔔 Avisar no celular')+'</button>':'')+'<button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
+  function admLessonCard(c){var i=admCursos.indexOf(c);var meta=c.asset?'<div class="asset-meta">Supabase Storage: '+esc(c.asset.name||'video')+' · '+formatBytes(c.asset.size)+'</div>':'';return '<div class="card curso-aula-card" data-adm-openaula="'+i+'" style="cursor:pointer" title="Abrir a trilha da aula (Aula · Resumo · Questões)"><div style="display:flex;align-items:flex-start;gap:.7rem"><div style="width:48px;height:48px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.25rem">'+esc(c.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+(c.curso?'<span class="tag tag-grn">'+esc(cursoNomeBySlug(c.curso))+'</span>':'<span class="tag" style="background:#1c2a48;color:#9aa6ba">Sem curso</span>')+(c.modulo?'<span class="tag tag-pur">'+esc(c.modulo)+'</span>':'')+(c.dur?'<span class="tag tag-gold">'+esc(c.dur)+'</span>':'')+(c.free?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+'</div>'+(c.desc?'<div style="font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.4rem">'+esc(c.desc)+'</div>':'')+meta+'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:.15rem"><span style="font-size:.72rem;color:var(--blue);font-weight:700">▶ Abrir trilha</span><span style="flex:1"></span><button class="btn btn-outline btn-sm" data-adm-freecurso="'+i+'" title="Liberar/retirar como amostra grátis para a degustação"'+(c.free?' style="color:var(--gold);border-color:var(--gold)"':'')+'>'+(c.free?'🎁 Amostra ✓':'🎁 Tornar amostra')+'</button>'+(c.curso===EMC_SLUG?'<button class="btn btn-outline btn-sm" data-adm-pushcurso="'+i+'" title="Manda a notificação desta aula para os celulares dos alunos"'+(c.pushAt?' style="color:var(--grn);border-color:var(--grn)"':'')+'>'+(c.pushAt?'🔔 Avisada em '+new Date(c.pushAt).toLocaleDateString('pt-BR'):'🔔 Avisar no celular')+'</button>':'')+(c.curso===EMC_SLUG?(String(c.resumo||'').trim()?(c.resumoAuto?'<button class="btn btn-outline btn-sm" data-adm-resumocurso="'+i+'" title="Resumo gerado automaticamente em '+new Date(c.resumoAuto.at||Date.now()).toLocaleDateString('pt-BR')+' ('+(c.resumoAuto.base==='transcricao'?'transcrição da aula':'título, descrição e capítulos')+'). Clique para gerar de novo.">📝 Resumo automático · refazer</button>':''):'<button class="btn btn-outline btn-sm" data-adm-resumocurso="'+i+'" title="Gera o resumo no modelo da 1ª aula da Educação Médica Continuada" style="color:var(--gold);border-color:var(--gold)">📝 Gerar resumo</button>'):'')+'<button class="btn btn-outline btn-sm" data-adm-delcurso="'+i+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div></div></div>';}
   // Navegação igual às Diretrizes: curso → subespecialidade → aula.
   var verHTML;
   if(!admCursoFiltro){
@@ -20664,7 +20811,10 @@ function bindAdmSec(sec){
         var nova=Object.assign({at:Date.now()},dados);
         admCursos.push(nova);
         persistCursos();notify('Videoaula adicionada!','ok');
-        // Educação Médica Continuada: notificação no celular, depois de gravar no servidor.
+        // Educação Médica Continuada: resumo automático (só se o campo Resumo ficou vazio)…
+        var resEl=document.getElementById('adm-curso-autoresumo');
+        if(nova.curso===EMC_SLUG&&resEl&&resEl.checked&&!String(nova.resumo||'').trim())gerarResumoAulaEmc(nova);
+        // …e notificação no celular, depois de gravar no servidor.
         var pushEl=document.getElementById('adm-curso-push');
         if(nova.curso===EMC_SLUG&&pushEl&&pushEl.checked){
           Promise.resolve(queueRemoteStateSave(true)).then(function(salvo){
@@ -20706,6 +20856,7 @@ function bindAdmSec(sec){
     var nsFocus=document.getElementById('curso-newsub');if(nsFocus){nsFocus.focus();nsFocus.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();var bc=document.getElementById('btn-curso-newsub-create');if(bc)bc.click();}});}
     main.querySelectorAll('[data-adm-openaula]').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('button'))return;admPlayCursoAula(parseInt(el.dataset.admOpenaula));});});
     main.querySelectorAll('[data-adm-freecurso]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.admFreecurso);var c=admCursos[i];if(!c)return;c.free=!c.free;persistCursos();renderAdmSec('cursos');try{renderCursosAluno();}catch(e){}notify(c.free?('Aula liberada como amostra grátis (degustação). ✓'):('Aula não é mais amostra grátis.'),'ok');});});
+    main.querySelectorAll('[data-adm-resumocurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admResumocurso)];if(!c)return;var refazer=!!String(c.resumo||'').trim();if(refazer&&(!c.resumoAuto||!confirm('Gerar de novo o resumo automático desta aula? O texto atual (inclusive o que o senhor editou) será substituído quando o novo ficar pronto.')))return;gerarResumoAulaEmc(c,b,refazer);});});
     main.querySelectorAll('[data-adm-pushcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admPushcurso)];if(!c)return;if(c.pushAt&&!confirm('Esta aula já foi avisada em '+new Date(c.pushAt).toLocaleDateString('pt-BR')+'. Mandar a notificação de novo?'))return;avisarAulaEmc(c,b);});});
     main.querySelectorAll('[data-adm-delcurso]').forEach(function(b){b.addEventListener('click',function(){var c=admCursos[parseInt(b.dataset.admDelcurso)];if(!confirm('Excluir a videoaula "'+((c&&c.title)||'')+'"? Esta ação não pode ser desfeita.'))return;admCursos.splice(parseInt(b.dataset.admDelcurso),1);persistCursos();renderAdmSec('cursos');renderCursosAluno();});});
   }
