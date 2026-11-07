@@ -1068,6 +1068,18 @@ try {
   fail('regressão do aviso de aula nova da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-r. RESUMO AUTOMÁTICO DA AULA DA EMC (07/11/2026). Pedido do professor: "Sempre que
+//      for inserida uma nova aula no curso de Educação Médica Continuada, já introduz
+//      automaticamente um resumo conforme modelo aula anterior". Modelo = 1ª aula; base =
+//      transcrição do Bunny ou título/descrição/capítulos; grounding do PubMed; número só com fonte.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-emc-resumo-auto.js')], { stdio: 'pipe' });
+  ok('resumo automático da EMC: modelo da 1ª aula, transcrição do Bunny quando houver, PubMed, formato conferido, nunca sobrescreve, refazer seguro');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do resumo automático da EMC falhou:\n' + out);
+}
+
 // 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
 //      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
 //      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,

@@ -5,6 +5,10 @@ atualizado: 2026-11-07
 
 # Pendências
 
+## 📝 Resumos da EMC (07/11)
+- [ ] O professor tem de conferir se a biblioteca do Bunny gera a transcrição automática. Com ela ligada, os resumos automáticos seguem a fala da aula.
+- [ ] Resultado final do SMARTEST: incluir no resumo da aula da metformina (`adm_cursos[107]`) quando estiver publicado, ou quando o professor passar o resultado.
+
 ## 🎬 Videoaulas e o plano Standard (07/11): decisão do professor
 
 - [ ] O professor disse "Gold: todas" e "degustação: uma por subespecialidade". O Standard
