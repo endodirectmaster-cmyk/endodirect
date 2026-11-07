@@ -85,9 +85,15 @@ const render = corpo('renderCursosAluno');
     '🧨 voltou o selo com o nome do curso embaixo do título da aula — a volta acima já nomeia o curso');
   ok(!/esc\(c\.modulo\)/.test(cartao),
     '🧨 voltou o selo da subespecialidade embaixo do título da aula — o cabeçalho acima já a nomeia');
-  // O que NÃO se repete em lugar nenhum fica: duração e amostra grátis.
-  ok(/esc\(c\.dur\)/.test(cartao),
-    '⚠️ a duração da aula saiu junto, e ela não está em nenhum outro lugar da tela');
+  // 07/11/2026, pedido do professor: "Retirar descrição da aula e tempo de duração.
+  // Aparecer descrição apenas quando clicar na aula". O cartão não mostra mais nem a
+  // duração nem a descrição; a descrição aparece no player, embaixo do vídeo.
+  ok(!/c\.dur\b/.test(cartao), '🧨 a duração voltou ao cartão da aula — o professor pediu para tirar');
+  ok(!/c\.desc\b/.test(cartao), '🧨 a descrição voltou ao cartão da aula — ela só aparece ao clicar na aula');
+  const pl = html.indexOf('function renderAulaPlayer(){');
+  ok(pl > 0 && /\(c\.desc\?'<div style="font-size:\.78rem;color:var\(--t2\);line-height:1\.6;margin-top:\.6rem">'\+esc\(c\.desc\)/.test(html.slice(pl, pl + 2600)),
+    '⚠️ a descrição sumiu também do player — ela tem de aparecer quando o aluno clica na aula');
+  // O que fica no cartão: amostra grátis e concluída.
   ok(/Amostra grátis/.test(cartao),
     '🧨 o selo de amostra grátis saiu junto: o não-assinante deixaria de saber por que aquela aula abre');
   ok(/✓ concluída/.test(cartao), '⚠️ o selo de aula concluída saiu junto');
