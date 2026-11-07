@@ -1,9 +1,39 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-11-04
+atualizado: 2026-11-07
 ---
 
 # Newsletter e Radar
+
+## 🎓🔔 AULA NOVA DA EDUCAÇÃO MÉDICA CONTINUADA VAI PARA O CELULAR (2026-11-07)
+
+Pedido do professor: *"Quando tiver uma aula nova de educação médica continuada, avisar os alunos
+como post de notificação no celular."*
+
+- **Quando sai:** ao clicar **"+ Adicionar aula"** em Cursos › Importar videoaula, com o curso
+  **Educação Médica Continuada** (`emc`).
+  - O formulário mostra a caixa "🔔 Avisar os alunos no celular quando a aula for salva",
+    marcada por padrão; ela só aparece com esse curso e só para aula nova.
+  - Editar aula não avisa.
+  - A gravação da aula ao vivo entra pelo mesmo formulário, então também avisa.
+- **Ordem:** primeiro grava no servidor (`queueRemoteStateSave(true)`), depois manda
+  (`avisarAulaEmc`). Quem toca na notificação na hora já encontra a aula. Se o save falhar, o
+  painel explica e aponta o botão de reenvio.
+- **Canal:** o mesmo dos avisos do mural: `admSendPush` → `api/admin/refresh-radar`, action
+  `push`, `sendToAll`. Vai para todos os celulares inscritos; em 07/11 eram 20 aparelhos:
+  11 Gold, 2 professores e 5 sem plano.
+- **Mensagem:** título "🎓 Nova aula · Educação Médica Continuada", corpo com o título da aula,
+  link `/#cursos/emc-<at>`.
+- **O link abre Cursos › EMC na subespecialidade da aula.**
+  - `LINK_PAINEIS` ganhou `cursos`. O pedido fica em `cursoLinkPendente` até os acessos e as aulas
+    chegarem (`aplicarCursoLinkPendente`, no começo de `renderCursosAluno`) e vale uma vez.
+  - Quem não é Gold cai no curso com a aula-amostra e o convite para assinar.
+  - O professor cai em Cursos do painel.
+- **Botão no card:** toda aula da EMC no painel tem "🔔 Avisar no celular", que vira "🔔 Avisada
+  em dd/mm" (`pushAt` na aula). Reenviar pede confirmação.
+- **Prova:** `scripts/test-emc-aula-push.js` (17c-undecies-q no `ci-validate`).
+- **Em aberto:** se o professor preferir que só o Gold receba, é preciso uma ação nova no
+  `refresh-radar`, que filtre as inscrições pelos acessos.
 
 ## 📄 BOTÃO DO ARTIGO ORIGINAL NOS POSTS AUTOMÁTICOS DO MURAL (2026-10-16)
 

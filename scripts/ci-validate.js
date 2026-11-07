@@ -1057,6 +1057,17 @@ try {
   fail('regressão das videoaulas na degustação falhou:\n' + out);
 }
 
+// 17c-undecies-q. AULA NOVA DA EDUCAÇÃO MÉDICA CONTINUADA → CELULAR (07/11/2026). Pedido do
+//      professor: "Quando tiver uma aula nova de educação médica continuada, avisar os alunos
+//      como post de notificação no celular." Mesmo canal dos avisos do mural, depois do save.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-emc-aula-push.js')], { stdio: 'pipe' });
+  ok('aula nova da EMC: notificação no celular depois do save, só aula nova da EMC com a caixa marcada, botão de reenvio e link que abre o curso na aula');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do aviso de aula nova da EMC falhou:\n' + out);
+}
+
 // 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
 //      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
 //      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,
