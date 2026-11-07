@@ -105,6 +105,11 @@ obesidade para deixar liberado para eles. E também assim das outras subespecial
   - **Obesidade:** "Obesidade clínica x pré-clínica", o capítulo de avaliação e diagnóstico;
   - **Endocrinologia Masculina:** "Hipogonadismo masculino", a única da área;
   - **Lípides:** "Lipoproteína (a)", a única da área.
+  - Gravado em 07/11, às 12h42 UTC, depois do deploy (v344 no ar). Posições 95, 70, 116 e 110,
+    `videos[0]`. Backup `main-antes-videoaulas-degustacao-2026-11-07`; guardas: md5 do payload,
+    233 itens, e tema e título de cada vídeo.
+  - Conferido: tirando as 4 marcas, o payload é idêntico ao backup; a degustação passou a
+    receber 31 itens (28 + 3 só de vídeo, nenhum com `resumo`).
 - **Standard (aberto):** o professor falou do Gold e da degustação. O Standard (1 assinante em
   07/11) continua vendo todas, porque o portão do servidor é `plano`. Se ele quiser só no Gold,
   é trocar `@> array['plano']` por um teste de `plano:gold` no ramo das privadas.
