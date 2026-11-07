@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-04
+atualizado: 2026-11-07
 ---
 
 # Decisões
@@ -8,6 +8,11 @@ atualizado: 2026-11-04
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 VIDEOAULAS: GOLD VÊ TODAS; DEGUSTAÇÃO, UMA POR SUBESPECIALIDADE (2026-11-07).**
+  - **Pedido do professor:** *"Para o pessoal do plano Gold, obviamente, eles terão acesso a todas essas videoaulas. [...] Para o pessoal do modo degustação, a ideia é que eles tenham acesso a uma videoaula de cada subespecialidade."*
+  - **Como:** o professor marca 🎁 no vídeo (`degustacao: true`, uma por área). O servidor (`endodirect_member_resumos`) entrega à degustação só esse vídeo: no capítulo-amostra, ou como item "só de vídeo" quando ele está em outro capítulo.
+  - **Escolha inicial:** CAC (Adrenal), obesidade clínica × pré-clínica (Obesidade), hipogonadismo (Masculina) e Lp(a) (Lípides).
+  - **Standard:** continua com todas, até o professor decidir. Detalhes em [[Videoaulas dos Resumos]].
 - **📣 NOVA COBRANÇA DA ENQUETE EMC: E-MAIL + CELULAR AOS GOLD QUE NÃO VOTARAM (2026-11-04).**
   - **Pedido do professor:** *"Os 20 alunos que já responderam não precisam responder novamente. Deixe essa mudança a partir de agora para os novos alunos [...] essa enquete já está rolando para os demais alunos que ainda não responderam. Acho que vale a pena uma nova cobrança."*
   - **Quem recebe:** os 28 Gold ativos sem voto (medido em 04/11), sem teste, admin nem descadastrado. A lista sai da RPC `endodirect_enquete_cme_pendentes()`, só service_role (`supabase/enquete-lembrete.sql`).

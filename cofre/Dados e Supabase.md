@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-11-04
+atualizado: 2026-11-07
 ---
 
 # Dados e Supabase
@@ -233,6 +233,7 @@ Quem lê o quê no hydrate (`hydrateRemoteState`, index.html ~l.3593):
     - **Ensaio e produção (25/10):** com a mesma função em `pg_temp`, assinante = 233 itens em 12 páginas, uma versão só, as páginas juntas iguais à lista da chamada única e a maior página com 537 KB; visitante = 28 itens (10 Diretrizes de amostra + 18 capítulos) em 2 páginas. Depois da migração, o `prosrc` tem o md5 do corpo do arquivo (`71b0a402…`) e a chamada por HTTPS como visitante devolveu as 2 páginas com a mesma versão (222 KB + 93 KB).
     - 🧨 **Não copiar a regra para cá.** Quem vê o quê (assinante, degustação, rascunho) mora só em `endodirect_member_resumos()`; esta função só fatia. `endodirect_member_resumos()` fica para o app antigo em cache e como recurso.
   - **Degustação por tipo (2026-07-25):** o `distinct on` do ramo de degustação passou de `(sub)` para `(sub, coalesce(tipo,'capitulo'))` (migração `member_resumos_degustacao_por_tipo`). Sem isso, com a aba **Artigos**, um trial podia ocupar a vaga única da área e deixar a aba **Capítulos** vazia na degustação. Itens sem `tipo` contam como `capitulo` → nada mudou para o acervo existente (14 áreas × 1 capítulo, conferido).
+  - **Videoaulas na degustação (2026-11-07):** sem plano, `videos` do capítulo-amostra vem reduzido ao vídeo liberado (`degustacao: true`, no máximo um por subespecialidade) mais `videos_total`; o liberado de outro capítulo vem como item `so_video` (sub, tema, título e o vídeo, sem conteúdo do capítulo), que o cliente tira da lista (`separarSoVideo`). Com plano, a saída é a mesma de antes. Corpo em `supabase/videoaulas-degustacao.sql`; ver [[Videoaulas dos Resumos]].
 
 ### Estado `rascunho` — item gravado que só o professor vê (2026-07-25)
 Um item de `diretrizes` com **`rascunho:true`** é filtrado **no servidor**, não só no cliente. Migração `diretrizes_rascunho_so_no_painel_do_professor`:

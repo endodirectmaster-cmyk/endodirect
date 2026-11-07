@@ -1670,6 +1670,14 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .adm-vid-prog{height:6px;background:var(--s2);border-radius:99px;overflow:hidden}
 .adm-vid-prog>span{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
 .adm-vid-msg{font-size:.72rem;color:var(--t2);min-height:1em}
+/* Degustação (07/11/2026): uma videoaula liberada por subespecialidade. */
+.dir-sub-btn .dsb-vid{font-size:.68rem;font-weight:700;color:var(--gold);margin-top:.2rem}
+.dir-deg-vid{display:grid;gap:.55rem;margin:1.1rem 0 .4rem;padding:.85rem;border:1px solid var(--gold);border-radius:var(--r);background:var(--gold-l)}
+.dir-deg-vid-tit{font-size:.84rem;font-weight:800;color:var(--tx)}
+.dir-deg-vid-de{font-size:.76rem;color:var(--t2);line-height:1.5}
+.adm-vid-deg{font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:.7rem;padding:.55rem .75rem;border:1px dashed var(--bd2);border-radius:10px;background:var(--s2)}
+.adm-vid-selo{font-size:.68rem;font-weight:800;color:var(--gold);background:var(--gold-l);padding:.12rem .5rem;border-radius:999px}
+.adm-vid-ed .btn.on-deg{background:var(--gold-l);color:var(--gold);border-color:var(--gold)}
 .dir-tema-card{position:relative;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1rem 1.1rem;cursor:pointer;transition:.15s;display:flex;flex-direction:column;min-height:104px}
 .dir-tema-card:hover{border-color:var(--blue);transform:translateY(-2px)}
 .dir-tema-card .dtc-ico{font-size:1.4rem;line-height:1}
@@ -6850,11 +6858,25 @@ function carregarResumosPaginas(client,uid,volta){
     aplicarResumos(itens);
   });
 }
+// Itens "só de vídeo" (degustação, 07/11/2026): para quem não tem plano, o servidor
+// manda o vídeo liberado de um capítulo que não é a amostra como item à parte
+// (`so_video`: sub, tema, título e o vídeo, sem resumo, flashcards nem mapa). Ele NÃO
+// é capítulo e não entra em `diretrizes` (contagens, temas, busca): fica em
+// dirVideosAmostra, que só a vitrine de vídeo da degustação lê.
+var dirVideosAmostra=[];
+function separarSoVideo(lista){
+  var caps=[],so=[];
+  (Array.isArray(lista)?lista:[]).forEach(function(d){(d&&d.so_video?so:caps).push(d);});
+  dirVideosAmostra=so;
+  return caps;
+}
 // Mesma aplicação da chamada única: lista vazia não apaga o que o aparelho tem.
 function aplicarResumos(lista){
   if(!Array.isArray(lista)||!lista.length)return;
-  diretrizes=lista;
-  diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
+  lista.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
+  var caps=separarSoVideo(lista);
+  if(!caps.length)return;
+  diretrizes=caps;
   try{lsSet('diretrizes',diretrizes);}catch(e){}
   resumosErro=false;
 }
@@ -6866,12 +6888,7 @@ function tentarResumos(client,rpc,tentativa,uid){
   return client.rpc(rpc).then(function(r2){
     if(r2.error)throw r2.error;
     if(!mesmaContaQue(uid))return;
-    if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length){
-      diretrizes=r2.data.diretrizes;
-      diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});
-      try{lsSet('diretrizes',diretrizes);}catch(e){}
-      resumosErro=false;
-    }
+    if(r2.data&&Array.isArray(r2.data.diretrizes)&&r2.data.diretrizes.length)aplicarResumos(r2.data.diretrizes);
   }).catch(function(e){
     if(!mesmaContaQue(uid))return;
     // Rede de celular derruba resposta grande (~1,8 MB) com frequência; uma
@@ -14597,6 +14614,7 @@ var DIRETRIZES_PUBLICADO=true;
 var refSubSel='';                 // subespecialidade selecionada ('' = grade)
 var refTemaSel='';                // tema selecionado dentro da subespecialidade
 var refFormat='resumo';          // resumo | flash | mapa | video
+var refVideoSoLiberado=false;     // degustação: na aba Videoaulas, só o vídeo liberado (ver dirVideosHTML)
 var refFlashOpen={};              // estado de flip dos flashcards (chave "i-j")
 var refFlashIdx={};               // card atual por diretriz (um flashcard por vez), chave "i"
 var refPrivadoMode=false;         // false = aba Diretrizes (públicas); true = aba Resumos (privados/assinantes)
@@ -15136,10 +15154,35 @@ function dirVideoPlayerHTML(v){
 function dirVideoCabHTML(v){
   return '<div class="dir-video-cab"><span class="dir-video-t">🎬 '+esc(v.titulo||'Videoaula')+'</span>'+(v.dur?'<span class="dir-video-dur">'+dirVideoDur(v.dur)+'</span>':'')+'</div>';
 }
-function dirVideosHTML(d){
-  var vs=dirVideosDe(d);
-  if(!vs.length)return '<div class="dir-empty-fmt">Videoaulas ainda não disponíveis.</div>';
-  return '<div class="dir-videos">'+vs.map(function(v){return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)+'</div>';}).join('')+'</div>';
+// DEGUSTAÇÃO (07/11/2026). Pedido do professor: "Para o pessoal do plano Gold,
+// obviamente, eles terão acesso a todas essas videoaulas. (...) Para o pessoal do modo
+// degustação, a ideia é que eles tenham acesso a uma videoaula de cada subespecialidade."
+// O professor marca no painel qual vídeo fica liberado (`degustacao:true`; um por
+// subespecialidade). O servidor (endodirect_member_resumos) só entrega à degustação o
+// vídeo liberado: no capítulo-amostra, `videos` vem só com ele e `videos_total` diz
+// quantos o capítulo tem; em outro capítulo, ele vem como item "só de vídeo"
+// (`so_video`), que separarSoVideo tira da lista de capítulos. O filtro daqui é a
+// segunda barreira.
+function dirVideoLiberado(v){return !!(v&&v.degustacao===true);}
+function dirVideosHTML(d,soLiberado){
+  var todos=dirVideosDe(d),vs=soLiberado?todos.filter(dirVideoLiberado):todos;
+  var resto=soLiberado?Math.max(+(d&&d.videos_total)||0,todos.length)-vs.length:0;
+  var mais=resto>0?'<div class="dir-deg-note">🔒 '+(vs.length?'Mais '+resto:resto)+' videoaula'+(resto>1?'s':'')+' neste capítulo, para assinantes.</div>':'';
+  if(!vs.length)return mais||'<div class="dir-empty-fmt">Videoaulas ainda não disponíveis.</div>';
+  return '<div class="dir-videos">'+vs.map(function(v){return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)+'</div>';}).join('')+'</div>'+mais;
+}
+// A videoaula liberada de uma subespecialidade, para a degustação: procura nos
+// capítulos que ela recebeu e nos itens só de vídeo. {v, tema} ou null.
+function dirVideoAmostraDaSub(sub){
+  var achou=null;
+  diretrizes.concat(dirVideosAmostra).some(function(d){
+    if(!d||d.privado!==true||dirIsRascunho(d)||dirTipoOf(d)!=='capitulo')return false;
+    if((String(d.sub||'Geral').trim()||'Geral')!==sub)return false;
+    var v=dirVideosDe(d).filter(dirVideoLiberado)[0];
+    if(v)achou={v:v,tema:dirTemaOf(d)};
+    return !!achou;
+  });
+  return achou;
 }
 // Monta cada <video data-hls> do container (Safari toca nativo; os outros, hls.js, que
 // chega por <script defer> e pode atrasar: tenta por até 10 s).
@@ -15188,7 +15231,7 @@ function dirCardHTML(d,i){
       +'</div>';
     }
   }else if(refFormat==='video'){
-    body=dirVideosHTML(d);
+    body=dirVideosHTML(d,refVideoSoLiberado);
   }else if(refFormat==='mapa'){
     body=dirMapaHTML(d.mapa);
   }else{ // 'resumo': texto corrido + pontos-chave + fluxograma(s) (o que houver)
@@ -15536,7 +15579,9 @@ function diretrizesViewHTML(){
       +'<div class="dir-sub-grid">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
         var _nv=dirNovosNaSub(s.sub,refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible);
-        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div></button>';
+        // Degustação: a área com videoaula liberada avisa já na grade.
+        var _vl=(_degFmt&&dirVideoAmostraDaSub(s.sub))?'<div class="dsb-vid">🎬 1 videoaula liberada</div>':'';
+        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div>'+_vl+'</button>';
       }).join('')+'</div>';
   }
   // Nível 2 — grade de temas dentro da subespecialidade.
@@ -15557,10 +15602,17 @@ function diretrizesViewHTML(){
     if(!temas.length){
       return head2+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2><p>'+(_isArt?('Os resumos dos principais estudos de '+esc(refSubSel)+' estão'):('Os resumos de '+esc(refSubSel)+' estão'))+' em curadoria pela equipe Endodirect.</p></div>';
     }
+    // Degustação nos Capítulos: a videoaula liberada desta área, com o player aqui
+    // mesmo — ela pode estar num capítulo que a degustação não abre.
+    var _vidAm=(_degFmt&&!_isArt)?dirVideoAmostraDaSub(refSubSel):null;
+    var _blocoVid=_vidAm?('<div class="dir-deg-vid"><div class="dir-deg-vid-tit">🎁 Videoaula liberada na degustação</div>'
+      +'<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(_vidAm.v)+'</div>'+dirVideoCabHTML(_vidAm.v)+'</div>'
+      +'<div class="dir-deg-vid-de">Do capítulo <b>'+esc(_vidAm.tema)+'</b>. Na degustação, uma videoaula por área; assine para ver todas.</div></div>'):'';
     return head2+'<div class="dir-sub-grid">'+temas.map(function(t,ti){
       var lk=_deg1&&ti>0;
       return '<button class="dir-sub-btn'+(lk?' dir-locked':'')+'" data-dir-'+(lk?'lockedtema':'tema')+'="'+esc(t.tema)+'"><div class="dsb-ico">'+(lk?'🔒':(_isArt?'🔬':'📄'))+'</div><h3>'+esc(t.tema)+'</h3><div class="dsb-cnt">'+(lk?'Exclusivo p/ assinantes':_cnt(t.count))+'</div></button>';
     }).join('')+'</div>'
+    +_blocoVid
     +(_deg1?'<div class="dir-deg-note">🔒 Na degustação você abre <b>1 '+(_isArt?'artigo':(refPrivadoMode?'capítulo':'diretriz'))+'</b> de cada área'+(_degFmt?' (só o resumo — flashcards e mapas para assinantes)':'')+'. Assine para liberar '+(temas.length>1?('<b>'+temas.length+'</b> de '+esc(refSubSel)):('todo o conteúdo de '+esc(refSubSel)))+'.</div>':'');
   }
   // Nível 3 — itens do tema, no formato escolhido.
@@ -15578,20 +15630,26 @@ function diretrizesViewHTML(){
       return head+'<div class="dir-deg-note" style="margin-top:1rem">🔒 Este '+(refPrivadoMode?(refTipoSel==='artigo'?'artigo':'capítulo'):'conteúdo')+' é <b>exclusivo para assinantes</b>. Na degustação, abra o 1º item de cada área. <button class="btn btn-primary btn-sm" data-dir-assine style="margin-top:.6rem">Ver planos</button></div>';
     }
   }
-  if(_degFmt)refFormat='resumo'; // Resumos na degustação: força o render do resumo (dirCardHTML usa refFormat global; flashcards/mapas travados)
+  // Resumos na degustação: força o render do resumo (dirCardHTML usa refFormat global;
+  // flashcards/mapas travados) — menos na aba Videoaulas, quando o capítulo tem o vídeo liberado.
+  if(_degFmt&&refFormat!=='video')refFormat='resumo';
+  refVideoSoLiberado=_degFmt;
   // ARTIGOS não têm flashcards nem mapas mentais: a ficha visual já é o material
   // de revisão. Sem seletor de formato, e o render é sempre o da ficha.
   var _ehArtigo=(refPrivadoMode&&refTipoSel==='artigo');
   if(_ehArtigo)refFormat='resumo';
-  // Videoaulas: só nos capítulos dos Resumos e só quando o capítulo tem vídeo.
-  var _temVideo=refPrivadoMode&&!_ehArtigo&&list.some(function(x){return dirVideosDe(x.d).length>0;});
+  // Videoaulas: só nos capítulos dos Resumos e só quando o capítulo tem vídeo. Na
+  // degustação, só conta o vídeo liberado; os outros deixam a aba com cadeado.
+  var _vidsDe=function(d){var v=dirVideosDe(d);return _degFmt?v.filter(dirVideoLiberado):v;};
+  var _temVideo=refPrivadoMode&&!_ehArtigo&&list.some(function(x){return _vidsDe(x.d).length>0;});
+  var _vidTrancado=_degFmt&&!_ehArtigo&&!_temVideo&&list.some(function(x){return Math.max(+x.d.videos_total||0,dirVideosDe(x.d).length)>0;});
   if(refFormat==='video'&&!_temVideo)refFormat='resumo';
   var fmts=[['resumo','📄 Resumo'],['flash','🃏 Flashcards'],['mapa','🧠 Mapas mentais']];
-  if(_temVideo)fmts.push(['video','🎬 Videoaulas']);
+  if(_temVideo||_vidTrancado)fmts.push(['video','🎬 Videoaulas']);
   var fmtAtivo=(refFormat==='flash'||refFormat==='mapa'||refFormat==='video')?refFormat:'resumo';
   return head
-    +(_ehArtigo?'':('<div class="dir-fmt">'+fmts.map(function(f){var lk=_degFmt&&f[0]!=='resumo';return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'))
-    +((_degFmt&&!_ehArtigo)?'<div class="dir-deg-note">🔒 '+(_temVideo?'<b>Flashcards</b>, <b>mapas mentais</b> e <b>videoaulas</b>':'<b>Flashcards</b> e <b>mapas mentais</b>')+' deste capítulo são exclusivos para assinantes.</div>':'')
+    +(_ehArtigo?'':('<div class="dir-fmt">'+fmts.map(function(f){var lk=_degFmt&&f[0]!=='resumo'&&!(f[0]==='video'&&_temVideo);return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'))
+    +((_degFmt&&!_ehArtigo)?'<div class="dir-deg-note">🔒 '+(_vidTrancado?'<b>Flashcards</b>, <b>mapas mentais</b> e <b>videoaulas</b>':'<b>Flashcards</b> e <b>mapas mentais</b>')+' deste capítulo são exclusivos para assinantes.'+(_temVideo?' 🎁 A videoaula liberada desta área está na aba <b>🎬 Videoaulas</b>.':'')+'</div>':'')
     +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
 }
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
@@ -19287,11 +19345,31 @@ var admRefFlashMode='edit'; // 'edit' (caixinhas) | 'view' (flip animado, prévi
 // Videoaulas do capítulo no painel: lista com o player (como o aluno vê), título editável,
 // ordem e exclusão; e o formulário para subir um arquivo (Storage, upload retomável) ou colar
 // um link (Bunny .m3u8, YouTube, Vimeo). 💾 grava pelo mesmo caminho dos flashcards.
+// Degustação (07/11/2026): o professor escolhe UMA videoaula por subespecialidade para
+// quem está no teste grátis (🎁). Marcar outra desmarca a anterior da mesma área.
+function admVideoLiberadoDaSub(sub){
+  var r=null;
+  diretrizes.some(function(o){
+    if(!o||o.privado!==true||dirIsRascunho(o)||dirTipoOf(o)!=='capitulo')return false;
+    if((String(o.sub||'Geral').trim()||'Geral')!==sub)return false;
+    var v=dirVideosDe(o).filter(dirVideoLiberado)[0];
+    if(v)r={v:v,tema:dirTemaOf(o)};
+    return !!r;
+  });
+  return r;
+}
 function admRefVideoHTML(d,i){
   var vs=Array.isArray(d.videos)?d.videos:[];
+  var sub=String(d.sub||'Geral').trim()||'Geral',lib=admVideoLiberadoDaSub(sub);
+  var info='<div class="adm-vid-deg">🎁 <b>Degustação:</b> quem está no teste grátis assiste a <b>uma</b> videoaula de cada subespecialidade, a marcada com 🎁. '
+    +(lib?('Hoje, em '+esc(sub)+': <b>'+esc(lib.v.titulo||'Videoaula')+'</b>'+(lib.tema!==dirTemaOf(d)?' (capítulo '+esc(lib.tema)+')':' (neste capítulo)')+'.')
+         :('Nenhuma marcada em '+esc(sub)+' ainda: a degustação não vê vídeo desta área.'))
+    +'</div>';
   var lista=vs.map(function(v,j){
     return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)
       +'<div class="adm-vid-ed"><input type="text" id="adm-vid-t-'+i+'-'+j+'" value="'+esc(v.titulo||'')+'" aria-label="Título da videoaula">'
+      +(v.degustacao?'<span class="adm-vid-selo">🎁 Liberada na degustação</span>':'')
+      +'<button class="btn btn-outline btn-sm'+(v.degustacao?' on-deg':'')+'" data-advid-deg="'+i+'-'+j+'" title="'+(v.degustacao?'Tirar da degustação':'Liberar esta videoaula para quem está no teste grátis (uma por subespecialidade)')+'">'+(v.degustacao?'Tirar da degustação':'🎁 Liberar na degustação')+'</button>'
       +'<button class="btn btn-primary btn-sm" data-advid-save="'+i+'-'+j+'">💾 Salvar título</button>'
       +'<button class="btn btn-outline btn-sm" data-advid-mv="'+i+'-'+j+'-up"'+(j===0?' disabled':'')+' title="Subir">↑</button>'
       +'<button class="btn btn-outline btn-sm" data-advid-mv="'+i+'-'+j+'-down"'+(j===vs.length-1?' disabled':'')+' title="Descer">↓</button>'
@@ -19299,6 +19377,7 @@ function admRefVideoHTML(d,i){
   }).join('');
   return '<div class="dir-card">'
     +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.7rem;line-height:1.5">Vídeos curtos do capítulo (até 15 min cada). Para os assinantes, a aba <b>🎬 Videoaulas</b> só aparece quando o capítulo tem pelo menos um vídeo.</div>'
+    +info
     +(lista?'<div class="dir-videos">'+lista+'</div>':'<div class="dir-empty-fmt">Nenhuma videoaula neste capítulo ainda.</div>')
     +'<div class="adm-vid-form"><div style="font-size:.78rem;font-weight:800;color:var(--tx)">＋ Nova videoaula</div>'
       +'<div class="fld2"><label>Título</label><input type="text" id="adm-vid-titulo-'+i+'" placeholder="Ex.: Rastreio do hiperaldosteronismo primário"></div>'
@@ -19351,6 +19430,16 @@ function admRefVideoAcao(tipo,arg){
     var t=((document.getElementById('adm-vid-t-'+i+'-'+j)||{}).value||'').trim();
     if(!t){notify('O título não pode ficar vazio.','err');return;}
     d.videos[j].titulo=t;persistDiretrizes();notify('Título salvo. ✓','ok');rerenderRef();return;
+  }
+  if(tipo==='deg'){
+    // Uma por subespecialidade: liberar esta desmarca a que estava liberada na mesma área.
+    var sub=String(d.sub||'Geral').trim()||'Geral',alvo=d.videos[j];
+    if(alvo.degustacao){delete alvo.degustacao;persistDiretrizes();notify('Videoaula fora da degustação de '+sub+'.','info');rerenderRef();return;}
+    diretrizes.forEach(function(o){
+      if(!o||!Array.isArray(o.videos)||(String(o.sub||'Geral').trim()||'Geral')!==sub)return;
+      o.videos.forEach(function(x){if(x&&x.degustacao)delete x.degustacao;});
+    });
+    alvo.degustacao=true;persistDiretrizes();notify('Liberada na degustação de '+sub+'. ✓','ok');rerenderRef();return;
   }
   if(tipo==='del'){
     if(!confirm('Excluir a videoaula "'+(d.videos[j].titulo||'')+'" deste capítulo?'))return;
@@ -20981,6 +21070,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-advid-save]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('save',b.dataset.advidSave);});});
     main.querySelectorAll('[data-advid-del]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('del',b.dataset.advidDel);});});
     main.querySelectorAll('[data-advid-mv]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('mv',b.dataset.advidMv);});});
+    main.querySelectorAll('[data-advid-deg]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('deg',b.dataset.advidDeg);});});
     montarVideosHls(main);
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
