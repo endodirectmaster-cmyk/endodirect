@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-07
+atualizado: 2026-11-08
 ---
 
 # Decisões
@@ -8,6 +8,23 @@ atualizado: 2026-11-07
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📑 CAPÍTULOS E RESUMOS DAS AULAS DA EMC LIDOS DOS SLIDES (2026-11-08).** Pedido do professor, com print da 1ª aula: *"Em todas as aulas de educação médica continuada, deixa desse modo também"*. Depois ele disse *"Autorizo acesso ao bunny"*.
+  - **Rede:** acrescentei ao ambiente Default os hosts exatos do Bunny (`vz-0161a494-b29.b-cdn.net`, `iframe.mediadelivery.net`, `video.bunnycdn.com`).
+    - O CDN só responde com `Referer` do site (403 sem ele). O navegador do aluno já manda esse cabeçalho, então o resumo automático lê o HLS normalmente.
+    - O player público (`iframe.mediadelivery.net/embed/741440/<id>`) traz os capítulos do Bunny no HTML: na 1ª aula batem com `caps`; nas duas novas estavam vazios.
+    - Nenhuma das três aulas tem legenda no Bunny (sem trilha `SUBTITLES` no HLS).
+  - **Como os capítulos foram feitos:** as aulas são slides narrados.
+    - Baixei os segmentos do HLS 720p com `curl` e o `Referer`; o ffmpeg não passa pelo proxy daqui.
+    - Juntei init e segmentos, detectei as trocas de slide (`fps=2,select=gt(scene,0.004)`) e li cada quadro com tesseract-por (`apt-get install tesseract-ocr-por`; ⚠️ com `OMP_THREAD_LIMIT=1`, senão os processos disputam o processador e ficam 1.000× mais lentos).
+    - Cada capítulo começa no 1º quadro da seção (o rótulo acima do título do slide). São 10 capítulos em cada aula.
+  - 🧨 **OS RESUMOS DE 07/11 ERRAVAM EM DOIS PONTOS, e a aula mostrou isso.**
+    - Eu tinha escrito que não havia ensaio randomizado da tirzepatida no DM1, mas há o de fase 2 de Snaith (Diabetes Care 2026, doi 10.2337/dc25-2379).
+    - Eu tinha escrito que não se demonstrou preservação do peptídeo C, mas houve: no NewLira (doi 10.1111/dom.15889), durante o tratamento; e com anti-IL-21 + liraglutida (doi 10.1016/S2213-8587(21)00019-X).
+    - A lição: o resumo escrito só a partir do título e da literatura erra o que a aula ensina. Os dois foram reescritos a partir dos slides, na estrutura do modelo (v2: 9.921 e 7.723 caracteres).
+    - Os números dos slides que eu não tinha conferido foram checados por amostragem no PubMed: Pasqua (Nat Med 2025, doi 10.1038/s41591-024-03463-z), Snaith, NewLira e anti-IL-21 batem.
+  - **SMARTEST:** a aula traz os resultados principais (Uppsala, 2026): 425 × 421 eventos, sem diferença; descontinuação de 9,5% × 4,9%; eventos adversos graves de 18,2% × 19,8%. Esses números entraram no resumo, atribuídos à fonte da aula. Ainda não estão no PubMed.
+  - **Gravação:** backup `main-antes-capitulos-e-resumos-v2-emc-2026-11-08`. Guardas: md5 do payload, md5 dos resumos anteriores e títulos. Conferido: md5 dos dois resumos igual ao arquivo local; o payload sem `resumo` e `caps` das duas aulas é idêntico ao backup; a 1ª aula está intacta.
+  - **Para as próximas aulas:** o resumo automático do painel não lê slides (só título, descrição, capítulos e PubMed). Com o vídeo publicado, a leitura dos slides aqui (capítulos + resumo fiel) leva poucos minutos. Ver [[Videoaulas dos Resumos]] e [[Newsletter e Radar]].
 - **📝 RESUMO AUTOMÁTICO DAS AULAS DA EMC, NO MODELO DA 1ª AULA (2026-11-07).** Pedido do professor: *"Sempre que for inserida uma nova aula no curso de Educação Médica Continuada, já introduz automaticamente um resumo conforme modelo aula anterior que foi dado por mim"*.
   - **No painel:** ao adicionar uma aula da EMC com o campo Resumo vazio, a caixa "📝 Gerar o resumo da aula no modelo da 1ª aula" (marcada por padrão) dispara `gerarResumoAulaEmc`.
     - **Modelo:** o resumo da aula mais antiga da EMC que não foi gerado automaticamente (a de massa magra). Entra no pedido como exemplo de estrutura e de registro.
