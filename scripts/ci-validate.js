@@ -1080,6 +1080,17 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-s. E-MAIL DE DEGUSTAÇÃO SÓ PARA QUEM NUNCA PAGOU (08/11/2026). A RPC excluía
+//      só plano ATIVO; assinante com plano vencido ou cobrança em atraso recebia "sua
+//      degustação terminou". Agora quem já teve acesso pago sai do funil para sempre.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-degustacao-alvos.js')], { stdio: 'pipe' });
+  ok('e-mail de degustação: ex-assinante fora (qualquer status), aviso dia 5–6, convite dia 7+, EXECUTE só do service role');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do público do e-mail de degustação falhou:\n' + out);
+}
+
 // 17c-undecies-m. LDL-c POR MARTIN/HOPKINS (24/10/2026). Decisão do professor: a
 //      SBC 2025 recomenda Martin/Hopkins para todos, e a calculadora "LDL" deixou o
 //      Friedewald. A tabela de 180 células conferida contra a fonte (LDLcalc 2.1,

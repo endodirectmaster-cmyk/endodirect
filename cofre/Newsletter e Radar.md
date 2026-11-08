@@ -1,6 +1,6 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-11-07
+atualizado: 2026-11-08
 ---
 
 # Newsletter e Radar
@@ -284,10 +284,14 @@ Todos pegam carona no cron diário do radar (10:30 UTC) — o plano limita o nú
 | e-mail | quem recebe | o que impede o disparo repetido |
 |---|---|---|
 | Newsletter do dia | inscritos | `newsletter_sent` (trava claim-first) |
-| Degustação: aviso + win-back | quem está/esteve em degustação | chave por pessoa no ledger `trial_emails` |
+| Degustação: aviso + win-back | quem está/esteve em degustação **e nunca pagou** (desde 08/11/2026) | chave por pessoa no ledger `trial_emails` |
 | Campanha "o que entrou desde a sua degustação" | ex-degustação | chave única `novidades_2026_08` — dispara uma vez e acabou |
 | **Reengajamento (14+ dias parado)** | **assinante pagante** | **cooldown de 30 dias na RPC** |
 | Lembrete da enquete EMC (04/11/2026) | Gold ativo que ainda não votou (RPC `endodirect_enquete_cme_pendentes`, só service_role) | ledger `enquete_lembrete_sent[<campanha>]`, chave protegida pelo gatilho; janela da campanha (`CAMPANHAS` em `lib/enquete-lembrete.js`) |
+
+**🧨 Ex-assinante recebia "sua degustação terminou" (corrigido em 08/11/2026).** Todo assinante entrou pela degustação, então todos têm `deg_trials.__start`. A RPC `endodirect_trial_email_targets()` excluía só quem tinha plano **ativo**: no dia em que o plano vencia ou a cobrança recorrente falhava, o assinante virava "aluno no dia 100+ da degustação" e recebia o win-back. Aconteceu com dois recorrentes em atraso (27/08 e 24/10/2026); 41 pagantes estavam na fila, a maioria das anuais vencendo entre 06 e 11/2027. Agora quem tem **qualquer** linha de acesso pago (`endodirect_acessos` com provedor que não seja `manual`/`interno`, em qualquer status) ou qualquer linha em `endodirect_assinaturas` sai do funil da degustação para sempre. Para essa pessoa existe o aviso de renovação, que fala do plano. Cortesia vencida continua não contando como compra. Arquivo: `supabase/degustacao-sem-ex-assinante.sql`; teste: `scripts/test-degustacao-alvos.js` (ci 17c-undecies-s).
+
+**Como conferir que o aviso de degustação está saindo (08/11/2026):** (1) ledger `trial_emails`, contagem de `warn`/`winback` por dia, sem e-mail; (2) cruzar quem passou do dia 5 sem plano com quem tem `warn`; (3) Resend `list-logs`: todo `POST /emails/batch` do cron (~10:46 UTC) com 200; (4) Resend `list-emails` para o status `delivered` do dia. O ledger sozinho prova o alvo, não a entrega (ver abaixo).
 
 **⚠️ O reengajamento é o único cuja condição NÃO expira sozinha.** Nos outros, a pessoa sai do público naturalmente (assinou, a degustação acabou, a campanha já foi). Aqui, quem está parado hoje continua parado amanhã: **sem o cooldown, o mesmo grupo receberia o mesmo e-mail todo dia** até marcar como spam — e aí o domínio de envio inteiro paga o preço. A regra e o cooldown vivem em `endodirect_reengajamento_alvos(p_dias, p_cooldown)`; o envio grava a data em `trial_emails[email].reengajamento`.
 

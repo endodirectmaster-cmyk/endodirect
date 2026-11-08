@@ -8,6 +8,13 @@ atualizado: 2026-11-08
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **⏳ AVISO DE FIM DE DEGUSTAÇÃO: FUNCIONA; EX-ASSINANTE SAIU DO PÚBLICO (2026-11-08).** Pergunta do professor: *"A automação de aviso de vencimento do modo degustação está funcionando?"*.
+  - **Está funcionando.** O cron roda todo dia (~10:46 UTC). Todos os `POST /emails/batch` do Resend de 21/10 a 08/11 voltaram 200, e o aviso de 08/11 consta como entregue.
+  - **Cobertura:** nos últimos 30 dias, 11 de 11 alunos que passaram do 7º dia sem assinar receberam o aviso e o convite, e o único na janela do 5º/6º dia recebeu o aviso hoje. Os 5 assinantes desse período ficaram de fora, como devem. Desde 01/07: 87 avisos e 104 convites.
+  - **Quem ficou sem o aviso:** 13 degustações de junho, que começaram antes de a automação existir (01/07) e só receberam o convite. Mais 2 que assinaram no 1º dia.
+  - 🧨 **Defeito achado e corrigido:** a RPC só excluía plano **ativo**, então o ex-assinante (plano vencido ou recorrente em atraso) recebia "sua degustação de 7 dias terminou". Aconteceu duas vezes, e 41 pagantes estavam na fila. Agora quem já teve acesso pago, em qualquer status, sai do funil da degustação.
+    - Aplicado via `apply_migration` (`degustacao_sem_ex_assinante`). Conferido antes e depois: o aviso foi idêntico (mesmo hash), o convite caiu de 97 para 94 (os 3 ex-pagantes, que já o tinham recebido) e não há EXECUTE público.
+    - Ver [[Newsletter e Radar]].
 - **📑 CAPÍTULOS E RESUMOS DAS AULAS DA EMC LIDOS DOS SLIDES (2026-11-08).** Pedido do professor, com print da 1ª aula: *"Em todas as aulas de educação médica continuada, deixa desse modo também"*. Depois ele disse *"Autorizo acesso ao bunny"*.
   - **Rede:** acrescentei ao ambiente Default os hosts exatos do Bunny (`vz-0161a494-b29.b-cdn.net`, `iframe.mediadelivery.net`, `video.bunnycdn.com`).
     - O CDN só responde com `Referer` do site (403 sem ele). O navegador do aluno já manda esse cabeçalho, então o resumo automático lê o HLS normalmente.
