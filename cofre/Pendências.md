@@ -1,13 +1,14 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-07
+atualizado: 2026-11-08
 ---
 
 # Pendências
 
-## 📝 Resumos da EMC (07/11)
-- [ ] O professor tem de conferir se a biblioteca do Bunny gera a transcrição automática. Com ela ligada, os resumos automáticos seguem a fala da aula.
-- [ ] Resultado final do SMARTEST: incluir no resumo da aula da metformina (`adm_cursos[107]`) quando estiver publicado, ou quando o professor passar o resultado.
+## 📝 Resumos da EMC (07/11, revisto em 08/11)
+- [x] Resultado do SMARTEST: entrou no resumo da aula da metformina, a partir do slide da aula (Uppsala, 2026). Quando sair no PubMed, conferir os números.
+- [ ] O Bunny não tem legenda nas aulas (conferido em 08/11). Se o professor ligar a transcrição automática, o resumo automático passa a seguir a fala. Sem ela, a leitura dos slides é feita na sessão (ver Decisões, 08/11).
+- [ ] Toda aula nova da EMC: ler os slides e gravar capítulos e resumo fiel. O automático do painel é só o primeiro rascunho.
 
 ## 🎬 Videoaulas e o plano Standard (07/11): decisão do professor
 
