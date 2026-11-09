@@ -33,10 +33,10 @@ function extrai(nome) {
   return '';
 }
 
-const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML', 'dirVideoLiberado', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML', 'dirVideosHTML'];
+const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML', 'dirVideoLiberado', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML', 'dirVideoItemHTML', 'dirVideosHTML'];
 const ctx = { String, Math, Array };
 vm.createContext(ctx);
-vm.runInContext(NOMES.map(extrai).join('\n'), ctx);
+vm.runInContext(NOMES.map(extrai).join('\n') + "\nvar refVideoAberto='';", ctx);
 NOMES.forEach((f) => ok(f + ' foi extraída', typeof ctx[f] === 'function'));
 
 // ---- 1. o campo videos ---------------------------------------------------------------------

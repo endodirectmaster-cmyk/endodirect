@@ -149,6 +149,28 @@ Coloca isso como uma skill sua."*
   Agrupar pela 1ª linha (como funcionava na EMC) juntava a aula inteira num slide só. Agora
   o cabeçalho são as duas primeiras linhas com texto de verdade, comparadas por semelhança.
 
+## Uma videoaula por vez: lista de escolha (09/11/2026)
+
+Pedido do professor, com print da aba Videoaulas mostrando todos os vídeos abertos: *"Não deixar
+todas as videoaulas abertas de uma vez só, nos resumos, nem tampouco em nenhum curso. (...)
+deixa uma subjanela onde ele vai escolher qual a videoaula que ele quer assistir. Então, por
+exemplo, ele clica em tirzepatida, então vai abrir a videoaula e, claro, (...) embaixo já os
+tópicos, a minutagem (...) tanto para a versão de computador, mas também para a versão mobile"*.
+
+- Capítulo com 2 ou mais vídeos mostra a **lista**: ▶, título, duração e quantidade de
+  tópicos (`dirVideoItemHTML`). Nenhum player é carregado enquanto a lista aparece.
+- Ao tocar num item, só aquele vídeo abre, com "Nesta aula" embaixo e o botão
+  "← Videoaulas do capítulo (N)" em cima. O botão leva de volta à lista, como na aula da EMC.
+  A tela rola até o topo do que abriu.
+- Capítulo com um vídeo só abre o vídeo direto, porque não há o que escolher. A degustação
+  também abre direto, porque ela só recebe o vídeo liberado.
+- O estado é `refVideoAberto`, que guarda o src do vídeo aberto. Ele volta a vazio ao trocar
+  de capítulo, de área, de aba (Resumo, Flashcards…) ou de tipo, e ao entrar em
+  Resumos/Diretrizes.
+- Os **Cursos** já funcionavam assim desde 07/11: lista de aulas, e a aula aberta esconde a
+  lista. O painel do professor continua mostrando todos os vídeos do capítulo, porque ali é
+  onde se editam título, capítulos e degustação.
+
 ## Pontos de atenção
 
 - Vídeo grande no Storage gasta banda de saída do Supabase. Se as videoaulas crescerem muito,

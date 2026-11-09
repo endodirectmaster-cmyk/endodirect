@@ -33,34 +33,71 @@ function extrai(nome) {
 }
 
 // ---- 1. a tela do aluno ----------------------------------------------------------------
+// Desde 09/11/2026 (pedido do professor: "Não deixar todas as videoaulas abertas de uma vez
+// só (...) deixa uma subjanela onde ele vai escolher"), capítulo com 2+ vídeos mostra a LISTA,
+// e só o escolhido (refVideoAberto = src) vira player, com os tópicos embaixo.
 const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML',
-  'dirVideoLiberado', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML', 'dirVideosHTML',
+  'dirVideoLiberado', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML', 'dirVideoItemHTML', 'dirVideosHTML',
   'capSegundos', 'capsParse', 'capsTexto', 'admRefVideoAcao'];
 const avisos = [];
 const ctx = { avisos };
 vm.createContext(ctx);
 vm.runInContext(NOMES.map(extrai).join('\n')
-  + '\nvar diretrizes=[];var salvou=0;function persistDiretrizes(){salvou++;}function rerenderRef(){}'
+  + "\nvar diretrizes=[];var salvou=0;var refVideoAberto='';function persistDiretrizes(){salvou++;}function rerenderRef(){}"
   + 'function notify(m,t){avisos.push([t,m]);}function confirm(){return true;}'
   + 'var __campos={};var document={getElementById:function(id){return __campos[id]?{value:__campos[id]}:null;}};', ctx);
 NOMES.forEach((f) => ok(f + ' foi extraída', vm.runInContext('typeof ' + f, ctx) === 'function'));
 const run = (c) => vm.runInContext(c, ctx);
 
 const MP4 = 'https://auth.endodirect.com.br/storage/v1/object/public/endodirect-assets/resumos/videos/x/lpa.mp4';
-run(`var cap={videos:[{titulo:'Lipoproteína (a)',src:'${MP4}',dur:849,caps:[{t:111,titulo:'Por que importa'},{t:44,titulo:'O que é a Lp(a)'},{t:771,titulo:'Mensagens para a prática'}]},{titulo:'Sem capítulos',src:'${MP4}'},{titulo:'YouTube',src:'https://www.youtube.com/watch?v=abcdefghijk',caps:[{t:10,titulo:'X'}]}]};`);
-const html = run('dirVideosHTML(cap,false)');
-const cartoes = html.split('<div class="dir-video">').slice(1);
-ok('três cartões', cartoes.length === 3, String(cartoes.length));
-ok('cartão com capítulos: bloco "Nesta aula" dentro do cartão do vídeo', /<div class="aula-caps"><div class="aula-caps-lbl">Nesta aula<\/div>/.test(cartoes[0]));
+const MP4B = MP4.replace('lpa', 'outro');
+const YT = 'https://www.youtube.com/watch?v=abcdefghijk';
+run(`var cap={videos:[{titulo:'Lipoproteína (a)',src:'${MP4}',dur:849,caps:[{t:111,titulo:'Por que importa'},{t:44,titulo:'O que é a Lp(a)'},{t:771,titulo:'Mensagens para a prática'}]},{titulo:'Sem capítulos',src:'${MP4B}'},{titulo:'YouTube',src:'${YT}',caps:[{t:10,titulo:'X'}]}]};`);
+
+// 1a. nada aberto: a lista
+const lista = run(`refVideoAberto='';dirVideosHTML(cap,false)`);
+ok('lista: nenhum player carregado de uma vez', lista.indexOf('<video') < 0 && lista.indexOf('<iframe') < 0, lista);
+ok('lista: um item por vídeo, com o src para abrir', (lista.match(/data-dir-vidabre="/g) || []).length === 3 && lista.indexOf(`data-dir-vidabre="${MP4}"`) > 0);
+ok('lista: rótulo com a quantidade', /<div class="dir-vid-lbl">3 videoaulas · escolha uma para assistir<\/div>/.test(lista));
+ok('lista: duração e quantidade de tópicos no item', /<span class="dir-vid-nome">Lipoproteína \(a\)<\/span><span class="dir-vid-meta">14:09 · 3 tópicos<\/span>/.test(lista), lista);
+ok('lista: sem duração nem tópicos, o item fica só com o nome', /<span class="dir-vid-nome">Sem capítulos<\/span><\/span>/.test(lista));
+ok('lista: YouTube não anuncia tópicos que não vai mostrar', !/YouTube<\/span><span class="dir-vid-meta">/.test(lista));
+ok('lista: src com aspas sai escapado', run(`dirVideoItemHTML({titulo:'A',src:'https://x.com/a.mp4" onclick="x'})`).indexOf('" onclick=') < 0);
+
+// 1b. escolhido: só ele, com os tópicos e a volta
+const aberto = run(`refVideoAberto='${MP4}';dirVideosHTML(cap,false)`);
+const cartoes = aberto.split('<div class="dir-video">').slice(1);
+ok('aberto: um só player, o escolhido', cartoes.length === 1 && (aberto.match(/<video/g) || []).length === 1 && aberto.indexOf('Sem capítulos') < 0, aberto);
+ok('aberto: a volta à lista em cima, com a quantidade', /^<div class="dir-videos"><button type="button" class="dir-back dir-vid-volta" data-dir-vidvolta>← Videoaulas do capítulo \(3\)<\/button><div class="dir-video">/.test(aberto));
+ok('aberto: bloco "Nesta aula" dentro do cartão do vídeo', /<div class="aula-caps"><div class="aula-caps-lbl">Nesta aula<\/div>/.test(cartoes[0]));
 const ordem = [...cartoes[0].matchAll(/data-cap="(\d+)"/g)].map((m) => +m[1]);
 ok('capítulos em ordem de tempo', JSON.stringify(ordem) === '[44,111,771]', JSON.stringify(ordem));
 ok('minuto no formato da EMC', /<span class="aula-cap-h">00:44<\/span>/.test(cartoes[0]) && /<span class="aula-cap-h">12:51<\/span>/.test(cartoes[0]));
 ok('número do tópico', /<span class="aula-cap-n">01<\/span><span class="aula-cap-t">O que é a Lp\(a\)<\/span>/.test(cartoes[0]));
-ok('vídeo sem capítulos não ganha bloco vazio', cartoes[1].indexOf('aula-caps') < 0);
-ok('YouTube não mostra capítulos (o iframe não deixa saltar)', cartoes[2].indexOf('aula-caps') < 0);
+ok('vídeo sem capítulos não ganha bloco vazio', run(`refVideoAberto='${MP4B}';dirVideosHTML(cap,false)`).indexOf('aula-caps') < 0);
+ok('YouTube não mostra capítulos (o iframe não deixa saltar)', run(`refVideoAberto='${YT}';dirVideosHTML(cap,false)`).indexOf('aula-caps') < 0);
+ok('src aberto que não é deste capítulo: mostra a lista', run(`refVideoAberto='https://x.com/de-outro-capitulo.mp4';dirVideosHTML(cap,false)`).indexOf('<video') < 0);
 ok('mesma função de capítulos da EMC (aulaCapsHTML)', /return aulaCapsHTML\(v\);/.test(extrai('dirVideoCapsHTML')));
-ok('degustação: o vídeo liberado leva os capítulos junto',
-  /Nesta aula/.test(run(`dirVideosHTML({videos:[{titulo:'A',src:'${MP4}',degustacao:true,caps:[{t:5,titulo:'Início'}]}],videos_total:3},true)`)));
+
+// 1c. um vídeo só: não há o que escolher
+const um = run(`refVideoAberto='';dirVideosHTML({videos:[cap.videos[0]]},false)`);
+ok('um vídeo só: abre direto, sem lista e sem volta', (um.match(/<video/g) || []).length === 1 && um.indexOf('data-dir-vidabre') < 0 && um.indexOf('data-dir-vidvolta') < 0 && /Nesta aula/.test(um));
+ok('degustação: o vídeo liberado abre direto, com os capítulos',
+  /Nesta aula/.test(run(`refVideoAberto='';dirVideosHTML({videos:[{titulo:'A',src:'${MP4}',degustacao:true,caps:[{t:5,titulo:'Início'}]}],videos_total:3},true)`)));
+
+// 1d. os toques que abrem, voltam e zeram
+const bind = extrai('bindDiretrizesView');
+ok('tocar no item abre aquele vídeo e redesenha', /\[data-dir-vidabre\][\s\S]{0,120}refVideoAberto=b\.getAttribute\('data-dir-vidabre'\)\|\|'';renderDiretrizesInto\(root\);_vidRola\('\[data-dir-vidvolta\]'\);/.test(bind));
+ok('a volta devolve a lista', /vvolta\.addEventListener\('click',function\(\)\{refVideoAberto='';renderDiretrizesInto\(root\);_vidRola\('\.dir-vid-lista'\);\}\)/.test(bind));
+['data-dir-sub', 'data-dir-tema', 'data-dir-fmt', 'data-dir-tipo'].forEach((a) => {
+  const i = bind.indexOf("querySelectorAll('[" + a + "]')");
+  ok('trocar de ' + a.replace('data-dir-', '') + ' fecha o vídeo aberto', i > 0 && bind.slice(i, i + 260).indexOf("refVideoAberto='';") > 0);
+});
+ok('voltar à grade ou aos temas fecha o vídeo aberto',
+  /back\.addEventListener\('click',function\(\)\{refSubSel='';refTemaSel='';refTipoSel='capitulo';refVideoAberto='';/.test(bind)
+  && /tback\.addEventListener\('click',function\(\)\{refTemaSel='';refVideoAberto='';/.test(bind));
+ok('entrar em Resumos/Diretrizes começa pela lista', (SRC.match(/refTipoSel='capitulo';refFlashOpen=\{\};refVideoAberto='';/g) || []).length >= 2);
+ok('CSS: lista e volta descontam o topo fixo ao rolar', /\.dir-vid-lista\{[^}]*scroll-margin-top:90px/.test(SRC) && /\.dir-vid-volta\{[^}]*scroll-margin-top:90px/.test(SRC));
 
 // ---- 2. o toque e o tópico aceso ------------------------------------------------------------
 const cliq = SRC.slice(SRC.indexOf("document.addEventListener('click',function(e){\n  var t=e.target;"), SRC.indexOf('// questões', SRC.indexOf("document.addEventListener('click',function(e){\n  var t=e.target;")));

@@ -40,12 +40,12 @@ function extrai(nome) {
 
 const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML',
   'dirVideoLiberado', 'dirVideosHTML', 'dirVideoAmostraDaSub', 'separarSoVideo', 'dirTipoOf', 'dirIsRascunho', 'dirTemaOf',
-  'admVideoLiberadoDaSub', 'admRefVideoAcao', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML'];
+  'admVideoLiberadoDaSub', 'admRefVideoAcao', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML', 'dirVideoItemHTML'];
 const avisos = [];
 const ctx = { String, Math, Array, Object, avisos };
 vm.createContext(ctx);
 vm.runInContext(NOMES.map(extrai).join('\n')
-  + '\nvar diretrizes=[];var dirVideosAmostra=[];var salvou=0;'
+  + "\nvar diretrizes=[];var dirVideosAmostra=[];var salvou=0;var refVideoAberto='';"
   + 'function persistDiretrizes(){salvou++;}function rerenderRef(){}function notify(m){avisos.push(m);}function confirm(){return true;}'
   + 'this.__set=function(d,a){diretrizes=d;dirVideosAmostra=a||[];};this.__get=function(){return {diretrizes:diretrizes,amostra:dirVideosAmostra,salvou:salvou};};', ctx);
 NOMES.forEach((f) => ok(f + ' foi extraída', typeof ctx[f] === 'function'));
@@ -60,7 +60,8 @@ const V = (t, deg) => Object.assign({ titulo: t, src: MP4(t.replace(/\W+/g, '-')
   ok('degustação: só o vídeo liberado vira player', (html.match(/class="dir-video"/g) || []).length === 1 && html.indexOf('Liberado') > 0 && html.indexOf('Outro A') < 0, html);
   ok('degustação: avisa os outros 2, para assinantes', /Mais 2 videoaulas neste capítulo, para assinantes/.test(html), html);
   const assin = ctx.dirVideosHTML(cap, false);
-  ok('assinante: os 3 vídeos, sem aviso', (assin.match(/class="dir-video"/g) || []).length === 3 && assin.indexOf('para assinantes') < 0);
+  // Desde 09/11/2026 o assinante escolhe numa lista (um vídeo aberto por vez).
+  ok('assinante: os 3 vídeos na lista de escolha, sem aviso', (assin.match(/data-dir-vidabre=/g) || []).length === 3 && assin.indexOf('<video') < 0 && assin.indexOf('para assinantes') < 0, assin);
   // Como chega do servidor: só o liberado em `videos`, e o total à parte.
   const doServidor = { tema: 'T', videos: [V('Liberado', true)], videos_total: 4 };
   ok('degustação: usa o videos_total do servidor', /Mais 3 videoaulas/.test(ctx.dirVideosHTML(doServidor, true)));

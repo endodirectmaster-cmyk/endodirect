@@ -1664,6 +1664,17 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .dir-video-t{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.35}
 .dir-video-dur{font-size:.7rem;color:var(--t3);font-variant-numeric:tabular-nums}
 .dir-video .aula-caps{margin:0;padding:.15rem .8rem .8rem}
+.dir-vid-lista{display:flex;flex-direction:column;gap:.45rem;scroll-margin-top:90px}
+.dir-vid-lbl{font-size:.66rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:.1rem;padding-right:2rem}
+.dir-vid-item{display:flex;align-items:center;gap:.8rem;width:100%;text-align:left;padding:.75rem .9rem;border:1px solid var(--bd);border-radius:var(--r);background:var(--surface);color:var(--tx);font-family:var(--font);cursor:pointer;transition:border-color .15s,background .15s}
+.dir-vid-item:hover{border-color:var(--gold);background:var(--s2)}
+.dir-vid-item:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.dir-vid-play{width:2.1rem;height:2.1rem;border-radius:50%;background:var(--gold-l);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0}
+.dir-vid-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:.15rem}
+.dir-vid-nome{font-size:.88rem;font-weight:700;line-height:1.35}
+.dir-vid-meta{font-size:.72rem;color:var(--t3);font-variant-numeric:tabular-nums}
+.dir-vid-seta{font-size:1.25rem;line-height:1;color:var(--t3);flex-shrink:0}
+.dir-vid-volta{margin-bottom:.6rem;scroll-margin-top:90px;max-width:calc(100% - 2rem)}
 .adm-vid-caps{display:grid;gap:.4rem;padding:.6rem .8rem .75rem;border-top:1px solid var(--bd)}
 .adm-vid-caps label{font-size:.7rem;font-weight:700;color:var(--t2)}
 .adm-vid-caps textarea{width:100%;min-height:6.5rem;font-family:var(--font);font-size:.78rem;line-height:1.5;resize:vertical}
@@ -14669,6 +14680,7 @@ var refFormat='resumo';          // resumo | flash | mapa | video
 var refVideoSoLiberado=false;     // degustação: na aba Videoaulas, só o vídeo liberado (ver dirVideosHTML)
 var refFlashOpen={};              // estado de flip dos flashcards (chave "i-j")
 var refFlashIdx={};               // card atual por diretriz (um flashcard por vez), chave "i"
+var refVideoAberto='';            // src da videoaula aberta na aba Videoaulas ('' = a lista de escolha)
 var refPrivadoMode=false;         // false = aba Diretrizes (públicas); true = aba Resumos (privados/assinantes)
 // Tipo do item dentro dos Resumos: 'capitulo' (padrão, conteúdo por assunto) |
 // 'artigo' (resumo estruturado de um trial). Itens antigos não têm o campo →
@@ -15223,12 +15235,32 @@ function dirVideoLiberado(v){return !!(v&&v.degustacao===true);}
 // saem da leitura dos slides (skill capitulos-videoaula) ou do campo no painel.
 // Só em <video>: YouTube e Vimeo tocam em iframe, e daqui não dá para saltar o tempo deles.
 function dirVideoCapsHTML(v){var src=String((v&&v.src)||'').trim();if(ytId(src)||vimeoId(src)||!safeHttpUrl(src))return '';return aulaCapsHTML(v);}
+// UMA VIDEOAULA POR VEZ (09/11/2026). Pedido do professor, com o print da aba aberta: "Não
+// deixar todas as videoaulas abertas de uma vez só (...) deixa uma subjanela onde ele vai
+// escolher qual a videoaula que ele quer assistir. (...) ele clica em tirzepatida, então vai
+// abrir a videoaula e, claro, (...) embaixo já os tópicos". Capítulo com 2+ vídeos mostra a
+// LISTA; o escolhido abre sozinho, com a volta à lista em cima (como a aula da EMC). Com um
+// vídeo só não há o que escolher: ele abre direto. Quem guarda o aberto é `refVideoAberto`
+// (o src), zerado ao trocar de capítulo, de aba ou de área.
+function dirVideoItemHTML(v){
+  var n=dirVideoCapsHTML(v)?aulaCaps(v).length:0;
+  var meta=[v.dur?dirVideoDur(v.dur):'',n?n+' tópicos':''].filter(Boolean).join(' · ');
+  return '<button type="button" class="dir-vid-item" data-dir-vidabre="'+esc(v.src)+'">'
+    +'<span class="dir-vid-play" aria-hidden="true">▶</span>'
+    +'<span class="dir-vid-txt"><span class="dir-vid-nome">'+esc(v.titulo||'Videoaula')+'</span>'+(meta?'<span class="dir-vid-meta">'+meta+'</span>':'')+'</span>'
+    +'<span class="dir-vid-seta" aria-hidden="true">›</span></button>';
+}
 function dirVideosHTML(d,soLiberado){
   var todos=dirVideosDe(d),vs=soLiberado?todos.filter(dirVideoLiberado):todos;
   var resto=soLiberado?Math.max(+(d&&d.videos_total)||0,todos.length)-vs.length:0;
   var mais=resto>0?'<div class="dir-deg-note">🔒 '+(vs.length?'Mais '+resto:resto)+' videoaula'+(resto>1?'s':'')+' neste capítulo, para assinantes.</div>':'';
   if(!vs.length)return mais||'<div class="dir-empty-fmt">Videoaulas ainda não disponíveis.</div>';
-  return '<div class="dir-videos">'+vs.map(function(v){return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)+dirVideoCapsHTML(v)+'</div>';}).join('')+'</div>'+mais;
+  var aberto=vs.length===1?vs[0]:vs.filter(function(v){return v.src===refVideoAberto;})[0];
+  if(aberto)return '<div class="dir-videos">'
+    +(vs.length>1?'<button type="button" class="dir-back dir-vid-volta" data-dir-vidvolta>← Videoaulas do capítulo ('+vs.length+')</button>':'')
+    +'<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(aberto)+'</div>'+dirVideoCabHTML(aberto)+dirVideoCapsHTML(aberto)+'</div></div>'+mais;
+  return '<div class="dir-vid-lista"><div class="dir-vid-lbl">'+vs.length+' videoaulas · escolha uma para assistir</div>'
+    +vs.map(dirVideoItemHTML).join('')+'</div>'+mais;
 }
 // A videoaula liberada de uma subespecialidade, para a degustação: procura nos
 // capítulos que ela recebeu e nos itens só de vídeo. {v, tema} ou null.
@@ -15723,7 +15755,7 @@ function bindDiretrizesView(root){
   root.querySelectorAll('[data-dir-fmtlock]').forEach(function(b){b.addEventListener('click',_resuUpsell);});
   var _assb=root.querySelector('[data-dir-assine]');if(_assb)_assb.addEventListener('click',_resuUpsell);
   // Alternador Capítulos × Artigos (Resumos): troca o tipo e volta para a grade de temas.
-  root.querySelectorAll('[data-dir-tipo]').forEach(function(b){b.addEventListener('click',function(){refTipoSel=b.dataset.dirTipo;refTemaSel='';refFlashOpen={};refFlashIdx={};renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-tipo]').forEach(function(b){b.addEventListener('click',function(){refTipoSel=b.dataset.dirTipo;refTemaSel='';refFlashOpen={};refFlashIdx={};refVideoAberto='';renderDiretrizesInto(root);});});
   // "Tentar de novo" quando a carga dos Resumos falhou (ver carregarResumos).
   var _rtry=root.querySelector('#btn-resumos-retry');
   if(_rtry)_rtry.addEventListener('click',function(){
@@ -15731,13 +15763,20 @@ function bindDiretrizesView(root){
     recarregarResumos().then(function(){renderDiretrizesInto(root);});
   });
   // Entrar numa subespecialidade sempre começa pelos capítulos.
-  root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refTipoSel='capitulo';refFlashOpen={};renderDiretrizesInto(root);});});
-  root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
   var back=root.querySelector('[data-dir-back]');
-  if(back)back.addEventListener('click',function(){refSubSel='';refTemaSel='';refTipoSel='capitulo';renderDiretrizesInto(root);});
+  if(back)back.addEventListener('click',function(){refSubSel='';refTemaSel='';refTipoSel='capitulo';refVideoAberto='';renderDiretrizesInto(root);});
   var tback=root.querySelector('[data-dir-temaback]');
-  if(tback)tback.addEventListener('click',function(){refTemaSel='';renderDiretrizesInto(root);});
-  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.dirFmt;refFlashOpen={};renderDiretrizesInto(root);});});
+  if(tback)tback.addEventListener('click',function(){refTemaSel='';refVideoAberto='';renderDiretrizesInto(root);});
+  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.dirFmt;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
+  // Videoaulas: tocar na lista abre só aquela; a volta devolve a lista (ver dirVideosHTML).
+  // Depois de redesenhar, rola até o topo do que abriu: quem escolheu o último da lista não
+  // pode ficar olhando para o meio dos tópicos.
+  var _vidRola=function(sel){var el=root.querySelector(sel);if(el&&el.scrollIntoView){try{el.scrollIntoView({block:'start',behavior:'smooth'});}catch(e){el.scrollIntoView();}}};
+  root.querySelectorAll('[data-dir-vidabre]').forEach(function(b){b.addEventListener('click',function(){refVideoAberto=b.getAttribute('data-dir-vidabre')||'';renderDiretrizesInto(root);_vidRola('[data-dir-vidvolta]');});});
+  var vvolta=root.querySelector('[data-dir-vidvolta]');
+  if(vvolta)vvolta.addEventListener('click',function(){refVideoAberto='';renderDiretrizesInto(root);_vidRola('.dir-vid-lista');});
   // Flip 3D: alterna a classe direto no elemento (anima sem re-renderizar).
   root.querySelectorAll('[data-dir-flash]').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('flipped');});});
   // Navegação de flashcards (um por vez): avança/volta o card da diretriz.
@@ -15758,7 +15797,7 @@ function renderDiretrizesInto(root){root.innerHTML=diretrizesViewHTML();bindDire
 function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
   refPrivadoMode=false; // aba Diretrizes = itens públicos
-  refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={}; // sempre abrir na grade de subespecialidades
+  refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto=''; // sempre abrir na grade de subespecialidades
   if(DIRETRIZES_PUBLICADO){renderDiretrizesInto(el);return;}
   el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
@@ -15770,7 +15809,7 @@ function renderRef(){
 function renderResu(){
   var el=document.getElementById('resu-body'); if(!el)return;
   refPrivadoMode=true;
-  refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={};
+  refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto='';
   renderDiretrizesInto(el);
 }
 // Ordem de prioridade dos periódicos no mural (pedido do Rodolpho, 2026-07-04):
