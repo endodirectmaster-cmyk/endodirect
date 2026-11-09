@@ -1663,6 +1663,11 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .dir-video-cab{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem .8rem;flex-wrap:wrap}
 .dir-video-t{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.35}
 .dir-video-dur{font-size:.7rem;color:var(--t3);font-variant-numeric:tabular-nums}
+.dir-video .aula-caps{margin:0;padding:.15rem .8rem .8rem}
+.adm-vid-caps{display:grid;gap:.4rem;padding:.6rem .8rem .75rem;border-top:1px solid var(--bd)}
+.adm-vid-caps label{font-size:.7rem;font-weight:700;color:var(--t2)}
+.adm-vid-caps textarea{width:100%;min-height:6.5rem;font-family:var(--font);font-size:.78rem;line-height:1.5;resize:vertical}
+.adm-vid-caps-pe{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:.7rem;color:var(--t3)}
 .adm-vid-ed{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;padding:.5rem .8rem .7rem;border-top:1px solid var(--bd)}
 .adm-vid-ed input[type=text]{flex:1 1 14rem;min-width:0}
 .adm-vid-form{border:1px dashed var(--bd2);border-radius:var(--r);padding:.85rem;display:grid;gap:.6rem;margin-top:1rem}
@@ -12771,6 +12776,12 @@ function renderAulaPlayer(){
   var pb=document.getElementById('aula-pdf');if(pb)pb.addEventListener('click',function(){exportAulaPDF(c);});
   if(curAulaTab==='quest')renderAulaQuest(c);
 }
+// O capítulo em curso acende também nas videoaulas dos Resumos. `timeupdate` não
+// borbulha: escuta na captura, uma vez só, para qualquer cartão que venha a ser desenhado.
+document.addEventListener('timeupdate',function(e){
+  var v=e.target;if(!v||!v.closest)return;
+  var b=v.closest('.dir-video');if(b&&b.querySelector('.aula-cap'))aulaCapAtivo(b,v.currentTime);
+},true);
 // ── CAPÍTULOS E PLAYER DA AULA ────────────────────────────────────────────────
 // 🧨 104 das 106 aulas são HLS (.m3u8 do Bunny) e o `playerEmbed` mandava o
 // .m3u8 direto para um <video>. NENHUM navegador além do Safari toca isso:
@@ -15205,12 +15216,19 @@ function dirVideoCabHTML(v){
 // (`so_video`), que separarSoVideo tira da lista de capítulos. O filtro daqui é a
 // segunda barreira.
 function dirVideoLiberado(v){return !!(v&&v.degustacao===true);}
+// CAPÍTULOS DA VIDEOAULA (09/11/2026). Pedido do professor: "Nas videoaulas que estão
+// contidas nos resumos, deixa do modo igual a da educação médica continuada, com a minutagem
+// em tópicos". Mesmo `caps` [{t,titulo}] das aulas da EMC e o mesmo bloco "Nesta aula"
+// (aulaCapsHTML); o clique salta o vídeo do mesmo cartão (ver o clique global). Os capítulos
+// saem da leitura dos slides (skill capitulos-videoaula) ou do campo no painel.
+// Só em <video>: YouTube e Vimeo tocam em iframe, e daqui não dá para saltar o tempo deles.
+function dirVideoCapsHTML(v){var src=String((v&&v.src)||'').trim();if(ytId(src)||vimeoId(src)||!safeHttpUrl(src))return '';return aulaCapsHTML(v);}
 function dirVideosHTML(d,soLiberado){
   var todos=dirVideosDe(d),vs=soLiberado?todos.filter(dirVideoLiberado):todos;
   var resto=soLiberado?Math.max(+(d&&d.videos_total)||0,todos.length)-vs.length:0;
   var mais=resto>0?'<div class="dir-deg-note">🔒 '+(vs.length?'Mais '+resto:resto)+' videoaula'+(resto>1?'s':'')+' neste capítulo, para assinantes.</div>':'';
   if(!vs.length)return mais||'<div class="dir-empty-fmt">Videoaulas ainda não disponíveis.</div>';
-  return '<div class="dir-videos">'+vs.map(function(v){return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)+'</div>';}).join('')+'</div>'+mais;
+  return '<div class="dir-videos">'+vs.map(function(v){return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)+dirVideoCapsHTML(v)+'</div>';}).join('')+'</div>'+mais;
 }
 // A videoaula liberada de uma subespecialidade, para a degustação: procura nos
 // capítulos que ela recebeu e nos itens só de vídeo. {v, tema} ou null.
@@ -19579,14 +19597,18 @@ function admRefVideoHTML(d,i){
          :('Nenhuma marcada em '+esc(sub)+' ainda: a degustação não vê vídeo desta área.'))
     +'</div>';
   var lista=vs.map(function(v,j){
-    return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)
+    return '<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(v)+'</div>'+dirVideoCabHTML(v)+dirVideoCapsHTML(v)
       +'<div class="adm-vid-ed"><input type="text" id="adm-vid-t-'+i+'-'+j+'" value="'+esc(v.titulo||'')+'" aria-label="Título da videoaula">'
       +(v.degustacao?'<span class="adm-vid-selo">🎁 Liberada na degustação</span>':'')
       +'<button class="btn btn-outline btn-sm'+(v.degustacao?' on-deg':'')+'" data-advid-deg="'+i+'-'+j+'" title="'+(v.degustacao?'Tirar da degustação':'Liberar esta videoaula para quem está no teste grátis (uma por subespecialidade)')+'">'+(v.degustacao?'Tirar da degustação':'🎁 Liberar na degustação')+'</button>'
       +'<button class="btn btn-primary btn-sm" data-advid-save="'+i+'-'+j+'">💾 Salvar título</button>'
       +'<button class="btn btn-outline btn-sm" data-advid-mv="'+i+'-'+j+'-up"'+(j===0?' disabled':'')+' title="Subir">↑</button>'
       +'<button class="btn btn-outline btn-sm" data-advid-mv="'+i+'-'+j+'-down"'+(j===vs.length-1?' disabled':'')+' title="Descer">↓</button>'
-      +'<button class="btn btn-outline btn-sm" data-advid-del="'+i+'-'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';
+      +'<button class="btn btn-outline btn-sm" data-advid-del="'+i+'-'+j+'" style="color:var(--red);border-color:var(--red)">🗑 Excluir</button></div>'
+      +'<div class="adm-vid-caps"><label for="adm-vid-caps-'+i+'-'+j+'">Capítulos (“Nesta aula”): um por linha, minuto e título</label>'
+      +'<textarea id="adm-vid-caps-'+i+'-'+j+'" placeholder="00:44 O que é a lipoproteína(a)&#10;01:52 Por que importa">'+esc(capsTexto(v.caps))+'</textarea>'
+      +'<div class="adm-vid-caps-pe"><button class="btn btn-outline btn-sm" data-advid-caps="'+i+'-'+j+'">💾 Salvar capítulos</button>'
+      +'<span>'+(aulaCaps(v).length?aulaCaps(v).length+' capítulos':'Sem capítulos ainda: o Claude lê os slides do vídeo e preenche na madrugada seguinte.')+'</span></div></div></div>';
   }).join('');
   return '<div class="dir-card">'
     +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.7rem;line-height:1.5">Vídeos curtos do capítulo (até 15 min cada). Para os assinantes, a aba <b>🎬 Videoaulas</b> só aparece quando o capítulo tem pelo menos um vídeo.</div>'
@@ -19653,6 +19675,12 @@ function admRefVideoAcao(tipo,arg){
       o.videos.forEach(function(x){if(x&&x.degustacao)delete x.degustacao;});
     });
     alvo.degustacao=true;persistDiretrizes();notify('Liberada na degustação de '+sub+'. ✓','ok');rerenderRef();return;
+  }
+  if(tipo==='caps'){
+    var txt=((document.getElementById('adm-vid-caps-'+i+'-'+j)||{}).value||'').trim(),caps=capsParse(txt);
+    if(txt&&!caps.length){notify('Não reconheci nenhum capítulo. Use uma linha por capítulo: "02:45 Título".','err');return;}
+    if(caps.length)d.videos[j].caps=caps;else delete d.videos[j].caps;
+    persistDiretrizes();notify(caps.length?caps.length+' capítulos salvos. ✓':'Capítulos retirados.','ok');rerenderRef();return;
   }
   if(tipo==='del'){
     if(!confirm('Excluir a videoaula "'+(d.videos[j].titulo||'')+'" deste capítulo?'))return;
@@ -21303,6 +21331,7 @@ function bindAdmSec(sec){
     main.querySelectorAll('[data-advid-del]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('del',b.dataset.advidDel);});});
     main.querySelectorAll('[data-advid-mv]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('mv',b.dataset.advidMv);});});
     main.querySelectorAll('[data-advid-deg]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('deg',b.dataset.advidDeg);});});
+    main.querySelectorAll('[data-advid-caps]').forEach(function(b){b.addEventListener('click',function(){admRefVideoAcao('caps',b.dataset.advidCaps);});});
     montarVideosHls(main);
     main.querySelectorAll('[data-refmapa-addnode]').forEach(function(b){b.addEventListener('click',function(){admRefMapaAddNode(parseInt(b.dataset.refmapaAddnode));});});
     main.querySelectorAll('[data-refmapa-addchild]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.refmapaAddchild.split('-');admRefMapaAddChild(parseInt(p[0]),parseInt(p[1]));});});
@@ -21675,6 +21704,10 @@ function initAll(){
 document.addEventListener('click',function(e){
   var t=e.target;
   var c=function(sel){return t.closest(sel);};
+  // capítulo de uma videoaula dos Resumos: salta o vídeo do MESMO cartão (um capítulo
+  // pode ter vários vídeos, cada um com os seus capítulos).
+  var dvc=c('.dir-video .aula-cap');
+  if(dvc){var dvb=dvc.closest('.dir-video'),dvt=parseFloat(dvc.getAttribute('data-cap'))||0;aulaSeek(dvb&&dvb.querySelector('video'),dvt);aulaCapAtivo(dvb,dvt);return;}
   // questões
   var qrow=c('.q-row');
   if(qrow&&!c('[data-del-q]')){toggleQDetail(parseInt(qrow.dataset.qi),qrow.dataset.src,qrow.dataset.mc==='true');return;}

@@ -33,7 +33,7 @@ function extrai(nome) {
   return '';
 }
 
-const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML', 'dirVideoLiberado', 'dirVideosHTML'];
+const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML', 'dirVideoLiberado', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML', 'dirVideosHTML'];
 const ctx = { String, Math, Array };
 vm.createContext(ctx);
 vm.runInContext(NOMES.map(extrai).join('\n'), ctx);
