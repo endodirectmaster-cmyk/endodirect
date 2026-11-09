@@ -1092,6 +1092,18 @@ try {
   fail('regressão dos modelos de IA falhou (lib/modelos-ia.js, api/ai.js, lib/discussao.js, lib/radar.js, lib/news.js):\n' + out);
 }
 
+// 17c-undecies-u. BUSCA NO GOOGLE (09/11/2026). Pedido do professor: "ver como está o motor de
+//      busca no google da nossa plataforma". A home ganhou título com "Endocrinologia", description,
+//      canonical, Open Graph, JSON-LD e favicon quadrado; a description das páginas públicas deixou
+//      de apagar o ">" do texto; o sitemap ficou só com <loc>.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-seo-home.js')], { stdio: 'pipe' });
+  ok('busca no Google: home com título, description, canonical, Open Graph, JSON-LD e favicon quadrado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da busca no Google (home/páginas públicas) falhou:\n' + out);
+}
+
 // 17c-undecies-t. CAPÍTULOS NAS VIDEOAULAS DOS RESUMOS (09/11/2026). Pedido do professor:
 //      "deixa do modo igual a da educação médica continuada, com a minutagem em tópicos (...)
 //      Coloca isso como uma skill sua". "Nesta aula" em cada cartão de vídeo, salto no vídeo do

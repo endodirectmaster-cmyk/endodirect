@@ -59,7 +59,10 @@ ok('resposta vazia ou estranha não quebra', M.lerResposta(null).texto === '' &&
 // ---- 4. quem usa ----------------------------------------------------------------------------
 const ler = (f) => fs.readFileSync(path.join(RAIZ, f), 'utf8').replace(/^\s*\/\/.*$/gm, '');
 const ai = ler('api/ai.js');
-ok('api/ai.js: padrão Opus 5.5 pela normalização comum', /const DEFAULT_MODEL = normModelo\(process\.env\.ANTHROPIC_MODEL\) \|\| 'claude-opus-5-5';/.test(ai));
+ok('api/ai.js: padrão Opus 5.5 pela normalização comum', /const DEFAULT_MODEL = normModelo\(process\.env\.AI_GERADORES_MODEL\) \|\| 'claude-opus-5-5';/.test(ai));
+// A env ANTHROPIC_MODEL é do radar (Sonnet). Se voltar a mandar no padrão dos geradores, todo
+// gerador sem modelo explícito cai no Sonnet sem erro nenhum.
+ok('🧨 api/ai.js: o padrão dos geradores não segue a env do radar', !/process\.env\.ANTHROPIC_MODEL/.test(ai));
 ok('api/ai.js: corpo, cabeçalho e leitura pelo módulo', /montarCorpo\(\{ max_tokens: maxTokens, system, messages:/.test(ai) && /headers: cabecalhos\(apiKey, model\)/.test(ai) && /lerResposta\(data\)/.test(ai));
 ok('api/ai.js: recusa vira mensagem ao aluno (422), não JSON vazio', /if \(lido\.recusa\) return json\(res, 422, \{ error: mensagemRecusa\(\) \}\);/.test(ai));
 ok('api/ai.js: esforço dos geradores explícito', /const ESFORCO_GERADORES = '(low|medium|high)';/.test(ai));
