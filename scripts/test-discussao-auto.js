@@ -73,7 +73,7 @@ ok('aceita objeto além de Set', selecionar(avisos, { d: true }, 10).map((x) => 
 ok('lista ausente não quebra', selecionar(null, new Set(), 5).length === 0);
 ok('item sem sourceId é ignorado', selecionar([art({ sourceId: '', tipo: 'Metanálise' })], new Set(), 5).length === 0);
 
-// ---- 7. o modelo é Opus 4.8, e a env legada NÃO o sequestra ------------------
+// ---- 7. o modelo é Opus (5.5 desde 09/11/2026), e a env legada NÃO o sequestra ----
 // A primeira discussão em produção saiu com `claude-sonnet-4-6` — id retirado em
 // 13/07 — porque lib/discussao.js lia process.env.ANTHROPIC_MODEL cru.
 delete require.cache[require.resolve('../lib/discussao.js')];
@@ -85,9 +85,11 @@ delete process.env.DISCUSSAO_MODEL;
   const src = require('fs').readFileSync(require.resolve('../lib/discussao.js'), 'utf8');
   const codigo = src.replace(/^\s*\/\/.*$/gm, '');
   ok('discussao.js NÃO lê ANTHROPIC_MODEL (fora de comentário)', codigo.indexOf('process.env.ANTHROPIC_MODEL') < 0);
-  ok('o padrão é Opus 4.8', /normModel\(process\.env\.DISCUSSAO_MODEL\)\s*\|\|\s*'claude-opus-4-8'/.test(src));
-  ok('a env própria passa por allowlist', /LEGACY_MODEL_MAP/.test(src) && /ALLOWED_MODELS/.test(src));
+  ok('o padrão é Opus 5.5', /normModelo\(process\.env\.DISCUSSAO_MODEL\)\s*\|\|\s*'claude-opus-5-5'/.test(src));
+  ok('a env própria passa pela normalização comum (lib/modelos-ia.js)', /require\('\.\/modelos-ia'\)/.test(src));
+  const { normModelo } = require('../lib/modelos-ia');
+  ok('env com id retirado cai no padrão', normModelo('claude-sonnet-4-6') === 'claude-sonnet-5-5' && normModelo('modelo-inventado') === '');
 }
 
-console.log(bad ? '\nFALHOU: ' + bad : '\n✓ seleção da discussão automática: 5 tipos + consenso/ensaio por título, Opus 4.8 fixo');
+console.log(bad ? '\nFALHOU: ' + bad : '\n✓ seleção da discussão automática: 5 tipos + consenso/ensaio por título, Opus 5.5 fixo');
 process.exit(bad ? 1 : 0);

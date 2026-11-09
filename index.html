@@ -8301,13 +8301,14 @@ function aiRequest(payload){
     throw (e&&e.name==='AbortError')?new Error('A IA demorou demais para responder. Tente novamente.'):e;
   });
 }
-var AI_MODEL_CLINICO='claude-opus-4-8'; // avaliação e relatório clínico (raciocínio)
+var AI_MODEL_CLINICO='claude-opus-5-5'; // avaliação e relatório clínico (raciocínio); geração 5.5 desde 09/11/2026
 // Geração de vinhetas de caso (OSCE, prescrição simulada, questões do simulado).
 // 2026-07-25: passou de Sonnet 5 para Opus 4.8 — todos os geradores usam o mesmo
 // modelo agora, então este id ficou igual ao AI_MODEL_CLINICO e ao padrão do
 // servidor. Mantido como constante separada para permitir voltar a diferenciar
-// (custo/latência) sem caçar chamada por chamada.
-var AI_MODEL_SIM_GEN='claude-opus-4-8';
+// (custo/latência) sem caçar chamada por chamada. 09/11/2026: Opus 5.5 (o servidor
+// remapeia o id antigo que um index.html em cache ainda mande; ver lib/modelos-ia.js).
+var AI_MODEL_SIM_GEN='claude-opus-5-5';
 // ============================================================
 // Padrão de autoria clínica p/ geração por IA (questões, flashcards, mapas).
 // Máxima precisão técnica + diretrizes recentes NOMEADAS + zero "linguagem de
@@ -18808,7 +18809,7 @@ function gerarResumoAulaEmc(aula,btn,forcar){
   var transcricao='';
   var p=emcTranscricaoBunny(aula.src).then(function(t){
     transcricao=t||'';
-    return callAI('Você converte o tema de uma aula de endocrinologia em termos de busca do PubMed, em inglês.','Aula: '+String(aula.title||'')+(aula.desc?'\nDescrição: '+aula.desc:'')+'\nResponda SOMENTE com a busca: 3 a 8 termos em inglês, sem aspas, sem operadores, em uma linha.',80,'claude-haiku-4-5')
+    return callAI('Você converte o tema de uma aula de endocrinologia em termos de busca do PubMed, em inglês.','Aula: '+String(aula.title||'')+(aula.desc?'\nDescrição: '+aula.desc:'')+'\nResponda SOMENTE com a busca: 3 a 8 termos em inglês, sem aspas, sem operadores, em uma linha.',80,'claude-haiku-5-5')
       .then(function(q){return String(q||'').split('\n')[0].replace(/["'`]/g,'').trim().slice(0,200);}).catch(function(){return '';});
   }).then(function(busca){
     var pr=emcResumoPrompt(aula,modelo,transcricao);

@@ -1,40 +1,19 @@
-// Modelos que o cliente pode solicitar por requisição (evita abuso/custo).
-// `claude-sonnet-5` continua ACEITO (não é o padrão): clientes com o index.html
-// antigo no cache do service worker ainda mandam esse id em AI_MODEL_SIM_GEN —
-// removê-lo da lista os jogaria no padrão sem aviso. Some quando o SW rodar.
-const ALLOWED_MODELS = { 'claude-sonnet-5': 1, 'claude-opus-4-8': 1, 'claude-haiku-4-5': 1 };
-// ⚠️ 2026-07-13 — `claude-sonnet-4-6` parou de responder para esta conta: como
-// era o DEFAULT (e o AI_MODEL_SIM_GEN do OSCE), derrubou TODOS os geradores que
-// não pedem Opus — OSCE, Resumidor, flashcards, mapas, cronograma, simulado,
-// Chat IA. Migrado para `claude-sonnet-5` (Sonnet atual). O remapeamento abaixo
-// conserta também clientes que ainda tenham o index.html antigo em cache (SW),
-// pois eles continuam mandando o id legado no corpo da requisição.
-const LEGACY_MODEL_MAP = { 'claude-sonnet-4-6': 'claude-sonnet-5' };
-// Normaliza um id (remapeia legados) e só aceita o que está na allowlist.
-function normModel(raw) {
-  const m = LEGACY_MODEL_MAP[String(raw || '')] || String(raw || '');
-  return ALLOWED_MODELS[m] ? m : '';
-}
-// Padrão de TODOS os geradores (2026-07-25, pedido do professor: "deixa os
-// geradores de IA com modelo opus 4.8"). Antes era `claude-sonnet-5` e só os
-// recursos clínicos pediam Opus; agora Opus 4.8 é o padrão e vale para OSCE,
-// Resumidor, flashcards, mapas, cronograma, simulado, Questão do Dia e Chat IA.
-// ⚠️ Custo: Opus 4.8 é US$ 5/25 por milhão de tokens (entrada/saída) contra
-// US$ 3/15 do Sonnet 5 — ~1,7x mais caro por token.
-// A env ANTHROPIC_MODEL passa pela MESMA normalização do que vem do cliente.
-// Antes ela era usada crua: uma env apontando para um id retirado (exatamente o
-// caso `claude-sonnet-4-6` de 2026-07-13) virava o DEFAULT e derrubava todos os
-// geradores — e o LEGACY_MODEL_MAP não a alcançava, pois só tratava o id do
-// corpo da requisição. Valor inválido agora cai no padrão em vez de quebrar.
-const DEFAULT_MODEL = normModel(process.env.ANTHROPIC_MODEL) || 'claude-opus-4-8';
-// Modelos que ligam "adaptive thinking" QUANDO O CAMPO `thinking` É OMITIDO.
-// Neles o raciocínio consome o teto de max_tokens e trunca o JSON dos geradores,
-// então desligamos explicitamente (ver comentário no ponto de uso). Opus 4.8 e
-// Haiku 4.5 NÃO entram: omitir `thinking` neles já significa sem raciocínio.
-// ⚠️ Ao adicionar um modelo novo ao ALLOWED_MODELS, verifique este mapa — no
-// Opus 5, por exemplo, thinking passou a ser ligado por padrão (ao contrário do
-// 4.8), e sem esta trava os geradores voltariam a truncar.
-const THINKING_ON_BY_DEFAULT = { 'claude-sonnet-5': 1, 'claude-opus-5': 1 };
+// MODELOS: quais ids valem, o remapeamento dos antigos e o que cada modelo precisa no
+// corpo da requisição moram em lib/modelos-ia.js (um lugar só para api/ai.js, a discussão,
+// o radar e as notícias). Histórico que continua valendo:
+//  - 2026-07-13: `claude-sonnet-4-6` parou de responder e, por ser o padrão, derrubou
+//    todos os geradores. Por isso o id que vem do cliente E o da env passam pela mesma
+//    normalização: id inválido cai no padrão em vez de quebrar.
+//  - 2026-07-25: o professor pôs todos os geradores no Opus ("deixa os geradores de IA com
+//    modelo opus 4.8").
+//  - 2026-11-09: geração 5.5. O padrão passa a ser o Opus 5.5 (mais barato que o 4.8) e os
+//    ids antigos são remapeados para os novos (o index.html em cache ainda manda
+//    `claude-opus-4-8`).
+const { normModelo, montarCorpo, cabecalhos, lerResposta, mensagemRecusa } = require('../lib/modelos-ia');
+const DEFAULT_MODEL = normModelo(process.env.ANTHROPIC_MODEL) || 'claude-opus-5-5';
+// Esforço dos geradores no Opus 5.5 (o raciocínio não desliga mais; ver lib/modelos-ia.js).
+// `low` mantém o OSCE dentro do teto de 59 s do cliente. Medido na bancada de 09/11/2026.
+const ESFORCO_GERADORES = 'low';
 // Grounding opcional por PubMed (módulo — não conta como função serverless).
 const { pubmedGround, formatSources } = require('../lib/pubmed');
 // Busca server-side de um link p/ resumo (módulo lib/ — não conta como função).
@@ -49,7 +28,18 @@ const { licencaOpeni, baixarImagemOpeni } = require('../lib/openi-imagem');
 const { excluirConta } = require('../lib/excluir-conta');
 const { contaRevisao } = require('../lib/conta-revisao');
 function pickModel(requested) {
-  return normModel(requested) || DEFAULT_MODEL;
+  return normModelo(requested) || DEFAULT_MODEL;
+}
+
+// ⏱️ BANCADA TEMPORÁRIA (09/11/2026): mede tempo e qualidade dos modelos ANTES da troca,
+// com os pedidos reais dos geradores. Só roda na prévia do branch e SAI antes do merge
+// (o teste test-modelos-ia.js falha se ela chegar ao main). O token fica só num arquivo
+// fora do repositório; aqui, apenas o sha256 e o prazo.
+const BANCADA = { sha: '612e8e12fedabb6aa941d4f159e12057fe681b1978759f7b0e7753cc23b2bdb5', ate: 1794259172000 };
+const BANCADA_MODELOS = { 'claude-opus-4-8': 1, 'claude-opus-5-5': 1, 'claude-sonnet-5': 1, 'claude-sonnet-5-5': 1, 'claude-haiku-4-5': 1, 'claude-haiku-5-5': 1 };
+function bancadaOk(token) {
+  if (!token || Date.now() > BANCADA.ate) return false;
+  return require('crypto').createHash('sha256').update(String(token)).digest('hex') === BANCADA.sha;
 }
 
 function json(res, status, body) {
@@ -78,11 +68,6 @@ function clampTokens(value) {
   // de saída — com o teto antigo de 4000 o JSON TRUNCAVA e a importação falhava
   // ("A IA não retornou um JSON válido"). Nenhum gerador pede mais que isto.
   return Math.max(200, Math.min(parsed, 8000));
-}
-
-function extractText(payload) {
-  const item = Array.isArray(payload.content) ? payload.content.find((part) => part && part.type === 'text') : null;
-  return item && item.text ? item.text : '';
 }
 
 // Busca de imagem de exame complementar no Open-i (NLM/NIH) — figuras do PubMed
@@ -269,7 +254,8 @@ module.exports = async function handler(req, res) {
   // aluno de degustação, assinante e professor, e apertar para `plano` aqui
   // seria mudança de produto, não de segurança. A checagem de origem continua
   // como primeira camada (barra o navegador de outro site).
-  const aiUser = await userFromReq(req);
+  const naBancada = bancadaOk(parseBody(req).bancada);
+  const aiUser = naBancada ? { bancada: true } : await userFromReq(req);
   if (!aiUser) {
     return json(res, 401, { error: 'Entre na sua conta para usar os recursos de IA.' });
   }
@@ -459,32 +445,16 @@ module.exports = async function handler(req, res) {
     : groundedPrompt);
 
   try {
-    const model = pickModel(body.model);
-    const upstreamBody = {
-      model,
-      max_tokens: maxTokens,
-      system,
-      messages: [{ role: 'user', content }]
-    };
-    // Sonnet 5 liga "adaptive thinking" por padrão quando `thinking` é omitido —
-    // o raciocínio consome o teto de max_tokens e TRUNCARIA o JSON dos geradores
-    // (OSCE, resumidor, flashcards, mapas…). Estes recursos não usam thinking;
-    // desligamos explicitamente para preservar o comportamento do Sonnet 4.6.
-    // Além disso, `effort` no Sonnet 5 usa `high` por padrão, o que deixou a
-    // geração LENTA (o OSCE, com system de ~40k chars + 3200 tokens, estourava o
-    // teto de 56s do cliente → "A geração demorou demais"). Sem thinking, `low`
-    // é o modo rápido recomendado para geração de JSON e corta a latência.
-    if (THINKING_ON_BY_DEFAULT[model]) {
-      upstreamBody.thinking = { type: 'disabled' };
-      upstreamBody.output_config = { effort: 'low' };
-    }
+    const model = (naBancada && BANCADA_MODELOS[body.model]) ? body.model : pickModel(body.model);
+    const esforco = (naBancada && body.esforco) ? String(body.esforco) : ESFORCO_GERADORES;
+    // Opus 5.5: sem `thinking` (o raciocínio não desliga), esforço explícito, folga no
+    // max_tokens para o raciocínio não truncar o JSON, e fallback no servidor se um
+    // classificador recusar. Ver lib/modelos-ia.js.
+    const upstreamBody = montarCorpo({ max_tokens: maxTokens, system, messages: [{ role: 'user', content }] }, model, esforco);
+    const t0 = Date.now();
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
+      headers: cabecalhos(apiKey, model),
       body: JSON.stringify(upstreamBody)
     });
 
@@ -493,10 +463,17 @@ module.exports = async function handler(req, res) {
       const message = data && data.error && data.error.message ? data.error.message : `Erro HTTP ${upstream.status}`;
       return json(res, upstream.status, { error: message });
     }
+    const lido = lerResposta(data);
+    if (naBancada) {
+      return json(res, 200, { text: lido.texto, usage: data.usage || null, ms: Date.now() - t0, model: data.model, pedido: model, esforco, stop_reason: data.stop_reason, recusa: lido.recusa, categoria: lido.categoria || null, fallback: !!lido.fallback });
+    }
+    // Recusa do classificador de segurança (HTTP 200 da Anthropic, conteúdo vazio): o
+    // aluno recebe uma mensagem, não um JSON vazio que o gerador leria como defeito.
+    if (lido.recusa) return json(res, 422, { error: mensagemRecusa() });
 
     // usage inclui cache_creation_input_tokens / cache_read_input_tokens —
     // permite conferir o cache de prompt no devtools (Network) sem ler logs.
-    return json(res, 200, { text: extractText(data), usage: (data && data.usage) || null });
+    return json(res, 200, { text: lido.texto, usage: (data && data.usage) || null });
   } catch (error) {
     return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }
