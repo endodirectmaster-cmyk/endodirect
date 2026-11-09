@@ -8,6 +8,10 @@ atualizado: 2026-11-09
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **▶ VIDEOAULAS DOS RESUMOS: UMA POR VEZ, ESCOLHIDA NUMA LISTA (2026-11-09).** Pedido do professor: *"Não deixar todas as videoaulas abertas de uma vez só (...) deixa uma subjanela onde ele vai escolher"*.
+  - Com 2 ou mais vídeos, a aba mostra a lista (nome, duração e tópicos); o escolhido abre sozinho, com "Nesta aula" e a volta em cima. Com um vídeo só, ele abre direto.
+  - Conferido no Chromium, no computador e no celular: lista sem player carregado; tirzepatida aberta com 12 tópicos; salto para 05:26 com o 4º tópico aceso; a volta reapresenta os 7. No celular, a estrela de favorito encostava no rótulo e na volta, e foi ajustado.
+  - sw v350. Teste `test-videoaulas-capitulos.js` atualizado. Ver [[Videoaulas dos Resumos]].
 - **⏱️ CAPÍTULOS "NESTA AULA" NAS VIDEOAULAS DOS RESUMOS + SKILL (2026-11-09).** Pedido do professor: *"deixa do modo igual a da educação médica continuada, com a minutagem em tópicos (...) também as próximas (...) Coloca isso como uma skill sua"*.
   - **Tela e painel:** "Nesta aula" em cada cartão de vídeo (mesmo componente da EMC); o clique salta o vídeo do próprio cartão e o tópico em curso acende. No painel há um campo de capítulos por vídeo. sw v349.
   - **Dados:** os 14 vídeos ganharam 155 tópicos lidos dos slides. Gravação com backup e guarda; o resto do payload foi conferido idêntico ao backup.
