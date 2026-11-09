@@ -40,7 +40,7 @@ function extrai(nome) {
 
 const NOMES = ['esc', 'safeHttpUrl', 'ytId', 'vimeoId', 'dirVideosDe', 'dirVideoDur', 'dirVideoPlayerHTML', 'dirVideoCabHTML',
   'dirVideoLiberado', 'dirVideosHTML', 'dirVideoAmostraDaSub', 'separarSoVideo', 'dirTipoOf', 'dirIsRascunho', 'dirTemaOf',
-  'admVideoLiberadoDaSub', 'admRefVideoAcao'];
+  'admVideoLiberadoDaSub', 'admRefVideoAcao', 'capsNormaliza', 'aulaCaps', 'capsFmt', 'aulaCapsHTML', 'dirVideoCapsHTML'];
 const avisos = [];
 const ctx = { String, Math, Array, Object, avisos };
 vm.createContext(ctx);

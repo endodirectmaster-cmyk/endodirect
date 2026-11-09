@@ -1080,6 +1080,18 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-t. CAPÍTULOS NAS VIDEOAULAS DOS RESUMOS (09/11/2026). Pedido do professor:
+//      "deixa do modo igual a da educação médica continuada, com a minutagem em tópicos (...)
+//      Coloca isso como uma skill sua". "Nesta aula" em cada cartão de vídeo, salto no vídeo do
+//      mesmo cartão, campo no painel e a skill .claude/skills/capitulos-videoaula.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-videoaulas-capitulos.js')], { stdio: 'pipe' });
+  ok('capítulos das videoaulas dos Resumos: "Nesta aula" como na EMC, salto no vídeo do cartão, campo no painel, skill com o leitor de slides');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos capítulos das videoaulas dos Resumos falhou:\n' + out);
+}
+
 // 17c-undecies-s. E-MAIL DE DEGUSTAÇÃO SÓ PARA QUEM NUNCA PAGOU (08/11/2026). A RPC excluía
 //      só plano ATIVO; assinante com plano vencido ou cobrança em atraso recebia "sua
 //      degustação terminou". Agora quem já teve acesso pago sai do funil para sempre.

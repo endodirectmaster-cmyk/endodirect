@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-08
+atualizado: 2026-11-09
 ---
 
 # Decisões
@@ -8,6 +8,13 @@ atualizado: 2026-11-08
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **⏱️ CAPÍTULOS "NESTA AULA" NAS VIDEOAULAS DOS RESUMOS + SKILL (2026-11-09).** Pedido do professor: *"deixa do modo igual a da educação médica continuada, com a minutagem em tópicos (...) também as próximas (...) Coloca isso como uma skill sua"*.
+  - **Tela e painel:** "Nesta aula" em cada cartão de vídeo (mesmo componente da EMC); o clique salta o vídeo do próprio cartão e o tópico em curso acende. No painel há um campo de capítulos por vídeo. sw v349.
+  - **Dados:** os 14 vídeos ganharam 155 tópicos lidos dos slides. Gravação com backup e guarda; o resto do payload foi conferido idêntico ao backup.
+  - **Futuro:** skill `.claude/skills/capitulos-videoaula` e tarefa agendada diária às 03:13 (Brasília) nesta sessão.
+    - A tarefa com sessão nova não serviu: ela nasceria sem o repositório e sem o conector do Supabase (o parâmetro de conectores não está disponível para a organização). Foi apagada e recriada ligada a esta sessão.
+  - Teste `scripts/test-videoaulas-capitulos.js` (ci 17c-undecies-t). Chromium: o clique levou o vídeo a 189 s com o 3º tópico aceso, e o outro cartão ficou parado.
+  - Ver [[Videoaulas dos Resumos]].
 - **⏳ AVISO DE FIM DE DEGUSTAÇÃO: FUNCIONA; EX-ASSINANTE SAIU DO PÚBLICO (2026-11-08).** Pergunta do professor: *"A automação de aviso de vencimento do modo degustação está funcionando?"*.
   - **Está funcionando.** O cron roda todo dia (~10:46 UTC). Todos os `POST /emails/batch` do Resend de 21/10 a 08/11 voltaram 200, e o aviso de 08/11 consta como entregue.
   - **Cobertura:** nos últimos 30 dias, 11 de 11 alunos que passaram do 7º dia sem assinar receberam o aviso e o convite, e o único na janela do 5º/6º dia recebeu o aviso hoje. Os 5 assinantes desse período ficaram de fora, como devem. Desde 01/07: 87 avisos e 104 convites.

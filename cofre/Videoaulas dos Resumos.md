@@ -1,6 +1,6 @@
 ---
 tags: [cofre, resumos, video]
-atualizado: 2026-11-07
+atualizado: 2026-11-09
 ---
 
 # Videoaulas dos Resumos
@@ -114,6 +114,40 @@ obesidade para deixar liberado para eles. E também assim das outras subespecial
   07/11) continua vendo todas, porque o portão do servidor é `plano`. Se ele quiser só no Gold,
   é trocar `@> array['plano']` por um teste de `plano:gold` no ramo das privadas.
 - **Teste:** `scripts/test-videoaulas-degustacao.js`, no ci-validate.
+
+## Capítulos "Nesta aula" em cada vídeo (09/11/2026)
+
+Pedido do professor: *"Nas videoaulas que estão contidas nos resumos, deixa do modo igual a da
+educação médica continuada, com a minutagem em tópicos. Já faz isso nas videoaulas que já estão
+lá nos resumos e, consequentemente, também as próximas que serão introduzidas na plataforma.
+Coloca isso como uma skill sua."*
+
+- **Dado:** `diretrizes[i].videos[j].caps = [{t, titulo}]`, o mesmo formato das aulas da EMC
+  (`adm_cursos[k].caps`). O RPC `endodirect_member_resumos` entrega o objeto do vídeo inteiro,
+  então os capítulos chegam ao aluno sem mudança no servidor, inclusive na degustação.
+- **Tela:** `dirVideoCapsHTML(v)` põe o bloco "Nesta aula" (o mesmo `aulaCapsHTML` da EMC)
+  embaixo do título de cada cartão. O clique global (`.dir-video .aula-cap`) salta o vídeo
+  do MESMO cartão, porque um capítulo pode ter vários vídeos (Tratamento Farmacológico da
+  Obesidade tem 7). O tópico em curso acende por um `timeupdate` escutado na captura (esse
+  evento não borbulha). Vídeos do YouTube e do Vimeo não mostram capítulos: o iframe não
+  deixa saltar.
+- **Painel:** cada vídeo tem o campo "Capítulos" (uma linha por tópico, `02:45 Título`,
+  aceitando o formato do Bunny) e o botão "💾 Salvar capítulos". Texto sem nenhum horário
+  reconhecível é recusado e não apaga os capítulos que havia.
+- **Os 14 vídeos de 09/11** ganharam 155 tópicos (de 9 a 12 cada), lidos dos slides.
+  - Backup: `main-antes-capitulos-videoaulas-resumos-2026-11-09`.
+  - A gravação teve guarda (md5 do payload, mais `src` e `titulo` de cada vídeo). Depois
+    dela, o payload sem os `caps` ficou idêntico ao backup.
+- **Skill:** `.claude/skills/capitulos-videoaula/` traz `SKILL.md`, `slides.sh` (download,
+  trocas de slide, OCR) e os auxiliares `tabela.py`, `agrupa.py` e `cabecalho.py`. A tarefa
+  agendada "Capítulos das videoaulas novas" roda todo dia às 03:13 (Brasília), nesta sessão,
+  e só age se houver vídeo sem capítulos.
+- 🧨 **O OCR troca dígitos em nome de estudo.** Ele leu SURMOUNT-5 onde o slide diz
+  SURMOUNT-3, e COR-T onde diz COR-BMOD. Toda sigla de ensaio, dose ou ano é conferida no
+  recorte do quadro antes de gravar.
+- 🧨 **Os slides dos Resumos têm o nome da aula como sobretítulo em todos os quadros.**
+  Agrupar pela 1ª linha (como funcionava na EMC) juntava a aula inteira num slide só. Agora
+  o cabeçalho são as duas primeiras linhas com texto de verdade, comparadas por semelhança.
 
 ## Pontos de atenção
 
