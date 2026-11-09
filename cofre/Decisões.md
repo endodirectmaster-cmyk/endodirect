@@ -8,6 +8,10 @@ atualizado: 2026-11-09
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🔎 HOME NO GOOGLE + PADRÃO DOS GERADORES FORA DA ENV DO RADAR (2026-11-09).**
+  - **SEO:** a home ganhou título com "Endocrinologia", description, canonical, Open Graph, JSON-LD e favicon quadrado. As páginas públicas deixaram de apagar o ">" do texto (a description da PBMAH distorcia "> 1 cm"), e o sitemap ficou só com `<loc>`. A lista do que depende do professor (Search Console, redirects na Vercel, autoria, arte de compartilhamento) está em [[Páginas Públicas e SEO]].
+  - **IA:** `api/ai.js` deixou de usar `ANTHROPIC_MODEL` como padrão dos geradores; ver [[Integrações]].
+  - **Pergunta do professor:** *"se deixar Opus 5.5 [no radar] fica muito caro/pesado?"*. A estimativa, de cerca de 30 chamadas por dia e 1.400 tokens de entrada + 570 de saída por chamada: Sonnet 5.5 sai por volta de US$ 8/mês e Opus 5.5 por US$ 15–16/mês, com o dobro do tempo por chamada no cron de 300 s, que é dividido com a newsletter e os e-mails. Na bancada, o resumo do Sonnet 5.5 foi preciso (números, RAC, cautela de subgrupo). Ficou o Sonnet; trocar é uma linha.
 - **🧠 IA DO APP NA GERAÇÃO 5.5 (2026-11-09).** O professor perguntou se valia trocar o modelo das nossas sessões para o Fable 5.2. A resposta foi manter o Opus 5.5 nas sessões e atualizar o app, que ainda chamava Opus 4.8, Sonnet 5 e Haiku 4.5. Ele respondeu: *"Pode fazer"*.
   - **Um módulo só:** `lib/modelos-ia.js` (ids, remapeamento dos antigos, corpo por modelo, leitura da resposta), usado por `api/ai.js`, `lib/discussao.js`, `lib/radar.js` e `lib/news.js`. O radar e as notícias liam a env `ANTHROPIC_MODEL` crua; agora ela passa pela normalização.
   - **O que a API mudou:**

@@ -10,7 +10,11 @@
 //    ids antigos são remapeados para os novos (o index.html em cache ainda manda
 //    `claude-opus-4-8`).
 const { normModelo, montarCorpo, cabecalhos, lerResposta, mensagemRecusa } = require('../lib/modelos-ia');
-const DEFAULT_MODEL = normModelo(process.env.ANTHROPIC_MODEL) || 'claude-opus-5-5';
+// ⚠️ O padrão dos geradores NÃO segue mais a env ANTHROPIC_MODEL (09/11/2026). Ela é do radar
+// e das notícias (Sonnet), e o cofre registrou em 28/07 que estava com um Sonnet: usada aqui,
+// todo gerador que não pede modelo (flashcards, mapas, OSCE, chat…) rodava em Sonnet, contra a
+// decisão do professor de pôr TODOS os geradores no Opus. Env própria, se um dia precisar.
+const DEFAULT_MODEL = normModelo(process.env.AI_GERADORES_MODEL) || 'claude-opus-5-5';
 // Esforço dos geradores no Opus 5.5 (o raciocínio não desliga mais; ver lib/modelos-ia.js).
 // MEDIDO em 09/11/2026 na prévia, com os pedidos reais (2ª rodada, cache quente):
 //   questão do dia 10 s (4.8: 15 s) · OSCE 26 s (4.8: 26 s) · flashcards 20 s (4.8: 25 s)

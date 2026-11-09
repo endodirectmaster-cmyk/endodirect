@@ -1,9 +1,52 @@
 ---
 tags: [cofre, seo, conteudo-publico, conversao]
-atualizado: 2026-08-19
+atualizado: 2026-11-09
 ---
 
 # Páginas Públicas e SEO
+
+## 🔎 A home no Google e a auditoria de 09/11/2026
+
+Pedido do professor: *"ver como está o motor de busca no google da nossa plataforma. Acho que nunca
+mexemos nisso"*. A auditoria (somente leitura, robô do Google simulado com `curl`) achou as páginas
+públicas de agosto funcionando:
+- 73 URLs no sitemap, todas com 200;
+- 404 de verdade para endereço inexistente;
+- canonical e X-Robots-Tag nos capítulos.
+
+A **home nunca tinha sido tratada.**
+
+**O que entrou (index.html e lib/publico.js; teste `scripts/test-seo-home.js`, ci 17c-undecies-u):**
+- Título "Endodirect: Endocrinologia e Metabologia para médicos". "Endodirect" sozinho, no Google,
+  é dominado pela Endo Direct, uma empresa americana de **endodontia**.
+- Meta description com os números da própria landing. O teste falha se a landing mudar e a
+  description não acompanhar.
+- Canonical em `https://www.endodirect.com.br/`. Isso também tira a duplicata de `endodirect.vercel.app`,
+  que serve a home inteira com 200.
+- Open Graph e Twitter card, por ora com o ícone de 512 px como imagem.
+- JSON-LD `Organization` + `WebSite`.
+- Favicon quadrado (`/icons/icon-192.png`). O antigo tinha 951×1064, e o Google só mostra ícone 1:1.
+- `descricao()` apagava qualquer `>`: a description da PBMAH dizia "nódulos bilaterais 1 cm" onde o
+  texto é "> 1 cm". Agora só sai o `>` de citação no início da linha.
+- Sitemap só com `<loc>`: o Google ignora `changefreq` e `priority`, e `lastmod` exigiria uma data
+  real de alteração, que o índice não guarda.
+- O hub `/resumos` passou a `og:type website`; as páginas públicas ganharam `og:image`.
+
+**O que depende do professor (fora do código):**
+1. **Google Search Console:**
+   - verificar o domínio (TXT no DNS);
+   - enviar `https://www.endodirect.com.br/sitemap.xml`;
+   - pedir a indexação de `/` e `/resumos`;
+   - acompanhar os relatórios "Páginas" e "Desempenho".
+
+   Hoje não existe nenhuma medição de tráfego orgânico: o Web Analytics da Vercel não está ativo.
+2. **Vercel → Domains:**
+   - trocar o redirect de `endodirect.com.br` para **308** (hoje é 307, temporário);
+   - redirecionar `endodirect.vercel.app` para www.
+3. **Quem assina e revisa** os capítulos públicos. Conteúdo médico é tratado pelo Google como área
+   sensível (YMYL), e autor, revisor e "atualizado em" contam.
+4. **Arte 1200×630** para o compartilhamento e os **perfis oficiais** (Instagram, podcast) para o
+   `sameAs`. Também colocar o link de `/resumos` na bio e na descrição do podcast.
 
 ## Por que isto existe (o número que mandou)
 
