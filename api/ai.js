@@ -12,7 +12,10 @@
 const { normModelo, montarCorpo, cabecalhos, lerResposta, mensagemRecusa } = require('../lib/modelos-ia');
 const DEFAULT_MODEL = normModelo(process.env.ANTHROPIC_MODEL) || 'claude-opus-5-5';
 // Esforço dos geradores no Opus 5.5 (o raciocínio não desliga mais; ver lib/modelos-ia.js).
-// `low` mantém o OSCE dentro do teto de 59 s do cliente. Medido na bancada de 09/11/2026.
+// MEDIDO em 09/11/2026 na prévia, com os pedidos reais (2ª rodada, cache quente):
+//   questão do dia 10 s (4.8: 15 s) · OSCE 26 s (4.8: 26 s) · flashcards 20 s (4.8: 25 s)
+//   chat 20 s, resposta COMPLETA (o 4.8 cortava em 1.200 tokens) · prescrição 34 s.
+// Em `medium` o OSCE levou 46–61 s e estoura o teto de 59 s do cliente. Ver cofre/Decisões.md.
 const ESFORCO_GERADORES = 'low';
 // Grounding opcional por PubMed (módulo — não conta como função serverless).
 const { pubmedGround, formatSources } = require('../lib/pubmed');
@@ -29,17 +32,6 @@ const { excluirConta } = require('../lib/excluir-conta');
 const { contaRevisao } = require('../lib/conta-revisao');
 function pickModel(requested) {
   return normModelo(requested) || DEFAULT_MODEL;
-}
-
-// ⏱️ BANCADA TEMPORÁRIA (09/11/2026): mede tempo e qualidade dos modelos ANTES da troca,
-// com os pedidos reais dos geradores. Só roda na prévia do branch e SAI antes do merge
-// (o teste test-modelos-ia.js falha se ela chegar ao main). O token fica só num arquivo
-// fora do repositório; aqui, apenas o sha256 e o prazo.
-const BANCADA = { sha: '612e8e12fedabb6aa941d4f159e12057fe681b1978759f7b0e7753cc23b2bdb5', ate: 1794259172000 };
-const BANCADA_MODELOS = { 'claude-opus-4-8': 1, 'claude-opus-5-5': 1, 'claude-sonnet-5': 1, 'claude-sonnet-5-5': 1, 'claude-haiku-4-5': 1, 'claude-haiku-5-5': 1 };
-function bancadaOk(token) {
-  if (!token || Date.now() > BANCADA.ate) return false;
-  return require('crypto').createHash('sha256').update(String(token)).digest('hex') === BANCADA.sha;
 }
 
 function json(res, status, body) {
@@ -254,8 +246,7 @@ module.exports = async function handler(req, res) {
   // aluno de degustação, assinante e professor, e apertar para `plano` aqui
   // seria mudança de produto, não de segurança. A checagem de origem continua
   // como primeira camada (barra o navegador de outro site).
-  const naBancada = bancadaOk(parseBody(req).bancada);
-  const aiUser = naBancada ? { bancada: true } : await userFromReq(req);
+  const aiUser = await userFromReq(req);
   if (!aiUser) {
     return json(res, 401, { error: 'Entre na sua conta para usar os recursos de IA.' });
   }
@@ -445,13 +436,11 @@ module.exports = async function handler(req, res) {
     : groundedPrompt);
 
   try {
-    const model = (naBancada && BANCADA_MODELOS[body.model]) ? body.model : pickModel(body.model);
-    const esforco = (naBancada && body.esforco) ? String(body.esforco) : ESFORCO_GERADORES;
+    const model = pickModel(body.model);
     // Opus 5.5: sem `thinking` (o raciocínio não desliga), esforço explícito, folga no
     // max_tokens para o raciocínio não truncar o JSON, e fallback no servidor se um
     // classificador recusar. Ver lib/modelos-ia.js.
-    const upstreamBody = montarCorpo({ max_tokens: maxTokens, system, messages: [{ role: 'user', content }] }, model, esforco);
-    const t0 = Date.now();
+    const upstreamBody = montarCorpo({ max_tokens: maxTokens, system, messages: [{ role: 'user', content }] }, model, ESFORCO_GERADORES);
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: cabecalhos(apiKey, model),
@@ -464,9 +453,6 @@ module.exports = async function handler(req, res) {
       return json(res, upstream.status, { error: message });
     }
     const lido = lerResposta(data);
-    if (naBancada) {
-      return json(res, 200, { text: lido.texto, usage: data.usage || null, ms: Date.now() - t0, model: data.model, pedido: model, esforco, stop_reason: data.stop_reason, recusa: lido.recusa, categoria: lido.categoria || null, fallback: !!lido.fallback });
-    }
     // Recusa do classificador de segurança (HTTP 200 da Anthropic, conteúdo vazio): o
     // aluno recebe uma mensagem, não um JSON vazio que o gerador leria como defeito.
     if (lido.recusa) return json(res, 422, { error: mensagemRecusa() });

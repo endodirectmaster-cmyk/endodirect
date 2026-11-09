@@ -104,7 +104,7 @@ const BOM = 'FUNDAMENTAÇÃO\n• ' + 'A'.repeat(600) + '\n\nEVIDÊNCIA CLÍNICA
   run(`rede={};chamadas=[];avisos=[];salvos=0;respostas=['GLP-1 receptor agonists type 1 diabetes',${JSON.stringify(BOM)}];`);
   const r1 = await run('gerarResumoAulaEmc(admCursos[4])');
   const ch = run('chamadas');
-  ok('gera: 1ª chamada (Haiku) faz a busca em inglês; 2ª usa o grounding dela', ch.length === 2 && ch[0].model === 'claude-haiku-5-5' && ch[1].grounding === 'GLP-1 receptor agonists type 1 diabetes' && ch[1].model === 'claude-opus-4-8' && ch[1].max === 6000, JSON.stringify(ch.map((c) => [c.model, c.grounding, c.max])));
+  ok('gera: 1ª chamada (Haiku) faz a busca em inglês; 2ª usa o grounding dela', ch.length === 2 && ch[0].model === 'claude-haiku-5-5' && ch[1].grounding === 'GLP-1 receptor agonists type 1 diabetes' && ch[1].model === 'claude-opus-5-5' && ch[1].max === 6000, JSON.stringify(ch.map((c) => [c.model, c.grounding, c.max])));
   ok('gera: grava o resumo, marca automático (base título) e salva', r1 === true && run('admCursos[4].resumo') === BOM && run('admCursos[4].resumoAuto.base') === 'titulo' && run('salvos') === 1);
   run(`chamadas=[];respostas=['busca','Texto sem formato nenhum.'];admCursos[4].resumo='';delete admCursos[4].resumoAuto;salvos=0;`);
   const r2 = await run('gerarResumoAulaEmc(admCursos[4])');

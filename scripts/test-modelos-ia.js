@@ -76,6 +76,9 @@ ok('🧨 a bancada de testes da prévia não chegou ao main', !/BANCADA/.test(ai
 ok('discussão: recusa vira motivo próprio', /if \(lido\.recusa\) return \{ ok: false, motivo: 'recusa_ia' \};/.test(ler('lib/discussao.js')));
 const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 ok('index.html: constantes no Opus 5.5', /var AI_MODEL_CLINICO='claude-opus-5-5';/.test(html) && /var AI_MODEL_SIM_GEN='claude-opus-5-5';/.test(html));
+// O Opus 5.5 escreve mais: sem limite, o relatório de prescrição saiu com 1.678 palavras em 59 s
+// e bateu no teto uma vez (cortado). Com a linha de tamanho: 905 palavras em 34 s.
+ok('prescrição: relatório com teto de tamanho no pedido', /avaliando a prescrição de um residente[^']*Seja objetivo: tópicos curtos e o relatório inteiro com no máximo 700 palavras\./.test(html));
 ok('index.html: nenhum id antigo pedido ao servidor', !/'claude-(opus-4-8|sonnet-5|sonnet-4-6|haiku-4-5)'/.test(html));
 
 if (bad) { console.log('\n' + bad + ' falha(s) nos modelos de IA'); process.exit(1); }
