@@ -8,6 +8,25 @@ atualizado: 2026-11-09
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🧠 IA DO APP NA GERAÇÃO 5.5 (2026-11-09).** O professor perguntou se valia trocar o modelo das nossas sessões para o Fable 5.2. A resposta foi manter o Opus 5.5 nas sessões e atualizar o app, que ainda chamava Opus 4.8, Sonnet 5 e Haiku 4.5. Ele respondeu: *"Pode fazer"*.
+  - **Um módulo só:** `lib/modelos-ia.js` (ids, remapeamento dos antigos, corpo por modelo, leitura da resposta), usado por `api/ai.js`, `lib/discussao.js`, `lib/radar.js` e `lib/news.js`. O radar e as notícias liam a env `ANTHROPIC_MODEL` crua; agora ela passa pela normalização.
+  - **O que a API mudou:**
+    - o Opus 5.5 não aceita `thinking: disabled` (400) e o esforço vira o controle;
+    - o Sonnet 5.5 desliga o raciocínio com `between_tools`;
+    - o raciocínio conta no `max_tokens`, daí a folga de 4.000;
+    - a resposta é lida pelo tipo do bloco;
+    - a recusa tem `fallbacks: 'default'` e mensagem 422 ao aluno.
+  - **Medido antes da troca**, numa bancada temporária na prévia do branch (token só por sha256, prazo de 60 min; removida antes do merge, e o teste falha se ela voltar). Foram 7 pedidos reais, Opus 4.8 contra Opus 5.5 `low` e `medium`, 2 rodadas. Na 2ª rodada:
+    - questão do dia: 14,6 → **10,1 s**;
+    - OSCE: 25,7 → **26,1 s** (em `medium`, 46–61 s, que estoura o teto de 59 s do cliente);
+    - flashcards: 24,6 → **19,6 s**;
+    - **chat: o Opus 4.8 CORTAVA a resposta em 1.200 tokens em produção** (terminava em "reavalie a ind"); o 5.5 responde inteiro em 20 s;
+    - prescrição: 37 → 59 s, com relatório de 1.678 palavras e um corte. Com a linha "no máximo 700 palavras" no pedido: **34 s, 905 palavras, sem corte**;
+    - discussão: 35 → 51 s (texto mais longo, dentro dos 120 s);
+    - radar: Sonnet 5 5,1 s → Sonnet 5.5 **4,2 s**.
+    - Todos os JSON foram válidos. A qualidade conferida (questão, chat, prescrição) ficou igual ou melhor.
+  - **Achado e NÃO corrigido (decisão do professor):** o chat, o OSCE e a avaliação de prescrição juntam `CLINICAL_GUIDELINES` ao próprio texto **sem** o separador `__ENDODIRECT_SYS_SPLIT_b1f7__`. Por isso o servidor corta o system em 60.000 caracteres (as diretrizes têm cerca de 80.000; o fim delas nunca chega à IA) e **nunca anexa o bloco profundo da subespecialidade**, mesmo com a pergunta do chat indo como `grounding` desde 07/08. Corrigir (usar `groundSys`) aumenta a entrada do chat e o custo por mensagem, por isso fica para o professor decidir.
+  - Teste `scripts/test-modelos-ia.js` (ci 17c-undecies-v). sw v351. Ver [[Integrações]].
 - **▶ VIDEOAULAS DOS RESUMOS: UMA POR VEZ, ESCOLHIDA NUMA LISTA (2026-11-09).** Pedido do professor: *"Não deixar todas as videoaulas abertas de uma vez só (...) deixa uma subjanela onde ele vai escolher"*.
   - Com 2 ou mais vídeos, a aba mostra a lista (nome, duração e tópicos); o escolhido abre sozinho, com "Nesta aula" e a volta em cima. Com um vídeo só, ele abre direto.
   - Conferido no Chromium, no computador e no celular: lista sem player carregado; tirzepatida aberta com 12 tópicos; salto para 05:26 com o 4º tópico aceso; a volta reapresenta os 7. No celular, a estrela de favorito encostava no rótulo e na volta, e foi ajustado.

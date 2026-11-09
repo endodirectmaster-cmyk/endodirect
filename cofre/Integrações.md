@@ -47,6 +47,15 @@ Os e-mails de auth (confirmação de cadastro, redefinir senha) devem sair do En
 ## Anthropic (IA)
 Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`). Env: `ANTHROPIC_API_KEY`. (Chave foi rotacionada pelo usuário após exposição anterior.) No sandbox de desenvolvimento, `api.anthropic.com` é dos poucos hosts liberados.
 
+**Modelos (geração 5.5 desde 09/11/2026):** tudo passa por `lib/modelos-ia.js`.
+- Geradores, chat e discussão de artigo: **Opus 5.5** em esforço `low`.
+- Radar e notícias: **Sonnet 5.5** com `thinking: between_tools`.
+- A busca do PubMed do resumo da EMC: **Haiku 5.5**.
+- Ids antigos (`claude-opus-4-8`, `claude-sonnet-5`, `claude-sonnet-4-6`, `claude-haiku-4-5`) são remapeados, inclusive o que vem da env `ANTHROPIC_MODEL` ou de um index.html em cache.
+- **Não mande `thinking: {type:'disabled'}` ao Opus 5.5 nem ao Sonnet 5.5 (erro 400).** O raciocínio do Opus 5.5 conta no `max_tokens`, e por isso há uma folga de 4.000 tokens.
+- Recusa do classificador (`stop_reason: 'refusal'`): `fallbacks: 'default'` no Opus e no Sonnet; ao aluno vai uma mensagem (422).
+- Medições: ver Decisões, 09/11/2026.
+
 ## Memed (Assistente de Prescrição)
 - **STATUS (2026-06-19): EM PRODUÇÃO e funcionando** — chaves de produção configuradas (`configured:true`), `MEMED_ALLOW=rodolphomend@gmail.com` (gating: só o médico vê o Consultório), e o módulo de prescrição **renderiza em produção** (confirmado pelo médico). Ver [[Decisões]] #392 (fix do SDK) e #393 (estética + paciente obrigatório).
 - Decisão: usar a **API da Memed** para o Assistente de Prescrição (substitui o builder próprio). Recurso fica **gated**; perfil ganhou `crm`/`uf`.

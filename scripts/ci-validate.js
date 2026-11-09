@@ -1080,6 +1080,18 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-v. MODELOS DE IA — GERAÇÃO 5.5 (09/11/2026). Opus/Sonnet/Haiku 5.5 num módulo
+//      só (lib/modelos-ia.js): nada de thinking disabled (é 400), folga no max_tokens para o
+//      raciocínio, leitura pelo tipo do bloco, recusa tratada, fallback no servidor e nenhuma
+//      bancada de testes no main.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-modelos-ia.js')], { stdio: 'pipe' });
+  ok('modelos de IA (geração 5.5): ids remapeados, corpo certo por modelo, recusa tratada, sem bancada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos modelos de IA falhou (lib/modelos-ia.js, api/ai.js, lib/discussao.js, lib/radar.js, lib/news.js):\n' + out);
+}
+
 // 17c-undecies-t. CAPÍTULOS NAS VIDEOAULAS DOS RESUMOS (09/11/2026). Pedido do professor:
 //      "deixa do modo igual a da educação médica continuada, com a minutagem em tópicos (...)
 //      Coloca isso como uma skill sua". "Nesta aula" em cada cartão de vídeo, salto no vídeo do
