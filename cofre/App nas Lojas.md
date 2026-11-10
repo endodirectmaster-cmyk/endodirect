@@ -104,6 +104,12 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     "Selecione o tipo de entidade" com "Individual" marcado. Orientado a não continuar ali e a ir
     por developer.apple.com/account; se a tela voltar, decidir antes de clicar (escolher
     Company / Organization ou falar com o suporte).
+- **10/11, ~17h UTC: CONTRATO ACEITO E ANUIDADE PAGA** (US$ 99, cobrado em dólar) com a Conta Apple
+  da inscrição (contato@endodirect.com.br, nome "RODOLPHO MENDONCA"). Tela da Apple: "Thank You —
+  We are processing your order and will send you an activation email when it's ready… up to two (2)
+  business days". Próximo: o e-mail de ativação ("Welcome to the Apple Developer Program"); depois, o
+  professor manda o **Team ID** e segue a etapa 2 de `app-ios/LEIA-ME.md` no Mac, entrando no Xcode
+  com essa mesma Conta Apple.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
