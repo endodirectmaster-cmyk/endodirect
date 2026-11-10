@@ -76,6 +76,26 @@ jobs:
             CODE_SIGNING_ALLOWED=NO build
           echo "Compilou com $(xcodebuild -version | sed -n 1p)."
 
+      # A permissão do "Entrar com a Apple" (App.entitlements) só vai para o app quando
+      # ele é assinado. Sem certificado aqui, a assinatura é local ("-"): basta para
+      # embutir a permissão e conferir. É assim também que o modo testflight arquiva,
+      # antes de a nuvem da Apple assinar de verdade na exportação.
+      - name: Conferir a permissão do Entrar com a Apple
+        if: inputs.modo == 'compilar'
+        run: |
+          xcodebuild -quiet -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd-adhoc" \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= build
+          APP="$RUNNER_TEMP/dd-adhoc/Build/Products/Release-iphoneos/App.app"
+          codesign -d --entitlements - --xml "$APP" > "$RUNNER_TEMP/permissoes.plist"
+          plutil -p "$RUNNER_TEMP/permissoes.plist"
+          if ! grep -q 'com.apple.developer.applesignin' "$RUNNER_TEMP/permissoes.plist"; then
+            echo "::error::O app saiu sem a permissão do Entrar com a Apple (App.entitlements)."
+            exit 1
+          fi
+          echo "Permissão do Entrar com a Apple embutida no app."
+
       - name: Conferir os segredos
         if: inputs.modo == 'testflight'
         env:
@@ -103,8 +123,9 @@ jobs:
 
       # Assinatura de distribuição pela NUVEM da Apple (cloud signing): o certificado fica
       # com a Apple e nada de certificado ou perfil vai para os segredos. Exige chave da
-      # API com papel Admin. 1ª tentativa: arquivo sem assinatura, assinado na exportação,
-      # sem criar certificado de desenvolvimento a cada build. Se a Apple recusar, a 2ª
+      # API com papel Admin. 1ª tentativa: arquivo com assinatura local ("-"), que embute a
+      # permissão do Entrar com a Apple sem precisar de certificado; a nuvem da Apple assina
+      # de verdade na exportação, sem criar certificado de desenvolvimento a cada build. Se a Apple recusar, a 2ª
       # tentativa arquiva com assinatura automática (cria um certificado de
       # desenvolvimento pela API; a Apple avisa o titular por e-mail).
       - name: Arquivar, assinar e enviar ao TestFlight
@@ -142,8 +163,8 @@ jobs:
           BASE=(-project ios/App/App.xcodeproj -scheme App -configuration Release
                 -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd"
                 -archivePath "$ARQ" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CURRENT_PROJECT_VERSION="$BUILD")
-          echo "Build $BUILD — 1ª tentativa: arquivo sem assinatura, assinado na exportação pela nuvem da Apple."
-          xcodebuild -quiet "${BASE[@]}" CODE_SIGNING_ALLOWED=NO archive
+          echo "Build $BUILD — 1ª tentativa: arquivo com assinatura local (leva a permissão do Entrar com a Apple), assinado de verdade na exportação pela nuvem da Apple."
+          xcodebuild -quiet "${BASE[@]}" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES PROVISIONING_PROFILE_SPECIFIER= archive
           if xcodebuild -exportArchive -archivePath "$ARQ" -exportOptionsPlist "$OPC" -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}"; then
             echo "Enviado ao App Store Connect (build $BUILD)."
             exit 0

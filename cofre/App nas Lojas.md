@@ -134,6 +134,24 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     em ~2 min (o Capacitor e os plugins resolvidos pelo Swift Package Manager). Actions em Node 24
     (checkout v6.1.0, setup-node v6.5.0). Falta o modo `testflight`, que depende da conta ativa,
     do identificador do app, do app no App Store Connect e dos quatro segredos.
+- **10/11: ENTRAR COM A APPLE (diretriz 4.8), pedido do professor "Vamos resolver isso".** Nativo:
+  - plugin Swift do próprio app (`AppleSignInPlugin`, jsName `AppleSignIn`, método `entrar`),
+    registrado em `AppViewController` (SceneDelegate e storyboard apontam para ele); permissão
+    `com.apple.developer.applesignin` em `App.entitlements`;
+  - site: botão "Continuar com a Apple" (estilo branco da Apple) só no app do iPhone com o plugin;
+    nonce aleatório, SHA-256 para a Apple e cru para o Supabase; `signInWithIdToken` provider
+    `apple`; o nome do primeiro login vai para o perfil; cancelar não mostra erro;
+  - sem Services ID nem chave secreta (só o login web precisaria, e ele expira a cada 6 meses);
+  - conferido no Chromium com o supabase-js real: a Apple recebeu o hash e o Supabase o nonce
+    cru correspondente; o botão some no site;
+  - a rotina do iPhone confere a permissão no app assinado localmente, e o arquivo do
+    testflight passa a levá-la (assinatura local "-" antes da assinatura pela nuvem);
+  - falta do professor: capability no App ID; Supabase → Providers → Apple ligado com
+    `br.com.endodirect.app` em Client IDs (em 10/11 o `/auth/v1/settings` mostra só Google e
+    e-mail); testar pelo TestFlight. Pendente antes da revisão: revogar o token da Apple ao
+    excluir a conta. Teste: `scripts/test-login-apple-app-ios.js` (ci 17c-undecies-z).
+  - **Compilado no GitHub em 10/11 (Xcode 26.6):** o Swift compila e o app assinado localmente sai
+    com `com.apple.developer.applesignin = [Default]`.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 

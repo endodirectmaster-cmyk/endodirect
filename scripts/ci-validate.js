@@ -1080,6 +1080,18 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-z. ENTRAR COM A APPLE NO APP DO IPHONE (10/11/2026). Exigido pela diretriz 4.8
+//      (o app oferece Google). Nativo: plugin Swift do próprio app → identityToken → Supabase
+//      signInWithIdToken com nonce. Só aparece no iPhone; nomes JS/Swift, registro do plugin e
+//      entitlement conferidos.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-login-apple-app-ios.js')], { stdio: 'pipe' });
+  ok('Entrar com a Apple no app do iPhone: só no iPhone, nonce certo, plugin registrado, entitlement no projeto');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Entrar com a Apple (index.html, app-ios/ios/App) falhou:\n' + out);
+}
+
 // 17c-undecies-y. APP DO IPHONE PELO GITHUB ACTIONS (10/11/2026). O Mac do professor (Intel,
 //      2019) não roda o Xcode 26; ele escolheu compilar e enviar ao TestFlight num Mac do GitHub.
 //      Repositório e logs são públicos: só disparo manual, actions oficiais fixadas por commit,
