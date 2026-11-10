@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-09
+atualizado: 2026-11-10
 ---
 
 # Decisões
@@ -8,6 +8,16 @@ atualizado: 2026-11-09
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📚 CHAT, OSCE E PRESCRIÇÃO COM AS DIRETRIZES INTEIRAS E O APROFUNDAMENTO (2026-11-10).** Achado ao responder sobre o Fable: os seis pontos das ferramentas do aluno (chat do aluno e do painel, geração e relatório do OSCE, geração e avaliação da prescrição) colavam `CLINICAL_GUIDELINES` no fim do próprio texto, sem o sentinela.
+  - **O defeito:** sem sentinela, `api/ai.js` corta o system em 60 mil caracteres. As diretrizes têm 80.758, então as ~21 mil finais, as entradas mais novas (p. ex. AR GLP-1 na DAP com a coorte TriNetX/JAHA 2026, TRAVERSE, menopausa), nunca chegavam ao modelo. E o aprofundamento da subespecialidade era calculado e descartado: o chat mandava a pergunta como `grounding` desde 07/08 justamente para recebê-lo, e nunca recebeu.
+  - **A correção:** os seis pontos vão por `groundSys`, com a área do caso (`area`, sem disparar o PubMed) e um teto por pedido (`profundoMax`), que o servidor só aceita para baixo. A geração e a avaliação usam a MESMA área (`simState.area`, `rxCase.areaProfunda`), e a avaliação lê do cache o bloco que a geração gravou (medido: gravação 0 na avaliação). Teste: `scripts/test-ferramentas-profundo.js` (ci 17c-undecies-w).
+  - **Medido na prévia** (bancada temporária, token por sha256 e prazo de 60 min, removida antes do merge). Opus 5.5 em `low`; quatro versões: a atual, o aprofundamento com 60 mil, com 120 mil e inteiro.
+    - **Tokens:** o português sai a ~2,1 caracteres por token no Opus 5.5 (a conta do orçamento em `api/ai.js` usa 3,2). As diretrizes inteiras são 39 mil tokens; o bloco inteiro de uma área, 116–176 mil.
+    - **Custo por mensagem de chat (fria):** atual ~US$ 0,05 (o system é o mesmo para todos e fica quente); 60 mil ~US$ 0,18; 120 mil ~US$ 0,34; inteiro ~US$ 0,80–0,93. Quente: US$ 0,06–0,10.
+    - **Tempo:** chat 20–27 s em todas as versões. OSCE: atual 23–28 s; 60 mil 26–30 s; 120 mil 36–44 s (o teto do cliente é 59 s); inteiro 32–37 s. Prescrição: geração 7–13 s, avaliação 33–37 s em todas.
+    - **Qualidade:** revisão às cegas (um revisor independente, sem saber qual versão era qual) dos quatro casos. Com o aprofundamento, nenhum tamanho ganhou de forma consistente, e as posições trocaram de caso para caso, dentro do ruído de uma amostra por versão. O ganho medido é o das diretrizes inteiras: a coorte de 2026 na DAP aparece em todas as versões novas e em nenhuma da atual.
+  - **Decisão:** `FERRAMENTA_PROFUNDO = 60000`. Leva o acervo conferido às ferramentas do aluno com o tempo de antes e metade do custo de 120 mil. ⚠️ 0 não desliga: sem teto o servidor manda o bloco inteiro.
+  - **Visto de passagem:** o gerador de questões já manda o bloco inteiro (até ~234 mil tokens; ~US$ 1,17 por chamada fria). Em lote a área se repete e o cache acerta, mas a Questão do Dia avulsa paga o frio. Na revisão às cegas, três de quatro avaliações de prescrição mandaram suspender o iSGLT2 24 h antes de cirurgia; o vigente é 3 dias (4 para ertugliflozina). O núcleo não tem a entrada. Ver [[Pendências]].
 - **🔎 HOME NO GOOGLE + PADRÃO DOS GERADORES FORA DA ENV DO RADAR (2026-11-09).**
   - **SEO:** a home ganhou título com "Endocrinologia", description, canonical, Open Graph, JSON-LD e favicon quadrado. As páginas públicas deixaram de apagar o ">" do texto (a description da PBMAH distorcia "> 1 cm"), e o sitemap ficou só com `<loc>`. A lista do que depende do professor (Search Console, redirects na Vercel, autoria, arte de compartilhamento) está em [[Páginas Públicas e SEO]].
   - **IA:** `api/ai.js` deixou de usar `ANTHROPIC_MODEL` como padrão dos geradores; ver [[Integrações]].

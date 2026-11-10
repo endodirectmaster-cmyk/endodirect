@@ -1080,6 +1080,18 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-w. CHAT, OSCE E PRESCRIÇÃO COM AS DIRETRIZES INTEIRAS (10/11/2026). Os seis
+//      pontos concatenavam +CLINICAL_GUIDELINES sem o sentinela: o servidor cortava em 60 mil
+//      caracteres (perdia o fim das diretrizes) e descartava o aprofundamento. Agora via
+//      groundSys, com a área do caso e um teto por pedido que o servidor só aceita para baixo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ferramentas-profundo.js')], { stdio: 'pipe' });
+  ok('chat, OSCE e prescrição: diretrizes inteiras, aprofundamento com teto, mesma área na geração e na avaliação');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das ferramentas do aluno (diretrizes/aprofundamento) falhou:\n' + out);
+}
+
 // 17c-undecies-v. MODELOS DE IA — GERAÇÃO 5.5 (09/11/2026). Opus/Sonnet/Haiku 5.5 num módulo
 //      só (lib/modelos-ia.js): nada de thinking disabled (é 400), folga no max_tokens para o
 //      raciocínio, leitura pelo tipo do bloco, recusa tratada, fallback no servidor e nenhuma

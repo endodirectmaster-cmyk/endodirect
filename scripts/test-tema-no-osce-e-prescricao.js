@@ -162,7 +162,7 @@ const cap = (sub, tema, extra) => Object.assign({ sub, tema, privado: true, tipo
   const sim = html.slice(i, i + 3000);
   ok(/var tema=\(\(document\.getElementById\('sim-tema'\)\|\|\{\}\)\.value\|\|''\)\.trim\(\);/.test(sim), 'OSCE: lê o tema escolhido');
   ok(/\+\(tema\?' — tema obrigatório do caso: '\+tema:''\)\+', complexidade '/.test(sim), 'OSCE: o tema entra no pedido à IA como obrigatório');
-  ok(/tema:tema\|\|'',level:level\}/.test(sim), 'OSCE: o tema fica no estado da simulação');
+  ok(/tema:tema\|\|'',level:level(,area:simArea)?\}/.test(sim), 'OSCE: o tema fica no estado da simulação');
   ok(/if\(!sub&&tema\)sub=subDaOptionSelecionada\('sim-tema'\);/.test(sim), 'OSCE: com "Todas", a subespecialidade vem da option SELECIONADA (não de uma busca pelo valor)');
   ok(sim.indexOf('querySelector(') < 0 || sim.indexOf("option[value=") < 0, 'OSCE: sem busca de option por valor (dois temas de mesmo nome quebrariam)');
   ok(/esc\(simState\.sub\)\+\(simState\.tema\?' · '\+esc\(simState\.tema\):''\)\+' · '\+esc\(simState\.level\)/.test(html), 'OSCE: o relatório final mostra o tema');
@@ -175,7 +175,7 @@ const cap = (sub, tema, extra) => Object.assign({ sub, tema, privado: true, tipo
   ok(/var tema=\(\(document\.getElementById\('rx-tema'\)\|\|\{\}\)\.value\|\|''\)\.trim\(\);/.test(rx), 'Prescrição (override): lê o tema escolhido');
   ok(/if\(!sub&&tema\)sub=subDaOptionSelecionada\('rx-tema'\);/.test(rx) && /sub=sub\|\|'Endocrinologia';/.test(rx), 'Prescrição (override): com "Todas", a subespecialidade vem da option selecionada; sem nada, "Endocrinologia"');
   ok(/'Caso clínico de '\+sub\+\(tema\?' — tema obrigatório do caso: '\+tema:''\)\+', complexidade '\+level\+', que demande prescrição \(incluindo dose e monitorização\)\. Português do Brasil\.'/.test(rx), 'Prescrição (override): o tema entra no pedido à IA');
-  ok(/rxCase=\{caso:d\.caso,area:d\.area\|\|sub,tema:tema\|\|''\};/.test(rx) && /setText\('rx-case-tag',rxCase\.area\+\(rxCase\.tema\?' · '\+rxCase\.tema:''\)\);/.test(rx), 'Prescrição (override): o tema fica no caso e na etiqueta');
+  ok(/rxCase=\{caso:d\.caso,area:d\.area\|\|sub,tema:tema\|\|''(,areaProfunda:rxArea)?\};/.test(rx) && /setText\('rx-case-tag',rxCase\.area\+\(rxCase\.tema\?' · '\+rxCase\.tema:''\)\);/.test(rx), 'Prescrição (override): o tema fica no caso e na etiqueta');
   ok(rx.indexOf("consumeTrial('rx')") >= 0 && rx.indexOf("consumeTrial('rx')") < rx.indexOf("'rx-tema'"), 'Prescrição (override): a cota da degustação continua antes de ler o tema');
   const rxMorta = corpo('genRxCase');
   ok(rxMorta.indexOf('rx-tema') < 0 && /FUNÇÃO MORTA/.test(html.slice(html.indexOf('function genRxCase(){') - 400, html.indexOf('function genRxCase(){'))), 'Prescrição: a função morta não carrega o tema (e está marcada como morta) — foi nela que o filtro entrou primeiro');

@@ -1,9 +1,13 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-08
+atualizado: 2026-11-10
 ---
 
 # Pendências
+
+## 🧠 IA: dois achados de 10/11 à espera do professor
+- **iSGLT2 antes de cirurgia.** Na revisão às cegas das ferramentas, três de quatro avaliações de prescrição mandaram suspender 24 h antes; o vigente (bula FDA e ADA) é 3 dias, ou 4 para ertugliflozina. O núcleo não tem a entrada e tem 1.242 caracteres de folga. Oferecido ao professor: incluir uma linha.
+- **Custo da Questão do Dia avulsa.** O gerador de questões manda o aprofundamento inteiro (até ~234 mil tokens, ~US$ 1,17 por chamada fria). Em lote o cache acerta; avulsa, paga o frio. Se pesar, aplicar o mesmo teto por pedido das ferramentas do aluno. Ver [[Decisões]], 10/11.
 
 ## 📝 Resumos da EMC (07/11, revisto em 08/11)
 - [x] Resultado do SMARTEST: entrou no resumo da aula da metformina, a partir do slide da aula (Uppsala, 2026). Quando sair no PubMed, conferir os números.

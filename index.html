@@ -7453,14 +7453,14 @@ function sleep(ms){return new Promise(function(resolve){setTimeout(resolve,ms);}
 // "Gerando..." indefinidamente. Em estouro, rejeita com mensagem clara (o fetch
 // subjacente é abortado pelo teto global do aiRequest).
 function withTimeout(p,ms,msg){return new Promise(function(res,rej){var t=setTimeout(function(){rej(new Error(msg||'Tempo esgotado. Tente novamente.'));},ms);p.then(function(v){clearTimeout(t);res(v);},function(e){clearTimeout(t);rej(e);});});}
-function callAIJson(sys,usr,maxTok,retries,model,grounding){
+function callAIJson(sys,usr,maxTok,retries,model,grounding,opts){
   retries=retries==null?1:retries;
-  return callAI(sys,usr,maxTok,model,grounding).then(function(raw){
+  return callAI(sys,usr,maxTok,model,grounding,opts).then(function(raw){
     var d=parseJ(raw);
     if(!d)throw new Error('Resposta invalida da IA.');
     return d;
   }).catch(function(e){
-    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1,model,grounding);});
+    if(retries>0)return sleep(650).then(function(){return callAIJson(sys,usr,maxTok,retries-1,model,grounding,opts);});
     throw e;
   });
 }
@@ -8463,10 +8463,25 @@ var CLINICAL_GUIDELINES='\n\nDIRETRIZES RECENTES — quando o tema for pertinent
 // CRU, sem as diretrizes: a IA escrevia sobre conduta sem a fonte que o
 // professor mantém. Este helper injeta o mesmo bloco de diretrizes com o MESMO
 // sentinela, então o prompt-cache continua valendo (prefixo estável, ~0,1x).
+// Teto do aprofundamento nas ferramentas interativas do aluno (chat, OSCE e
+// prescrição). No chat o bloco muda a cada pergunta e quase nunca acerta o cache:
+// sem teto, cada mensagem gravaria até 400 mil caracteres (~US$ 0,90). Medido na
+// prévia em 10/11/2026 com 60 mil, 120 mil e o bloco inteiro: revisão às cegas sem
+// ganho consistente acima de 60 mil; com 120 mil o OSCE passou a 36–44 s (teto do
+// cliente: 59 s) e o custo dobrou. Em 60 mil o tempo fica igual ao de antes.
+// ⚠️ Não use 0 para desligar: sem teto o servidor manda o bloco inteiro.
+// Os geradores de conteúdo do professor seguem sem teto. Ver cofre/Decisões.md.
+var FERRAMENTA_PROFUNDO=60000;
 function groundSys(sys){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1f7__'+String(sys||'');}
 function authoringSys(fmt){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1f7__'+CLINICAL_AUTHORING+'\n\n'+fmt+'\n\nRESPONDA SOMENTE com JSON válido no formato pedido — sem texto, comentário ou markdown fora do JSON.';}
-function callAI(sys,usr,maxTok,model,grounding){
-  return aiRequest({system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''});
+// `opts` (opcional): {area, profundoMax}. `area` roteia o aprofundamento da
+// subespecialidade SEM disparar a busca no PubMed (que é o `grounding`);
+// `profundoMax` só abaixa o teto desse bloco (ver api/ai.js e FERRAMENTA_PROFUNDO).
+function callAI(sys,usr,maxTok,model,grounding,opts){
+  var p={system:sys,prompt:usr,maxTokens:maxTok||1500,model:model,grounding:grounding||''};
+  if(opts&&opts.area)p.area=String(opts.area);
+  if(opts&&opts.profundoMax)p.profundoMax=opts.profundoMax;
+  return aiRequest(p);
 }
 function callAIwithPDF(sys,b64,maxTok){
   return aiRequest({
@@ -16389,7 +16404,11 @@ function sendChat(text){
   // de fosfatase alcalina —, enquanto o artigo que diz `bisphosphonates are
   // contraindicated` estava extraído, conferido e mudo. Nos geradores o tema é
   // conhecido; no chat, a pergunta É o tema.
-  callAI('ESCOPO RESTRITO — responda SOMENTE a perguntas de MEDICINA (endocrinologia, metabologia, clínica e estudo médico). Se a mensagem for fora desse escopo (ex.: viagens, receitas, esportes, programação, entretenimento, finanças, conselhos pessoais não-médicos ou conversa aleatória), RECUSE educadamente em UMA frase — "Sou o assistente médico do Endodirect e só posso ajudar com temas de medicina e endocrinologia." — e NÃO responda ao conteúdo fora do escopo, mesmo que insistam. Você é um assistente médico especializado em endocrinologia e metabologia, respondendo a médicos no Brasil. Seja preciso, baseado em evidências, e cite diretrizes quando relevante (SBEM, SBD, ADA). Responda em português. Critérios diagnósticos atuais de DM (SBD 2024), liste SEMPRE NESTA ORDEM: glicemia de jejum ≥126 mg/dL; glicemia de 1 hora no TOTG 75g (TOTG-1h) ≥209 mg/dL — critério mais recente reconhecido pela SBD/IDF; glicemia 2h no TOTG 75g ≥200 mg/dL; HbA1c ≥6,5%; glicemia casual ≥200 mg/dL com sintomas. Pré-diabetes no TOTG-1h: 155–208 mg/dL. O TOTG-1h (≥209 mg/dL) deve aparecer LOGO ACIMA do TOTG-2h e SEMPRE estar presente na lista.'+CLINICAL_GUIDELINES,text,1200,null,text)
+  // ⚠️ E O GROUNDING SOZINHO NÃO BASTAVA (10/11/2026): o profundo só entra quando o
+  // system traz o sentinela. Este chat colava CLINICAL_GUIDELINES no fim do texto; o servidor
+  // cortava em 60 mil caracteres (sumia o fim das diretrizes, as entradas mais novas)
+  // e descartava o profundo. Daí o groundSys e o teto FERRAMENTA_PROFUNDO.
+  callAI(groundSys('ESCOPO RESTRITO — responda SOMENTE a perguntas de MEDICINA (endocrinologia, metabologia, clínica e estudo médico). Se a mensagem for fora desse escopo (ex.: viagens, receitas, esportes, programação, entretenimento, finanças, conselhos pessoais não-médicos ou conversa aleatória), RECUSE educadamente em UMA frase — "Sou o assistente médico do Endodirect e só posso ajudar com temas de medicina e endocrinologia." — e NÃO responda ao conteúdo fora do escopo, mesmo que insistam. Você é um assistente médico especializado em endocrinologia e metabologia, respondendo a médicos no Brasil. Seja preciso, baseado em evidências, e cite diretrizes quando relevante (SBEM, SBD, ADA). Responda em português. Critérios diagnósticos atuais de DM (SBD 2024), liste SEMPRE NESTA ORDEM: glicemia de jejum ≥126 mg/dL; glicemia de 1 hora no TOTG 75g (TOTG-1h) ≥209 mg/dL — critério mais recente reconhecido pela SBD/IDF; glicemia 2h no TOTG 75g ≥200 mg/dL; HbA1c ≥6,5%; glicemia casual ≥200 mg/dL com sintomas. Pré-diabetes no TOTG-1h: 155–208 mg/dL. O TOTG-1h (≥209 mg/dL) deve aparecer LOGO ACIMA do TOTG-2h e SEMPRE estar presente na lista.'),text,1200,null,text,{profundoMax:FERRAMENTA_PROFUNDO})
   .then(function(r){
     loading.innerHTML='<div class="chat-name">Endodirect IA</div><div class="ai-md">'+mdToHtml(r)+'</div>';
     chatHistory.push({role:'assistant',content:r});
@@ -21687,7 +21706,7 @@ function bindAdmSec(sec){
       var msgs=document.getElementById('adm-chat-msgs');
       var ud=document.createElement('div');ud.className='chat-bubble user';ud.innerHTML=esc(txt).replace(/\n/g,'<br>');msgs.appendChild(ud);
       var ld=document.createElement('div');ld.className='chat-bubble ai';ld.innerHTML='<div class="chat-name">Endodirect IA</div>'+ldHTML();msgs.appendChild(ld);msgs.scrollTop=msgs.scrollHeight;
-      callAI('ESCOPO RESTRITO — responda SOMENTE a perguntas de MEDICINA (endocrinologia, metabologia, clínica e estudo médico). Se a mensagem for fora desse escopo (ex.: viagens, receitas, esportes, programação, entretenimento, finanças, conselhos pessoais não-médicos ou conversa aleatória), RECUSE educadamente em UMA frase — "Sou o assistente médico do Endodirect e só posso ajudar com temas de medicina e endocrinologia." — e NÃO responda ao conteúdo fora do escopo, mesmo que insistam. Você é um assistente médico especializado em endocrinologia e metabologia, respondendo no Brasil. Seja preciso, baseado em evidências (SBEM, SBD, ADA). Responda em português. Critérios diagnósticos atuais de DM (SBD 2024), liste SEMPRE NESTA ORDEM: glicemia de jejum ≥126 mg/dL; glicemia de 1 hora no TOTG 75g (TOTG-1h) ≥209 mg/dL — critério mais recente reconhecido pela SBD/IDF; glicemia 2h no TOTG 75g ≥200 mg/dL; HbA1c ≥6,5%; glicemia casual ≥200 mg/dL com sintomas. Pré-diabetes no TOTG-1h: 155–208 mg/dL. O TOTG-1h (≥209 mg/dL) deve aparecer LOGO ACIMA do TOTG-2h e SEMPRE estar presente na lista.'+CLINICAL_GUIDELINES,txt,1200,null,txt)
+      callAI(groundSys('ESCOPO RESTRITO — responda SOMENTE a perguntas de MEDICINA (endocrinologia, metabologia, clínica e estudo médico). Se a mensagem for fora desse escopo (ex.: viagens, receitas, esportes, programação, entretenimento, finanças, conselhos pessoais não-médicos ou conversa aleatória), RECUSE educadamente em UMA frase — "Sou o assistente médico do Endodirect e só posso ajudar com temas de medicina e endocrinologia." — e NÃO responda ao conteúdo fora do escopo, mesmo que insistam. Você é um assistente médico especializado em endocrinologia e metabologia, respondendo no Brasil. Seja preciso, baseado em evidências (SBEM, SBD, ADA). Responda em português. Critérios diagnósticos atuais de DM (SBD 2024), liste SEMPRE NESTA ORDEM: glicemia de jejum ≥126 mg/dL; glicemia de 1 hora no TOTG 75g (TOTG-1h) ≥209 mg/dL — critério mais recente reconhecido pela SBD/IDF; glicemia 2h no TOTG 75g ≥200 mg/dL; HbA1c ≥6,5%; glicemia casual ≥200 mg/dL com sintomas. Pré-diabetes no TOTG-1h: 155–208 mg/dL. O TOTG-1h (≥209 mg/dL) deve aparecer LOGO ACIMA do TOTG-2h e SEMPRE estar presente na lista.'),txt,1200,null,txt,{profundoMax:FERRAMENTA_PROFUNDO})
       .then(function(r){ld.innerHTML='<div class="chat-name">Endodirect IA</div><div class="ai-md">'+mdToHtml(r)+'</div>';msgs.scrollTop=msgs.scrollHeight;})
       .catch(function(e){ld.innerHTML='<div class="chat-name">Endodirect IA</div><span style="color:var(--red)">Erro: '+esc(e.message)+'</span>';});
     };
@@ -23011,11 +23030,14 @@ startSim=function(){
   var mode=(document.querySelector('input[name="sim-mode"]:checked')||{}).value||'mc';
   var btn=document.getElementById('btn-sim-start');
   btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
-  var sys='Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES;
-  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN);}),59000,'A geração demorou demais. Tente de novo.')
+  // Área do aprofundamento: a MESMA string vai no relatório final (simState.area),
+  // para o bloco sair idêntico e o relatório ler do cache o que a geração gravou.
+  var simArea=((sub||'')+(tema?' '+tema:'')).trim();
+  var sys=groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
+  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN,'',{area:simArea,profundoMax:FERRAMENTA_PROFUNDO});}),59000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
-    simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',tema:tema||'',level:level};
+    simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',tema:tema||'',level:level,area:simArea};
     document.getElementById('sim-setup').style.display='none';
     document.getElementById('sim-result').style.display='none';
     document.getElementById('sim-content').style.display='block';
@@ -23100,9 +23122,9 @@ finishSim=function(){
   result.style.display='block';
   result.innerHTML='<div class="sim-report"><div class="sim-report-head"><div><div class="sim-report-kicker">Relatório final</div><h3>Gerando relatório do desempenho…</h3><p>'+esc(simState.sub)+' · '+esc(simState.level)+'</p></div><div class="sim-report-score"><strong>'+pct+'%</strong><span>'+simState.score+'/'+total+' passos</span></div></div><div style="margin-top:.6rem">'+ldHTML('Analisando suas condutas…')+'</div></div>';
   var transcript=(simState.answers||[]).map(function(a,i){return 'Passo '+(i+1)+'\nPergunta: '+a.question+'\nResposta do aluno: '+a.answer+'\nReferência ideal: '+(a.correct||'')+'\nResultado: '+(a.ok?'adequada':'inadequada')+(a.feedback?('\nFeedback: '+a.feedback):'');}).join('\n\n');
-  var sys='Você é preceptor de endocrinologia avaliando o desempenho de um residente em um caso clínico simulado. Produza um RELATÓRIO técnico, específico e completo em português do Brasil. Responda em JSON APENAS: {"nota":<número 0-10 com uma casa decimal>,"veredito":"frase curta de síntese","fortes":["ponto específico 1","2","3"],"fracos":["ponto específico 1","2"],"raciocinio":"análise do raciocínio clínico, priorização diagnóstica e interpretação dos exames (3-5 frases)","conduta":"adequação das condutas, doses, titulação, monitorização e segurança (3-5 frases)","conclusao":"CONCLUSÃO FINAL detalhada: diagnóstico correto do caso, a conduta ideal completa (com valores de corte, doses e monitorização) e as principais mensagens de aprendizado (4-6 frases)","estudar":["tópico objetivo 1","2","3"]}. Cite alvos, valores de corte, doses e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente. Baseie-se apenas nos dados do caso; não invente. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES;
+  var sys=groundSys('Você é preceptor de endocrinologia avaliando o desempenho de um residente em um caso clínico simulado. Produza um RELATÓRIO técnico, específico e completo em português do Brasil. Responda em JSON APENAS: {"nota":<número 0-10 com uma casa decimal>,"veredito":"frase curta de síntese","fortes":["ponto específico 1","2","3"],"fracos":["ponto específico 1","2"],"raciocinio":"análise do raciocínio clínico, priorização diagnóstica e interpretação dos exames (3-5 frases)","conduta":"adequação das condutas, doses, titulação, monitorização e segurança (3-5 frases)","conclusao":"CONCLUSÃO FINAL detalhada: diagnóstico correto do caso, a conduta ideal completa (com valores de corte, doses e monitorização) e as principais mensagens de aprendizado (4-6 frases)","estudar":["tópico objetivo 1","2","3"]}. Cite alvos, valores de corte, doses e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente. Baseie-se apenas nos dados do caso; não invente. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
   var usr='Caso ('+simState.sub+(simState.tema?', tema: '+simState.tema:'')+', complexidade '+simState.level+'):\n'+(simState.data.intro||'')+'\n\nDesempenho passo a passo (acertos '+simState.score+'/'+total+'):\n'+transcript;
-  simRetry(function(){return callAIJson(sys,usr,2400,0,AI_MODEL_CLINICO);})
+  simRetry(function(){return callAIJson(sys,usr,2400,0,AI_MODEL_CLINICO,'',{area:simState.area||'',profundoMax:FERRAMENTA_PROFUNDO});})
   .then(function(d){renderSimReport(d,pct,total);})
   .catch(function(){renderSimReportFallback(pct,total);});
 };
@@ -23116,17 +23138,20 @@ genRxCase=function(){
   // em Endocrinologia Pediátrica).
   if(!sub&&tema)sub=subDaOptionSelecionada('rx-tema');
   sub=sub||'Endocrinologia';
+  // Área do aprofundamento: guardada em rxCase.areaProfunda e reusada na avaliação,
+  // para o bloco sair idêntico e a avaliação ler do cache o que a geração gravou.
+  var rxArea=(sub+(tema?' '+tema:'')).trim();
   var level=document.getElementById('rx-level').value;
   var btn=document.getElementById('btn-rx-gen');
   btn.disabled=true;
   btn.innerHTML=ldHTML('Gerando...');
   simRetry(function(){
-    return callAIJson('Você é preceptor de endocrinologia (Brasil). JSON APENAS: {"caso":"vinheta clínica em 4 a 6 linhas com dados objetivos (idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades) suficientes para uma prescrição segura e individualizada","area":"'+sub+'"}. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES,'Caso clínico de '+sub+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', que demande prescrição (incluindo dose e monitorização). Português do Brasil.',1100,0,AI_MODEL_SIM_GEN);
+    return callAIJson(groundSys('Você é preceptor de endocrinologia (Brasil). JSON APENAS: {"caso":"vinheta clínica em 4 a 6 linhas com dados objetivos (idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades) suficientes para uma prescrição segura e individualizada","area":"'+sub+'"}. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'),'Caso clínico de '+sub+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', que demande prescrição (incluindo dose e monitorização). Português do Brasil.',1100,0,AI_MODEL_SIM_GEN,'',{area:rxArea,profundoMax:FERRAMENTA_PROFUNDO});
   }).then(function(d){return JSON.stringify(d);})
   .then(function(raw){
     var d=parseJ(raw);
     if(!d||!d.caso)throw new Error('Resposta inválida.');
-    rxCase={caso:d.caso,area:d.area||sub,tema:tema||''};
+    rxCase={caso:d.caso,area:d.area||sub,tema:tema||'',areaProfunda:rxArea};
     document.getElementById('rx-case-wrap').style.display='block';
     setText('rx-case-text',rxCase.caso);
     setText('rx-case-tag',rxCase.area+(rxCase.tema?' · '+rxCase.tema:''));
@@ -23145,8 +23170,8 @@ evalRx=function(){
   btn.disabled=true;
   fb.style.display='block';
   fb.innerHTML=ldHTML('Avaliando prescrição...');
-  var sys='Você é preceptor de endocrinologia avaliando a prescrição de um residente. Produza um RELATÓRIO completo e técnico em português do Brasil, em markdown, com estas seções (use ## em cada): Nota (0 a 10, com justificativa em 1 linha); Acertos; Falhas e riscos de segurança (interações, contraindicações, ajuste por função renal/hepática, dose ou titulação inadequada, duplicidade); Prescrição ideal comentada (medicamento, dose, via, posologia e duração); Monitorização e metas (exames de controle e alvos terapêuticos); Orientações ao paciente; Conclusão. Seja objetivo: tópicos curtos e o relatório inteiro com no máximo 700 palavras. Seja específico com doses, valores de corte e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE). Baseie-se apenas nos dados do caso; não invente. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").'+CLINICAL_GUIDELINES;
-  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2600,AI_MODEL_CLINICO);})
+  var sys=groundSys('Você é preceptor de endocrinologia avaliando a prescrição de um residente. Produza um RELATÓRIO completo e técnico em português do Brasil, em markdown, com estas seções (use ## em cada): Nota (0 a 10, com justificativa em 1 linha); Acertos; Falhas e riscos de segurança (interações, contraindicações, ajuste por função renal/hepática, dose ou titulação inadequada, duplicidade); Prescrição ideal comentada (medicamento, dose, via, posologia e duração); Monitorização e metas (exames de controle e alvos terapêuticos); Orientações ao paciente; Conclusão. Seja objetivo: tópicos curtos e o relatório inteiro com no máximo 700 palavras. Seja específico com doses, valores de corte e diretrizes (SBEM, SBD, ADA, Endocrine Society, AACE). Baseie-se apenas nos dados do caso; não invente. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
+  simRetry(function(){return callAI(sys,'Caso: '+(rxCase&&rxCase.caso||'')+'\nDiagnóstico do aluno: '+diag+'\nPrescrição do aluno:\n'+txt,2600,AI_MODEL_CLINICO,'',{area:(rxCase&&rxCase.areaProfunda)||'',profundoMax:FERRAMENTA_PROFUNDO});})
   .then(function(r){fb.innerHTML=formatAIReport(r);})
   .catch(function(e){fb.innerHTML='<div style="color:var(--red)">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='✓ Avaliar';});

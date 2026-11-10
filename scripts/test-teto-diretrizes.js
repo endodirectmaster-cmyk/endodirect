@@ -105,7 +105,8 @@ ok(/imagensPedidas\s*\r?\n?\s*\.map\(\(data\) => \(\{ type: 'image'/.test(ai),
 // o que sobra depois do núcleo, do prompt e do anexo — e em uso normal não morde.
 ok(/ORCAMENTO_CHARS\s*=\s*Math\.floor\(\(200000 - RESERVA_SAIDA\) \* CHARS_POR_TOKEN\)/.test(ai)
   && /const sobra = ORCAMENTO_CHARS - TETO_NUCLEO - custoPrompt - custoAnexo/.test(ai)
-  && /Math\.max\(2000, Math\.min\(temAnexo \? TETO_COM_ANEXO : TETO_PROFUNDO, sobra\)\)/.test(ai),
+  && /let tetoBase = temAnexo \? TETO_COM_ANEXO : TETO_PROFUNDO;/.test(ai)
+  && /Math\.max\(2000, Math\.min\(tetoBase, sobra\)\)/.test(ai),
   '⚠️ sumiu o orçamento de contexto do bloco profundo — prompt grande + área grande estoura os 200k e o pedido falha inteiro');
 
 
@@ -318,22 +319,27 @@ ok(deep.canonArea('posso dar isso ao nosso paciente?') === '',
 // ── O CHAT precisa mandar a pergunta como grounding ─────────────────────────
 // Era o único consumidor de IA que nunca recebia a base profunda: o api/ai.js
 // roteia por `body.area||body.grounding` e o chat não mandava nem um nem outro.
+// ⚠️ E MANDAR NÃO BASTAVA (10/11/2026): o profundo só entra quando o system traz o
+// sentinela (groundSys). O chat concatenava `+CLINICAL_GUIDELINES` desde 07/08 e o
+// servidor, sem sentinela, cortava o system em 60 mil caracteres e descartava o
+// profundo calculado. Por isso a âncora agora é o fecho do groundSys(...).
 // ⚠️ Nada de regex sobre o system inteiro: ele passa de 1 KB e tem parênteses
 // dentro, então `[^)]*` casa errado e o teste vira sempre-verde. Ancora-se no
-// fim do argumento (`+CLINICAL_GUIDELINES,`) e lê só o que vem depois.
+// fim do argumento (`'),`) e lê só o que vem depois.
 {
-  const ANCORA = "+CLINICAL_GUIDELINES,";
+  const ANCORA = "'),";
   let i = -1, n = 0;
-  while ((i = html.indexOf("callAI('ESCOPO RESTRITO", i + 1)) >= 0) {
+  while ((i = html.indexOf("callAI(groundSys('ESCOPO RESTRITO", i + 1)) >= 0) {
     n++;
     const j = html.indexOf(ANCORA, i);
     ok(j > 0 && j - i < 4000, `chat ${n}: não achei o fim do system (${ANCORA})`);
     if (j < 0) continue;
-    const cauda = html.slice(j + ANCORA.length, j + ANCORA.length + 60);
-    ok(/^(text|txt),\s*1200\s*,\s*null\s*,\s*\1\s*\)/.test(cauda),
-      `⚠️ chat ${n}: a pergunta não vai como grounding (veio "${cauda.slice(0, 32)}…") — sem isso o chat NUNCA recebe a base profunda`);
+    const cauda = html.slice(j + ANCORA.length, j + ANCORA.length + 80);
+    ok(/^(text|txt),\s*1200\s*,\s*null\s*,\s*\1\s*,\s*\{profundoMax:FERRAMENTA_PROFUNDO\}\)/.test(cauda),
+      `⚠️ chat ${n}: a pergunta não vai como grounding com o teto do profundo (veio "${cauda.slice(0, 40)}…") — sem isso o chat NUNCA recebe a base profunda`);
   }
-  ok(n === 2, `esperava 2 chamadas de chat (aluno e admin) e achei ${n}`);
+  ok(n === 2, `esperava 2 chamadas de chat (aluno e admin) via groundSys e achei ${n}`);
+  ok(html.indexOf("callAI('ESCOPO RESTRITO") < 0, '⚠️ chat sem groundSys: o servidor corta o system em 60 mil caracteres e descarta o profundo');
 }
 
 // ── avalia CLINICAL_GUIDELINES de verdade ────────────────────────────────────

@@ -268,8 +268,10 @@ module.exports = async function handler(req, res) {
   // todas as diretrizes. Agora mandamos o bloco inteiro e o marcamos como prefixo
   // cacheável (cache_control ephemeral): a 1ª chamada grava (1,25x) e as seguintes
   // leem a ~0,1x. O cliente (authoringSys) separa as diretrizes ESTÁVEIS do
-  // formato/persona VARIÁVEL com um sentinela; system longo e fixo (Chat IA, OSCE,
-  // Prescrição) é cacheado inteiro. Tem de ser STRING ou ARRAY de blocos 'text'.
+  // formato/persona VARIÁVEL com um sentinela; system longo e fixo sem sentinela é
+  // cacheado inteiro. Tem de ser STRING ou ARRAY de blocos 'text'.
+  // ⚠️ Chat, OSCE e Prescrição usavam o ramo sem sentinela até 10/11/2026 e perdiam o
+  // fim das diretrizes (corte em 60 mil) e todo o aprofundamento; hoje vão por groundSys.
   const SYS_SPLIT = '__ENDODIRECT_SYS_SPLIT_b1f7__'; // sentinela IDENTICA a de authoringSys (index.html)
   const rawSystem = String(body.system || '');
   // ⚠️ TETO DO NÚCLEO. Ultrapassá-lo CORTA EM SILÊNCIO o FIM do bloco — a IA
@@ -355,7 +357,17 @@ module.exports = async function handler(req, res) {
   // encolheria o profundo por causa de texto que nem chega a ser enviado.
   const custoPrompt = Math.min(String(body.prompt || '').length, 200000);
   const sobra = ORCAMENTO_CHARS - TETO_NUCLEO - custoPrompt - custoAnexo;
-  const tetoDestePedido = Math.max(2000, Math.min(temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO, sobra));
+  // TETO POR PEDIDO (10/11/2026): `profundoMax` só ABAIXA o teto, nunca sobe. Chat,
+  // OSCE e prescrição são ferramentas de aluno, interativas, e no chat o
+  // aprofundamento muda a cada pergunta: o cache de 5 min quase nunca acerta e cada
+  // mensagem grava o bloco de novo. Medido na prévia (Opus 5.5, 10/11/2026): o
+  // português sai a ~2,1 caracteres por token, então 400 mil caracteres são ~180 mil
+  // tokens, ~US$ 0,90 por mensagem fria; com o teto das ferramentas (60 mil) são
+  // ~27 mil tokens, ~US$ 0,18, e o tempo de resposta não muda. Ver cofre/Decisões.md.
+  const tetoPedido = Number(body.profundoMax) > 0 ? Math.floor(Number(body.profundoMax)) : 0;
+  let tetoBase = temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO;
+  if (tetoPedido) tetoBase = Math.min(tetoBase, tetoPedido);
+  const tetoDestePedido = Math.max(2000, Math.min(tetoBase, sobra));
   try { profundo = deepFor(areaPedida, tetoDestePedido, areaPedida); } catch (e) { profundo = ''; }
   let system;
   if (rawSystem.indexOf(SYS_SPLIT) !== -1) {
@@ -374,6 +386,8 @@ module.exports = async function handler(req, res) {
     if (!system.length) system = '';
   } else {
     const s = rawSystem.slice(0, 60000);
+    // ⚠️ Sem sentinela NÃO há aprofundamento e o corte é em 60 mil caracteres: quem
+    // manda as diretrizes (80 mil+) tem de usar groundSys/authoringSys no cliente.
     // System longo e FIXO entre chamadas (diretrizes embutidas, ~39k chars) vira
     // prefixo cacheável; curtos seguem como string simples. O limiar garante estar
     // bem acima do mínimo cacheável (4096 tokens no Opus) — abaixo seria no-op.
