@@ -128,6 +128,17 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     pedir à King que retire e apague o app antigo; apagado, o nome volta ao conjunto geral e o nosso
     pode passar a "Endodirect" numa atualização. Com marca registrada no INPI, a Apple tem formulário
     de disputa de nome. O "Nome da empresa" (desenvolvedor, permanente) ficou "Endodirect".
+  - **App criado em 10/11: "Endodirect Endocrinologia"** (Apple ID do app 6833147654, SKU
+    `endodirect-ios`, Português (Brasil), Acesso total).
+  - **Chave da API "GitHub Actions" (Admin) criada em 10/11** em Usuários e acesso → Integrações →
+    Chaves da equipe (o acesso à API foi solicitado e aprovado na hora). O `.p8` ficou com o professor.
+    **Os quatro segredos** (`APPLE_TEAM_ID`, `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8`) foram
+    cadastrados por ele no GitHub; nenhum valor passou pelo Claude além do Team ID e dos dois IDs.
+  - **10/11, 17h50 de Brasília: PRIMEIRO ENVIO AO APP STORE CONNECT OK** (run 42898729978, build 4,
+    Xcode 26.6, ~2,5 min). A 1ª tentativa bastou: arquivo com assinatura local ("-") + exportação
+    assinada pela nuvem da Apple ("Upload succeeded", "EXPORT SUCCEEDED"). Nenhum certificado de
+    desenvolvimento criado. Próximo: a Apple processa o build; o professor se adiciona como testador
+    interno no TestFlight e instala no iPhone.
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
