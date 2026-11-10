@@ -117,6 +117,17 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     CURSOS EM ENDOCRINOLOGIA E METABOLOGIA LTDA", inscrita como Organização, titular Rodolpho
     Mendonça; renovação em 10/11/2027 (US$ 99). O professor ainda cadastra o Team ID como o
     segredo `APPLE_TEAM_ID` no GitHub, junto com os da chave da API.
+  - **Identificador registrado em 10/11:** App ID "Endodirect" = `br.com.endodirect.app` (explícito), com
+    **Sign In with Apple** ("Enable as a primary App ID"). O quadro "Finish Setting up Sign in with
+    Apple" lista Service ID e Key (só para login no site, não usado) e **Email Sources** (pendente: os
+    e-mails da plataforma só chegam a quem escondeu o e-mail se o remetente estiver cadastrado).
+  - **App no App Store Connect, 10/11: o nome "Endodirect" está OCUPADO.** Há na App Store um app
+    "Endodirect" (id 6700791940) da KING TECNOLOGIA DA INFORMACAO LTDA, a empresa que o professor
+    contratou antes (app de banco de questões, contrato encerrado). Nome de app é único na loja.
+    Orientado: lançar como **"Endodirect Endocrinologia"** (o nome do app muda em versão futura) e
+    pedir à King que retire e apague o app antigo; apagado, o nome volta ao conjunto geral e o nosso
+    pode passar a "Endodirect" numa atualização. Com marca registrada no INPI, a Apple tem formulário
+    de disputa de nome. O "Nome da empresa" (desenvolvedor, permanente) ficou "Endodirect".
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
