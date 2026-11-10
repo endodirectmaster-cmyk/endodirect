@@ -119,15 +119,6 @@ async function openiSearch(query, n, tipo, livres) {
 // servidor e não no index.html.
 const { deepFor, TETO_PROFUNDO, TETO_COM_ANEXO } = require('./../lib/clinical-deep');
 
-// BANCADA TEMPORÁRIA (10/11/2026): mede chat, OSCE e prescrição com e sem o
-// aprofundamento ANTES da troca. Só roda na prévia do branch e SAI antes do merge
-// (test-modelos-ia.js falha se ela chegar ao main). Aqui ficam só o sha256 e o prazo.
-const BANCADA = { sha: 'f249e5f794ce4e71b6dfb2037a0ccfe3c9606fb9c691f425e575d6aeb5ae929e', ate: 1794279418521 };
-function bancadaOk(token) {
-  if (!token || Date.now() > BANCADA.ate) return false;
-  return require('crypto').createHash('sha256').update(String(token)).digest('hex') === BANCADA.sha;
-}
-
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Allow', 'POST, OPTIONS');
@@ -259,7 +250,7 @@ module.exports = async function handler(req, res) {
   // aluno de degustação, assinante e professor, e apertar para `plano` aqui
   // seria mudança de produto, não de segurança. A checagem de origem continua
   // como primeira camada (barra o navegador de outro site).
-  const aiUser = bancadaOk(parseBody(req).bancada) ? { id: 'bancada' } : await userFromReq(req);
+  const aiUser = await userFromReq(req);
   if (!aiUser) {
     return json(res, 401, { error: 'Entre na sua conta para usar os recursos de IA.' });
   }
@@ -277,8 +268,10 @@ module.exports = async function handler(req, res) {
   // todas as diretrizes. Agora mandamos o bloco inteiro e o marcamos como prefixo
   // cacheável (cache_control ephemeral): a 1ª chamada grava (1,25x) e as seguintes
   // leem a ~0,1x. O cliente (authoringSys) separa as diretrizes ESTÁVEIS do
-  // formato/persona VARIÁVEL com um sentinela; system longo e fixo (Chat IA, OSCE,
-  // Prescrição) é cacheado inteiro. Tem de ser STRING ou ARRAY de blocos 'text'.
+  // formato/persona VARIÁVEL com um sentinela; system longo e fixo sem sentinela é
+  // cacheado inteiro. Tem de ser STRING ou ARRAY de blocos 'text'.
+  // ⚠️ Chat, OSCE e Prescrição usavam o ramo sem sentinela até 10/11/2026 e perdiam o
+  // fim das diretrizes (corte em 60 mil) e todo o aprofundamento; hoje vão por groundSys.
   const SYS_SPLIT = '__ENDODIRECT_SYS_SPLIT_b1f7__'; // sentinela IDENTICA a de authoringSys (index.html)
   const rawSystem = String(body.system || '');
   // ⚠️ TETO DO NÚCLEO. Ultrapassá-lo CORTA EM SILÊNCIO o FIM do bloco — a IA
@@ -365,12 +358,12 @@ module.exports = async function handler(req, res) {
   const custoPrompt = Math.min(String(body.prompt || '').length, 200000);
   const sobra = ORCAMENTO_CHARS - TETO_NUCLEO - custoPrompt - custoAnexo;
   // TETO POR PEDIDO (10/11/2026): `profundoMax` só ABAIXA o teto, nunca sobe. Chat,
-  // OSCE e prescrição são ferramentas de aluno, interativas, e o aprofundamento
-  // muda a cada pergunta: o cache de 5 min quase nunca acerta, e cada pedido grava
-  // o bloco inteiro de novo. Com 400 mil caracteres (~120 mil tokens) isso custa
-  // ~US$ 0,60 por mensagem e soma segundos de leitura; o recorte dos fatos mais
-  // relevantes para o tema (o profundo já sai ordenado por relevância) leva o
-  // essencial a uma fração do custo. Medido na prévia antes da troca (cofre/Decisões.md).
+  // OSCE e prescrição são ferramentas de aluno, interativas, e no chat o
+  // aprofundamento muda a cada pergunta: o cache de 5 min quase nunca acerta e cada
+  // mensagem grava o bloco de novo. Medido na prévia (Opus 5.5, 10/11/2026): o
+  // português sai a ~2,1 caracteres por token, então 400 mil caracteres são ~180 mil
+  // tokens, ~US$ 0,90 por mensagem fria; com o teto das ferramentas (60 mil) são
+  // ~27 mil tokens, ~US$ 0,18, e o tempo de resposta não muda. Ver cofre/Decisões.md.
   const tetoPedido = Number(body.profundoMax) > 0 ? Math.floor(Number(body.profundoMax)) : 0;
   let tetoBase = temAnexo ? TETO_COM_ANEXO : TETO_PROFUNDO;
   if (tetoPedido) tetoBase = Math.min(tetoBase, tetoPedido);
@@ -393,6 +386,8 @@ module.exports = async function handler(req, res) {
     if (!system.length) system = '';
   } else {
     const s = rawSystem.slice(0, 60000);
+    // ⚠️ Sem sentinela NÃO há aprofundamento e o corte é em 60 mil caracteres: quem
+    // manda as diretrizes (80 mil+) tem de usar groundSys/authoringSys no cliente.
     // System longo e FIXO entre chamadas (diretrizes embutidas, ~39k chars) vira
     // prefixo cacheável; curtos seguem como string simples. O limiar garante estar
     // bem acima do mínimo cacheável (4096 tokens no Opus) — abaixo seria no-op.
@@ -482,7 +477,7 @@ module.exports = async function handler(req, res) {
 
     // usage inclui cache_creation_input_tokens / cache_read_input_tokens —
     // permite conferir o cache de prompt no devtools (Network) sem ler logs.
-    return json(res, 200, Object.assign({ text: lido.texto, usage: (data && data.usage) || null }, aiUser.id === 'bancada' ? { profundoChars: profundo.length, sistemaBlocos: Array.isArray(system) ? system.map((x) => x.text.length) : [String(system).length], stop_reason: data.stop_reason } : {}));
+    return json(res, 200, { text: lido.texto, usage: (data && data.usage) || null });
   } catch (error) {
     return json(res, 500, { error: error && error.message ? error.message : 'Falha ao chamar a IA.' });
   }

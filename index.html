@@ -8464,10 +8464,14 @@ var CLINICAL_GUIDELINES='\n\nDIRETRIZES RECENTES — quando o tema for pertinent
 // professor mantém. Este helper injeta o mesmo bloco de diretrizes com o MESMO
 // sentinela, então o prompt-cache continua valendo (prefixo estável, ~0,1x).
 // Teto do aprofundamento nas ferramentas interativas do aluno (chat, OSCE e
-// prescrição). O bloco muda a cada pergunta e quase nunca acerta o cache: sem teto,
-// cada mensagem gravaria até 400 mil caracteres. Valor medido na prévia em 10/11/2026
-// (cofre/Decisões.md). Os geradores de conteúdo do professor seguem sem teto.
-var FERRAMENTA_PROFUNDO=120000;
+// prescrição). No chat o bloco muda a cada pergunta e quase nunca acerta o cache:
+// sem teto, cada mensagem gravaria até 400 mil caracteres (~US$ 0,90). Medido na
+// prévia em 10/11/2026 com 60 mil, 120 mil e o bloco inteiro: revisão às cegas sem
+// ganho consistente acima de 60 mil; com 120 mil o OSCE passou a 36–44 s (teto do
+// cliente: 59 s) e o custo dobrou. Em 60 mil o tempo fica igual ao de antes.
+// ⚠️ Não use 0 para desligar: sem teto o servidor manda o bloco inteiro.
+// Os geradores de conteúdo do professor seguem sem teto. Ver cofre/Decisões.md.
+var FERRAMENTA_PROFUNDO=60000;
 function groundSys(sys){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1f7__'+String(sys||'');}
 function authoringSys(fmt){return CLINICAL_GUIDELINES+'__ENDODIRECT_SYS_SPLIT_b1f7__'+CLINICAL_AUTHORING+'\n\n'+fmt+'\n\nRESPONDA SOMENTE com JSON válido no formato pedido — sem texto, comentário ou markdown fora do JSON.';}
 // `opts` (opcional): {area, profundoMax}. `area` roteia o aprofundamento da
@@ -16400,6 +16404,10 @@ function sendChat(text){
   // de fosfatase alcalina —, enquanto o artigo que diz `bisphosphonates are
   // contraindicated` estava extraído, conferido e mudo. Nos geradores o tema é
   // conhecido; no chat, a pergunta É o tema.
+  // ⚠️ E O GROUNDING SOZINHO NÃO BASTAVA (10/11/2026): o profundo só entra quando o
+  // system traz o sentinela. Este chat colava CLINICAL_GUIDELINES no fim do texto; o servidor
+  // cortava em 60 mil caracteres (sumia o fim das diretrizes, as entradas mais novas)
+  // e descartava o profundo. Daí o groundSys e o teto FERRAMENTA_PROFUNDO.
   callAI(groundSys('ESCOPO RESTRITO — responda SOMENTE a perguntas de MEDICINA (endocrinologia, metabologia, clínica e estudo médico). Se a mensagem for fora desse escopo (ex.: viagens, receitas, esportes, programação, entretenimento, finanças, conselhos pessoais não-médicos ou conversa aleatória), RECUSE educadamente em UMA frase — "Sou o assistente médico do Endodirect e só posso ajudar com temas de medicina e endocrinologia." — e NÃO responda ao conteúdo fora do escopo, mesmo que insistam. Você é um assistente médico especializado em endocrinologia e metabologia, respondendo a médicos no Brasil. Seja preciso, baseado em evidências, e cite diretrizes quando relevante (SBEM, SBD, ADA). Responda em português. Critérios diagnósticos atuais de DM (SBD 2024), liste SEMPRE NESTA ORDEM: glicemia de jejum ≥126 mg/dL; glicemia de 1 hora no TOTG 75g (TOTG-1h) ≥209 mg/dL — critério mais recente reconhecido pela SBD/IDF; glicemia 2h no TOTG 75g ≥200 mg/dL; HbA1c ≥6,5%; glicemia casual ≥200 mg/dL com sintomas. Pré-diabetes no TOTG-1h: 155–208 mg/dL. O TOTG-1h (≥209 mg/dL) deve aparecer LOGO ACIMA do TOTG-2h e SEMPRE estar presente na lista.'),text,1200,null,text,{profundoMax:FERRAMENTA_PROFUNDO})
   .then(function(r){
     loading.innerHTML='<div class="chat-name">Endodirect IA</div><div class="ai-md">'+mdToHtml(r)+'</div>';

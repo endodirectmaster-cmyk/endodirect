@@ -56,6 +56,7 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
 - **Não mande `thinking: {type:'disabled'}` ao Opus 5.5 nem ao Sonnet 5.5 (erro 400).** O raciocínio do Opus 5.5 conta no `max_tokens`, e por isso há uma folga de 4.000 tokens.
 - Recusa do classificador (`stop_reason: 'refusal'`): `fallbacks: 'default'` no Opus e no Sonnet; ao aluno vai uma mensagem (422).
 - Medições: ver Decisões, 09/11/2026.
+- **Diretrizes e aprofundamento (10/11/2026):** todo system com `CLINICAL_GUIDELINES` vai pelo sentinela (`groundSys`/`authoringSys`); sem ele o servidor corta em 60 mil caracteres e não manda o aprofundamento. Chat, OSCE e prescrição limitam o aprofundamento a `FERRAMENTA_PROFUNDO` (60 mil caracteres) com `profundoMax`, que o servidor só aceita para baixo; `area` roteia o bloco sem disparar o PubMed. No Opus 5.5 o português sai a ~2,1 caracteres por token.
 
 ## Memed (Assistente de Prescrição)
 - **STATUS (2026-06-19): EM PRODUÇÃO e funcionando** — chaves de produção configuradas (`configured:true`), `MEMED_ALLOW=rodolphomend@gmail.com` (gating: só o médico vê o Consultório), e o módulo de prescrição **renderiza em produção** (confirmado pelo médico). Ver [[Decisões]] #392 (fix do SDK) e #393 (estética + paciente obrigatório).
