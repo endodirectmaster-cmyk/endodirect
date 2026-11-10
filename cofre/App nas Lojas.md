@@ -110,6 +110,35 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   business days". Próximo: o e-mail de ativação ("Welcome to the Apple Developer Program"); depois, o
   professor manda o **Team ID** e segue a etapa 2 de `app-ios/LEIA-ME.md` (pelo GitHub, sem Mac;
   ver abaixo).
+- **10/11, 14h46 de Brasília: CONTA ATIVADA.** E-mails "Welcome to the Apple Developer Program." e
+  "Welcome to App Store Connect." para contato@endodirect.com.br. Próximo: Team ID, identificador do
+  app com Sign In with Apple, app no App Store Connect, chave da API e os quatro segredos.
+  - **Team ID: `9Q4Y44Z44C`** (não é segredo: vai na assinatura de todo app). Equipe "ENDODIRECT
+    CURSOS EM ENDOCRINOLOGIA E METABOLOGIA LTDA", inscrita como Organização, titular Rodolpho
+    Mendonça; renovação em 10/11/2027 (US$ 99). O professor ainda cadastra o Team ID como o
+    segredo `APPLE_TEAM_ID` no GitHub, junto com os da chave da API.
+  - **Identificador registrado em 10/11:** App ID "Endodirect" = `br.com.endodirect.app` (explícito), com
+    **Sign In with Apple** ("Enable as a primary App ID"). O quadro "Finish Setting up Sign in with
+    Apple" lista Service ID e Key (só para login no site, não usado) e **Email Sources** (pendente: os
+    e-mails da plataforma só chegam a quem escondeu o e-mail se o remetente estiver cadastrado).
+  - **App no App Store Connect, 10/11: o nome "Endodirect" está OCUPADO.** Há na App Store um app
+    "Endodirect" (id 6700791940) da KING TECNOLOGIA DA INFORMACAO LTDA, a empresa que o professor
+    contratou antes (app de banco de questões, contrato encerrado). Nome de app é único na loja.
+    Orientado: lançar como **"Endodirect Endocrinologia"** (o nome do app muda em versão futura) e
+    pedir à King que retire e apague o app antigo; apagado, o nome volta ao conjunto geral e o nosso
+    pode passar a "Endodirect" numa atualização. Com marca registrada no INPI, a Apple tem formulário
+    de disputa de nome. O "Nome da empresa" (desenvolvedor, permanente) ficou "Endodirect".
+  - **App criado em 10/11: "Endodirect Endocrinologia"** (Apple ID do app 6833147654, SKU
+    `endodirect-ios`, Português (Brasil), Acesso total).
+  - **Chave da API "GitHub Actions" (Admin) criada em 10/11** em Usuários e acesso → Integrações →
+    Chaves da equipe (o acesso à API foi solicitado e aprovado na hora). O `.p8` ficou com o professor.
+    **Os quatro segredos** (`APPLE_TEAM_ID`, `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8`) foram
+    cadastrados por ele no GitHub; nenhum valor passou pelo Claude além do Team ID e dos dois IDs.
+  - **10/11, 17h50 de Brasília: PRIMEIRO ENVIO AO APP STORE CONNECT OK** (run 42898729978, build 4,
+    Xcode 26.6, ~2,5 min). A 1ª tentativa bastou: arquivo com assinatura local ("-") + exportação
+    assinada pela nuvem da Apple ("Upload succeeded", "EXPORT SUCCEEDED"). Nenhum certificado de
+    desenvolvimento criado. Próximo: a Apple processa o build; o professor se adiciona como testador
+    interno no TestFlight e instala no iPhone.
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
