@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-10-31
+atualizado: 2026-11-10
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -85,6 +85,13 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   de sócios, o contrato social registrado, a 2ª alteração contratual, o cartão CNPJ e o
   passaporte. Tela da Apple: "Your documents are being processed". Agora é esperar a resposta
   (dias úteis); se ela pedir mais, o professor manda o print.
+- **10/11: INSCRIÇÃO ACEITA.** E-mail "Continue your Apple Developer Program enrollment": "Your
+  enrollment request has been accepted". Falta o professor entrar em developer.apple.com/account
+  com a mesma Conta Apple da inscrição, aceitar o Apple Developer Program License Agreement e
+  pagar a anuidade. Orientei a digitar o endereço em vez de clicar no link do e-mail. Depois do
+  e-mail de boas-vindas ("Welcome to the Apple Developer Program"), ele me manda o **Team ID**
+  (Membership details, 10 caracteres) para a etapa 4 de `app-ios/LEIA-ME.md` (Entrar com a
+  Apple, links universais) e segue a etapa 2 no Mac.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
