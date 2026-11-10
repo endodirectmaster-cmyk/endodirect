@@ -55,6 +55,10 @@ ok('formato dos segredos conferido antes de usar', /BEGIN PRIVATE KEY/.test(wf) 
 ok('Xcode 26 estável mais novo do runner', /Xcode_26\*\.app/.test(wf) && /beta\|release_candidate/.test(wf) && /xcode-select -s/.test(wf));
 ok('npm ci + cap sync antes de compilar', /npm ci\n\s+npx cap sync ios/.test(wf));
 ok('modo compilar: sem assinatura', /CODE_SIGNING_ALLOWED=NO build/.test(wf));
+ok('🧨 modo compilar confere a permissão do Entrar com a Apple no app assinado localmente',
+  /CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES/.test(wf) && /codesign -d --entitlements - --xml "\$APP"/.test(wf) && /grep -q 'com\.apple\.developer\.applesignin'/.test(wf));
+ok('🧨 o arquivo do testflight leva a permissão (assinatura local, não CODE_SIGNING_ALLOWED=NO)',
+  /"\$\{BASE\[@\]\}" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES PROVISIONING_PROFILE_SPECIFIER= archive/.test(wf) && !/CODE_SIGNING_ALLOWED=NO archive/.test(wf));
 ok('envio direto ao App Store Connect (cloud signing)', /<key>method<\/key><string>app-store-connect<\/string>/.test(wf) && /<key>destination<\/key><string>upload<\/string>/.test(wf) && /<key>signingStyle<\/key><string>automatic<\/string>/.test(wf));
 ok('número do build cresce a cada execução', /BUILD: \$\{\{ github\.run_number \}\}/.test(wf) && /CURRENT_PROJECT_VERSION="\$BUILD"/.test(wf));
 ok('autenticação pela chave da API', /-authenticationKeyPath "\$KEY" -authenticationKeyID "\$ASC_KEY_ID" -authenticationKeyIssuerID "\$ASC_ISSUER_ID"/.test(wf));
