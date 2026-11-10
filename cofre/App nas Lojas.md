@@ -110,6 +110,9 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   business days". Próximo: o e-mail de ativação ("Welcome to the Apple Developer Program"); depois, o
   professor manda o **Team ID** e segue a etapa 2 de `app-ios/LEIA-ME.md` (pelo GitHub, sem Mac;
   ver abaixo).
+- **10/11, 14h46 de Brasília: CONTA ATIVADA.** E-mails "Welcome to the Apple Developer Program." e
+  "Welcome to App Store Connect." para contato@endodirect.com.br. Próximo: Team ID, identificador do
+  app com Sign In with Apple, app no App Store Connect, chave da API e os quatro segredos.
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
