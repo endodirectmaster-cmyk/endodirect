@@ -113,6 +113,10 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
 - **10/11, 14h46 de Brasília: CONTA ATIVADA.** E-mails "Welcome to the Apple Developer Program." e
   "Welcome to App Store Connect." para contato@endodirect.com.br. Próximo: Team ID, identificador do
   app com Sign In with Apple, app no App Store Connect, chave da API e os quatro segredos.
+  - **Team ID: `9Q4Y44Z44C`** (não é segredo: vai na assinatura de todo app). Equipe "ENDODIRECT
+    CURSOS EM ENDOCRINOLOGIA E METABOLOGIA LTDA", inscrita como Organização, titular Rodolpho
+    Mendonça; renovação em 10/11/2027 (US$ 99). O professor ainda cadastra o Team ID como o
+    segredo `APPLE_TEAM_ID` no GitHub, junto com os da chave da API.
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
