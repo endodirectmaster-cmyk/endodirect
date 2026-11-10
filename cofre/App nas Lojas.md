@@ -130,6 +130,10 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   - roteiro do professor na etapa 2 de `app-ios/LEIA-ME.md`: Team ID, identificador do app
     com Sign In with Apple, app no App Store Connect, chave da API, segredos, primeiro envio
     e TestFlight. Teste: `scripts/test-app-ios-workflow.js` (ci 17c-undecies-y).
+  - **Primeira compilação (modo `compilar`), 10/11: OK** no runner `macos-26` com **Xcode 26.6**,
+    em ~2 min (o Capacitor e os plugins resolvidos pelo Swift Package Manager). Actions em Node 24
+    (checkout v6.1.0, setup-node v6.5.0). Falta o modo `testflight`, que depende da conta ativa,
+    do identificador do app, do app no App Store Connect e dos quatro segredos.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
