@@ -92,6 +92,18 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   e-mail de boas-vindas ("Welcome to the Apple Developer Program"), ele me manda o **Team ID**
   (Membership details, 10 caracteres) para a etapa 4 de `app-ios/LEIA-ME.md` (Entrar com a
   Apple, links universais) e segue a etapa 2 no Mac.
+  - **Qual Conta Apple (conferido no e-mail "Your program enrollment has been received", 31/10):**
+    a inscrição da empresa está na Conta Apple **contato@endodirect.com.br** (campo "Email" da
+    inscrição), nome exibido "Endodirect Endocrinologia". É com ela que se aceita o contrato e se
+    paga. O link "Go to the website" do e-mail aponta para developer.apple.com/enroll.
+  - **⚠️ A Conta Apple pessoal do professor tem uma assinatura ANTIGA, de pessoa física, expirada**
+    (tentativa de app anterior). Ela mostra "Renovar a assinatura": **não renovar**. Isso pagaria
+    uma conta individual no nome dele, e o app tem de ficar na conta da empresa. Pelo mesmo motivo,
+    o /enroll com a conta pessoal dá "already associated with the Account Holder of a membership".
+  - Em 10/11 a conta da empresa, entrando por /enroll/app → "Continue a inscrição na web", abriu
+    "Selecione o tipo de entidade" com "Individual" marcado. Orientado a não continuar ali e a ir
+    por developer.apple.com/account; se a tela voltar, decidir antes de clicar (escolher
+    Company / Organization ou falar com o suporte).
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
