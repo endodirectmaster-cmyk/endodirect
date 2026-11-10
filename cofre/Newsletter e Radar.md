@@ -1,9 +1,32 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-11-08
+atualizado: 2026-11-10
 ---
 
 # Newsletter e Radar
+
+## 🧨 BREAKING NEWS DE 2024 COMO NOTÍCIA DO DIA: A DATA DO FEED NÃO É A DO EVENTO (2026-11-10)
+
+O professor, com o print do push das 07:45 ("🚨 Breaking News · FDA / Eli Lilly — FDA approves
+selpercatinib for RET fusion-positive thyroid cancer") e da página da FDA: *"É de hoje mesmo?"*.
+Não era: a aprovação é de **12/06/2024**.
+
+- **Causa:** o feed oficial da FDA republicou em 09/11, com `<pubDate>` novo, duas páginas de
+  2024 da seção Cancer Approvals (a do RET-fusão, de 12/06/2024, e a do carcinoma medular, de
+  27/09/2024). `isRecent` só olhava o `<pubDate>`. A IA escreveu "Em 12 de junho de 2024" no
+  resumo e marcou como breaking mesmo assim, porque o pedido não dizia que dia era hoje nem
+  perguntava a data. O push automático conferia só `at`, que também era a data do feed.
+- **Correção (`lib/news.js`, `lib/push-breaking.js`):**
+  - a data do EVENTO é lida no texto: datas completas em inglês e português, valendo a mais
+    recente citada;
+  - a captação descarta o evento com mais de 30 dias;
+  - a IA recebe a data de hoje, devolve `data_evento`, e página antiga republicada é `breaking: false`;
+  - o item grava `dataEvento`, e o push automático exige evento de até 7 dias. Nos itens antigos,
+    sem o campo, o push lê a data no próprio texto.
+  - Teste: `scripts/test-breaking-data-evento.js` (ci 17c-undecies-x).
+- **Limpeza:** os dois itens saíram do mural e as chaves foram para `radar_hidden` (backup em
+  `endodirect_global_state_backup`, motivo "selpercatinibe"). O push já enviado não tem como ser
+  desfeito.
 
 ## 🎓🔔 AULA NOVA DA EDUCAÇÃO MÉDICA CONTINUADA VAI PARA O CELULAR (2026-11-07)
 

@@ -1080,6 +1080,18 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
+//      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
+//      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e
+//      no push automático.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-breaking-data-evento.js')], { stdio: 'pipe' });
+  ok('breaking news: data do evento no texto, na IA e no push (página antiga republicada não entra)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da data do evento nas Breaking News falhou (lib/news.js, lib/push-breaking.js):\n' + out);
+}
+
 // 17c-undecies-w. CHAT, OSCE E PRESCRIÇÃO COM AS DIRETRIZES INTEIRAS (10/11/2026). Os seis
 //      pontos concatenavam +CLINICAL_GUIDELINES sem o sentinela: o servidor cortava em 60 mil
 //      caracteres (perdia o fim das diretrizes) e descartava o aprofundamento. Agora via
