@@ -110,6 +110,14 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   business days". Próximo: o e-mail de ativação ("Welcome to the Apple Developer Program"); depois, o
   professor manda o **Team ID** e segue a etapa 2 de `app-ios/LEIA-ME.md` no Mac, entrando no Xcode
   com essa mesma Conta Apple.
+- **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
+  (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
+  Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
+  mais novo (26.4 em diante: Tahoe 26.2), e desde 28/04/2026 a App Store só aceita envio feito com
+  Xcode 26 / SDK do iOS 26. Saídas: (a) compilar e enviar ao TestFlight pelo GitHub Actions (runner
+  macOS; gratuito em repositório público), com chave da API do App Store Connect criada pelo
+  professor e guardada por ele nos segredos do GitHub; (b) um Mac com chip da Apple (M1 ou mais novo);
+  (c) Mac alugado na nuvem. Recomendado (a); aguarda a decisão do professor.
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 
