@@ -40,7 +40,55 @@ Sem esse endereço na lista, o Supabase devolve o login ao site e o aluno fica l
 dentro da folha do Safari, não no app. O site não muda com isso. Não tire esse
 endereço da lista.
 
-## 2. No Mac, depois que a Apple aprovar a conta
+## 2. Pelo GitHub, sem Mac (caminho escolhido em 10/11/2026)
+
+O MacBook Air do professor (2019, Intel, macOS Sonoma) não roda o Xcode 26, que a App
+Store exige desde 28/04/2026. A compilação e o envio acontecem num Mac do GitHub, pela
+rotina `.github/workflows/app-ios.yml` (Actions → **App iOS** → **Run workflow**):
+
+- **modo `compilar`:** compila sem assinar, só para conferir o projeto. Não precisa de
+  nenhum segredo;
+- **modo `testflight`:** assina pela nuvem da Apple (o certificado fica com a Apple) e
+  envia o build ao App Store Connect. O número do build sobe sozinho a cada execução.
+
+Só roda quando alguém dispara: push e pull request não acionam nada. O repositório é
+público; os segredos ficam guardados no GitHub e não aparecem nos logs.
+
+**O que o professor faz uma vez, no navegador, depois do e-mail de ativação da Apple**
+(sempre com a Conta Apple `contato@endodirect.com.br`):
+
+1. **Team ID:** developer.apple.com/account → **Membership details** → Team ID (10
+   caracteres).
+2. **Identificador do app:** developer.apple.com/account/resources/identifiers → **+** →
+   **App IDs** → **App** → Description `Endodirect`, Bundle ID **Explicit**
+   `br.com.endodirect.app` → em Capabilities, marque **Sign In with Apple** → Continue →
+   Register.
+3. **O app no App Store Connect:** como na etapa 3 abaixo (Apps → + → Novo app).
+4. **Chave da API:** appstoreconnect.apple.com → **Usuários e acesso** → **Integrações**
+   → **API do App Store Connect** → **Chaves da equipe**. Se aparecer "Solicitar
+   acesso", só o titular solicita, e a liberação é imediata. Depois, **+**: nome
+   `GitHub Actions`, acesso **Admin** (a assinatura pela nuvem recusa papel menor) →
+   Gerar. Anote o **Issuer ID** (no alto da página) e o **Key ID**, e clique em
+   **Baixar** a chave (arquivo `AuthKey_XXXX.p8`). Ela só pode ser baixada uma vez.
+5. **Segredos no GitHub:** github.com/endodirectmaster-cmyk/endodirect → **Settings** →
+   **Secrets and variables** → **Actions** → **New repository secret**, um de cada vez:
+
+   | Nome | Valor |
+   |---|---|
+   | `APPLE_TEAM_ID` | o Team ID |
+   | `ASC_KEY_ID` | o Key ID |
+   | `ASC_ISSUER_ID` | o Issuer ID |
+   | `ASC_KEY_P8` | o conteúdo inteiro do `.p8` (abra no TextEdit e cole tudo, da linha `-----BEGIN PRIVATE KEY-----` à `-----END PRIVATE KEY-----`) |
+
+   A chave não passa por mensagem nem pelo Claude. Depois de colada, guarde o `.p8`
+   em lugar seguro ou apague (se precisar, gera-se outra e revoga-se esta).
+6. **Primeiro envio:** Actions → **App iOS** → **Run workflow** → modo `testflight`.
+   Leva uns 15 minutos. Se a Apple recusar a assinatura, o log diz o motivo.
+7. **No iPhone:** instale o app **TestFlight** (App Store). No App Store Connect → app →
+   **TestFlight** → **Testes internos** → adicione o próprio e-mail. O convite chega e o
+   app instala pelo TestFlight.
+
+## 2b. No Mac (alternativa, se um dia houver um Mac com chip da Apple)
 
 Precisa de:
 - **Xcode** na versão mais recente (App Store do Mac). A Apple só aceita envio feito
@@ -122,6 +170,8 @@ quando quiser mostrar um número novo na loja.
 app-ios/
 ├── package.json            Capacitor 8.5.3 + plugins App e Browser (versões fixas)
 ├── capacitor.config.json   endereço do site, cor de fundo, marca no user agent
+├── ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
+│                           esquema compartilhado (o GitHub arquiva por ele)
 ├── www/                    só a página offline (o app abre o site)
 └── ios/App/                projeto do Xcode
 ```

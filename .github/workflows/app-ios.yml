@@ -1,0 +1,155 @@
+name: App iOS
+
+# Compila o app do iPhone (app-ios/, Capacitor 8) num Mac do GitHub e, no modo
+# "testflight", assina e envia ao App Store Connect.
+#
+# Por que aqui e não no Mac do professor (decisão dele em 10/11/2026, "Caminho 1"):
+# o MacBook Air dele é de 2019, Intel, e fica no macOS Sonoma. O Xcode 26 exige o
+# Sequoia 15.6 ou mais novo, e desde 28/04/2026 a App Store só aceita envio feito
+# com o Xcode 26 / SDK do iOS 26. Ver app-ios/LEIA-ME.md e cofre/App nas Lojas.md.
+#
+# 🔒 O repositório é PÚBLICO, e os logs também:
+#  - só roda por disparo manual (quem dispara precisa ter escrita no repositório);
+#    push e pull request nunca gastam build nem enviam nada à Apple;
+#  - os segredos só entram nos passos do modo "testflight" e nunca são impressos;
+#    a chave .p8 vai para um arquivo temporário (umask 077) apagado no fim;
+#  - actions de terceiros: nenhuma. As oficiais vão fixadas por commit.
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'compilar (sem assinatura: confere que o projeto compila) ou testflight (assina e envia à Apple)'
+        required: true
+        default: compilar
+        type: choice
+        options:
+          - compilar
+          - testflight
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-ios
+  cancel-in-progress: false
+
+jobs:
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: app-ios
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+
+      # O runner traz várias versões do Xcode. Vale a 26 estável mais nova (beta e RC
+      # ficam de fora): é a que a App Store exige.
+      - name: Escolher o Xcode 26 mais novo
+        run: |
+          XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -viE 'beta|release_candidate|_rc' | sort -V | tail -1 || true)
+          if [ -z "$XC" ]; then
+            echo "::error::Nenhum Xcode 26 estável neste runner. Disponíveis:"
+            ls -d /Applications/Xcode*.app || true
+            exit 1
+          fi
+          sudo xcode-select -s "$XC/Contents/Developer"
+          xcodebuild -version
+
+      - name: Instalar dependências e sincronizar o Capacitor
+        run: |
+          npm ci
+          npx cap sync ios
+          xcodebuild -list -project ios/App/App.xcodeproj
+
+      - name: Compilar sem assinatura (confere o projeto)
+        if: inputs.modo == 'compilar'
+        run: |
+          xcodebuild -quiet -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO build
+          echo "Compilou com $(xcodebuild -version | head -1)."
+
+      - name: Conferir os segredos
+        if: inputs.modo == 'testflight'
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          falta=""
+          for v in APPLE_TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do
+            [ -n "${!v}" ] || falta="$falta $v"
+          done
+          if [ -n "$falta" ]; then
+            echo "::error::Faltam segredos:$falta (Settings → Secrets and variables → Actions → New repository secret)."
+            exit 1
+          fi
+          [[ "$APPLE_TEAM_ID" =~ ^[A-Z0-9]{10}$ ]] || { echo "::error::APPLE_TEAM_ID deve ter 10 letras maiúsculas ou números (Membership details)."; exit 1; }
+          [[ "$ASC_KEY_ID" =~ ^[A-Z0-9]{8,12}$ ]] || { echo "::error::ASC_KEY_ID não parece um Key ID do App Store Connect."; exit 1; }
+          [[ "$ASC_ISSUER_ID" =~ ^[0-9a-fA-F-]{36}$ ]] || { echo "::error::ASC_ISSUER_ID não parece um Issuer ID (formato UUID)."; exit 1; }
+          case "$ASC_KEY_P8" in
+            *"BEGIN PRIVATE KEY"*"END PRIVATE KEY"*) ;;
+            *) echo "::error::ASC_KEY_P8 deve ser o conteúdo inteiro do arquivo .p8, da linha BEGIN à linha END."; exit 1 ;;
+          esac
+          echo "Segredos presentes e no formato esperado."
+
+      # Assinatura de distribuição pela NUVEM da Apple (cloud signing): o certificado fica
+      # com a Apple e nada de certificado ou perfil vai para os segredos. Exige chave da
+      # API com papel Admin. 1ª tentativa: arquivo sem assinatura, assinado na exportação,
+      # sem criar certificado de desenvolvimento a cada build. Se a Apple recusar, a 2ª
+      # tentativa arquiva com assinatura automática (cria um certificado de
+      # desenvolvimento pela API; a Apple avisa o titular por e-mail).
+      - name: Arquivar, assinar e enviar ao TestFlight
+        if: inputs.modo == 'testflight'
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          BUILD: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          umask 077
+          KEY="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          trap 'rm -f "$KEY"' EXIT
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          ARQ="$RUNNER_TEMP/Endodirect.xcarchive"
+          OPC="$RUNNER_TEMP/ExportOptions.plist"
+          cat > "$OPC" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          PLIST
+          plutil -lint "$OPC"
+          BASE=(-project ios/App/App.xcodeproj -scheme App -configuration Release
+                -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd"
+                -archivePath "$ARQ" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CURRENT_PROJECT_VERSION="$BUILD")
+          echo "Build $BUILD — 1ª tentativa: arquivo sem assinatura, assinado na exportação pela nuvem da Apple."
+          xcodebuild -quiet "${BASE[@]}" CODE_SIGNING_ALLOWED=NO archive
+          if xcodebuild -exportArchive -archivePath "$ARQ" -exportOptionsPlist "$OPC" -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}"; then
+            echo "Enviado ao App Store Connect (build $BUILD)."
+            exit 0
+          fi
+          echo "::warning::A Apple não exportou o arquivo sem assinatura. 2ª tentativa: arquivo com assinatura automática."
+          rm -rf "$ARQ" "$RUNNER_TEMP/export"
+          xcodebuild -quiet "${BASE[@]}" CODE_SIGN_STYLE=Automatic "${AUTH[@]}" archive
+          xcodebuild -exportArchive -archivePath "$ARQ" -exportOptionsPlist "$OPC" -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}"
+          echo "Enviado ao App Store Connect (build $BUILD)."

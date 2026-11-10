@@ -108,8 +108,8 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   da inscrição (contato@endodirect.com.br, nome "RODOLPHO MENDONCA"). Tela da Apple: "Thank You —
   We are processing your order and will send you an activation email when it's ready… up to two (2)
   business days". Próximo: o e-mail de ativação ("Welcome to the Apple Developer Program"); depois, o
-  professor manda o **Team ID** e segue a etapa 2 de `app-ios/LEIA-ME.md` no Mac, entrando no Xcode
-  com essa mesma Conta Apple.
+  professor manda o **Team ID** e segue a etapa 2 de `app-ios/LEIA-ME.md` (pelo GitHub, sem Mac;
+  ver abaixo).
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
@@ -117,7 +117,19 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
   Xcode 26 / SDK do iOS 26. Saídas: (a) compilar e enviar ao TestFlight pelo GitHub Actions (runner
   macOS; gratuito em repositório público), com chave da API do App Store Connect criada pelo
   professor e guardada por ele nos segredos do GitHub; (b) um Mac com chip da Apple (M1 ou mais novo);
-  (c) Mac alugado na nuvem. Recomendado (a); aguarda a decisão do professor.
+  (c) Mac alugado na nuvem. Recomendado (a).
+- **10/11: o professor escolheu o "Caminho 1" (GitHub Actions).** Rotina `.github/workflows/app-ios.yml`:
+  - só disparo manual; modo `compilar` (sem assinatura, sem segredo) e modo `testflight`;
+  - o modo `testflight` assina pela nuvem da Apple (cloud signing, chave da API com papel
+    **Admin**) e envia direto ao App Store Connect. Primeiro tenta o arquivo sem assinatura,
+    assinado na exportação; se a Apple recusar, arquiva com assinatura automática;
+  - segredos: `APPLE_TEAM_ID`, `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8`, cadastrados pelo
+    professor no GitHub. A chave não passa pelo Claude;
+  - esquema compartilhado `App.xcscheme` versionado, porque o Mac do GitHub nunca abriu o
+    projeto no Xcode;
+  - roteiro do professor na etapa 2 de `app-ios/LEIA-ME.md`: Team ID, identificador do app
+    com Sign In with Apple, app no App Store Connect, chave da API, segredos, primeiro envio
+    e TestFlight. Teste: `scripts/test-app-ios-workflow.js` (ci 17c-undecies-y).
 - **19/10:** ajustes da plataforma feitos (seção abaixo), autorizados pelo professor com
   *"Pode fazer tudo"*. Falta o `assetlinks.json`, que depende do Play Console.
 

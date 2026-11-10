@@ -1080,6 +1080,18 @@ try {
   fail('regressão do resumo automático da EMC falhou:\n' + out);
 }
 
+// 17c-undecies-y. APP DO IPHONE PELO GITHUB ACTIONS (10/11/2026). O Mac do professor (Intel,
+//      2019) não roda o Xcode 26; ele escolheu compilar e enviar ao TestFlight num Mac do GitHub.
+//      Repositório e logs são públicos: só disparo manual, actions oficiais fixadas por commit,
+//      segredos só no modo testflight e a chave .p8 apagada no fim.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-workflow.js')], { stdio: 'pipe' });
+  ok('app iOS pelo GitHub Actions: só manual, actions fixadas, segredos só no envio, esquema compartilhado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da rotina do app iOS (.github/workflows/app-ios.yml) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e
