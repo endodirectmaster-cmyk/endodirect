@@ -141,9 +141,21 @@ quando quiser mostrar um número novo na loja.
 
 ## 4. O que falta e depende da conta da Apple
 
-1. **Entrar com a Apple.** Como o app oferece o Google, a diretriz 4.8 exige também
-   "Entrar com a Apple". É preciso criar o Services ID e a chave na conta da Apple e
-   ligar o provedor Apple no Supabase. Sem isso a revisão deve recusar.
+1. **Entrar com a Apple: código pronto (10/11/2026).** Como o app oferece o Google, a
+   diretriz 4.8 exige também "Entrar com a Apple". É **nativo**: a folha da Apple (com
+   Face ID) abre pelo plugin do próprio app (`ios/App/App/AppleSignInPlugin.swift`,
+   registrado em `AppViewController.swift`), e o site troca o token por sessão no
+   Supabase (`startAppleSignIn` no `index.html`). O botão "Continuar com a Apple" só
+   aparece no app do iPhone. Não usa Services ID nem chave: isso só seria preciso para o
+   login com a Apple no site, que a Apple não exige. Falta, do professor:
+   - no identificador do app (etapa 2, passo 2), a capability **Sign In with Apple**
+     marcada;
+   - no **Supabase** → Authentication → **Sign In / Providers** → **Apple** → ligar
+     (Enable), em **Client IDs** pôr `br.com.endodirect.app`, deixar o campo da chave
+     secreta em branco e salvar;
+   - testar no iPhone pelo TestFlight.
+   Pendente para antes da revisão: ao excluir a conta, revogar o token da Apple (a Apple
+   recomenda a API REST dela; exige uma chave de Sign in with Apple no servidor).
 2. **Notificações (APNs).** As notificações do site não funcionam dentro de app no
    iPhone. Precisam da chave APNs da conta e do envio pelo servidor.
 3. **Sem a pergunta "Abrir no Endodirect?"** (opcional). Trocar a folha do Safari pela
