@@ -146,9 +146,12 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     cru correspondente; o botão some no site;
   - a rotina do iPhone confere a permissão no app assinado localmente, e o arquivo do
     testflight passa a levá-la (assinatura local "-" antes da assinatura pela nuvem);
-  - falta do professor: capability no App ID; Supabase → Providers → Apple ligado com
-    `br.com.endodirect.app` em Client IDs (em 10/11 o `/auth/v1/settings` mostra só Google e
-    e-mail); testar pelo TestFlight. Pendente antes da revisão: revogar o token da Apple ao
+  - **Supabase: provedor Apple LIGADO pelo professor em 10/11, ~17h24 de Brasília**, com
+    `br.com.endodirect.app` em Client IDs e a Secret Key vazia (o Chrome tinha preenchido os dois
+    campos com um usuário e uma senha salvos; foram apagados antes de salvar). Conferido:
+    `/auth/v1/settings` mostra apple/google/email, e o `/token?grant_type=id_token` com token
+    falso responde "not an Apple ID token issuer" (o provedor aceita o fluxo nativo).
+  - falta do professor: capability no App ID (depois da ativação da conta); testar pelo TestFlight. Pendente antes da revisão: revogar o token da Apple ao
     excluir a conta. Teste: `scripts/test-login-apple-app-ios.js` (ci 17c-undecies-z).
   - **Compilado no GitHub em 10/11 (Xcode 26.6):** o Swift compila e o app assinado localmente sai
     com `com.apple.developer.applesignin = [Default]`.
