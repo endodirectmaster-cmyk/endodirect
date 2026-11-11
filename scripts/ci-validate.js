@@ -269,13 +269,14 @@ try {
 //      (17/10/2026). Pedido do professor: ver a questão como o aluno vê, numa aba
 //      ao lado de "Postados", e um visual mais didático (prancheta com o caso e a
 //      pergunta em destaque). A resposta do professor ali é de TESTE: não pode ir a
-//      DB.qotd nem às estatísticas; e a tinta da folha não pode vir do tema.
+//      DB.qotd nem às estatísticas. Em 11/11/2026 a prancheta SAIU ("ficou muito
+//      apertado o enunciado"): cartão simples, texto no tema, caixas claras com tinta fixa.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-qotd-prancheta.js')], { stdio: 'pipe' });
-  ok('Questão do Dia: prancheta com a pergunta em destaque e a aba "Como o aluno vê" do professor, que não grava');
+  ok('Questão do Dia: cartão simples (a prancheta saiu em 11/11/2026), pergunta em destaque e a aba "Como o aluno vê" do professor, que não grava');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
-  fail('prancheta da Questão do Dia / aba do professor falhou:\n' + out);
+  fail('cartão da Questão do Dia / aba do professor falhou:\n' + out);
 }
 
 // 17b3. TÍTULOS DO MURAL EM PORTUGUÊS (11/10/2026). O radar grava a tradução em
