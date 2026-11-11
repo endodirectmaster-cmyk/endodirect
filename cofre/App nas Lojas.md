@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-11-10
+atualizado: 2026-11-11
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -139,6 +139,19 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     assinada pela nuvem da Apple ("Upload succeeded", "EXPORT SUCCEEDED"). Nenhum certificado de
     desenvolvimento criado. Próximo: a Apple processa o build; o professor se adiciona como testador
     interno no TestFlight e instala no iPhone.
+  - **10/11, ~21h: APP INSTALADO NO IPHONE DO PROFESSOR PELO TESTFLIGHT.** Grupo interno
+    **"Equipe"** com distribuição automática (todo build novo chega sozinho ao iPhone), testador
+    RODOLPHO MENDONCA (convite em contato@endodirect.com.br, aceito com outro Apple ID no iPhone:
+    o TestFlight permite). iPhone 12 Pro, iOS 27.0.1. Build 4 vale até 08/02/2027. O TestFlight
+    dele ainda lista os apps da empresa antiga ("Endodirect" e "Simulados Pro", builds removidos).
+    O app ainda não está na App Store: falta a página do produto e o envio à revisão.
+  - **10/11: 1º achado do teste — o ☰ do painel não respondia.** O app desenha o site sob o
+    relógio (Capacitor `contentInset: "never"`) e a barra do topo começava em y=0, atrás do
+    relógio e da bateria. Correção em 11/11 (site, vale sem reinstalar): as barras do topo
+    (`.topbar` e `.adm-topbar`), a lateral do painel e a Questão do Dia descem por
+    `env(safe-area-inset-top)`; faixa fixa escura (`body::after`) pinta o fundo do relógio quando
+    a página rola. No app, `UIStatusBarStyleLightContent` no Info.plist deixa o relógio claro
+    (vale a partir do build 5). Teste: `scripts/test-app-ios-area-segura.js` (ci 17c-undecies-aa).
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou

@@ -1104,6 +1104,17 @@ try {
   fail('regressão da rotina do app iOS (.github/workflows/app-ios.yml) falhou:\n' + out);
 }
 
+// 17c-undecies-aa. ÁREA SEGURA DO IPHONE NO APP (11/11/2026). No 1º teste pelo TestFlight o ☰
+//      do painel ficava atrás do relógio do iPhone e não respondia ao toque. As barras do topo,
+//      as laterais e a Questão do Dia descem pelo recuo; uma faixa escura pinta o fundo do relógio.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-area-segura.js')], { stdio: 'pipe' });
+  ok('área segura do iPhone: barras do topo e laterais abaixo do relógio, faixa escura, relógio claro');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da área segura do iPhone (index.html, app-ios) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e
