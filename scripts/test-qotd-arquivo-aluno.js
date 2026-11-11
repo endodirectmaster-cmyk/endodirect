@@ -74,7 +74,8 @@ const ANTIGA = 'q0';  // a mais antiga (26/06/2026)
 function monta(respostas) {
   vm.runInContext('igStories=' + JSON.stringify(stories) + ';', ctx);
   vm.runInContext('DB=(typeof DB==="object"&&DB)?DB:{};DB.qotd=' + JSON.stringify(respostas || {}) + ';DB.perf=DB.perf||{};', ctx);
-  vm.runInContext('qotdArchOpen=null;qotdArchAuto=true;qotdArchSort="recent";', ctx);
+  // Desde 11/11/2026 a lista vem em páginas (10, 30 ou 50; padrão 10): ver test-qotd-paginacao.js.
+  vm.runInContext('qotdArchOpen=null;qotdArchAuto=true;qotdArchSort="recent";qotdArchPor=10;qotdArchPagina=0;', ctx);
   vm.runInContext('renderQotdArchive();', ctx);
   return dom.window.document.getElementById('panel-qotd-body');
 }
@@ -84,12 +85,15 @@ const idsNaTela = (el) => [...el.querySelectorAll('[data-qa-toggle]')].map((b) =
 {
   const el = monta({});
   const ids = idsNaTela(el);
-  ok(ids.length === 52, 'esperava as 52 publicadas na tela, vieram ' + ids.length);
+  ok(ids.length === 10, 'esperava a 1ª página com 10 das 52 publicadas, vieram ' + ids.length);
   ok(ids[0] === HOJE,
     '⚠️ a QUESTÃO DE HOJE não é a primeira linha do arquivo do aluno (veio "' + ids[0] + '", esperado "' + HOJE + '"). '
     + 'Foi exatamente assim que o aluno de 15/08/2026 parou de responder a do dia: ela caía no fim da lista.');
-  ok(ids[ids.length - 1] === ANTIGA,
-    'com "mais recentes primeiro" a questão mais ANTIGA tem de ser a última (veio "' + ids[ids.length - 1] + '")');
+  vm.runInContext('qotdArchPagina=5;renderQotdArchive();', ctx);
+  const ult = idsNaTela(dom.window.document.getElementById('panel-qotd-body'));
+  ok(ult.length === 2 && ult[ult.length - 1] === ANTIGA,
+    'com "mais recentes primeiro" a questão mais ANTIGA tem de ser a última da última página (veio "' + ult[ult.length - 1] + '")');
+  vm.runInContext('qotdArchPagina=0;renderQotdArchive();', ctx);
 
   // ── 2. o selo "De hoje" aponta a MESMA questão que o modal do mural ───────
   const daTela = vm.runInContext('(qotdTodays()||{}).id', ctx);
@@ -124,9 +128,11 @@ const idsNaTela = (el) => [...el.querySelectorAll('[data-qa-toggle]')].map((b) =
 // (era o que ele estava fazendo à força: posições 1,2,3… do array, de junho)
 {
   const el = monta({});
-  vm.runInContext('qotdArchSort="old";renderQotdArchive();', ctx);
+  vm.runInContext('qotdArchSort="old";qotdArchPagina=0;renderQotdArchive();', ctx);
   const ids = idsNaTela(dom.window.document.getElementById('panel-qotd-body'));
-  ok(ids[0] === ANTIGA && ids[ids.length - 1] === HOJE,
+  vm.runInContext('qotdArchPagina=5;renderQotdArchive();', ctx);
+  const fim = idsNaTela(dom.window.document.getElementById('panel-qotd-body'));
+  ok(ids[0] === ANTIGA && fim[fim.length - 1] === HOJE,
     '⚠️ sumiu a opção "mais antigas primeiro" — quem quer varrer o arquivo em ordem cronológica perdeu o caminho');
   ok(!!el.querySelector('#qa-sort'), 'o seletor de ordenação #qa-sort não está na tela do aluno');
 }
