@@ -18409,7 +18409,41 @@ function admContaRevisaoHTML(){
       +'<div>Senha: <code style="font-size:.95rem;user-select:all">'+esc(d.senha)+'</code> <button class="btn btn-outline btn-sm" type="button" data-adm-revisao-copiar="1">Copiar</button></div>'
       +'<div style="font-size:.72rem;color:var(--t3);margin-top:.3rem">Ela não fica guardada em lugar nenhum. Cole agora no formulário da loja: no Google Play, em Acesso ao app; na App Store, em Informações de login.</div>'
       +'</div>':'')
+    +admAppleTesteHTML()
     +'</div></div>';
+}
+// ── TESTE DA CHAVE DA APPLE (11/11/2026) ─────────────────────────────────────
+// A exclusão de conta de quem entrou com a Apple revoga o acesso na Apple com a
+// chave "Sign in with Apple" (envs APPLE_SIWA_KEY_ID e APPLE_SIWA_PRIVATE_KEY na
+// Vercel; ver lib/apple-revogar.js). O botão manda à Apple um código inválido de
+// propósito: se a Apple só recusar o código, a chave está certa.
+var admAppleTeste=null,admAppleTestando=false;
+var ADM_APPLE_TESTE_MSG={
+  aceita:'✅ A Apple aceitou a chave. A exclusão de contas criadas com a Apple já revoga o acesso na Apple.',
+  sem_chave:'A chave ainda não está no site: faltam APPLE_SIWA_KEY_ID e APPLE_SIWA_PRIVATE_KEY na Vercel, ou o site não foi republicado depois de colá-las.',
+  chave_ilegivel:'O conteúdo de APPLE_SIWA_PRIVATE_KEY não é uma chave válida. Cole o arquivo .p8 inteiro, da linha BEGIN à linha END.',
+  invalid_client:'A Apple recusou a chave. Confira se APPLE_SIWA_KEY_ID é o Key ID desta chave e se ela tem "Sign in with Apple" ligado ao br.com.endodirect.app.',
+  sessao:'Sua sessão expirou. Entre de novo e repita o teste.'
+};
+function admAppleTesteHTML(){
+  var t=admAppleTeste,cor=t&&t.ok?'var(--grn)':'var(--red)';
+  return '<div style="border-top:1px solid var(--bd);margin-top:1rem;padding-top:.9rem">'
+    +'<div style="font-size:.84rem;font-weight:700;color:var(--tx);margin-bottom:.3rem">Chave da Apple (exclusão de conta)</div>'
+    +'<p style="font-size:.78rem;color:var(--t2);line-height:1.55;margin:0 0 .6rem">Quem entrou com a Apple e exclui a conta tem o acesso revogado na Apple. O teste confere com a própria Apple se a chave colada na Vercel está certa. Nada é apagado.</p>'
+    +'<button class="btn btn-outline" type="button" data-adm-apple-teste="1"'+(admAppleTestando?' disabled':'')+'>'+(admAppleTestando?'Testando…':'Testar a chave da Apple')+'</button>'
+    +(t?'<div style="font-size:.8rem;line-height:1.55;margin-top:.6rem;color:'+cor+'">'+esc(ADM_APPLE_TESTE_MSG[t.motivo]||('Não foi possível testar agora ('+String(t.motivo||'erro')+'). Tente de novo em alguns minutos.'))+'</div>':'')
+    +'</div>';
+}
+function admTestarChaveApple(){
+  if(admAppleTestando)return;
+  admAppleTestando=true;admAppleTeste=null;admRevisaoRedesenha();
+  admSupportToken().then(function(token){
+    if(!token)throw new Error('sessao');
+    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'apple_chave_teste'})});
+  }).then(function(r){return r.json().catch(function(){return {};});})
+  .then(function(d){admAppleTeste={ok:!!(d&&d.ok),motivo:(d&&d.motivo)||(d&&d.error)||'erro'};})
+  .catch(function(e){admAppleTeste={ok:false,motivo:(e&&e.message==='sessao')?'sessao':'erro'};})
+  .then(function(){admAppleTestando=false;admRevisaoRedesenha();});
 }
 function admRevisaoRedesenha(){
   var c=document.getElementById('adm-revisao-card');
@@ -21976,6 +22010,7 @@ document.addEventListener('click',function(e){
   if(c('[data-curso-upsell]')){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
   // conta de revisão das lojas (painel do professor, Estudantes)
   if(c('[data-adm-revisao]')){admGerarContaRevisao();return;}
+  if(c('[data-adm-apple-teste]')){admTestarChaveApple();return;}
   if(c('[data-adm-revisao-copiar]')){var _sr=admRevisaoUltima&&admRevisaoUltima.senha;if(_sr){try{navigator.clipboard.writeText(_sr).then(function(){notify('Senha copiada.','ok');},function(){notify('Não deu para copiar: selecione a senha e copie.','err');});}catch(e){notify('Não deu para copiar: selecione a senha e copie.','err');}}return;}
   var cf=c('[data-cursofilter]');if(cf){cursoFilter=(cursoFilter===cf.dataset.cursofilter?'':cf.dataset.cursofilter);cursoMod='';renderCursosAluno();return;}
   var cmo=c('[data-cursomod]');if(cmo){cursoMod=cmo.dataset.cursomod;renderCursosAluno();return;}
