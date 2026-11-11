@@ -1175,6 +1175,16 @@ try {
   fail('regressão do OSCE (alternativas/leitor) falhou:\n' + out);
 }
 
+// 17c-undecies-ah. SESSÃO: 6 HORAS SEM USO (11/11/2026). Pedido do professor: a sessão dura 6 h
+//      sem uso (antes, 30 min) e então abre a janela "Deseja permanecer conectado?".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-sessao-inativa.js')], { stdio: 'pipe' });
+  ok('sessão: 6 h sem uso e então a janela "Permanecer conectado"');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da sessão por inatividade falhou:\n' + out);
+}
+
 // 17c-undecies-ag. QUESTÃO DO DIA EM PÁGINAS (11/11/2026). Pedido do professor: o aluno escolhe
 //      10, 30 ou 50 por página e o restante vai para a próxima; a de hoje (ou do link) abre na
 //      página dela; a aba "Como o aluno vê" tem a mesma paginação.
