@@ -22672,8 +22672,10 @@ function ensureLightbox(){
   if(window.__muralLbInit)return;window.__muralLbInit=true;
   var ov=document.createElement('div');
   ov.id='img-lightbox';
-  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.92);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out';
-  ov.innerHTML='<img alt="" style="max-width:96vw;max-height:92vh;border-radius:10px;background:#fff;box-shadow:0 12px 50px rgba(0,0,0,.55)"><button type="button" aria-label="Fechar" style="position:fixed;top:12px;right:16px;width:42px;height:42px;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(8,12,24,.78);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer">✕</button>';
+  // iPhone (app e atalho): o recuo do relógio/bateria (safe area) entra na margem e no
+  // botão de fechar; antes o ✕ ficava embaixo da bateria e não dava para tocar (11/11/2026).
+  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.92);display:none;align-items:center;justify-content:center;padding:max(20px,calc(env(safe-area-inset-top,0px) + 56px)) max(20px,env(safe-area-inset-right,0px)) max(20px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));cursor:zoom-out';
+  ov.innerHTML='<img alt="" style="max-width:96vw;max-height:100%;border-radius:10px;background:#fff;box-shadow:0 12px 50px rgba(0,0,0,.55)"><button type="button" aria-label="Fechar" style="position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:calc(env(safe-area-inset-right,0px) + 14px);width:44px;height:44px;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(8,12,24,.78);color:#fff;font-size:1.5rem;line-height:1;cursor:pointer">✕</button>';
   document.body.appendChild(ov);
   function closeLb(){ov.style.display='none';var im=ov.firstChild;if(im&&im.tagName==='IMG')im.src='';}
   ov.addEventListener('click',closeLb);
@@ -22697,7 +22699,7 @@ function ensureLightbox(){
     ov.style.alignItems=svgLargo?'flex-start':'center';
     ov.style.justifyContent=svgLargo?'flex-start':'center';
     im.style.maxWidth=svgLargo?'none':'96vw';
-    im.style.maxHeight=svgLargo?'none':'92vh';
+    im.style.maxHeight=svgLargo?'none':'100%'; // 100% da área sem a margem: não sobe até o ✕ nem a barra de status
     im.style.width=svgLargo?t.naturalWidth+'px':'';
     im.src=t.src;ov.style.display='flex';
   });
