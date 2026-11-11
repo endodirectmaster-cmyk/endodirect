@@ -26,6 +26,25 @@ Texto proposto (o professor viu em 11/11; ajustar se ele pedir):
   Apple só com a arte original, sem alterar).
 - Lembrete agendado: trig_015ousdo3Y94KeXAWnC41Dw3 (conferência da revisão) já inclui este passo.
 
+## 🔔 Notificações no app do iPhone (pedido de 11/11): push nativo na versão 1.1
+
+Professor: *"assim que estiver no ar, o aplicativo, vê alguns botões que existem na plataforma
+de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
+- **Já feito (11/11, sem build):** no app do iPhone o web push não existe (WKWebView). Para o
+  revisor não achar botão morto, `pushSupported()` devolve falso quando `APP_LOJA==='ios'`: somem
+  a faixa do Mural, o cartão das novidades, o convite do cartão de ativação e o "Ativar avisos"
+  do suporte do professor. Site e Android seguem iguais.
+- **Plano da 1.1 (depois da aprovação da 1.0; trocar o build em revisão recomeça a fila):**
+  1. Professor: Identifiers › br.com.endodirect.app › ligar **Push Notifications**; Keys ›
+     editar a chave "Endodirect Sign in with Apple" e ligar **APNs** (mesma chave, nada novo a colar)
+     — ou criar chave própria para APNs.
+  2. App: plugin `@capacitor/push-notifications`, `aps-environment` no App.entitlements, pedido de
+     permissão pelo mesmo botão "Ativar notificações" (que volta a aparecer só no app novo).
+  3. Banco: token APNs em `endodirect_push_subs` (coluna de plataforma) ou tabela própria.
+  4. Servidor: envio APNs (HTTP/2, JWT ES256 com a chave) dentro de `lib/push.js`, usado por
+     breaking news, Questão do Dia, avisos e suporte. Sem função serverless nova (12/12).
+  5. Build 1.1 pelo GitHub, TestFlight, teste no iPhone do professor, envio à revisão.
+
 ## 🧠 IA: dois achados de 10/11 à espera do professor
 - **iSGLT2 antes de cirurgia.** Na revisão às cegas das ferramentas, três de quatro avaliações de prescrição mandaram suspender 24 h antes; o vigente (bula FDA e ADA) é 3 dias, ou 4 para ertugliflozina. O núcleo não tem a entrada e tem 1.242 caracteres de folga. Oferecido ao professor: incluir uma linha.
 - **Custo da Questão do Dia avulsa.** O gerador de questões manda o aprofundamento inteiro (até ~234 mil tokens, ~US$ 1,17 por chamada fria). Em lote o cache acerta; avulsa, paga o frio. Se pesar, aplicar o mesmo teto por pedido das ferramentas do aluno. Ver [[Decisões]], 10/11.

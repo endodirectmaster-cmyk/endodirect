@@ -66,6 +66,7 @@ ok('🧨 o servidor não manda identidade do aluno à Anthropic',
 // ---- 2b. nada de "instale na tela inicial" nem web push dentro do app do iPhone -----------
 ok('🧨 faixa do Mural vazia no app do iPhone', /function muralPushCtaHTML\(\)\{\n(?:\s*\/\/[^\n]*\n)*\s*if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)return '';/.test(html));
 ok('cartão "Tenha o app no celular" só no site', /<div class="so-site"[^>]*>\s*<div[^>]*>📲<\/div>/.test(html));
+ok('🧨 web push desligado no app do iPhone (pushSupported falso)', /function pushSupported\(\)\{if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)return false;/.test(html));
 ok('cartão de notificações das novidades some no app do iPhone', /id="wn-push-card"/.test(html) && /if\(wpc&&typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)wpc\.style\.display='none';/.test(html));
 
 // ---- 3. consentimento da IA: comportamento ---------------------------------------------------

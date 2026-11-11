@@ -5676,7 +5676,10 @@ function getSupabaseClient(){
 // ── WEB PUSH (avisos/breaking news no celular) ──
 // Chave PÚBLICA do VAPID (não é segredo; o par privado vive só no servidor).
 var PUSH_VAPID_PUBLIC='BEyscFEW1gPewjFPkzpmEzl12i8cKij79AWvbZ8horMbbaWCHlGrJUMGyGVJczJvaSe3e6SqyiORvFbPsKRle-Q';
-function pushSupported(){return ('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);}
+// 📱 App do iPhone (11/11/2026): o WKWebView não entrega web push. Todo botão e convite de
+// notificação passa por aqui (Mural, novidades, cartão de ativação, suporte do professor),
+// então no app do iPhone eles somem até existir o push nativo (APNs; ver cofre/Pendências).
+function pushSupported(){if(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios')return false;return ('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);}
 function pushIsIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
 function pushStandalone(){return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||(navigator.standalone===true);}
 function pushB64ToU8(b64){var pad='='.repeat((4-b64.length%4)%4);var s=(b64+pad).replace(/-/g,'+').replace(/_/g,'/');var raw=atob(s);var arr=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return arr;}
