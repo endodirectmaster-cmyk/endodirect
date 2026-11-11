@@ -34,6 +34,7 @@ const { licencaOpeni, baixarImagemOpeni } = require('../lib/openi-imagem');
 // Exclusão de conta pelo aluno e conta de revisão das lojas (módulos lib/).
 const { excluirConta } = require('../lib/excluir-conta');
 const { contaRevisao } = require('../lib/conta-revisao');
+const { testarChaveApple } = require('../lib/apple-revogar');
 function pickModel(requested) {
   return normModelo(requested) || DEFAULT_MODEL;
 }
@@ -215,6 +216,15 @@ module.exports = async function handler(req, res) {
       const r = await contaRevisao();
       res.setHeader('Cache-Control', 'no-store');
       return json(res, r.ok ? 200 : (r.code || 400), r.ok ? { ok: true, email: r.email, senha: r.senha, criada: r.criada } : { ok: false, error: r.error });
+    }
+    // (d4) PROFESSOR testa a chave "Sign in with Apple" (envs da Vercel) com um código
+    // inválido de propósito. Ver lib/apple-revogar.js (testarChaveApple).
+    if (sbody && sbody.kind === 'apple_chave_teste') {
+      const admin = await adminFromReq(req);
+      if (!admin) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
+      const r = await testarChaveApple();
+      res.setHeader('Cache-Control', 'no-store');
+      return json(res, 200, r);
     }
     // (e) Busca de imagem de exame no Open-i (PubMed Central) p/ ilustrar a Questão
     // do Dia. Não usa Anthropic → tratado aqui. Best-effort: falha vira lista vazia.

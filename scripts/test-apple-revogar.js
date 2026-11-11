@@ -23,7 +23,7 @@ const ok = (nome, cond, det) => { if (cond) return; bad++; console.log('  ✗ ' 
 let terminou = false;
 process.on('exit', () => { if (!terminou) { console.log('  ✗ o teste não chegou ao fim (promessa pendurada)'); process.exitCode = 1; } });
 
-const { revogarApple, clientSecret, subDoIdToken, config } = require(path.join(RAIZ, 'lib', 'apple-revogar.js'));
+const { revogarApple, testarChaveApple, clientSecret, subDoIdToken, config } = require(path.join(RAIZ, 'lib', 'apple-revogar.js'));
 
 const par = crypto.generateKeyPairSync('ec', { namedCurve: 'P-256' });
 const pem = par.privateKey.export({ type: 'pkcs8', format: 'pem' });
@@ -90,6 +90,22 @@ function appleFalsa(resp) {
     ok('🧨 rede caindo: devolve erro, não lança', !r2.ok && r2.motivo === 'erro');
   }
 
+  // ---- 2b. botão "Testar a chave da Apple" ------------------------------------------------
+  {
+    const f = appleFalsa({ '/auth/token': { status: 400, body: { error: 'invalid_grant' } } });
+    const r = await testarChaveApple({ env: ENV, fetch: f });
+    ok('🧨 teste da chave: invalid_grant = chave aceita', r.ok === true && r.motivo === 'aceita' && f.chamadas.length === 1 && f.chamadas[0].campos.client_secret.split('.').length === 3);
+    ok('o teste não chama /auth/revoke', !f.chamadas.some((c) => /revoke/.test(c.url)));
+    const g = appleFalsa({ '/auth/token': { status: 400, body: { error: 'invalid_client' } } });
+    const r2 = await testarChaveApple({ env: ENV, fetch: g });
+    ok('🧨 teste da chave: invalid_client = chave recusada', !r2.ok && r2.motivo === 'invalid_client');
+    const h = appleFalsa({});
+    const r3 = await testarChaveApple({ env: {}, fetch: h });
+    ok('teste sem chave: avisa sem chamar a Apple', !r3.ok && r3.motivo === 'sem_chave' && h.chamadas.length === 0);
+    const r4 = await testarChaveApple({ env: { APPLE_SIWA_KEY_ID: 'X', APPLE_SIWA_PRIVATE_KEY: '-----BEGIN PRIVATE KEY-----\nlixo\n-----END PRIVATE KEY-----' }, fetch: h });
+    ok('chave colada errada: avisa que está ilegível', !r4.ok && r4.motivo === 'chave_ilegivel');
+  }
+
   // ---- 3. dentro da exclusão ----------------------------------------------------------------
   {
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'chave-de-teste';
@@ -132,6 +148,9 @@ function appleFalsa(resp) {
   const ai = fs.readFileSync(path.join(RAIZ, 'api', 'ai.js'), 'utf8');
   ok('🧨 o endpoint repassa apple_code à exclusão', /const appleCode = typeof sbody\.apple_code === 'string' \? sbody\.apple_code\.slice\(0, 2000\) : '';\s*const r = await excluirConta\(user, \{ appleCode \}\);/.test(ai));
   const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+  ok('🧨 o teste da chave é só para professor', /if \(sbody && sbody\.kind === 'apple_chave_teste'\) \{\s*const admin = await adminFromReq\(req\);\s*if \(!admin\) return json\(res, 401/.test(ai));
+  ok('o botão do teste está no cartão da conta de revisão', /\+admAppleTesteHTML\(\)/.test(html) && /if\(c\('\[data-adm-apple-teste\]'\)\)\{admTestarChaveApple\(\);return;\}/.test(html) && /body:JSON\.stringify\(\{kind:'apple_chave_teste'\}\)/.test(html));
+  ['aceita', 'sem_chave', 'chave_ilegivel', 'invalid_client'].forEach((m) => ok('o painel explica o resultado ' + m, new RegExp('\\b' + m + ":'").test(html)));
   ok('🧨 a exclusão pede o código da Apple antes de chamar o servidor', /return codigoAppleParaExclusao\(\)\.then\(function\(appleCode\)\{\s*var corpo=\{kind:'excluir_conta',confirmar:'EXCLUIR'\};\s*if\(appleCode\)corpo\.apple_code=appleCode;/.test(html));
   ok('fechar a folha da Apple para a exclusão com aviso', /if\(e&&e\.appleCancelado\)\{falha\(e\.message\);return;\}/.test(html));
   const ini = html.indexOf('var EXCLUSAO_APPLE_CANCELADA=');

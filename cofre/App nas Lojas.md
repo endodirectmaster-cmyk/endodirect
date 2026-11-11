@@ -185,6 +185,13 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     Falha da Apple não trava a exclusão (vai ao log: `apple: revogada` ou o motivo). Fechar a folha
     para a exclusão com aviso. Página /excluir-conta atualizada. Teste
     `scripts/test-apple-revogar.js` (ci 17c-undecies-ac), 11 mutações pegas.
+    - **Teste da chave no painel (11/11):** Estudantes › cartão "Conta de revisão das lojas" ›
+      "Testar a chave da Apple" (`kind:'apple_chave_teste'`, só professor). Manda à Apple um código
+      inválido de propósito: `invalid_grant` = chave aceita; `invalid_client` = chave/Key ID errados.
+      O teste real de exclusão não dá para fazer com o Apple ID do professor: o "Continuar com a
+      Apple" de 10/11 vinculou a Apple à conta de professor (Google + Apple), que não se exclui.
+    - **Email Sources cadastrados pelo professor (10/11, 23h33):** domínios endodirect.com.br e
+      send.endodirect.com.br; e-mails nao-responda@, newsletter@, noticias@, suporte@ e contato@.
     - **Falta do professor:** chave "Sign in with Apple" no portal (Keys) e as envs da Vercel
       `APPLE_SIWA_KEY_ID` e `APPLE_SIWA_PRIVATE_KEY` (a chave não passa pelo Claude); depois, redeploy
       e um teste real (conta nova pela Apple no iPhone, excluída no app, conferir o log).
