@@ -39,15 +39,6 @@ function pickModel(requested) {
   return normModelo(requested) || DEFAULT_MODEL;
 }
 
-// ⏱️ BANCADA TEMPORÁRIA (11/11/2026): amostra do complemento dos comentários do banco
-// (demais alternativas). Só roda na prévia do branch e SAI antes do merge
-// (test-modelos-ia.js falha se ela chegar ao main). Token fora do repositório; aqui, sha256 e prazo.
-const BANCADA = { sha: '8ab5c776e3994d42e9538574bd5276e31800db9afb5b455530b9dad64181a63e', ate: 1794424867000 };
-function bancadaOk(token) {
-  if (!token || Date.now() > BANCADA.ate) return false;
-  return require('crypto').createHash('sha256').update(String(token)).digest('hex') === BANCADA.sha;
-}
-
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -272,8 +263,7 @@ module.exports = async function handler(req, res) {
   // aluno de degustação, assinante e professor, e apertar para `plano` aqui
   // seria mudança de produto, não de segurança. A checagem de origem continua
   // como primeira camada (barra o navegador de outro site).
-  const naBancada = bancadaOk(parseBody(req).bancada);
-  const aiUser = naBancada ? { bancada: true } : await userFromReq(req);
+  const aiUser = await userFromReq(req);
   if (!aiUser) {
     return json(res, 401, { error: 'Entre na sua conta para usar os recursos de IA.' });
   }
