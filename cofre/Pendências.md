@@ -1,9 +1,30 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-10
+atualizado: 2026-11-11
 ---
 
 # Pendências
+
+## 📱 FAQ do site quando o app do iPhone estiver na App Store (pedido de 11/11)
+
+Professor: *"Assim que o aplicativo estiver no ar, uma coisa que vale a pena também modificar é
+no site, na landing page, lá embaixo no FAQ, sobre se o aplicativo está disponível na plataforma
+do iOS."* **Publicar só depois de o professor clicar em "Lançar esta versão"** (lançamento manual)
+e de a página https://apps.apple.com/br/app/id6833147654 abrir.
+
+Onde: `index.html`, FAQ da landing (`.lp-faq`: "Funciona no celular?" e "📱 Como deixar o app na
+tela do iPhone/Android?") e o FAQ de dentro da plataforma (`faq-item so-site`, mesmo assunto).
+
+Texto proposto (o professor viu em 11/11; ajustar se ele pedir):
+- **Funciona no celular?** Sim. No iPhone, pelo app **Endodirect Endocrinologia**, na App Store.
+  No computador e no Android, pelo navegador.
+- **📱 Tem app para iPhone e Android?** **iPhone:** baixe o **Endodirect Endocrinologia** na App
+  Store (link). Entre com o mesmo e-mail, Google ou Apple da sua conta: o progresso é o mesmo do
+  site. A assinatura é feita pelo site. **Android:** o app da Play Store está em preparação. Até
+  lá, abra o site no Chrome → menu ⋮ → Instalar app.
+- Botão/link: "Baixar na App Store" → https://apps.apple.com/br/app/id6833147654 (selo oficial da
+  Apple só com a arte original, sem alterar).
+- Lembrete agendado: trig_015ousdo3Y94KeXAWnC41Dw3 (conferência da revisão) já inclui este passo.
 
 ## 🧠 IA: dois achados de 10/11 à espera do professor
 - **iSGLT2 antes de cirurgia.** Na revisão às cegas das ferramentas, três de quatro avaliações de prescrição mandaram suspender 24 h antes; o vigente (bula FDA e ADA) é 3 dias, ou 4 para ertugliflozina. O núcleo não tem a entrada e tem 1.242 caracteres de folga. Oferecido ao professor: incluir uma linha.
