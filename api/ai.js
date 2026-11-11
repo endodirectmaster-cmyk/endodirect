@@ -39,6 +39,16 @@ function pickModel(requested) {
   return normModelo(requested) || DEFAULT_MODEL;
 }
 
+// ⏱️ BANCADA TEMPORÁRIA (11/11/2026): mede o OSCE em duas partes contra a versão atual,
+// com os pedidos reais. Só roda na prévia do branch e SAI antes do merge (o teste
+// test-modelos-ia.js falha se ela chegar ao main). O token fica só num arquivo fora do
+// repositório; aqui, apenas o sha256 e o prazo.
+const BANCADA = { sha: 'cac9a9779b8d22c2ff5c048f6d35ecb55ef8e9e0b3c224f7e2d25a42c6a9c44d', ate: 1794417079256 };
+function bancadaOk(token) {
+  if (!token || Date.now() > BANCADA.ate) return false;
+  return require('crypto').createHash('sha256').update(String(token)).digest('hex') === BANCADA.sha;
+}
+
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -263,7 +273,8 @@ module.exports = async function handler(req, res) {
   // aluno de degustação, assinante e professor, e apertar para `plano` aqui
   // seria mudança de produto, não de segurança. A checagem de origem continua
   // como primeira camada (barra o navegador de outro site).
-  const aiUser = await userFromReq(req);
+  const naBancada = bancadaOk(parseBody(req).bancada);
+  const aiUser = naBancada ? { bancada: true } : await userFromReq(req);
   if (!aiUser) {
     return json(res, 401, { error: 'Entre na sua conta para usar os recursos de IA.' });
   }

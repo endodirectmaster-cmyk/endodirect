@@ -23273,9 +23273,59 @@ function simRetry(promiseFactory){
 }
 function updateSimCounter(){
   var el=document.getElementById('sim-counter');if(!el||!simState||!simState.data)return;
-  var resp=(simState.answers||[]).length,total=(simState.data.steps||[]).length,ac=simState.score||0;
+  var resp=(simState.answers||[]).length,total=Math.max((simState.data.steps||[]).length,simState.totalPassos||0),ac=simState.score||0;
   var pct=resp?Math.round(ac/resp*100):0;
   el.textContent='Passos: '+resp+'/'+total+' · Acertos: '+ac+(resp?' ('+pct+'%)':'');
+}
+// ── OSCE EM DUAS PARTES (11/11/2026, pedido do professor: "deixar o tempo de geração do
+// caso menor sem comprometer a qualidade") ──
+// Antes, uma chamada só escrevia a vinheta e os 4 passos com as justificativas (23–30 s, e
+// o aluno olhando o "Gerando..."). Agora: a 1ª parte escreve a vinheta, o roteiro (o plano
+// dos 4 passos, que o aluno não vê) e o passo 1; o caso abre. A 2ª parte escreve os passos
+// 2–4 por trás, enquanto o aluno lê e responde o passo 1, com a vinheta, o passo 1 e o
+// roteiro na mão (coerência). Mesmo modelo, mesmas diretrizes, mesmo aprofundamento (o
+// cache das diretrizes e da área é o mesmo das duas chamadas) e as mesmas regras.
+var SIM_PASSOS=4;
+var SIM_REGRAS=' Os feedbacks podem ser ricos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").';
+function simPassoSchema(mode){
+  return '{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}';
+}
+function simSysParte1(mode){
+  return groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). O caso tem EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Planeje os 4 agora, mas escreva SÓ a vinheta, o roteiro e o PASSO 1: os passos 2 a 4 serão escritos depois, a partir da vinheta, do passo 1 e do roteiro. JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","roteiro":"diagnóstico final e o que cada um dos passos 2, 3 e 4 vai cobrar, uma linha por passo (o aluno não vê)","steps":['+simPassoSchema(mode)+']} com UM item em steps (o passo 1).'+SIM_REGRAS);
+}
+function simSysParte2(mode){
+  return groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta e o passo 1 já foram apresentados ao aluno: NÃO os reescreva nem os repita, e não contradiga nenhum dado deles. Escreva agora os passos 2, 3 e 4, seguindo o roteiro e a progressão (2: exames complementares → 3: diagnóstico → 4: conduta/titulação). Cada passo avança a partir do anterior. JSON APENAS: {"steps":['+simPassoSchema(mode)+']} com EXATAMENTE 3 itens (os passos 2, 3 e 4).'+SIM_REGRAS);
+}
+function simPedidoParte2(st){
+  var p1=(st.data&&st.data.steps&&st.data.steps[0])||{};
+  return 'Caso de '+(st.sub||'endocrinologia')+(st.tema?' — tema obrigatório do caso: '+st.tema:'')+', complexidade '+st.level+', modo '+(st.mode==='mc'?'múltipla escolha':'resposta aberta')+'.'
+    +'\n\nVINHETA (já apresentada):\n'+String((st.data&&st.data.intro)||'')
+    +'\n\nPASSO 1 (já apresentado):\n'+JSON.stringify(p1)
+    +'\n\nROTEIRO:\n'+String(st.roteiro||'(sem roteiro: siga a progressão exames → diagnóstico → conduta)');
+}
+// Os passos 2–4 que voltam: tira um eventual passo 1 repetido e fica com até 3.
+function simPassosResto(d,p1){
+  var lista=(d&&Array.isArray(d.steps))?d.steps:[];
+  var q1=String((p1&&p1.pergunta)||'').trim();
+  lista=lista.filter(function(x){return x&&x.pergunta&&String(x.pergunta).trim()!==q1;});
+  return lista.slice(0,SIM_PASSOS-1);
+}
+// 2ª parte, por trás. `estado` é o caso que a pediu: se o aluno recomeçar no meio, a
+// resposta atrasada não entra no caso novo.
+function simGerarResto(estado){
+  estado.restoErro=null;
+  estado.resto=withTimeout(simRetry(function(){return callAIJson(simSysParte2(estado.mode),simPedidoParte2(estado),3000,0,AI_MODEL_SIM_GEN,'',estado.simOpts);}),59000,'O restante do caso demorou demais.')
+  .then(function(d){
+    if(simState!==estado)return;
+    var resto=simPassosResto(d,estado.data.steps[0]);
+    if(!resto.length)throw new Error('Resposta inválida.');
+    estado.data.steps=[estado.data.steps[0]].concat(resto);
+    estado.resto=null;
+  }).catch(function(e){
+    if(simState!==estado)return;
+    estado.resto=null;estado.restoErro=(e&&e.message)||'Falha ao preparar o restante do caso.';
+  });
+  return estado.resto;
 }
 startSim=function(){
   if(!consumeTrial('sim'))return;
@@ -23291,11 +23341,16 @@ startSim=function(){
   // Área do aprofundamento: a MESMA string vai no relatório final (simState.area),
   // para o bloco sair idêntico e o relatório ler do cache o que a geração gravou.
   var simArea=((sub||'')+(tema?' '+tema:'')).trim();
-  var sys=groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
-  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN,'',{area:simArea,profundoMax:FERRAMENTA_PROFUNDO});}),59000,'A geração demorou demais. Tente de novo.')
+  var simOpts={area:simArea,profundoMax:FERRAMENTA_PROFUNDO};
+  var sys=simSysParte1(mode);
+  withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',2000,0,AI_MODEL_SIM_GEN,'',simOpts);}),59000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
-    if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
+    if(!d||!d.intro||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
+    d.steps=d.steps.slice(0,1); // só o passo 1; os outros vêm da 2ª parte
     simState={data:d,step:0,mode:mode,score:0,answers:[],sub:sub||'Endocrinologia',tema:tema||'',level:level,area:simArea};
+    simState.roteiro=String(d.roteiro||'');delete d.roteiro;
+    simState.simOpts=simOpts;simState.totalPassos=SIM_PASSOS;
+    simGerarResto(simState);
     document.getElementById('sim-setup').style.display='none';
     document.getElementById('sim-result').style.display='none';
     document.getElementById('sim-content').style.display='block';
@@ -23307,7 +23362,17 @@ startSim=function(){
 renderSimStep=function(){
   updateSimCounter();
   var s=simState.data.steps[simState.step];
-  if(!s){finishSim();return;}
+  if(!s){
+    var est=simState,wrapR=document.getElementById('sim-input-wrap');
+    // A 2ª parte ainda está chegando: espera aqui (normalmente são poucos segundos).
+    if(est.resto){wrapR.innerHTML=ldHTML('Preparando o próximo passo...');est.resto.then(function(){if(simState===est)renderSimStep();});return;}
+    if(est.restoErro){
+      wrapR.innerHTML='<div style="font-size:.8rem;color:var(--t2);margin-bottom:.45rem">Não consegui preparar o próximo passo ('+esc(est.restoErro)+').</div><button class="btn btn-primary btn-sm" id="btn-sim-resto">Tentar de novo</button>';
+      var br=document.getElementById('btn-sim-resto');if(br)br.addEventListener('click',function(){simGerarResto(est);renderSimStep();});
+      return;
+    }
+    finishSim();return;
+  }
   var msgs=document.getElementById('sim-msgs');
   msgs.innerHTML+='<div class="sim-bubble doc"><strong>Passo '+(simState.step+1)+':</strong> '+esc(s.pergunta)+'</div>';
   var wrap=document.getElementById('sim-input-wrap');

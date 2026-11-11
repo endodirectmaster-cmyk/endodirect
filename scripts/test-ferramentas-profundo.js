@@ -36,8 +36,14 @@ const TETO_FERRAMENTA = mTeto ? Number(mTeto[1]) : 0;
 ok('FERRAMENTA_PROFUNDO abaixo do teto do servidor e acima do mínimo útil', TETO_FERRAMENTA >= 30000 && TETO_FERRAMENTA < 400000, String(TETO_FERRAMENTA));
 ok('os seis pontos passam o teto (chat ×2, OSCE ×2, prescrição ×2)', (html.match(/profundoMax:FERRAMENTA_PROFUNDO/g) || []).length === 6);
 ok('chat do aluno e do painel via groundSys', (html.match(/callAI\(groundSys\('ESCOPO RESTRITO/g) || []).length === 2);
-ok('OSCE: geração e relatório via groundSys',
-  /var sys=groundSys\('Você é preceptor de endocrinologia conduzindo/.test(html) && /var sys=groundSys\('Você é preceptor de endocrinologia avaliando o desempenho/.test(html));
+// Desde 11/11/2026 a geração do OSCE tem duas partes (vinheta + passo 1; depois os passos
+// 2–4), cada uma com o seu groundSys e a MESMA área/teto (simOpts).
+ok('OSCE: geração (as duas partes) e relatório via groundSys',
+  /function simSysParte1\(mode\)\{\s*return groundSys\('Você é preceptor de endocrinologia conduzindo/.test(html)
+  && /function simSysParte2\(mode\)\{\s*return groundSys\('Você é preceptor de endocrinologia conduzindo/.test(html)
+  && /var sys=groundSys\('Você é preceptor de endocrinologia avaliando o desempenho/.test(html));
+ok('OSCE: as duas partes da geração usam a MESMA área e o mesmo teto (o cache das diretrizes e da área serve às duas)',
+  /var simOpts=\{area:simArea,profundoMax:FERRAMENTA_PROFUNDO\};/.test(html) && /AI_MODEL_SIM_GEN,'',simOpts\)/.test(html) && /AI_MODEL_SIM_GEN,'',estado\.simOpts\)/.test(html));
 ok('prescrição: geração e avaliação via groundSys',
   /callAIJson\(groundSys\('Você é preceptor de endocrinologia \(Brasil\)/.test(html) && /var sys=groundSys\('Você é preceptor de endocrinologia avaliando a prescrição/.test(html));
 ok('OSCE: o relatório usa a MESMA área da geração (bloco idêntico, cache acerta)',
