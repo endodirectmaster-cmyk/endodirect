@@ -343,8 +343,15 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .calc-pills{margin:0 0 .35rem;max-width:100%}
 /* A faixa vira linha flex para a busca sentar ao lado das abas; em tela estreita
    a busca desce para a linha de baixo (wrap). As abas continuam podendo encolher. */
-.calc-pills-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem}
-.calc-pills{flex:1 1 32rem;min-width:0}
+.calc-pills-wrap{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem 1rem}
+/* 🔽 FILTRO EM CAIXA (11/11/2026, pedido do professor): as fileiras de botões de filtro
+   (Calculadoras: Todas, Lípides…; Flashcards e Mapas Mentais: Todos, DM1, DM2…) viraram
+   uma caixa de seleção com rótulo, no padrão do filtro do Mural. As opções só aparecem
+   ao abrir a caixa. Mudança tratada num ouvinte só ('change' em select[data-filtro]). */
+.filtro-caixa{display:flex;flex-direction:column;gap:.28rem;flex:0 1 19rem;min-width:12rem;max-width:100%}
+.filtro-caixa-rot{font-size:.6rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.filtro-caixa select{height:38px;font-weight:600;cursor:pointer}
+.filtro-linha{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;margin:.2rem 0 .9rem}
 /* A cor do card vem das classes `mural-card-*`, que só definem
    `border-left-color` — por isso a borda em si é declarada aqui. Card de área
    sem cor mapeada fica com a borda neutra, e não sem borda: alinhamento
@@ -627,6 +634,9 @@ textarea{resize:vertical;line-height:1.6}
 .sr-hard{background:#33280c;color:#ca8a04}
 .sr-again{background:var(--red-l);color:var(--red)}
 .mm-item{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.75rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:.7rem}
+.mm-abre{cursor:pointer;transition:border-color .15s}
+.mm-abre:hover{border-color:var(--blue)}
+.mm-abre:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .mm-gen-card{padding:1rem 1.1rem}
 .mm-generate-row{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content;gap:8px;align-items:end}
 .mm-help{font-size:.68rem;color:var(--t3);margin-top:.65rem}
@@ -2700,7 +2710,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="pc">
         <div style="display:flex;gap:7px;margin-bottom:.85rem;flex-wrap:wrap">
           <button class="btn btn-primary btn-sm" id="fc-btn-create">+ Novo card</button>
-          <button class="btn btn-outline btn-sm" id="fc-btn-gen">▶ Gerar com IA</button>
           <button class="btn btn-outline btn-sm" id="fc-btn-study">📖 Estudar</button>
         </div>
         <div id="fc-create" style="display:none" class="gen-box">
@@ -2710,15 +2719,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div class="fld2"><label>Categoria</label><div id="fc-cat-pills" style="display:flex;flex-wrap:wrap;gap:.3rem"></div></div>
           <div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" id="fc-save-btn">Salvar</button><button class="btn btn-outline btn-sm" id="fc-create-cancel2">Cancelar</button></div>
         </div>
-        <div id="fc-gen" style="display:none" class="gen-box">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Gerar com IA</span><button class="btn btn-ghost btn-sm" id="fc-gen-cancel">✕</button></div>
-          <div class="g3" style="margin-bottom:.65rem">
-            <div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="fc-gsub"><option>Diabetes</option><option>Obesidade</option><option>Tireoide</option><option>Adrenal</option><option>Neuroendocrinologia</option><option>Osteometabolismo</option><option>Lípides</option><option>Endocrinologia Pediátrica</option><option>Endocrinologia Feminina</option><option>Endocrinologia Masculina</option><option>Endocrinologia do Esporte</option><option>Transgeneridade</option></select></div>
-            <div class="fld2" style="margin:0"><label>Tema (opcional)</label><input type="text" id="fc-gt" placeholder="Ex: Tireoidite de Hashimoto"></div>
-            <div class="fld2" style="margin:0"><label>Quantidade</label><select id="fc-gq"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option></select></div>
-          </div>
-          <button class="btn btn-primary btn-sm" id="btn-fcgen">Gerar</button>
-        </div>
+        <!-- 11/11/2026: o "Gerar com IA" dos flashcards do aluno saiu, a pedido do professor
+             (o baralho vem do professor; o aluno ainda cria card à mão em "+ Novo card"). -->
         <div id="fc-study" style="display:none">
           <div style="max-width:440px;margin:0 auto">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Modo estudo</span><button class="btn btn-outline btn-sm" id="fc-end-study">Sair</button></div>
@@ -2737,7 +2739,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Podcasts</b></div>
       <div class="ph"><h1>Podcasts</h1><p>Episódios em áudio de endocrinologia para escutar na plataforma.</p></div>
       <div class="pc">
-        <div id="pod-filter-row" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem"></div>
+        <div id="pod-filter-row" class="filtro-linha" style="margin:0 0 .85rem"></div>
         <div id="pod-list" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
@@ -2760,7 +2762,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div class="gen-box mm-gen-card">
           <div class="mm-generate-row">
             <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
-            <button class="btn btn-primary" id="btn-mmgen">🤖 Gerar com IA</button>
             <button class="btn btn-outline" id="btn-mmblank">✏️ Manual</button>
           </div>
           <div class="mm-help">💡 Clique em qualquer caixa para editar o texto. Passe o mouse sobre uma caixa e clique em <b>+</b> para criar um subramo a partir dela (em qualquer nível) ou em <b>×</b> para remover.</div>
@@ -10353,15 +10354,11 @@ function markLockedNavItems(){
   });
   try{applyDegLocks();}catch(e){}
 }
-// Bloqueios visuais da DEGUSTAÇÃO: "Gerar com IA" (flashcards/mapas) e as fontes
-// IA/Misto do Simulado ficam travadas (só conteúdo pré-salvo/banco é liberado).
+// Bloqueios visuais da DEGUSTAÇÃO: as fontes IA/Misto do Simulado ficam travadas (só
+// conteúdo pré-salvo/banco é liberado). O "Gerar com IA" de flashcards e de mapas do
+// aluno saiu em 11/11/2026 (pedido do professor), e com ele a trava deles.
 function applyDegLocks(){
   var deg=isDegustacao()&&!acessosPendentes(); // pendente não tranca nem força a fonte do Simulado
-  [['fc-btn-gen','▶ Gerar com IA'],['btn-mmgen','🤖 Gerar com IA']].forEach(function(p){
-    var b=document.getElementById(p[0]);if(!b)return;
-    if(deg){b.innerHTML='🔒 Gerar com IA';b.style.opacity='.65';b.title='Disponível nos pacotes';b.dataset.degLock='1';}
-    else if(b.dataset.degLock){b.innerHTML=p[1];b.style.opacity='';b.title='';delete b.dataset.degLock;}
-  });
   ['ia','misto'].forEach(function(v){
     var r=document.querySelector('input[name="sf-fonte"][value="'+v+'"]');if(!r)return;
     var lab=r.closest('label');
@@ -12003,20 +12000,6 @@ function saveFC(){
   fcFilter=fcSelectedCat; // mostra a categoria do card recém-criado
   renderFC();refreshDash();notify('Flashcard criado!','ok');
 }
-function genFC(){
-  var sub=document.getElementById('fc-gsub').value;
-  var topic=(document.getElementById('fc-gt').value||'').trim();
-  var qty=parseInt(document.getElementById('fc-gq').value)||10;
-  var btn=document.getElementById('btn-fcgen');
-  btn.disabled=true;btn.innerHTML=ldHTML();
-  callAI(groundSys('Endocrinologista educador BR. JSON APENAS: {"cards":[{"front":"pergunta curta","back":"resposta objetiva 1-2 frases"}]}'),'Gere '+qty+' flashcards de '+sub+(topic?', tema '+topic:'')+'.',1800)
-  .then(function(raw){
-    var d=parseJ(raw);if(!d||!d.cards)throw new Error('Resposta inválida.');
-    d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:sub,at:Date.now()});});
-    persist();document.getElementById('fc-gen').style.display='none';renderFC();refreshDash();notify(d.cards.length+' flashcards gerados!','ok');
-  }).catch(function(e){notify('Erro: '+e.message,'err');})
-  .then(function(){btn.disabled=false;btn.innerHTML='Gerar';});
-}
 function fcCatColor(cat){
   var k=String(cat||'').toLowerCase();
   if(k.indexOf('diabet')>=0)return'#2563eb';
@@ -12051,14 +12034,15 @@ function renderFC(){
   if(frow){
     frow.style.display='flex';
     var tabs='<button class="dir-back" data-fcsub="">← Subespecialidades</button>';
-    tabs+='<button class="cat-pill'+(fcTema===''?' on':'')+'" data-fctema="">Todos ('+subList.length+')</button>';
-    tabs+=temaListFor(subList,fcFilter).map(function(o){return '<button class="cat-pill'+(fcTema===o.tema?' on':'')+'" data-fctema="'+esc(o.tema)+'">'+esc(o.tema)+' ('+o.count+')</button>';}).join('');
+    tabs+=filtroCaixaHTML('Subtópico','fctema',
+      [{v:'',t:'Todos ('+subList.length+')'}].concat(temaListFor(subList,fcFilter).map(function(o){return {v:o.tema,t:o.tema+' ('+o.count+')'};})),
+      fcTema);
     frow.innerHTML=tabs;
   }
   el.className='fc-grid';
   var list=fcTema?subList.filter(function(c){return temaOf(c,fcFilter)===fcTema;}):subList;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard nesta subespecialidade ainda.</div>';return;}
-  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'" data-fav-tit="'+esc(c.front||'')+'" data-fav-sub="'+esc(c.cat||'')+'"><button class="fc-del" data-fcdel="'+i+'" title="Excluir">✕</button>'
+  el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'" data-fav-tit="'+esc(c.front||'')+'" data-fav-sub="'+esc(c.cat||'')+'">'
       // A estrela fica FORA do .fc-inner que gira: dentro, ela viraria de cabeca
       // para baixo junto com o card ao ser revelado.
       +'<span style="position:absolute;top:.4rem;right:2rem;z-index:3">'+favStarHTML('flashcard',c)+'</span>'+'<div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+(c.shared?novoSeloHTML(c):'')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
@@ -12174,28 +12158,6 @@ function buildSVG(data){
   });
   svg+='</svg>';
   return svg;
-}
-function genMM(){
-  var topic=(document.getElementById('mm-topic').value||'').trim();
-  if(!topic){notify('Digite um tema.','err');return;}
-  var btn=document.getElementById('btn-mmgen');
-  btn.disabled=true;btn.innerHTML=ldHTML();
-  document.getElementById('mm-live').style.display='block';
-  setText('mm-live-title',topic);
-  document.getElementById('mm-svg').innerHTML=ldHTML();
-  callAI(groundSys('Endocrinologista educador. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe 1","detalhe 2","detalhe 3"]}]}. Crie 5-6 ramos com 3-5 folhas cada, em portugues medico claro.'),'Mapa mental sobre: '+topic,1800)
-  .then(function(raw){
-    var d=parseJ(raw);if(!d||!d.branches)throw new Error('Resposta inválida.');
-    d=normalizeMMData(d);
-    curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:d,at:Date.now()};
-    setText('mm-live-title',d.root||topic);
-    renderMMEditor();
-  }).catch(function(e){
-    curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:sampleMMData(topic),at:Date.now()};
-    setText('mm-live-title',curMM.data.root||topic);
-    renderMMEditor();
-    notify('IA indisponível agora. Abri um mapa editável para você ajustar.','info');
-  }).then(function(){btn.disabled=false;btn.innerHTML='🤖 Gerar com IA';});
 }
 function sampleMMData(topic){
   var t=(topic||'Hipertireoidismo').trim()||'Hipertireoidismo';
@@ -12391,11 +12353,12 @@ function renderMMList(){
   var ph=(DB.mm||[]).map(function(m,i){return{m:m,i:i};}).filter(function(o){return canonSub(o.m.sub)===mmSubSel&&!(o.m&&o.m.seed);});
   var allMaps=sh.concat(ph.map(function(o){return o.m;}));
   if(head){
-    var mtabs='<button class="cat-pill'+(mmTema===''?' on':'')+'" data-mmtema="">Todos ('+allMaps.length+')</button>';
-    mtabs+=temaListFor(allMaps,mmSubSel).map(function(o){return '<button class="cat-pill'+(mmTema===o.tema?' on':'')+'" data-mmtema="'+esc(o.tema)+'">'+esc(o.tema)+' ('+o.count+')</button>';}).join('');
+    var mtabs=filtroCaixaHTML('Subtópico','mmtema',
+      [{v:'',t:'Todos ('+allMaps.length+')'}].concat(temaListFor(allMaps,mmSubSel).map(function(o){return {v:o.tema,t:o.tema+' ('+o.count+')'};})),
+      mmTema);
     head.innerHTML='<button class="dir-back" data-mmback style="margin-bottom:.7rem">← Todas as subespecialidades</button>'
       +'<div class="ph" style="margin-top:0;margin-bottom:.5rem"><h1 style="font-size:1.05rem">'+dirSubIcon(mmSubSel)+' '+esc(mmSubSel)+'</h1></div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.7rem">'+mtabs+'</div>';
+      +'<div class="filtro-linha" style="margin:0 0 .7rem">'+mtabs+'</div>';
   }
   var shF=mmTema?sh.filter(function(m){return temaOf(m,mmSubSel)===mmTema;}):sh;
   shF=shF.slice().sort(function(a,b){return (acervoEhNovo(b)?1:0)-(acervoEhNovo(a)?1:0);});
@@ -12403,10 +12366,11 @@ function renderMMList(){
   setText('mm-count','('+(shF.length+phF.length)+')');
   var html=shF.map(function(m){
     var j=(sharedMM||[]).indexOf(m); // índice no array GLOBAL (viewMMShared lê sharedMM), não no filtrado
-    return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+novoSeloHTML(m)+' <span class="tag tag-pur" style="font-size:.55rem">Professor</span></div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmviewshared="'+j+'">Ver</button></div></div>';
+    // 11/11/2026 (pedido do professor): a linha inteira abre o mapa, sem o "Ver", e sem o selo "Professor".
+    return'<div class="mm-item mm-abre" data-mmviewshared="'+j+'" role="button" tabindex="0" title="Abrir o mapa" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+novoSeloHTML(m)+'</div><div style="font-size:.63rem;color:var(--t3)">'+esc(canonSub(m.sub))+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'</div></div>';
   }).join('');
   html+=phF.map(function(o){var m=o.m,i=o.i;
-    return'<div class="mm-item" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-outline btn-sm" data-mmview="'+i+'">Ver</button><button class="btn btn-ghost btn-sm" data-mmdel="'+i+'">×</button></div></div>';
+    return'<div class="mm-item mm-abre" data-mmview="'+i+'" role="button" tabindex="0" title="Abrir o mapa" data-fav-tit="'+esc(m.topic||'')+'" data-fav-sub="'+esc(canonSub(m.sub)||'')+'"><div><div style="font-size:.8rem;font-weight:600">'+esc(m.topic)+'</div><div style="font-size:.63rem;color:var(--t3)">'+new Date(m.at||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div style="display:flex;gap:4px;align-items:center">'+favStarHTML('mapa',m)+'<button class="btn btn-ghost btn-sm" data-mmdel="'+i+'" title="Excluir este mapa">×</button></div></div>';
   }).join('');
   if(!html)html='<div class="empty">Nenhum mapa neste subtópico ainda.</div>';
   el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px">'+html+'</div>';
@@ -12625,7 +12589,8 @@ function renderPodcasts(){
   var order=POD_ORDER.filter(function(c){return cats[c];});
   Object.keys(cats).forEach(function(c){if(c!=='Miscelânea'&&order.indexOf(c)<0)order.push(c);});
   if(cats['Miscelânea'])order.push('Miscelânea'); // sempre ao final
-  if(frow)frow.innerHTML='<button class="cat-pill'+(podFilter===''?' on':'')+'" data-podfilter="">Todos ('+podcasts.length+')</button>'+order.map(function(c){return'<button class="cat-pill'+(podFilter===c?' on':'')+'" data-podfilter="'+esc(c)+'">'+esc(c)+' ('+cats[c]+')</button>';}).join('');
+  // Filtro em caixa (11/11/2026, pedido do professor; era fileira de botões).
+  if(frow)frow.innerHTML=filtroCaixaHTML('Subespecialidade','podfilter',[{v:'',t:'Todos ('+podcasts.length+')'}].concat(order.map(function(c){return {v:c,t:c+' ('+cats[c]+')'};})),podFilter);
   var el=document.getElementById('pod-list');if(!el)return;
   var list=podFilter?podcasts.filter(function(p){return podArea(p)===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
@@ -13527,12 +13492,11 @@ function renderCalcGrid(){
   var ix=calcAreasIndex();
   if(calcAreaFiltro&&ix.areas.indexOf(calcAreaFiltro)<0)calcAreaFiltro='';   // área que deixou de existir
   var visiveis=calcAreaFiltro?[calcAreaFiltro]:ix.areas;
-  var pills='<div class="pill-tab-row calc-pills">'
-    +'<button class="pill-tab'+(calcAreaFiltro?'':' on')+'" data-calcarea="">Todas <span class="calc-pill-n">'+CALCS.length+'</span></button>'
-    +ix.areas.map(function(a){
-      return '<button class="pill-tab'+(calcAreaFiltro===a?' on':'')+'" data-calcarea="'+esc(a)+'"><i class="calc-dot '+muralSubMeta(a).tag+'"></i>'+esc(a)+' <span class="calc-pill-n">'+ix.porArea[a].length+'</span></button>';
-    }).join('')
-    +'</div>';
+  // Filtro de área em caixa de seleção (pedido do professor, 11/11/2026).
+  var pills=filtroCaixaHTML('Área',
+    'calcarea',
+    [{v:'',t:'Todas as áreas ('+CALCS.length+')'}].concat(ix.areas.map(function(a){return {v:a,t:a+' ('+ix.porArea[a].length+')'};})),
+    calcAreaFiltro);
   var grupos=visiveis.map(function(a){
     // ⚠️ A COR VEM DE `muralSubMeta`, a MESMA do Mural. Agora que as áreas são as
     // subespecialidades, inventar uma paleta aqui faria Lípides ser vermelho no
@@ -13551,9 +13515,6 @@ function renderCalcGrid(){
   // `activeCalc` ter sido zerado (o painel do professor zera em `bindAdmSec`)
   // deixaria a tela vazia: grade escondida e nenhuma calculadora para mostrar.
   el.style.display='';
-  el.querySelectorAll('[data-calcarea]').forEach(function(b){
-    b.addEventListener('click',function(){calcAreaFiltro=b.getAttribute('data-calcarea')||'';renderCalcGrid();});
-  });
   var campo=el.querySelector('#calc-busca');
   if(campo)campo.addEventListener('input',function(){calcBusca=campo.value;calcAplicarBusca(el);});
   // Teclado: o cartão é botão (role + tabindex), então Enter e espaço abrem.
@@ -16692,7 +16653,7 @@ function admMapasHTML(){
   }
   // Nível 2 — mapas da subespecialidade + criação contextual.
   var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return canonSub(o.m.sub)===admMMSub;});
-  var mmTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admMMTema===''?' on':'')+'" data-admmm-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.m;}),admMMSub).map(function(t){return '<button class="cat-pill'+(admMMTema===t.tema?' on':'')+'" data-admmm-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
+  var mmTemaTabs='<div class="filtro-linha">'+filtroCaixaHTML('Subtópico','admmmtema',[{v:'',t:'Todos ('+rows.length+')'}].concat(temaListFor(rows.map(function(o){return o.m;}),admMMSub).map(function(t){return {v:t.tema,t:t.tema+' ('+t.count+')'};})),admMMTema)+'</div>';
   var rowsF=admMMTema?rows.filter(function(o){return temaOf(o.m,admMMSub)===admMMTema;}):rows;
   var list=rowsF.map(function(o){var m=o.m,j=o.j;var row='<div class="adm-mm-row" data-adm-mm-edit="'+j+'" title="Abrir e editar o mapa"><div style="min-width:0"><div class="adm-mm-title" style="font-weight:600;font-size:.82rem;color:var(--blue)">'+esc(m.topic)+'</div><div style="font-size:.68rem;color:var(--t3)">'+((m.data&&m.data.branches&&m.data.branches.length)||0)+' ramos</div></div><span style="color:var(--t3);font-size:1.15rem;flex-shrink:0" aria-hidden="true">›</span></div>';return '<div style="padding:.35rem 0;border-bottom:1px solid var(--bd)">'+row+'</div>';}).join('');
   var createForm='<div class="card" style="margin-bottom:1rem"><div class="card-head"><span class="card-title">Criar mapa mental em '+esc(admMMSub)+'</span></div>'
@@ -16753,7 +16714,7 @@ function admFlashHTML(){
       +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Crie e publique flashcards por subespecialidade. Ao salvar, eles entram no baralho de todos os alunos.</p></div>'+grid+'</div>';
   }
   var rows=(fcShared||[]).map(function(c,j){return{c:c,j:j};}).filter(function(o){return canonSub(o.c.sub||o.c.cat)===admFcSub;});
-  var fcTemaTabs='<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .9rem"><button class="cat-pill'+(admFcTema===''?' on':'')+'" data-admfc-tema="">Todos ('+rows.length+')</button>'+temaListFor(rows.map(function(o){return o.c;}),admFcSub).map(function(t){return '<button class="cat-pill'+(admFcTema===t.tema?' on':'')+'" data-admfc-tema="'+esc(t.tema)+'">'+esc(t.tema)+' ('+t.count+')</button>';}).join('')+'</div>';
+  var fcTemaTabs='<div class="filtro-linha">'+filtroCaixaHTML('Subtópico','admfctema',[{v:'',t:'Todos ('+rows.length+')'}].concat(temaListFor(rows.map(function(o){return o.c;}),admFcSub).map(function(t){return {v:t.tema,t:t.tema+' ('+t.count+')'};})),admFcTema)+'</div>';
   var rowsF=admFcTema?rows.filter(function(o){return temaOf(o.c,admFcSub)===admFcTema;}):rows;
   var list=rowsF.map(function(o){var c=o.c,j=o.j;
     return '<div style="padding:.6rem 0;border-bottom:1px solid var(--bd)"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem"><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:.82rem">'+esc(c.front)+'</div><div style="font-size:.74rem;color:var(--t2);margin-top:.2rem">'+esc(c.back)+'</div></div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-fc-edit="'+j+'">Editar</button></div></div>'
@@ -20830,7 +20791,6 @@ function bindAdmSec(sec){
     }
     // Grade de subespecialidades → entra na subespecialidade.
     main.querySelectorAll('[data-admmm-sub]').forEach(function(b){b.addEventListener('click',function(){admMMSub=b.dataset.admmmSub;admMMTema='';admMMDraft=null;admMMEditId=null;renderAdmSec('mapas');});});
-    main.querySelectorAll('[data-admmm-tema]').forEach(function(b){b.addEventListener('click',function(){admMMTema=b.dataset.admmmTema;renderAdmSec('mapas');});});
     var mmBack=document.getElementById('adm-mm-back');
     if(mmBack)mmBack.addEventListener('click',function(){admMMSub='';admMMTema='';renderAdmSec('mapas');});
     var mmEditBack=document.getElementById('adm-mm-editback');
@@ -20959,7 +20919,6 @@ function bindAdmSec(sec){
 
   if(sec==='flashcards'){
     main.querySelectorAll('[data-admfc-sub]').forEach(function(b){b.addEventListener('click',function(){admFcSub=b.dataset.admfcSub;admFcTema='';admFcEditId=null;renderAdmSec('flashcards');});});
-    main.querySelectorAll('[data-admfc-tema]').forEach(function(b){b.addEventListener('click',function(){admFcTema=b.dataset.admfcTema;admFcEditId=null;renderAdmSec('flashcards');});});
     var fcBack=document.getElementById('adm-fc-backbtn');
     if(fcBack)fcBack.addEventListener('click',function(){admFcSub='';admFcTema='';admFcEditId=null;renderAdmSec('flashcards');});
     var fcGen=document.getElementById('adm-fc-gen');
@@ -21969,6 +21928,29 @@ function initAll(){
 }
 
 // ── DELEGAÇÃO DE EVENTOS GLOBAL ──
+// Caixa de filtro (ver .filtro-caixa). `opcoes`: [{v:'',t:'Todos (49)'}, ...].
+function filtroCaixaHTML(rotulo,chave,opcoes,atual){
+  return '<label class="filtro-caixa"><span class="filtro-caixa-rot">'+esc(rotulo)+'</span>'
+    +'<select data-filtro="'+chave+'" aria-label="'+esc(rotulo)+'">'
+    +opcoes.map(function(o){return '<option value="'+esc(o.v)+'"'+(o.v===(atual||'')?' selected':'')+'>'+esc(o.t)+'</option>';}).join('')
+    +'</select></label>';
+}
+// Linha de mapa mental que abre ao clicar: Enter e espaço também abrem (role="button").
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  var t=e.target;if(!t||!t.classList||!t.classList.contains('mm-abre'))return;
+  e.preventDefault();t.click();
+});
+document.addEventListener('change',function(e){
+  var sel=e.target;if(!sel||!sel.matches||!sel.matches('select[data-filtro]'))return;
+  var v=sel.value||'',k=sel.getAttribute('data-filtro');
+  if(k==='calcarea'){calcAreaFiltro=v;renderCalcGrid();}
+  else if(k==='fctema'){fcTema=v;renderFC();}
+  else if(k==='mmtema'){mmTema=v;renderMMList();}
+  else if(k==='admfctema'){admFcTema=v;admFcEditId=null;renderAdmSec('flashcards');}
+  else if(k==='admmmtema'){admMMTema=v;renderAdmSec('mapas');}
+  else if(k==='podfilter'){podFilter=v;renderPodcasts();}
+});
 document.addEventListener('click',function(e){
   var t=e.target;
   var c=function(sel){return t.closest(sel);};
@@ -21993,29 +21975,26 @@ document.addEventListener('click',function(e){
   if(dq){if(!confirm('Excluir esta questão do seu banco salvo? Esta ação não pode ser desfeita.'))return;DB.q.splice(parseInt(dq.dataset.delQ),1);persist();renderSavedQ();refreshDash();return;}
   // flashcards
   var fctog=c('[data-fctoggle]');
-  if(fctog&&!c('[data-fcdel]')){toggleFC(parseInt(fctog.dataset.fctoggle));return;}
-  var fcdel=c('[data-fcdel]');
-  if(fcdel){e.stopPropagation();if(!confirm('Deseja realmente excluir este flashcard? Esta ação não pode ser desfeita.'))return;DB.fc.splice(parseInt(fcdel.dataset.fcdel),1);persist();renderFC();refreshDash();return;}
+  // 11/11/2026: o aluno não exclui mais flashcard (pedido do professor); o "✕" saiu do card.
+  if(fctog){toggleFC(parseInt(fctog.dataset.fctoggle));return;}
   var fccat=c('[data-fccat]');
   if(fccat){fcSelectedCat=fccat.dataset.fccat;renderFcCatPills();return;}
   var fcsub=c('[data-fcsub]');
   if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;fcTema='';renderFC();return;}
-  var fctema=c('[data-fctema]');
-  if(fctema){fcTema=fctema.dataset.fctema;renderFC();return;}
   // mind map
   var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;mmTema='';renderMMList();return;}
-  var mmtema=c('[data-mmtema]');if(mmtema){mmTema=mmtema.dataset.mmtema;renderMMList();return;}
   var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';mmTema='';renderMMList();return;}
-  var mmvs=c('[data-mmviewshared]');if(mmvs){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
-  var mmv=c('[data-mmview]');if(mmv){viewMM(parseInt(mmv.dataset.mmview));return;}
+  // A linha inteira do mapa abre (11/11/2026). A estrela e o "×" ficam DENTRO dela: o
+  // "×" é tratado antes, e a estrela (outro ouvinte) não pode abrir o mapa.
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
+  var mmvs=c('[data-mmviewshared]');if(mmvs&&!c('[data-fav-t]')){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
+  var mmv=c('[data-mmview]');if(mmv&&!c('[data-fav-t]')){viewMM(parseInt(mmv.dataset.mmview));return;}
   var mmab=c('[data-mmaddbranch]');if(mmab&&curMM){syncMMFromDOM();curMM.data.branches.push({label:'Novo ramo',leaves:['Novo subramo']});renderMMEditor();return;}
   var mmas=c('[data-mmaddsub]');if(mmas&&curMM){syncMMFromDOM();var bi=parseInt(mmas.dataset.mmaddsub,10);if(curMM.data.branches[bi]){curMM.data.branches[bi].leaves.push('Novo subramo');renderMMEditor();}return;}
   var mmac=c('[data-mmaddchild]');if(mmac&&curMM){syncMMFromDOM();var rA=mmResolvePath(mmac.dataset.mmaddchild);if(rA&&rA.arr&&rA.arr[rA.idx]!=null){var nA=rA.arr[rA.idx];if(typeof nA==='string')nA={label:nA,children:[]};if(!nA.children)nA.children=[];nA.children.push('Novo subramo');rA.arr[rA.idx]=nA;renderMMEditor();}return;}
   var mmdb=c('[data-mmdelbranch]');if(mmdb&&curMM){syncMMFromDOM();curMM.data.branches.splice(parseInt(mmdb.dataset.mmdelbranch,10),1);renderMMEditor();return;}
   var mmdl=c('[data-mmdelleaf]');if(mmdl&&curMM){syncMMFromDOM();var rD=mmResolvePath(mmdl.dataset.mmdelleaf);if(rD&&rD.arr)rD.arr.splice(rD.idx,1);renderMMEditor();return;}
   // podcasts
-  var pf=c('[data-podfilter]');if(pf){podFilter=pf.dataset.podfilter;renderPodcasts();return;}
   // cursos
   if(c('[data-curso-upsell]')){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
   // conta de revisão das lojas (painel do professor, Estudantes)
@@ -22535,45 +22514,6 @@ function wirePerfil(){
     if(msg){msg.textContent=subs.length?('Salvo · '+subs.length+' tema(s) selecionado(s).'):'Salvo · você receberá os destaques gerais.';msg.style.color='var(--grn)';}
   });
 }
-genFC=function(){
-  if(blockIfDegustacao())return;
-  var sub=document.getElementById('fc-gsub').value,topic=document.getElementById('fc-gt').value.trim(),qty=parseInt(document.getElementById('fc-gq').value)||5;
-  var btn=document.getElementById('btn-fcgen');
-  btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
-  callAIJson(authoringSys('Gere flashcards de estudo. JSON APENAS: {"cards":[{"front":"pergunta curta e específica","back":"resposta objetiva em 1-2 frases com o dado exato (valor de corte, dose, critério ou conduta)"}]}'),'Gere '+qty+' flashcards de '+sub+(topic?', tema '+topic:'')+'.',1800,1,null,(sub+(topic?(' '+topic):'')))
-  .then(function(d){
-    if(!d||!d.cards)throw new Error('Resposta inválida.');
-    d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:sub,due:Date.now(),box:1,at:Date.now()});});
-    fcFilter=sub; // mostra a categoria recém-gerada
-    persist();notify('Flashcards gerados!','ok');document.getElementById('fc-gen').style.display='none';renderFC();refreshDash();
-  }).catch(function(e){notify('Erro: '+e.message,'err');})
-  .then(function(){btn.disabled=false;btn.innerHTML='Gerar';});
-};
-genMM=function(){
-  if(blockIfDegustacao())return;
-  var topic=(document.getElementById('mm-topic').value||'').trim();
-  if(!topic){notify('Digite um tema.','err');return;}
-  var btn=document.getElementById('btn-mmgen');
-  btn.disabled=true;btn.innerHTML=ldHTML('Gerando...');
-  setText('mm-live-title',topic);
-  document.getElementById('mm-live').style.display='block';
-  document.getElementById('mm-svg').innerHTML='<div class="empty">'+ldHTML('Gerando mapa...')+'</div>';
-  callAIJson(authoringSys('Crie um mapa mental de estudo. JSON APENAS: {"root":"Tema","branches":[{"label":"Ramo","leaves":["detalhe com dado concreto"]}]}. Use 5-6 ramos com 3-5 folhas cada; cada folha deve trazer um dado concreto (critério, valor de corte, dose ou conduta), nunca generalidades.'),'Mapa mental sobre: '+topic,1800,1,null,topic)
-  .then(function(d){
-    if(!d||!d.branches)throw new Error('Resposta inválida.');
-    d=normalizeMMData(d);
-    curMM={id:Date.now(),topic:topic,data:d,at:Date.now()};
-    setText('mm-live-title',d.root||topic);
-    renderMMEditor();
-  })
-  .catch(function(e){
-    curMM={id:Date.now(),topic:topic,data:sampleMMData(topic),at:Date.now()};
-    setText('mm-live-title',curMM.data.root||topic);
-    renderMMEditor();
-    notify('IA indisponível agora. Abri um mapa editável para você ajustar.','info');
-  })
-  .then(function(){btn.disabled=false;btn.innerHTML='🤖 Gerar com IA';});
-};
 function muralFilterOptions(list,current){
   var subs=MURAL_SUBSPECIALTY_FILTERS.slice();
   list.forEach(function(a){var s=muralSubspecialty(a);if(s&&subs.indexOf(s)<0)subs.push(s);}); // ignora sub vazia (senão vira <option> em branco no seletor)
@@ -24068,21 +24008,17 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 
   // FLASHCARDS
-  document.getElementById('fc-btn-create').addEventListener('click',function(){var d=document.getElementById('fc-create');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-gen').style.display='none';document.getElementById('fc-study').style.display='none';renderFcCatPills();});
-  document.getElementById('fc-btn-gen').addEventListener('click',function(){if(acessosPendentes()){planoAindaNaoConfirmado();return;}if(isDegustacao()){showAssineScreen((currentUser&&currentUser.email)||'');return;}var d=document.getElementById('fc-gen');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-create').style.display='none';document.getElementById('fc-study').style.display='none';});
+  document.getElementById('fc-btn-create').addEventListener('click',function(){var d=document.getElementById('fc-create');d.style.display=d.style.display==='none'?'block':'none';document.getElementById('fc-study').style.display='none';renderFcCatPills();});
   document.getElementById('fc-btn-study').addEventListener('click',startStudy);
   document.getElementById('fc-create-cancel').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
   document.getElementById('fc-create-cancel2').addEventListener('click',function(){document.getElementById('fc-create').style.display='none';});
-  document.getElementById('fc-gen-cancel').addEventListener('click',function(){document.getElementById('fc-gen').style.display='none';});
   document.getElementById('fc-save-btn').addEventListener('click',saveFC);
-  document.getElementById('btn-fcgen').addEventListener('click',genFC);
   document.getElementById('fc-end-study').addEventListener('click',endStudy);
   document.getElementById('study-c').addEventListener('click',flipStudy);
   document.getElementById('study-prev').addEventListener('click',function(){if(studyIdx>0){studyIdx--;renderStudyCard();}});
   document.getElementById('study-next').addEventListener('click',function(){if(studyIdx<studyCards.length-1){studyIdx++;renderStudyCard();}else{notify('Fim dos cards!','ok');endStudy();}});
 
   // MIND MAP
-  document.getElementById('btn-mmgen').addEventListener('click',genMM);
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
   document.getElementById('btn-mm-close').addEventListener('click',function(){

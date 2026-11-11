@@ -71,7 +71,7 @@ ok(/\.calc-vazio\{grid-column:1\/-1/.test(SRC), '(5) a mensagem de busca vazia n
 // (6) o que já valia
 ok(/\.calc-card\{border-left:3px solid var\(--bd2\)\}/.test(SRC), '(6) a borda do cartão com fallback neutro sumiu');
 ok(/var meta=muralSubMeta\(a\);/.test(grid) && /calcCardHTML\(c,meta\)/.test(grid), '(6) o cartão deixou de receber a cor da subespecialidade');
-ok(/\.calc-pills-wrap\{grid-column:1\/-1;min-width:0\}/.test(SRC) && /\.calc-pills-wrap\{display:flex;flex-wrap:wrap/.test(SRC) && /\.calc-pills\{flex:1 1 32rem;min-width:0\}/.test(SRC), '(6) a faixa das abas perdeu o min-width:0 (estourava a página no iPhone) ou deixou de ser linha flex com a busca');
+ok(/\.calc-pills-wrap\{grid-column:1\/-1;min-width:0\}/.test(SRC) && /\.calc-pills-wrap\{display:flex;flex-wrap:wrap/.test(SRC) && /\.filtro-caixa\{[^}]*min-width:12rem;max-width:100%\}/.test(SRC), '(6) a faixa do filtro perdeu o min-width:0 (estourava a página no iPhone) ou deixou de ser linha flex com a busca');
 
 if (falhas.length) { console.error('test-calc-grade: ' + falhas.length + ' falha(s)'); falhas.forEach((f) => console.error('  ✗ ' + f)); process.exit(1); }
 console.log('test-calc-grade: ok (auto-fill, cartão com unidade e Abrir, busca sem acento que esconde sem redesenhar, Enter/espaço abrem, busca vazia avisa)');
