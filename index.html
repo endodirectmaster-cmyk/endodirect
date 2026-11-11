@@ -759,11 +759,8 @@ textarea{resize:vertical;line-height:1.6}
 #panel-mural .pc{max-width:none}
 .mural-shell{display:flex;flex-direction:column;gap:1rem}
 .mural-status{display:inline-flex;align-items:center;width:max-content;border-radius:5px;background:var(--grn-l);color:#4ade80;font-size:.66rem;font-weight:800;padding:.32rem .55rem}
-.mural-hero,.mural-filter-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 1px 2px rgba(26,39,68,.03)}
-.mural-hero{padding:1.25rem 1.35rem}
-.mural-eyebrow,.mural-filter-label{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
-.mural-hero h2{font-size:1.35rem;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin:.55rem 0 .45rem}
-.mural-hero p{font-size:.8rem;color:var(--t2);line-height:1.55}
+.mural-filter-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 1px 2px rgba(26,39,68,.03)}
+.mural-filter-label{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .mural-push-cta{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(180deg,rgba(245,179,44,.08),rgba(245,179,44,.03));border:1px solid rgba(245,179,44,.35);border-radius:var(--r);padding:.8rem 1.1rem;font-size:.82rem;color:var(--t2);line-height:1.5}
 .mural-push-cta b{color:var(--tx)}
 .mural-push-cta .btn{flex-shrink:0}
@@ -1257,9 +1254,7 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .calc-area-grid .calc-card{min-height:0}
   .calc-pills .pill-tab{white-space:nowrap;flex:0 0 auto}
   .mural-ph{padding:.85rem .9rem .75rem}
-  .mural-hero{padding:1rem}
-  .mural-hero h2{font-size:1.16rem}
-  .mural-filter-card{display:block;padding:.95rem}
+    .mural-filter-card{display:block;padding:.95rem}
   .mural-filter-main{grid-template-columns:1fr;gap:.55rem}
   .mural-count-pill,.mural-theme-pill{width:100%}
   #mural-clear{width:100%;justify-content:center;margin-top:.65rem;min-height:40px}
@@ -2685,7 +2680,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           </div>
           <label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--t2);margin:0 0 .6rem;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="q-naofeitas" style="width:16px;height:16px;flex-shrink:0"> Mostrar só as que ainda não respondi</label>
           <div style="background:var(--blue-l);border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--blue);margin-bottom:.7rem" id="q-prova-info">Selecione filtros para ver questões.</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button><button class="btn btn-outline" id="btn-sortear-5" title="Cinco questões ainda não respondidas, dentro dos filtros escolhidos">Sortear 5 não respondidas</button></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button></div>
         </div>
         <div id="q-gen-results"></div>
         <div id="q-panel-salvo" style="display:none">
@@ -11759,13 +11754,6 @@ function feitaSeloHTML(q,src,idx){
   else{rot='Respondida';cls='tag-pur';}
   return '<span'+id+' class="tag '+cls+'" style="font-size:.57rem">'+rot+(d?' em '+d:'')+'</span>';
 }
-// Sorteia N questões ainda não respondidas dentro dos filtros atuais.
-function sortearNaoFeitas(n){
-  var inst=(document.getElementById('q-inst')||{}).value||'',ano=(document.getElementById('q-ano')||{}).value||'',area=(document.getElementById('q-parea')||{}).value||'',type=(document.getElementById('q-ptype')||{}).value||'';
-  var pool=filterProvas(inst,ano,area,type).filter(function(q){return !feitaDe(q);});
-  for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
-  return pool.slice(0,Math.max(1,n|0));
-}
 // Alternativas incorretas explicadas pela IA, com o registro do material da
 // plataforma: técnico, formal, sem citar letra (a ordem pode variar), sem
 // repetir o comentário do gabarito. Uma vez por questão por sessão.
@@ -16031,7 +16019,6 @@ function initMural(){
   var tema=muralFilter||'Todos os temas';
   var options='<option value="">Todos</option>'+fontes.map(function(f){return'<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join('');
   el.innerHTML='<div class="mural-shell">'
-    +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, julgados recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
     +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+options+'</select></label><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(avisos.length?avisos.map(noticeHTML).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +'</div>';
@@ -23156,7 +23143,6 @@ initMural=function(){
   var count=avisos.length+' '+(avisos.length===1?'artigo':'artigos');
   var tema=muralFilter||muralTipoFilter||perOpt.currentLabel||'Todas as subespecialidades';
   el.innerHTML='<div class="mural-shell">'
-    +'<section class="mural-hero"><div class="mural-eyebrow">Avisos para alunos</div><h2>Calendário, notícias e leituras essenciais</h2><p>Acompanhe prazos, artigos recentes, atualizações do curso e temas úteis para estudo dirigido. Os links abrem as fontes oficiais.</p></section>'
     +muralPushCtaHTML()
     +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><div class="mural-filter-field"><span class="mural-filter-label">Periódico</span>'+muralPerDropdownHTML('mural-filter-per',perOpt)+'</div><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(pageAvisos.length?pageAvisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
@@ -23989,18 +23975,8 @@ document.addEventListener('DOMContentLoaded',function(){
     if(soNao&&soNao.checked)qs=qs.filter(function(q){return !feitaDe(q);});
     renderProvaResults(qs);
   });
-  // "Só as que ainda não respondi" muda a contagem na hora; "Sortear 5" monta a
-  // sessão curta do dia (pedido de um assinante: ~5 questões por dia por tema).
+  // "Só as que ainda não respondi" muda a contagem na hora.
   var _soNao=document.getElementById('q-naofeitas');if(_soNao)_soNao.addEventListener('change',updateProvaInfo);
-  var _sort5=document.getElementById('btn-sortear-5');
-  if(_sort5)_sort5.addEventListener('click',function(){
-    if(bancoEstado()){renderProvaResults([]);return;} // carregando/erro: a área de resultados explica, como no Buscar
-    var inst=document.getElementById('q-inst').value;var ano=(document.getElementById('q-ano')||{}).value||'';var area=document.getElementById('q-parea').value;var type=(document.getElementById('q-ptype')||{}).value||'';
-    if(!filterProvas(inst,ano,area,type).length){notify('Nenhuma questão com esses filtros.','info');return;}
-    var qs=sortearNaoFeitas(5);
-    if(!qs.length){notify('Todas as questões desses filtros já foram respondidas. Troque o filtro para sortear outras.','info');return;}
-    renderProvaResults(qs);
-  });
   // "Tentar de novo" do Banco (o botão é redesenhado a cada estado; delega no contêiner).
   document.getElementById('q-gen-results').addEventListener('click',function(e){
     var b=e.target&&e.target.closest?e.target.closest('#btn-banco-retry'):null;

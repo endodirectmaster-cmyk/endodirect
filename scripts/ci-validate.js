@@ -614,11 +614,11 @@ try {
 //      "as questões que eu já fiz voltam como se eu ainda não tivesse
 //      realizado"; "as alternativas incorretas possuem alguma explicação?".
 //      `DB.feitas` (pessoal, sincronizado, união pela data), selo no card,
-//      "só as que ainda não respondi", "Sortear 5" e a explicação das outras
+//      "só as que ainda não respondi" e a explicação das outras
 //      alternativas pela IA (registro técnico, pelo texto, com memória).
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-banco-feitas.js')], { stdio: 'pipe' });
-  ok('banco: respondidas persistidas, selo, sorteio das não feitas e explicação das alternativas');
+  ok('banco: respondidas persistidas, selo, filtro das não feitas e explicação das alternativas');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão das questões respondidas falhou:\n' + out);

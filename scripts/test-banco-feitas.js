@@ -10,8 +10,9 @@
 // caderno de erros), pessoal, persistida e sincronizada (persist, PERSONAL_STATE_KEYS,
 // userStatePayload, applyStatePayload com união pela data, limpa ao trocar de
 // conta); (2) o selo "Acertou/Errou em dd/mm" no card e a contagem no painel;
-// (3) "Mostrar só as que ainda não respondi" e "Sortear 5 não respondidas"
-// respeitam os filtros e excluem as feitas; (4) o botão "Por que as outras
+// (3) "Mostrar só as que ainda não respondi" respeita os filtros e exclui as
+// feitas (o "Sortear 5" saiu em 11/11/2026, a pedido do professor: a caixa
+// já faz isso); (4) o botão "Por que as outras
 // alternativas estão incorretas?" pede à IA no registro técnico, identifica a
 // alternativa pelo texto (nunca pela letra), memoriza por questão, trata erro e
 // respeita a degustação (sem bloquear enquanto os acessos não chegaram).
@@ -75,7 +76,7 @@ function caixa(extra) {
     'function provasPool(){return provasDB;}',
     corpo('filterProvas'),
     corpo('feitaChave'), corpo('mesclarFeitas'), corpo('feitaDe'), corpo('feitaRegistrar'), corpo('feitaSeloHTML'),
-    corpo('sortearNaoFeitas'), corpo('explicarAlternativasPrompt'), corpo('explicarAlternativas'),
+    corpo('explicarAlternativasPrompt'), corpo('explicarAlternativas'),
   ].join('\n'), c);
   return c;
 }
@@ -124,32 +125,6 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(r2.A.ok === 0, 'mesclar: empate de data → vale o aparelho (é o que o aluno acabou de responder)');
     const r3 = run(c, 'mesclarFeitas(null,{A:{ok:1,at:1},X:"lixo",Y:null})');
     ok(r3.A && !('X' in r3) && !('Y' in r3), 'mesclar: lado ausente e entradas inválidas não quebram');
-  }
-
-  // ── 2. Sorteio das não respondidas, dentro dos filtros ────────────────────
-  {
-    const c = caixa();
-    for (let i = 1; i <= 8; i++) c.provasDB.push({ code: 'A' + i, stem: 'a' + i, area: 'Adrenal', inst: 'Endodirect', options: { A: 'x', B: 'y' }, answer: 'A' });
-    for (let i = 1; i <= 3; i++) c.provasDB.push({ code: 'D' + i, stem: 'd' + i, area: 'Diabetes', inst: 'Endodirect', options: { A: 'x', B: 'y' }, answer: 'A' });
-    c.DB.feitas = { a1: { ok: 1, at: 1 }, a2: { ok: 0, at: 1 } };
-    c.dom['q-parea'].value = 'Adrenal';
-    const vistos = {};
-    for (let t = 0; t < 20; t++) {
-      const s = run(c, 'sortearNaoFeitas(5)');
-      ok(s.length === 5, 'sortear: devolve 5 (há 6 não respondidas em Adrenal)');
-      ok(s.every((q) => q.area === 'Adrenal'), 'sortear: respeita o filtro de subespecialidade');
-      ok(!s.some((q) => q.code === 'A1' || q.code === 'A2'), 'sortear: exclui as já respondidas');
-      ok(new Set(s.map((q) => q.code)).size === 5, 'sortear: sem repetição');
-      s.forEach((q) => { vistos[q.code] = 1; });
-    }
-    ok(Object.keys(vistos).length === 6, 'sortear: em 20 sorteios, todas as 6 não respondidas aparecem (é sorteio, não as 5 primeiras)');
-    c.DB.feitas = { a1: {}, a2: {}, a3: {}, a4: {}, a5: {}, a6: {} };
-    ok(run(c, 'sortearNaoFeitas(5)').length === 2, 'sortear: só 2 restantes → devolve as 2');
-    for (let i = 7; i <= 8; i++) c.DB.feitas['a' + i] = {};
-    ok(run(c, 'sortearNaoFeitas(5)').length === 0, 'sortear: nada restante → lista vazia (o botão avisa)');
-    c.dom['q-parea'].value = '';
-    ok(run(c, 'sortearNaoFeitas(5)').length === 3 && run(c, 'sortearNaoFeitas(5)').every((q) => q.area === 'Diabetes'), 'sortear: sem filtro de área, sobram as 3 de Diabetes');
-    ok(run(c, 'sortearNaoFeitas(0)').length === 1, 'sortear: pedido de 0 vira 1 (nunca devolve "nada" por engano)');
   }
 
   // ── 3. O pedido à IA: técnico, pelo texto da alternativa, com o gabarito ──
@@ -273,7 +248,7 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     const iDl = html.lastIndexOf('doLogin=function(u){');
     ok(/if\(!ownLocal\)\{try\{DB\.feitas=\{\};lsSet\('feitas',null\);\}catch\(e\)\{\}\}/.test(html.slice(iDl, iDl + 2500)), 'doLogin: trocou a conta neste navegador (qualquer papel) → as respondidas da anterior não se unem às desta');
     ok(/<input type="checkbox" id="q-naofeitas"[^>]*> Mostrar só as que ainda não respondi<\/label>/.test(html), 'tela: caixa "Mostrar só as que ainda não respondi"');
-    ok(/<button class="btn btn-outline" id="btn-sortear-5"[^>]*>Sortear 5 não respondidas<\/button>/.test(html), 'tela: botão "Sortear 5 não respondidas"');
+    ok(!/btn-sortear-5|function sortearNaoFeitas|Sortear 5 não respondidas/.test(html), '🧨 tela: sem o botão "Sortear 5 não respondidas" (a caixa já mostra só as não respondidas)');
     const upi = corpo('updateProvaInfo');
     ok(/var feitasN=lista\.filter\(function\(q\)\{return !!feitaDe\(q\);\}\)\.length;/.test(upi) && /var n=soNao\?\(lista\.length-feitasN\):lista\.length;/.test(upi), 'updateProvaInfo: conta as respondidas e desconta quando a caixa está marcada');
     ok(/' · '\+feitasN\+' já respondida'\+\(feitasN===1\?'':'s'\)\+\(soNao\?' \(ocultas\)':''\)/.test(upi), 'updateProvaInfo: "N já respondidas (ocultas)"');
@@ -282,8 +257,6 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     const bind = html.slice(iBind, iBind + 2600);
     ok(/if\(soNao&&soNao\.checked\)qs=qs\.filter\(function\(q\)\{return !feitaDe\(q\);\}\);\s*renderProvaResults\(qs\);/.test(bind), 'Buscar: com a caixa marcada, tira as respondidas da lista');
     ok(/_soNao\.addEventListener\('change',updateProvaInfo\)/.test(bind), 'caixa: marcar/desmarcar refaz a contagem na hora');
-    ok(/if\(bancoEstado\(\)\)\{renderProvaResults\(\[\]\);return;\}/.test(bind) && /if\(!filterProvas\(inst,ano,area,type\)\.length\)\{notify\('Nenhuma questão com esses filtros\.','info'\);return;\}/.test(bind), 'Sortear 5: banco carregando/erro mostra o estado; filtro vazio diz "nenhuma questão" (não "todas respondidas")');
-    ok(/var qs=sortearNaoFeitas\(5\);\s*if\(!qs\.length\)\{notify\('Todas as questões desses filtros já foram respondidas\. Troque o filtro para sortear outras\.','info'\);return;\}\s*renderProvaResults\(qs\);/.test(bind), 'Sortear 5: monta a sessão curta ou avisa que não sobrou nada');
     ok(/var ea=c\('\[data-exp-alt\]'\);\s*if\(ea\)\{var _p=String\(ea\.dataset\.expAlt\|\|''\)\.split\('\|'\);explicarAlternativas\(_p\[0\],_p\[1\],ea\);return;\}/.test(html), 'clique: o botão das alternativas está ligado (delegação global)');
     // O Simulado continua usando filterProvas com a semântica de sempre (sem feitas).
     ok(/function filterProvas\(inst,ano,area,type\)\{\s*return provasPool\(\)\.filter\(/.test(html), 'filterProvas: inalterada (o Simulado depende dela)');
@@ -294,5 +267,5 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     falhas.forEach((f) => console.error('  ✗ ' + f));
     process.exit(1);
   }
-  console.log('test-banco-feitas: ok (respondidas persistidas e sincronizadas, selo no card, sorteio das não feitas, explicação das alternativas pela IA)');
+  console.log('test-banco-feitas: ok (respondidas persistidas e sincronizadas, selo no card, filtro das não feitas, explicação das alternativas pela IA)');
 })().catch((e) => { console.error(e); process.exit(1); });
