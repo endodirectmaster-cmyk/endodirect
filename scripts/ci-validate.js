@@ -1162,6 +1162,18 @@ try {
   fail('regressão do avançar/voltar deslizando (index.html) falhou:\n' + out);
 }
 
+// 17c-undecies-af. OSCE EM DUAS PARTES (11/11/2026, pedido do professor: tempo de geração menor
+//      sem perder qualidade). A 1ª parte (vinheta, roteiro e passo 1) abre o caso; a 2ª (passos
+//      2–4) chega por trás, com a vinheta, o passo 1 e o roteiro. O leitor de JSON conserta o
+//      fechamento errado das alternativas (antes, o gerador pedia tudo de novo).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-osce-duas-partes.js')], { stdio: 'pipe' });
+  ok('OSCE em duas partes: caso abre com o passo 1, passos 2–4 por trás, coerentes, sem deixar o aluno preso');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do OSCE em duas partes (index.html) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e

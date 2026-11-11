@@ -23298,7 +23298,7 @@ function updateSimCounter(){
 // roteiro na mão (coerência). Mesmo modelo, mesmas diretrizes, mesmo aprofundamento (o
 // cache das diretrizes e da área é o mesmo das duas chamadas) e as mesmas regras.
 var SIM_PASSOS=4;
-var SIM_REGRAS=' Alternativas curtas (até 15 palavras cada). Cada feedback com 2 a 4 frases, técnico e direto, como num gabarito comentado de prova. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").';
+var SIM_REGRAS=' Alternativas curtas (até 15 palavras cada) e de tamanho parecido: a correta não pode se destacar por ser a mais longa ou a mais detalhada; nenhuma distratora pode se contradizer com os números do próprio caso. Cada feedback com 2 a 4 frases, técnico e direto, como num gabarito comentado de prova. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").';
 function simPassoSchema(mode){
   return '{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}';
 }
