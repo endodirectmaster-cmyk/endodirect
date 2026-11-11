@@ -230,7 +230,8 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   ok(/function degExpired\(\)\{return !acessosPendentes\(\)&&isDegustacao\(\)&&/.test(html), 'degExpired: pendente nunca está vencido — e a guarda vem primeiro (não chama degStart)');
   ok(/function consumeTrial\(id\)\{\s*if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return false;\}[^\n]*\n\s*if\(!isDegustacao\(\)\)return true;/.test(html), 'consumeTrial: pendente não debita cota e espera a confirmação');
   ok(/function blockIfDegustacao\(\)\{\s*if\(isAdminUser\(\)\)return false;\s*if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return true;\}/.test(html), 'blockIfDegustacao: pendente espera a confirmação (mesma regra da cota)');
-  ok(/fc-btn-gen'\)\.addEventListener\('click',function\(\)\{if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return;\}if\(isDegustacao\(\)\)/.test(html), 'Gerar flashcards com IA: pendente espera; degustação → pacotes');
+  // 11/11/2026: o "Gerar com IA" dos flashcards do aluno saiu (pedido do professor).
+  ok(!/id="fc-btn-gen"/.test(html) && !/id="fc-gen"/.test(html) && !/function genFC\(/.test(html), 'Flashcards do aluno: sem botão nem painel "Gerar com IA"');
   ok(/function applyDegLocks\(\)\{\s*var deg=isDegustacao\(\)&&!acessosPendentes\(\);/.test(html), 'applyDegLocks: pendente não tranca "Gerar com IA" nem força a fonte do Simulado');
   const dw = corpo('startDeviceWatcher');
   ok((dw.match(/acessosRetentarSePendente\(\)/g) || []).length === 3, 'startDeviceWatcher: voltar a aba, o foco e a rede pedem a lista de novo se ainda não veio');

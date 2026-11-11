@@ -64,8 +64,10 @@ const linha = GUIDE.split('\n').find((l) => /hipogonadismo masculino/i.test(l)) 
 {
   ok('existe o helper que ancora sem forçar JSON', /function groundSys\(sys\)\{return CLINICAL_GUIDELINES\+'__ENDODIRECT_SYS_SPLIT_b1f7__'/.test(APP));
   const geradores = [
-    ['flashcards', "callAI(groundSys('Endocrinologista educador BR. JSON APENAS: {\"cards\""],
-    ['mapas mentais', "callAI(groundSys('Endocrinologista educador. JSON APENAS: {\"root\""],
+    // 11/11/2026: o gerador de flashcards do aluno saiu; o do professor usa authoringSys,
+    // que também começa pelas diretrizes.
+    ['flashcards (professor)', "callAI(authoringSys('Gere flashcards de estudo (pergunta na frente"],
+    ['mapas mentais (professor)', "callAI(authoringSys('Crie um mapa mental de estudo. JSON APENAS: {\"root\""],
     ['caso p/ prescrição', "callAI(groundSys('Preceptor de endocrinologia BR. JSON APENAS: {\"caso\""],
     ['avaliação da prescrição', "callAI(groundSys('Preceptor de endocrinologia. Avalie a prescrição"],
     ['questões do simulado', "callAI(groundSys('Examinador de endocrinologia BR. JSON APENAS: {\"questions\""]

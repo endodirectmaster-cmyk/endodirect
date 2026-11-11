@@ -1139,6 +1139,17 @@ try {
   fail('regressão da revogação na Apple (lib/apple-revogar.js, lib/excluir-conta.js, index.html) falhou:\n' + out);
 }
 
+// 17c-undecies-ad. FILTROS EM CAIXA (11/11/2026, pedido do professor). Calculadoras, Flashcards
+//      e Mapas Mentais (aluno e professor) trocaram a fileira de botões de filtro por uma caixa
+//      de seleção com rótulo; um ouvinte de 'change' trata as cinco.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-filtro-caixa.js')], { stdio: 'pipe' });
+  ok('filtros em caixa: Calculadoras, Flashcards e Mapas Mentais sem fileira de botões');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos filtros em caixa (index.html) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e

@@ -48,10 +48,11 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   ok('a sub-grade colapsa em 1 coluna no celular', /\.g2,\.g3,\.g4,\.calc-area-grid\{grid-template-columns:1fr\}/.test(SRC));
   ok('o grupo mostra a contagem', /porArea\[a\]\.length\+'<\/span>/.test(semComentarios));
 
-  // ---- abas de área acima da lista -----------------------------------------
-  ok('há uma aba por área mais a de "Todas"', /data-calcarea=""/.test(semComentarios) && /data-calcarea="'\+esc\(a\)\+'"/.test(semComentarios));
-  ok('a aba mostra a contagem', /calc-pill-n">'\+ix\.porArea\[a\]\.length/.test(semComentarios));
-  ok('clicar na aba filtra e redesenha', /calcAreaFiltro=b\.getAttribute\('data-calcarea'\)\|\|'';renderCalcGrid\(\)/.test(semComentarios));
+  // ---- filtro de área em CAIXA acima da lista (11/11/2026: era fileira de abas) ----
+  ok('caixa de área com "Todas" e uma opção por área, com contagem',
+     /filtroCaixaHTML\('Área',\s*'calcarea',\s*\[\{v:'',t:'Todas as áreas \('\+CALCS\.length\+'\)'\}\]\.concat\(ix\.areas\.map\(function\(a\)\{return \{v:a,t:a\+' \('\+ix\.porArea\[a\]\.length\+'\)'\};\}\)\)/.test(semComentarios));
+  ok('escolher a área filtra e redesenha', /if\(k==='calcarea'\)\{calcAreaFiltro=v;renderCalcGrid\(\);\}/.test(semComentarios));
+  ok('nenhuma aba de área sobrou', !/data-calcarea/.test(semComentarios));
   // ⚠️ Trocar de aba NÃO pode fechar a calculadora aberta: apagaria o resultado
   // que a pessoa está lendo. renderCalcGrid só mexe no grid, nunca em activeCalc.
   ok('o filtro não mexe em activeCalc',
@@ -102,7 +103,7 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   ok('a faixa de abas ocupa a linha inteira E pode encolher',
      /\.calc-pills-wrap\{grid-column:1\/-1;min-width:0\}/.test(SRC));
   ok('a sub-grade também pode encolher', /\.calc-area-grid\{min-width:0\}/.test(SRC));
-  ok('a faixa de abas não passa da largura do container', /\.calc-pills\{margin:0 0 \.35rem;max-width:100%\}/.test(SRC));
+  ok('a caixa de filtro não passa da largura do container', /\.filtro-caixa\{display:flex;flex-direction:column;gap:\.28rem;flex:0 1 19rem;min-width:12rem;max-width:100%\}/.test(SRC));
   ok('as abas rolam na horizontal no celular', /\.pill-tab-row\{overflow-x:auto;flex-wrap:nowrap/.test(SRC));
 
   // ---- ⚠️ A COR VEM DO MURAL, não de uma paleta nova ------------------------
@@ -120,9 +121,9 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
        return !/#[0-9a-f]{3}\b|#[0-9a-f]{6}\b/i.test(b) && b.indexOf('CORES') < 0;
      })());
   ok('o card recebe a classe de cor', /class="card calc-card'\+meta\.card\+'"/.test(semComentarios));
-  ok('a aba e o título têm o ponto colorido',
-     /<i class="calc-dot '\+muralSubMeta\(a\)\.tag\+'"><\/i>/.test(semComentarios)
-     && /<i class="calc-dot '\+meta\.tag\+'"><\/i>/.test(semComentarios));
+  // A caixa de área (11/11/2026) não leva ponto: <option> não aceita marcação. O ponto
+  // colorido segue no título de cada grupo.
+  ok('o título do grupo tem o ponto colorido', /<i class="calc-dot '\+meta\.tag\+'"><\/i>/.test(semComentarios));
   // A borda existe SEMPRE, mesmo sem cor mapeada: sem ela os grupos ficariam
   // com alinhamento diferente entre si.
   ok('a borda do card é declarada com fallback neutro', /\.calc-card\{border-left:3px solid var\(--bd2\)\}/.test(SRC));
