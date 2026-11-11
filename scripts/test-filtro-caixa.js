@@ -59,9 +59,13 @@ ok('🧨 Mapas do aluno: a linha inteira abre, sem "Ver" e sem selo "Professor"'
 ok('🧨 o "×" do mapa é tratado antes de abrir, e a estrela não abre o mapa',
   html.indexOf("var mmd=c('[data-mmdel]')") > 0 && html.indexOf("var mmd=c('[data-mmdel]')") < html.indexOf("var mmvs=c('[data-mmviewshared]');if(mmvs&&!c('[data-fav-t]'))"));
 ok('Enter e espaço abrem a linha do mapa', /if\(!t\|\|!t\.classList\|\|!t\.classList\.contains\('mm-abre'\)\)return;\s*e\.preventDefault\(\);t\.click\(\);/.test(html));
+ok('🧨 Mural de artigos: sem o quadro "Avisos para alunos / Calendário, notícias e leituras essenciais"',
+  !/class="mural-hero"/.test(html) && !/Avisos para alunos/.test(html) && !/Calendário, notícias e leituras essenciais/.test(html));
+ok('Mural de artigos: os filtros continuam', (html.match(/el\.innerHTML='<div class="mural-shell">'/g) || []).length === 2 && /<section class="mural-filter-card">/.test(html));
+ok('Banco de questões: sem "Sortear 5"; a caixa "só as que ainda não respondi" fica', !/btn-sortear-5/.test(html) && /id="q-naofeitas"/.test(html));
 
 // ---- 5. estilo ---------------------------------------------------------------------------------
 ok('caixa com largura contida e que encolhe no celular', /\.filtro-caixa\{display:flex;flex-direction:column;gap:\.28rem;flex:0 1 19rem;min-width:12rem;max-width:100%\}/.test(html));
 
 if (bad) { console.log('\n' + bad + ' falha(s): filtros em caixa'); process.exit(1); }
-console.log('filtros em caixa: Calculadoras, Flashcards e Mapas Mentais (aluno e professor) sem fileira de botões: ok');
+console.log('filtros em caixa (Calculadoras, Flashcards, Mapas, Podcasts), painel do aluno enxuto e Mural sem o quadro de avisos: ok');
