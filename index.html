@@ -1012,23 +1012,23 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .qa-badge.err{background:var(--red-l);color:var(--red)}
 .qa-badge.new{background:var(--gold-l);color:var(--gold)}
 .qa-badge.hoje{background:var(--blue-l);color:var(--blue)}
-/* Questão do Dia numa PRANCHETA (pedido do professor, 17/10/2026, com figura de
-   referência): madeira, prendedor de metal e folha branca com o caso. É um objeto
-   físico, com as mesmas cores nos dois temas — por isso a tinta da folha é FIXA e
-   escura, e não os tokens do tema (no escuro, var(--tx) daria texto claro no papel). */
-.qp{position:relative;margin:38px auto 0;max-width:780px;background:#c69c6d;border:5px solid #1c1714;border-radius:26px;padding:26px 16px 16px;box-shadow:0 8px 20px rgba(0,0,0,.22)}
-.qp-clip{position:absolute;left:50%;top:-16px;transform:translateX(-50%);width:clamp(112px,30%,190px);height:40px;border:4px solid #1c1714;border-radius:9px;background:linear-gradient(#cdd1d4 0 62%,#8d949a 62% 100%);z-index:2}
-.qp-clip::before{content:'';position:absolute;left:50%;bottom:100%;transform:translateX(-50%);width:56px;height:24px;border:4px solid #1c1714;border-bottom:0;border-radius:28px 28px 0 0;background:#cdd1d4}
-.qp-clip::after{content:'';position:absolute;left:50%;top:-20px;transform:translateX(-50%);width:16px;height:16px;box-sizing:border-box;border:4px solid #1c1714;border-radius:50%;background:#eef0f2}
-.qp-folha{position:relative;background:#fff;border:4px solid #1c1714;border-radius:8px;padding:26px 18px 16px;color:#1f2937}
-.qp-topo{position:relative;display:flex;justify-content:center;align-items:center;margin-bottom:.8rem;padding:0 2rem}
-.qp-tit{font-weight:800;font-size:1.3rem;line-height:1.25;color:#111827;text-align:center;text-wrap:balance}
-.qp-fav{position:absolute;right:-.4rem;top:50%;transform:translateY(-50%)}
-.qp .fav-star{color:#94a3b8}
+/* Questão do Dia: CARTÃO SIMPLES (11/11/2026). A prancheta de 17/10 (madeira, prendedor e
+   folha) saiu a pedido do professor, com print do celular: "Deixando o formato anterior, sem
+   esse desenho de fundo, pois ficou muito apertado o enunciado". Volta o cartão de antes da
+   prancheta: fundo do tema, borda dourada fina, título dourado à esquerda e a estrela à
+   direita. Ficam o que veio depois e não é o desenho: a pergunta final em destaque, as
+   alternativas com a letra, o gabarito com figura e o texto justificado. O texto do cartão
+   segue o TEMA; só as caixas claras (alternativas, gabarito, figura) têm tinta fixa escura. */
+.qp{position:relative;margin:0 auto;max-width:780px;background:var(--surface);border:1px solid var(--gold);border-radius:var(--r);padding:1rem 1.1rem}
+.qp-folha{color:var(--tx)}
+.qp-topo{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.qp-tit{font-weight:800;font-size:.92rem;line-height:1.3;color:var(--gold)}
+.qp-fav{margin-left:auto}
+.qp .fav-star{color:var(--t3)}
 .qp .fav-star.on,.qp .fav-star:hover{color:#d97706}
-/* texto justificado, a pedido do professor (17/10/2026), como no cartão antigo */
-.qp-caso{font-size:.9rem;line-height:1.62;color:#1f2937;margin-bottom:.6rem;text-align:justify}
-.qp-perg{font-size:.93rem;line-height:1.5;font-weight:700;color:#0b2545;margin:.1rem 0 .85rem;text-align:justify}
+/* texto justificado, a pedido do professor (17/10/2026) */
+.qp-caso{font-size:.86rem;line-height:1.55;color:var(--tx);opacity:.88;margin-bottom:.6rem;text-align:justify}
+.qp-perg{font-size:.9rem;line-height:1.5;font-weight:700;color:var(--tx);margin:.1rem 0 .75rem;text-align:justify}
 .qp-opts{display:flex;flex-direction:column;gap:.45rem}
 .qp-opt{display:flex;gap:.6rem;align-items:flex-start;width:100%;text-align:left;padding:.58rem .7rem;border-radius:10px;border:1.5px solid #cbd5e1;background:#f8fafc;color:#0f172a;font-family:var(--font);font-size:.85rem;line-height:1.45;cursor:pointer;transition:border-color .12s,background .12s}
 .qp-opt:hover:not([disabled]){border-color:#2563eb;background:#eff6ff}
@@ -1047,7 +1047,7 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .qp-fb.ok b{color:#15803d}
 .qp-fb.err b{color:#b91c1c}
 /* Figura do COMENTÁRIO (pedido do professor, 21/10/2026): dos Resumos, do PubMed ou
-   enviada por ele. Papel branco e tinta fixa, como o resto da prancheta, também no
+   enviada por ele. Papel branco e tinta fixa (é uma caixa clara), também no
    cartão de revisão do tema escuro; toca e amplia (ensureLightbox, classe qp-zoom). */
 .qp-expfig{margin:.6rem 0 .1rem;padding:.45rem;background:#fff;border:1px solid #d1d5db;border-radius:8px}
 .qp-expfig img{display:block;max-width:100%;max-height:440px;margin:0 auto;border-radius:4px}
@@ -1056,7 +1056,7 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
    abria buracos ("📚      Resumos   ·   Tratamento") no celular */
 .qp-expfig-src{display:block;font-weight:700;color:#374151;margin-bottom:.1rem;text-align:left;-webkit-hyphens:manual;hyphens:manual}
 .qp-zoom{cursor:zoom-in}
-@media(max-width:600px){.qp{border-width:4px;border-radius:20px;padding:24px 9px 10px}.qp-folha{border-width:3px;padding:24px 12px 13px}.qp-tit{font-size:1.15rem}}
+@media(max-width:600px){.qp{padding:.85rem .8rem}}
 @media(prefers-reduced-motion:reduce){.qp-opt{transition:none}}
 /* Enquete do programa de Educação Médica Continuada (só plano Gold, no dashboard) */
 .cme-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.4rem .68rem;border-radius:999px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .12s}
@@ -7476,6 +7476,18 @@ function parseJ(raw){
   try{return JSON.parse(c);}catch(e){}
   var m=c.match(/(\{[\s\S]*\})/)||c.match(/(\[[\s\S]*\])/);
   if(m){try{return JSON.parse(m[1]);}catch(e){}}
+  // Conserto do erro mais comum da IA nos geradores (medido no OSCE em 11/11/2026: 3 de
+  // 20 respostas): fechar o objeto das alternativas com chave+colchete, ou só colchete, em
+  // vez de só a chave, logo antes de "correct"/"answer". Só roda quando a leitura normal
+  // falhou, e o resultado ainda passa pelo JSON.parse: nada é inventado, só a pontuação é
+  // acertada. Sem isto, o gerador pedia tudo de novo (o dobro da espera). (Sem chaves
+  // literais neste comentário nem na expressão: os testes extraem a função contando chaves.)
+  var fx=c.replace(/"\s*\x7d\s*\x5d\s*,\s*"(correct|answer)"/g,'"\x7d,"$1"').replace(/"\s*\x5d\s*,\s*"(correct|answer)"/g,'"\x7d,"$1"');
+  if(fx!==c){
+    try{return JSON.parse(fx);}catch(e){}
+    var m2=fx.match(/(\{[\s\S]*\})/);
+    if(m2){try{return JSON.parse(m2[1]);}catch(e){}}
+  }
   return null;
 }
 // Recupera JSON TRUNCADO (resposta cortada pelo teto de tokens): fecha a string
@@ -11120,9 +11132,10 @@ function qotdPartes(txt){
   var m=/^([\s\S]{40,}?[.!:;)\]])\s+([A-ZÁÉÍÓÚÂÊÔÃÕÇ][^.!?]{3,300}\?)$/.exec(s);
   return m?{caso:m[1],perg:m[2]}:{caso:s,perg:''};
 }
-// A Questão do Dia numa PRANCHETA (pedido do professor, 17/10/2026): prendedor, folha
-// branca, o caso e a pergunta em destaque. O mesmo cartão no arquivo do aluno, na
-// janela do mural, no "Comece por aqui" e na aba "Como o aluno vê" do professor.
+// A Questão do Dia num cartão simples (11/11/2026: a prancheta de 17/10 saiu a pedido do
+// professor, "ficou muito apertado o enunciado"): título, o caso e a pergunta em destaque.
+// O mesmo cartão no arquivo do aluno, na janela do mural, no "Comece por aqui", no Caderno
+// de erros, nas questões da aula e na aba "Como o aluno vê" do professor.
 function qotdCardHTML(q,ans,title){
   var ltrs=['A','B','C','D'].filter(function(L){return q.options[L];});
   var opts=ltrs.map(function(L){
@@ -11136,9 +11149,8 @@ function qotdCardHTML(q,ans,title){
   }
   var p=qotdPartes(q.stem);
   return '<div class="qp" data-fav-tit="'+esc(String(q.stem||'').slice(0,180))+'" data-fav-sub="'+esc(q.area||q.sub||'')+'">'
-    +'<div class="qp-clip" aria-hidden="true"></div>'
     +'<div class="qp-folha">'
-    +'<div class="qp-topo"><span class="qp-tit">'+esc(title||'Questão do dia')+'</span><span class="qp-fav">'+favStarHTML('questao',q)+'</span></div>'
+    +'<div class="qp-topo"><span class="qp-tit">'+esc(title||'🧠 Questão do Dia')+'</span><span class="qp-fav">'+favStarHTML('questao',q)+'</span></div>'
     +'<div class="qp-caso">'+esc((q.teem?String(q.teem).trim()+' ':'')+p.caso)+'</div>'
     +qFigHTML(q)
     +(p.perg?'<div class="qp-perg">'+esc(p.perg)+'</div>':'')
@@ -23291,7 +23303,7 @@ startSim=function(){
   // Área do aprofundamento: a MESMA string vai no relatório final (simState.area),
   // para o bloco sair idêntico e o relatório ler do cache o que a geração gravou.
   var simArea=((sub||'')+(tema?' '+tema:'')).trim();
-  var sys=groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
+  var sys=groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. As alternativas de cada passo devem ter tamanho parecido: a correta não pode se destacar por ser a mais longa ou a mais detalhada; nenhuma distratora pode se contradizer com os números do próprio caso. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
   withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN,'',{area:simArea,profundoMax:FERRAMENTA_PROFUNDO});}),59000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');

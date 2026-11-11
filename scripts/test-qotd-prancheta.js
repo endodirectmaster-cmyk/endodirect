@@ -5,13 +5,18 @@
 // "Vamos deixar mais didático a visualização da questão do dia", com a figura de uma
 // prancheta (prendedor, folha branca, "Questão do dia", o caso).
 //
+// ⚠️ 11/11/2026: a PRANCHETA SAIU. O professor, com print do celular: "Deixando o formato
+// anterior, sem esse desenho de fundo, pois ficou muito apertado o enunciado". Voltou o
+// cartão simples de antes (fundo do tema, borda dourada, título dourado à esquerda). O
+// resto ficou: pergunta em destaque, letras, gabarito com figura, aba do professor.
+//
 // O que este teste segura:
-//   1. o cartão é a prancheta (prendedor + folha), com o caso e a PERGUNTA FINAL em
+//   1. o cartão é SIMPLES (sem prendedor, sem madeira), com o caso e a PERGUNTA FINAL em
 //      destaque — e nunca corta o enunciado no meio ("ex.", frase sem "?");
 //   2. depois de responder: certa em verde, a marcada em vermelho, o resto apagado, e
 //      o gabarito comentado na folha;
-//   3. ⚠️ a tinta da folha é fixa e escura: com os tokens do tema, o tema escuro poria
-//      texto claro no papel branco;
+//   3. ⚠️ sem papel branco, o texto do cartão segue o TEMA (tinta fixa escura no fundo
+//      escuro sumiria); só as caixas claras (alternativas, gabarito, figura) têm tinta fixa;
 //   4. ⚠️ a aba do professor mostra só as publicadas, abre a de hoje e a resposta dele
 //      é de TESTE: não toca em DB.qotd nem chama qotdSaveAns (senão ele entraria nas
 //      estatísticas de quem respondeu);
@@ -52,34 +57,39 @@ const partes = (s) => JSON.parse(run('JSON.stringify(qotdPartes(' + JSON.stringi
   ok(longa.perg.length > 200, 'a pergunta final longa (203 caracteres, caso real do banco) não se separou');
 }
 
-// ── 2. o cartão é a prancheta, antes e depois de responder ────────────────────
+// ── 2. o cartão simples, antes e depois de responder ─────────────────────────
 const Q = { id: 'ig-3', status: 'posted', postedAt: 3, sub: 'Osteometabolismo', stem: 'Mulher de 34 anos, com sarcoidose pulmonar e cutânea, assintomática. TC de abdome: nefrocalcinose medular bilateral. Qual a melhor conduta inicial?', options: { A: 'Suspender vitamina D', B: 'Paratireoidectomia', C: 'Tiazídico', D: 'Pamidronato' }, answer: 'A', explanation: 'Hipercalcemia mediada por 1,25(OH)2D.' };
 {
   doc.getElementById('cartao').innerHTML = run('qotdCardHTML(' + JSON.stringify(Q) + ',null)');
   const qp = doc.querySelector('#cartao .qp');
-  ok(!!qp && !!qp.querySelector('.qp-clip') && !!qp.querySelector('.qp-folha'), 'o cartão não é a prancheta (prendedor + folha)');
-  ok(qp && (qp.querySelector('.qp-tit') || {}).textContent === 'Questão do dia', 'o título da folha não é "Questão do dia"');
+  ok(!!qp && !qp.querySelector('.qp-clip'), '⚠️ o prendedor da prancheta voltou (o professor pediu o cartão simples em 11/11/2026)');
+  ok(qp && (qp.querySelector('.qp-tit') || {}).textContent === '🧠 Questão do Dia', 'o título do cartão não é "🧠 Questão do Dia" (o de antes da prancheta)');
   ok(qp && (qp.querySelector('.qp-perg') || {}).textContent === 'Qual a melhor conduta inicial?', 'a pergunta final não está em destaque na folha');
   ok(qp && qp.querySelectorAll('.qp-opt .qp-letra').length === 4, 'as 4 alternativas não vieram com a letra');
   ok(qp && ![...qp.querySelectorAll('[data-qotd-opt]')].some((b) => b.disabled), 'antes de responder, as alternativas não podem estar desativadas');
-  ok(qp && qp.hasAttribute('data-fav-tit'), 'a prancheta perdeu o data-fav-tit (a estrela de favorito depende dele)');
+  ok(qp && qp.hasAttribute('data-fav-tit'), 'o cartão perdeu o data-fav-tit (a estrela de favorito depende dele)');
 
   doc.getElementById('cartao').innerHTML = run('qotdCardHTML(' + JSON.stringify(Q) + ',{letter:"C",ok:false})');
   const cls = [...doc.querySelectorAll('#cartao .qp-opt')].map((b) => b.className.replace('qp-opt', '').trim());
   ok(JSON.stringify(cls) === '["certa","apagada","errada","apagada"]', 'marcação errada depois de responder: ' + JSON.stringify(cls));
   const fb = doc.querySelector('#cartao .qp-fb');
-  ok(fb && fb.classList.contains('err') && /Resposta correta: A/.test(fb.textContent) && /1,25\(OH\)2D/.test(fb.textContent), 'o gabarito comentado não apareceu na folha');
+  ok(fb && fb.classList.contains('err') && /Resposta correta: A/.test(fb.textContent) && /1,25\(OH\)2D/.test(fb.textContent), 'o gabarito comentado não apareceu no cartão');
   ok([...doc.querySelectorAll('#cartao [data-qotd-opt]')].every((b) => b.disabled), 'depois de responder, as alternativas têm de ficar desativadas');
 }
 
-// ── 3. ⚠️ a tinta da folha é fixa (não vem do tema) ────────────────────────────
+// ── 3. ⚠️ o cartão segue o tema; as caixas claras têm tinta fixa ──────────────────
 {
   const css = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n');
-  const regras = css.split('}').filter((r) => /\.qp[\w-]*[\s{.:,[]/.test(r) && !/@media\(max-width/.test(r));
-  ok(regras.length >= 10, 'não achei as regras de CSS da prancheta');
-  const comToken = regras.filter((r) => /color:var\(--|background:var\(--/.test(r.replace(/\s+/g, '')));
-  ok(comToken.length === 0, '⚠️ regra da prancheta com cor do TEMA (no escuro, texto claro no papel branco): ' + comToken.map((r) => r.trim().slice(0, 50)).join(' | '));
-  ok(/\.qp-folha\{[^}]*background:#fff/.test(css), 'a folha deixou de ser branca');
+  const regra = (sel) => { const m = css.match(new RegExp('(^|\\n)' + sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\{([^}]*)\\}')); return m ? m[2] : ''; };
+  ok(!/\.qp-clip/.test(css) && !/#c69c6d/.test(css), '⚠️ o desenho da prancheta (prendedor ou madeira) voltou ao CSS');
+  ok(/background:var\(--surface\)/.test(regra('.qp')) && /border:1px solid var\(--gold\)/.test(regra('.qp')), 'o cartão não é o de antes (fundo do tema e borda dourada)');
+  ['.qp-folha', '.qp-caso', '.qp-perg'].forEach((sel) => ok(/color:var\(--tx\)/.test(regra(sel)), '⚠️ ' + sel + ' com tinta fixa: no tema escuro o texto sumiria no fundo escuro'));
+  ok(/color:var\(--gold\)/.test(regra('.qp-tit')), 'o título não é dourado como antes');
+  // caixas claras: fundo claro fixo e tinta fixa escura (nada de var(--tx) dentro delas)
+  [['.qp-opt', /background:#f8fafc/], ['.qp-fb.ok', /background:#ecfdf3/], ['.qp-fb.err', /background:#fef2f2/], ['.qp-expfig', /background:#fff/]].forEach(([sel, fundo]) =>
+    ok(fundo.test(regra(sel)) && !/color:var\(--/.test(regra(sel)), sel + ': caixa clara com tinta do tema (no escuro, texto claro no fundo claro)'));
+  ok(!/color:var\(--/.test(regra('.qp-fb')) && /color:#1f2937/.test(regra('.qp-fb')), 'o texto do gabarito deixou de ter tinta fixa escura');
+  ok(/@media\(max-width:600px\)\{\.qp\{padding:\.85rem \.8rem\}\}/.test(css), 'no celular, o cartão perdeu a margem enxuta (o enunciado ficava apertado)');
 }
 
 // ── 4. ⚠️ a aba do professor: só publicadas, a de hoje aberta, resposta de TESTE ──
@@ -95,7 +105,7 @@ const Q = { id: 'ig-3', status: 'posted', postedAt: 3, sub: 'Osteometabolismo', 
   ok(JSON.stringify(ids) === '["ig-3","ig-2","ig-1"]', 'a aba devia listar só as publicadas, da mais recente: ' + JSON.stringify(ids));
   const abertas = [...el.querySelectorAll('.qa-item.open [data-admqal-toggle]')].map((b) => b.getAttribute('data-admqal-toggle'));
   ok(JSON.stringify(abertas) === '["ig-3"]', 'a de hoje não abriu sozinha na aba do professor');
-  ok(!!el.querySelector('.qa-item.open .qp'), 'a questão aberta na aba não está na prancheta');
+  ok(!!el.querySelector('.qa-item.open .qp'), 'a questão aberta na aba não está no cartão');
   ok(!el.querySelector('[data-qa-toggle]') && !el.querySelector('#qa-sort'), 'a aba do professor usa os mesmos ids do painel do aluno (as duas telas se cruzariam)');
   el.querySelector('.qa-item.open [data-qotd-opt="B"]').click();
   ok(run('JSON.stringify(DB.qotd)') === '{}', '⚠️ a resposta de teste do professor foi GRAVADA em DB.qotd');
@@ -110,8 +120,8 @@ ok(/nb\('postados','✅ Postados \('\+nPosted\+'\)'\)\+nb\('aluno','👁 Como o 
 ok(/\['lote','manual','fila','postados','aluno','promo'\]/.test(html), 'stShowView não conhece a aba "aluno" (o botão não alternaria)');
 
 if (falhas.length) {
-  console.error('✗ prancheta da Questão do Dia / aba "Como o aluno vê":');
+  console.error('✗ cartão da Questão do Dia / aba "Como o aluno vê":');
   falhas.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ Questão do Dia: prancheta com caso e pergunta em destaque, tinta fixa na folha, e a aba "Como o aluno vê" do professor só lê (não grava)');
+console.log('✓ Questão do Dia: cartão simples (sem prancheta) com caso e pergunta em destaque, cores do tema e caixas claras legíveis, e a aba "Como o aluno vê" do professor só lê (não grava)');

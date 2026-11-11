@@ -269,13 +269,14 @@ try {
 //      (17/10/2026). Pedido do professor: ver a questão como o aluno vê, numa aba
 //      ao lado de "Postados", e um visual mais didático (prancheta com o caso e a
 //      pergunta em destaque). A resposta do professor ali é de TESTE: não pode ir a
-//      DB.qotd nem às estatísticas; e a tinta da folha não pode vir do tema.
+//      DB.qotd nem às estatísticas. Em 11/11/2026 a prancheta SAIU ("ficou muito
+//      apertado o enunciado"): cartão simples, texto no tema, caixas claras com tinta fixa.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-qotd-prancheta.js')], { stdio: 'pipe' });
-  ok('Questão do Dia: prancheta com a pergunta em destaque e a aba "Como o aluno vê" do professor, que não grava');
+  ok('Questão do Dia: cartão simples (a prancheta saiu em 11/11/2026), pergunta em destaque e a aba "Como o aluno vê" do professor, que não grava');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
-  fail('prancheta da Questão do Dia / aba do professor falhou:\n' + out);
+  fail('cartão da Questão do Dia / aba do professor falhou:\n' + out);
 }
 
 // 17b3. TÍTULOS DO MURAL EM PORTUGUÊS (11/10/2026). O radar grava a tradução em
@@ -1160,6 +1161,18 @@ try {
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão do avançar/voltar deslizando (index.html) falhou:\n' + out);
+}
+
+// 17c-undecies-af. OSCE: ALTERNATIVAS E LEITOR (11/11/2026). Medido no estudo do OSCE em duas
+//      partes (fechado sem merge; o professor manteve a chamada única, pelo rigor): a correta
+//      era a mais longa em 39/40 passos (regra nova no pedido) e 3/20 respostas fechavam mal
+//      as alternativas, o que fazia o gerador pedir tudo de novo (parseJ agora acerta).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-osce-alternativas.js')], { stdio: 'pipe' });
+  ok('OSCE: chamada única, alternativas sem pista de tamanho, leitor que acerta a pontuação');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do OSCE (alternativas/leitor) falhou:\n' + out);
 }
 
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
