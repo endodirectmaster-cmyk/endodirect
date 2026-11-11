@@ -1150,6 +1150,18 @@ try {
   fail('regressão dos filtros em caixa (index.html) falhou:\n' + out);
 }
 
+// 17c-undecies-ae. AVANÇAR/VOLTAR DESLIZANDO (11/11/2026, pedido do professor com vídeo).
+//      Simulado, Flashcards (estudo e Diretrizes), Caderno de erros e as abas do Banco e da
+//      Prescrição: o conteúdo sai para um lado e o novo entra pelo outro; respeita "reduzir
+//      movimento"; a cópia que sai é inerte, sem id/name, e nunca sobra na tela.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-deslizar.js')], { stdio: 'pipe' });
+  ok('avançar/voltar deslizando: direção certa, sem sobra, respeita reduzir movimento');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do avançar/voltar deslizando (index.html) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e
