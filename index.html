@@ -516,6 +516,16 @@ html.app-loja #degustacao-cta,html.app-loja #perfil-upgrade,html.app-loja #btn-p
 html.app-loja #q-banco-buy,html.app-loja #btn-aovivo-assinar,html.app-loja .amostra-cta,
 html.app-loja [data-dir-assine],html.app-loja .so-site{display:none!important}
 html:not(.app-loja) .so-app{display:none!important}
+/* Aviso de consentimento da IA (app do iPhone; ver garantirConsentimentoIA). Acima
+   de tudo (Questão do Dia 9000, faixa do relógio 950), com o recuo do relógio. */
+.ia-consent-bg{position:fixed;inset:0;z-index:9500;background:rgba(6,11,22,.62);display:flex;align-items:center;justify-content:center;padding:max(1rem,env(safe-area-inset-top,0px)) 1rem max(1rem,env(safe-area-inset-bottom,0px))}
+.ia-consent-box{background:var(--surface);color:var(--tx);border:1px solid var(--bd);border-radius:16px;width:min(460px,100%);max-height:100%;overflow:auto;padding:1.2rem 1.25rem 1.1rem;box-shadow:0 16px 48px rgba(0,0,0,.35)}
+.ia-consent-box h2{font-size:1.05rem;font-weight:800;margin:0 0 .6rem}
+.ia-consent-box p{font-size:.84rem;line-height:1.55;color:var(--t2);margin:0 0 .55rem}
+.ia-consent-box .ia-consent-alerta{color:var(--tx);font-weight:700}
+.ia-consent-box .ia-consent-link a{color:var(--blue)}
+.ia-consent-acoes{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.9rem}
+.ia-consent-acoes .btn{min-height:44px;padding:.55rem 1.1rem}
 /* Exclusão de conta (Meu perfil). */
 .pf-excluir{margin-top:1rem;border-color:#5a2326}
 .pf-excluir .card-title{color:var(--red)}
@@ -5569,6 +5579,14 @@ var CALCS=[
    interp:function(s){return{t:'Superfície corporal estimada',c:'tag-blue'};},
    unit:'m²',note:'Fórmula de Mosteller: √(peso[kg] × altura[cm] ÷ 3600). Útil para doses ajustadas por superfície corporal (ex.: corticoide em pediatria, quimioterapia).'},
 ];
+// 💊 APP DO IPHONE SEM CALCULADORA DE DOSE (11/11/2026). Diretriz 1.4.2 da App
+// Store: calculadora de dose só de fabricante, hospital, universidade, operadora,
+// farmácia ou entidade aprovada. O professor autorizou ("pode") esconder as três no
+// app do iPhone. Site e Android seguem com todas. Toda tela de calculadora lê CALCS
+// na hora (grade, áreas, busca, openCalc), então filtrar aqui basta. Teste:
+// scripts/test-app-ios-revisao-apple.js.
+var CALC_DOSE_FORA_DO_IOS=['cliques','lt4','cortic'];
+if(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios')CALCS=CALCS.filter(function(c){return CALC_DOSE_FORA_DO_IOS.indexOf(c.id)<0;});
 
 var USERS=[
   // Só professores, por login do Google. A régua de admin DE VERDADE é a tabela
@@ -8307,7 +8325,55 @@ function aiAuthHeaders(){
     }).catch(function(){return base;});
   }catch(e){return Promise.resolve(base);}
 }
+// 🤖 CONSENTIMENTO ANTES DA IA NO APP DO IPHONE (11/11/2026). Diretriz 5.1.2(i) da
+// App Store: antes de mandar dados a uma IA de terceiros, dizer qual e pedir
+// permissão explícita. Toda chamada de IA do aluno e do painel passa por aqui
+// (callAI, callAIJson, callAIwithPDF), então o aviso aparece uma vez, na primeira
+// chamada, e nada sai antes do "Concordo". "Agora não" recusa só aquela chamada.
+// Só no app do iPhone (APP_LOJA==='ios'): no site e no Android, nada muda.
+// O que o aviso promete foi conferido: o servidor manda à Anthropic só o texto do
+// recurso (system + prompt), sem nome, e-mail ou CPF. Teste:
+// scripts/test-app-ios-revisao-apple.js.
+var IA_CONSENT_CHAVE='endo_ia_consent_v1',iaConsentMem=false,iaConsentAberto=null;
+var IA_CONSENT_RECUSA='Os recursos de inteligência artificial só funcionam com a sua concordância. Tente de novo para ver o aviso.';
+function iaConsentDado(){
+  if(typeof APP_LOJA==='undefined'||APP_LOJA!=='ios'||iaConsentMem)return true;
+  try{if(localStorage.getItem(IA_CONSENT_CHAVE)){iaConsentMem=true;return true;}}catch(e){}
+  return false;
+}
+function garantirConsentimentoIA(){
+  if(iaConsentDado())return Promise.resolve();
+  if(iaConsentAberto)return iaConsentAberto;
+  iaConsentAberto=new Promise(function(resolve,reject){
+    var bg=document.createElement('div');
+    bg.className='ia-consent-bg';bg.id='ia-consent';
+    bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-labelledby','ia-consent-tit');
+    bg.innerHTML='<div class="ia-consent-box">'
+      +'<h2 id="ia-consent-tit">Recursos de inteligência artificial</h2>'
+      +'<p>O Chat IA, o Simulador de Casos, a Prescrição Comentada e os demais recursos de IA do Endodirect usam o modelo Claude, da empresa Anthropic (Estados Unidos).</p>'
+      +'<p>Para gerar cada resposta, o Endodirect envia à Anthropic o texto que você escreve ou responde no recurso e, quando o recurso pede, dados do seu estudo, como o desempenho por área. Nome, e-mail, CPF e dados de pagamento não são enviados.</p>'
+      +'<p>A Anthropic usa esses dados só para gerar a resposta e não os usa para treinar modelos.</p>'
+      +'<p class="ia-consent-alerta">Não escreva dados que identifiquem pacientes.</p>'
+      +'<p class="ia-consent-link">Detalhes na <a href="/privacidade" target="_blank" rel="noopener">política de privacidade</a>.</p>'
+      +'<div class="ia-consent-acoes"><button type="button" class="btn btn-outline" data-ia-nao>Agora não</button><button type="button" class="btn btn-primary" data-ia-ok>Concordo</button></div>'
+      +'</div>';
+    document.body.appendChild(bg);
+    function fim(ok){
+      try{bg.parentNode&&bg.parentNode.removeChild(bg);}catch(e){}
+      iaConsentAberto=null;
+      if(ok){iaConsentMem=true;try{localStorage.setItem(IA_CONSENT_CHAVE,new Date().toISOString());}catch(e){}resolve();}
+      else reject(new Error(IA_CONSENT_RECUSA));
+    }
+    bg.querySelector('[data-ia-ok]').addEventListener('click',function(){fim(true);});
+    bg.querySelector('[data-ia-nao]').addEventListener('click',function(){fim(false);});
+    try{bg.querySelector('[data-ia-ok]').focus();}catch(e){}
+  });
+  return iaConsentAberto;
+}
 function aiRequest(payload){
+  return garantirConsentimentoIA().then(function(){return aiRequestEnviar(payload);});
+}
+function aiRequestEnviar(payload){
   // Teto global de tempo (130s) p/ NENHUMA chamada de IA pendurar o app. O
   // servidor corta em 120s (maxDuration, plano Pro) — o cliente espera um pouco
   // mais para receber a resposta/erro do servidor antes de abortar. Importar PDF

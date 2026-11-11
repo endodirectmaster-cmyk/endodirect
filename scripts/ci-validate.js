@@ -1115,6 +1115,18 @@ try {
   fail('regressão da área segura do iPhone (index.html, app-ios) falhou:\n' + out);
 }
 
+// 17c-undecies-ab. APP DO IPHONE PARA A REVISÃO DA APPLE (11/11/2026). Diretriz 1.4.2: as
+//      três calculadoras de dose (semaglutida em cliques, LT4 por peso, corticoides) somem só
+//      no app do iPhone. Diretriz 5.1.2(i): aviso de consentimento antes da 1ª chamada de IA,
+//      só no app do iPhone; nada sai antes do "Concordo".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-revisao-apple.js')], { stdio: 'pipe' });
+  ok('app do iPhone para a revisão da Apple: sem calculadora de dose e com consentimento antes da IA');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do app do iPhone para a revisão da Apple (index.html) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e

@@ -159,6 +159,25 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     senha; sair e entrar; modo avião mostra "Sem conexão" com "Tentar de novo". Próximo: preparar
     o envio à revisão da Apple (página do produto, privacidade, conta do revisor, revogação do
     token da Apple ao excluir a conta, Email Sources do relay privado).
+  - **11/11: FICHA DA APP STORE** (página privada do professor:
+    https://claude.ai/artifact/9Gq7kJPZ19BY1b49Sh7YGd): subtítulo "Questões, resumos e
+    simulados", texto promocional, descrição (sem preço nem "assine"), palavras-chave (95
+    caracteres), URLs, copyright da razão social, categorias Educação + Medicina, classificação
+    etária, notas ao revisor em inglês, respostas de privacidade, gratuito e só Brasil.
+    Lançamento recomendado: manual.
+  - **Conta do revisor:** já existia (19/10). O professor gera a senha em Estudantes › "Conta de
+    revisão das lojas" e cola no App Store Connect ("Início de sessão obrigatório").
+  - **11/11: DUAS DIRETRIZES QUE O APP NÃO CUMPRIA, corrigidas só no app do iPhone:**
+    - **1.4.2** (calculadora de dose só de fabricante, hospital, universidade ou entidade
+      aprovada): somem `cliques` (semaglutida), `lt4` e `cortic`. Professor: "pode".
+    - **5.1.2(i)** (permissão explícita antes de mandar dados a IA de terceiros): aviso uma vez,
+      na primeira chamada de IA (`garantirConsentimentoIA` em `aiRequest`), com Anthropic/Claude,
+      o que vai e o que não vai (nome, e-mail, CPF e pagamento não vão: conferido em `api/ai.js`),
+      sem treino de modelo e "não escreva dados que identifiquem pacientes". "Agora não" recusa
+      só aquela chamada. Concordância em `localStorage` (`endo_ia_consent_v1`).
+    - Teste `scripts/test-app-ios-revisao-apple.js` (ci 17c-undecies-ab), 9 mutações pegas.
+  - **Falta antes de "Adicionar para revisão":** revogar o token da Apple ao excluir a conta
+    (código meu + chave Sign in with Apple do professor), Email Sources (professor), capturas.
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
