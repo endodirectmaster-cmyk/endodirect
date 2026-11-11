@@ -1162,6 +1162,18 @@ try {
   fail('regressão do avançar/voltar deslizando (index.html) falhou:\n' + out);
 }
 
+// 17c-undecies-af. OSCE: ALTERNATIVAS E LEITOR (11/11/2026). Medido no estudo do OSCE em duas
+//      partes (fechado sem merge; o professor manteve a chamada única, pelo rigor): a correta
+//      era a mais longa em 39/40 passos (regra nova no pedido) e 3/20 respostas fechavam mal
+//      as alternativas, o que fazia o gerador pedir tudo de novo (parseJ agora acerta).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-osce-alternativas.js')], { stdio: 'pipe' });
+  ok('OSCE: chamada única, alternativas sem pista de tamanho, leitor que acerta a pontuação');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do OSCE (alternativas/leitor) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e

@@ -7476,6 +7476,18 @@ function parseJ(raw){
   try{return JSON.parse(c);}catch(e){}
   var m=c.match(/(\{[\s\S]*\})/)||c.match(/(\[[\s\S]*\])/);
   if(m){try{return JSON.parse(m[1]);}catch(e){}}
+  // Conserto do erro mais comum da IA nos geradores (medido no OSCE em 11/11/2026: 3 de
+  // 20 respostas): fechar o objeto das alternativas com chave+colchete, ou só colchete, em
+  // vez de só a chave, logo antes de "correct"/"answer". Só roda quando a leitura normal
+  // falhou, e o resultado ainda passa pelo JSON.parse: nada é inventado, só a pontuação é
+  // acertada. Sem isto, o gerador pedia tudo de novo (o dobro da espera). (Sem chaves
+  // literais neste comentário nem na expressão: os testes extraem a função contando chaves.)
+  var fx=c.replace(/"\s*\x7d\s*\x5d\s*,\s*"(correct|answer)"/g,'"\x7d,"$1"').replace(/"\s*\x5d\s*,\s*"(correct|answer)"/g,'"\x7d,"$1"');
+  if(fx!==c){
+    try{return JSON.parse(fx);}catch(e){}
+    var m2=fx.match(/(\{[\s\S]*\})/);
+    if(m2){try{return JSON.parse(m2[1]);}catch(e){}}
+  }
   return null;
 }
 // Recupera JSON TRUNCADO (resposta cortada pelo teto de tokens): fecha a string
@@ -23291,7 +23303,7 @@ startSim=function(){
   // Área do aprofundamento: a MESMA string vai no relatório final (simState.area),
   // para o bloco sair idêntico e o relatório ler do cache o que a geração gravou.
   var simArea=((sub||'')+(tema?' '+tema:'')).trim();
-  var sys=groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
+  var sys=groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","steps":[{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}]}. Use EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Os feedbacks podem ser ricos, mas mantenha SÓ 4 passos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. As alternativas de cada passo devem ter tamanho parecido: a correta não pode se destacar por ser a mais longa ou a mais detalhada; nenhuma distratora pode se contradizer com os números do próprio caso. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").');
   withTimeout(simRetry(function(){return callAIJson(sys,'Caso de '+(sub||'endocrinologia')+(tema?' — tema obrigatório do caso: '+tema:'')+', complexidade '+level+', modo '+(mode==='mc'?'múltipla escolha':'resposta aberta')+'.',3200,0,AI_MODEL_SIM_GEN,'',{area:simArea,profundoMax:FERRAMENTA_PROFUNDO});}),59000,'A geração demorou demais. Tente de novo.')
   .then(function(d){
     if(!d||!d.steps||!d.steps.length)throw new Error('Resposta inválida.');
