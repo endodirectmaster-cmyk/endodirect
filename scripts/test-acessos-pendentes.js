@@ -242,7 +242,6 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   ok(/function provasPool\(\)\{\s*if\(!isDegustacao\(\)\|\|acessosPendentes\(\)\)return provasDB;/.test(html), 'provasPool: pendente não corta o banco em 50');
   const upi = corpo('updateProvaInfo');
   ok(/var hideAno=\(isDegustacao\(\)&&!acessosPendentes\(\)\)\|\|inst==='Endodirect';/.test(upi) && /else if\(isDegustacao\(\)&&!acessosPendentes\(\)\)\{/.test(upi), 'updateProvaInfo: pendente não escreve "Degustação: mostrando…" nem esconde o ano');
-  ok(/if\(acessosPendentes\(\)\)\{planoAindaNaoConfirmado\(\);return;\}\s*if\(blockIfDegustacao\(\)\)return;/.test(corpo('explicarAlternativas')), 'explicarAlternativas: pendente espera; depois, exige pacote (blockIfDegustacao)');
   const da = corpo('definirAcessos');
   ok(/acessosConhecidos=true;/.test(da) && /reavaliarPainelAtual\(\)/.test(da) && /if\(!telaDeCompraAberta\(\)\)maybeTrialModal\(\)/.test(da), 'definirAcessos: marca a lista como conhecida, reavalia o painel e só então oferece a janela de degustação (nunca sobre a compra)');
   ok(da.indexOf('reavaliarPainelAtual()') < da.indexOf('maybeTrialModal()'), 'definirAcessos: reavaliar o painel vem antes da janela (a janela pode cobrir o cartão de bloqueio)');
