@@ -190,6 +190,15 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       inválido de propósito: `invalid_grant` = chave aceita; `invalid_client` = chave/Key ID errados.
       O teste real de exclusão não dá para fazer com o Apple ID do professor: o "Continuar com a
       Apple" de 10/11 vinculou a Apple à conta de professor (Google + Apple), que não se exclui.
+    - **10/11, 23h48: CHAVE "SIGN IN WITH APPLE" CONFIGURADA E ACEITA PELA APPLE.** Chave "Endodirect
+      Sign in with Apple" criada em Keys (Sign in with Apple, app br.com.endodirect.app); envs
+      `APPLE_SIWA_KEY_ID` e `APPLE_SIWA_PRIVATE_KEY` (Production) coladas pelo professor; redeploy
+      23h47; botão do painel: "A Apple aceitou a chave".
+    - **⚠️ 10/11, 23h39: o professor abriu por engano a chave do App Store Connect ("GitHub Actions",
+      a do TestFlight, papel Admin) e o conteúdo apareceu num print.** Orientado a revogá-la, criar
+      outra (Admin) e trocar `ASC_KEY_ID` e `ASC_KEY_P8` no GitHub; a cópia local do print foi apagada.
+      Depois da troca, rodar um envio de teste ao TestFlight. Regra: print de arquivo .p8 nunca,
+      só o nome do arquivo.
     - **Email Sources cadastrados pelo professor (10/11, 23h33):** domínios endodirect.com.br e
       send.endodirect.com.br; e-mails nao-responda@, newsletter@, noticias@, suporte@ e contato@.
     - **Falta do professor:** chave "Sign in with Apple" no portal (Keys) e as envs da Vercel
