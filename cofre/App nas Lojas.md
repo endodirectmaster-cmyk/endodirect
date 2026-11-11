@@ -176,8 +176,22 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       sem treino de modelo e "não escreva dados que identifiquem pacientes". "Agora não" recusa
       só aquela chamada. Concordância em `localStorage` (`endo_ia_consent_v1`).
     - Teste `scripts/test-app-ios-revisao-apple.js` (ci 17c-undecies-ab), 9 mutações pegas.
-  - **Falta antes de "Adicionar para revisão":** revogar o token da Apple ao excluir a conta
-    (código meu + chave Sign in with Apple do professor), Email Sources (professor), capturas.
+  - **11/11: REVOGAÇÃO NA APPLE AO EXCLUIR A CONTA** (exigência da Apple para quem oferece Entrar
+    com a Apple). No app do iPhone, conta com identidade Apple: a folha da Apple abre de novo na
+    exclusão e o `authorizationCode` vai com o pedido (`apple_code`); o servidor
+    (`lib/apple-revogar.js`, chamado por `lib/excluir-conta.js` antes de apagar o usuário) assina o
+    client_secret ES256, troca o código em /auth/token, confere o `sub` com as identidades Apple da
+    conta (`userFromReq` agora devolve `appleSubs`) e revoga em /auth/revoke. Nenhum token guardado.
+    Falha da Apple não trava a exclusão (vai ao log: `apple: revogada` ou o motivo). Fechar a folha
+    para a exclusão com aviso. Página /excluir-conta atualizada. Teste
+    `scripts/test-apple-revogar.js` (ci 17c-undecies-ac), 11 mutações pegas.
+    - **Falta do professor:** chave "Sign in with Apple" no portal (Keys) e as envs da Vercel
+      `APPLE_SIWA_KEY_ID` e `APPLE_SIWA_PRIVATE_KEY` (a chave não passa pelo Claude); depois, redeploy
+      e um teste real (conta nova pela Apple no iPhone, excluída no app, conferir o log).
+  - **Ficha preenchida pelo professor em 10/11 à noite:** capturas (6, 1179 × 2556), textos, build 5,
+    login do revisor, notas, contato, categorias, direitos de conteúdo ("Sim"), classificação 16+ (A16
+    no Brasil), privacidade (11 tipos; Saúde por causa da Memed; ID do dispositivo pelo limite de
+    aparelhos). Falta: preço e disponibilidade, Email Sources, chave da Apple.
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou

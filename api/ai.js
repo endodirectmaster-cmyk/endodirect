@@ -201,7 +201,10 @@ module.exports = async function handler(req, res) {
       if (String(sbody.confirmar || '').trim().toUpperCase() !== 'EXCLUIR') {
         return json(res, 400, { ok: false, error: 'Para confirmar, digite EXCLUIR.' });
       }
-      const r = await excluirConta(user);
+      // `apple_code`: código novo da folha da Apple, mandado pelo app do iPhone por
+      // quem entrou com a Apple; serve só para revogar o acesso na Apple.
+      const appleCode = typeof sbody.apple_code === 'string' ? sbody.apple_code.slice(0, 2000) : '';
+      const r = await excluirConta(user, { appleCode });
       return json(res, r.ok ? 200 : (r.code || 400), r.ok ? { ok: true } : { ok: false, error: r.error });
     }
     // (d3) PROFESSOR cria ou renova a conta de revisão das lojas e recebe a senha
