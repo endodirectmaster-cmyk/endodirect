@@ -3022,7 +3022,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <button class="btn btn-primary" id="btn-art">▶ Resumir</button>
             <label style="display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="art-gen-q" checked style="width:auto;accent-color:var(--blue)">Gerar questões</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="art-gen-fc" style="width:auto;accent-color:var(--blue)">Gerar flashcards</label>
           </div>
         </div>
         <div id="art-result"></div>
@@ -14588,18 +14587,17 @@ function handleArtFile(file){
 function resumeArt(){
   var mode=document.getElementById('art-file-panel').style.display!=='none'?'file':'text';
   var genQ=document.getElementById('art-gen-q').checked;
-  var genFCck=document.getElementById('art-gen-fc').checked;
   var btn=document.getElementById('btn-art');
   var out=document.getElementById('art-result');
-  var sys='Pesquisador médico. Retorne JSON APENAS: {"resumo":"resumo estruturado em markdown (objetivos, métodos, resultados, conclusão)","pontos":["ponto-chave 1","2","3"]'+(genQ?',"questions":[{"stem":"...","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"Endocrinologia","dificuldade":"intermediario"}]':'')+(genFCck?',"cards":[{"front":"","back":""}]':'')+'}';
+  var sys='Pesquisador médico. Retorne JSON APENAS: {"resumo":"resumo estruturado em markdown (objetivos, métodos, resultados, conclusão)","pontos":["ponto-chave 1","2","3"]'+(genQ?',"questions":[{"stem":"...","options":{"A":"","B":"","C":"","D":""},"answer":"A","explanation":"","area":"Endocrinologia","dificuldade":"intermediario"}]':'')+'}';
   btn.disabled=true;btn.innerHTML='Gerando…';out.innerHTML=ldHTML();
   var p;
   if(mode==='file'&&artFileData&&artFileData.type==='pdf'){
-    p=callAIwithPDF(sys+' '+(genQ?'Gere 3 questões. ':'')+(genFCck?'Gere 5 flashcards.':''),artFileData.base64);
+    p=callAIwithPDF(sys+' '+(genQ?'Gere 3 questões.':''),artFileData.base64);
   }else{
     var txt=mode==='file'&&artFileData&&artFileData.type==='txt'?artFileData.text:(document.getElementById('art-text').value||'').trim();
     if(!txt){notify('Forneça o texto ou arquivo.','err');btn.disabled=false;btn.innerHTML='▶ Resumir';out.innerHTML='';return;}
-    p=callAI(sys+' '+(genQ?'Gere 3 questões. ':'')+(genFCck?'Gere 5 flashcards.':''),'Artigo:\n'+txt.substring(0,8000),2500);
+    p=callAI(sys+' '+(genQ?'Gere 3 questões.':''),'Artigo:\n'+txt.substring(0,8000),2500);
   }
   p.then(function(raw){
     var d=parseJ(raw);if(!d)throw new Error('Resposta inválida.');
@@ -14607,18 +14605,18 @@ function resumeArt(){
     var html='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">📄 Resumo</span></div><div class="art-md" style="font-size:.8rem;line-height:1.72">'+mdToHtml(d.resumo||'')+'</div>';
     if(d.pontos&&d.pontos.length)html+='<div style="margin-top:.7rem"><div class="card-title" style="margin-bottom:.4rem">Pontos-chave</div>'+d.pontos.map(function(p){return'<div style="font-size:.77rem;padding:.2rem 0;display:flex;gap:.4rem"><span style="color:var(--blue)">▸</span>'+esc(p)+'</div>';}).join('')+'</div>';
     html+='</div>';
-    // Persiste no banco/baralho (também aparecem em Questões/Flashcards/Revisão)
-    // e mostra interativo aqui no resumidor (aluno responde na hora).
+    // Persiste no banco (também aparecem em Questões e Revisão) e mostra
+    // interativo aqui no resumidor (aluno responde na hora). Flashcards não:
+    // o "Gerar flashcards" saiu em 11/11/2026, a pedido do professor.
     if(d.questions&&d.questions.length){d.questions.forEach(function(q){DB.q.push(Object.assign({},q,{code:genCode(q.area||'Endocrinologia'),type:'mc',at:Date.now()}));});}
-    if(d.cards&&d.cards.length){d.cards.forEach(function(c){DB.fc.push({id:Date.now()+Math.random(),front:c.front,back:c.back,cat:'Artigos',at:Date.now()});});}
-    if((d.questions&&d.questions.length)||(d.cards&&d.cards.length)){persist();refreshDash();}
+    if(d.questions&&d.questions.length){persist();refreshDash();}
     html+=artQuizHTML(d);
     out.innerHTML=html;
     wireArtResult(out);
   }).catch(function(e){out.innerHTML='<div style="color:var(--red);font-size:.78rem;padding:.5rem;background:var(--red-l);border-radius:var(--rs)">❌ '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.innerHTML='▶ Resumir';});
 }
-// Render interativo das questões/flashcards gerados pelo resumidor: o aluno
+// Render interativo das questões geradas pelo resumidor: o aluno
 // responde no próprio painel (sem ter de caçar no Banco). artLastData guarda o
 // último resultado p/ o handler delegado (anexado uma vez em wireArtResult).
 var artLastData=null;
@@ -14634,19 +14632,6 @@ function artQuizHTML(d){
         +'<div style="font-size:.8rem;font-weight:600;margin-bottom:.45rem;line-height:1.5">'+(gi+1)+'. '+esc(q.stem||'')+'</div>'
         +Object.keys(opts).map(function(k){return '<button class="sim-opt" data-aqopt="'+gi+':'+esc(k)+'"><span style="font-weight:700">'+esc(k)+'</span>'+esc(opts[k])+'</button>';}).join('')
         +'<div data-aqfb="'+gi+'" style="display:none;font-size:.76rem;line-height:1.55;margin-top:.4rem;padding:.5rem .7rem;border-radius:var(--rs);background:var(--s2);border:1px solid var(--bd)"></div>'
-        +'</div>';
-    }).join('');
-    html+='</div>';
-  }
-  var cs=(d&&d.cards)||[];
-  if(cs.length){
-    html+='<div class="card" style="margin-bottom:.7rem"><div class="card-head"><span class="card-title">🃏 Flashcards ('+cs.length+')</span></div>'
-      +'<div style="font-size:.7rem;color:var(--t3);margin:-.15rem 0 .6rem">Também salvos nos Flashcards e na Revisão.</div>';
-    html+=cs.map(function(c,ci){
-      return '<div style="border:1px solid var(--bd2);border-radius:var(--rs);padding:.55rem .8rem;margin-bottom:6px">'
-        +'<div style="font-size:.8rem;font-weight:600;line-height:1.5">'+esc(c.front||'')+'</div>'
-        +'<button class="btn btn-outline btn-sm" data-afcflip="'+ci+'" style="margin-top:.45rem">Mostrar resposta</button>'
-        +'<div data-afcback="'+ci+'" style="display:none;font-size:.78rem;line-height:1.55;margin-top:.45rem;color:var(--t2)">'+esc(c.back||'')+'</div>'
         +'</div>';
     }).join('');
     html+='</div>';
@@ -14671,11 +14656,6 @@ function wireArtResult(out){
       if(fb){var ok=String(k).toUpperCase()===ans;fb.style.display='block';
         fb.innerHTML='<b style="color:'+(ok?'#34d399':'var(--red)')+'">'+(ok?'✓ Correta':'✗ Incorreta — resposta: '+esc(ans))+'</b>'+(q.explanation?('<div style="margin-top:.3rem;color:var(--t2)">'+esc(q.explanation)+'</div>'):'');}
       return;
-    }
-    var fbtn=ev.target.closest&&ev.target.closest('[data-afcflip]');
-    if(fbtn){
-      var back=out.querySelector('[data-afcback="'+fbtn.dataset.afcflip+'"]');
-      if(back){back.style.display='block';fbtn.style.display='none';}
     }
   });
 }

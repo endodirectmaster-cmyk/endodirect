@@ -63,9 +63,13 @@ ok('🧨 Mural de artigos: sem o quadro "Avisos para alunos / Calendário, notí
   !/class="mural-hero"/.test(html) && !/Avisos para alunos/.test(html) && !/Calendário, notícias e leituras essenciais/.test(html));
 ok('Mural de artigos: os filtros continuam', (html.match(/el\.innerHTML='<div class="mural-shell">'/g) || []).length === 2 && /<section class="mural-filter-card">/.test(html));
 ok('Banco de questões: sem "Sortear 5"; a caixa "só as que ainda não respondi" fica', !/btn-sortear-5/.test(html) && /id="q-naofeitas"/.test(html));
+ok('🧨 Resumidor: sem "Gerar flashcards" (não pede, não salva e não mostra flashcards)',
+  !/id="art-gen-fc"/.test(html) && !/genFCck/.test(html) && !/Gere 5 flashcards/.test(html) && !/data-afcflip/.test(html)
+  && !/cat:'Artigos'/.test(html));
+ok('Resumidor: o "Gerar questões" continua', /<input type="checkbox" id="art-gen-q" checked/.test(html) && /\(genQ\?'Gere 3 questões\.':''\)/.test(html));
 
 // ---- 5. estilo ---------------------------------------------------------------------------------
 ok('caixa com largura contida e que encolhe no celular', /\.filtro-caixa\{display:flex;flex-direction:column;gap:\.28rem;flex:0 1 19rem;min-width:12rem;max-width:100%\}/.test(html));
 
 if (bad) { console.log('\n' + bad + ' falha(s): filtros em caixa'); process.exit(1); }
-console.log('filtros em caixa (Calculadoras, Flashcards, Mapas, Podcasts), painel do aluno enxuto e Mural sem o quadro de avisos: ok');
+console.log('filtros em caixa (Calculadoras, Flashcards, Mapas, Podcasts), painel do aluno enxuto, Resumidor só com questões e Mural sem o quadro de avisos: ok');
