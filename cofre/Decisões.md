@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-10
+atualizado: 2026-11-11
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-10
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📱 ÁREA SEGURA DO IPHONE NO APP (2026-11-11).** No 1º teste pelo TestFlight o ☰ do painel ficava atrás do relógio e não respondia. As barras do topo, as laterais e a Questão do Dia descem pelo recuo do relógio (`env(safe-area-inset-top)`, que vale 0 no navegador); uma faixa escura fixa cobre o relógio quando a página rola, e o relógio fica claro no app (Info.plist, a partir do build 5). Ver [[App nas Lojas]].
 - **🍎 ENTRAR COM A APPLE NO APP DO IPHONE (2026-11-10).** Exigido pela diretriz 4.8, porque o app oferece Google. Feito **nativo** (folha da Apple → identityToken → Supabase `signInWithIdToken` com nonce), e não pelo fluxo web: não precisa de Services ID nem da chave secreta que expira a cada 6 meses. O botão só aparece no app do iPhone. Compilado no GitHub (Xcode 26.6), com a permissão embutida. Falta do professor: capability no App ID, provedor Apple no Supabase e o teste pelo TestFlight. Ver [[App nas Lojas]].
 - **📱 APP DO IPHONE PELO GITHUB ACTIONS (2026-11-10).** O MacBook Air do professor (2019, Intel, Sonoma) não roda o Xcode 26. Escolha dele: "Caminho 1". `.github/workflows/app-ios.yml`, só manual: modo compilar e modo testflight (assinatura pela nuvem da Apple, chave da API Admin nos segredos do GitHub). Ver [[App nas Lojas]].
 - **🧨 BREAKING NEWS PELA DATA DO EVENTO (2026-11-10).** O push automático das 07:45 levou "FDA approves selpercatinib for RET fusion-positive thyroid cancer", uma aprovação de 12/06/2024 que o feed da FDA republicou com data nova. Agora a data da aprovação é lida no texto e pela IA, e vale na captação (30 dias) e no push (7 dias). Os dois itens antigos saíram do mural. Ver [[Newsletter e Radar]].

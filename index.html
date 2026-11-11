@@ -240,7 +240,7 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .login-link:hover{text-decoration:underline}
 .login-err{background:var(--red-l);border:1px solid #5a2326;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:var(--red);margin-bottom:.95rem;display:none}
 #app-screen{display:none;flex-direction:column;height:100%}
-.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem 0 0;flex-shrink:0;z-index:50}
+.topbar{height:calc(52px + env(safe-area-inset-top,0px));background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,0px) 1.2rem 0 0;flex-shrink:0;z-index:50}
 .tb-left{display:flex;align-items:center;height:100%}
 .tb-logo{width:190px;height:100%;background:var(--navy);display:flex;align-items:center;gap:9px;padding:0 1.1rem;flex-shrink:0}
 .tb-logo-img{width:34px;height:34px;flex-shrink:0}
@@ -248,6 +248,18 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .tb-logo span{font-size:1.05rem;font-weight:700;color:#fff}
 .tb-bc{padding:0 1.1rem;font-size:.7rem;color:var(--t3);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
 .mobile-menu-btn{display:none}
+/* 📱 FAIXA DO RELÓGIO NO APP DO IPHONE (11/11/2026). O app (app-ios/, Capacitor,
+   contentInset "never") desenha o site por baixo da barra do relógio e da bateria, e o
+   professor não conseguia tocar no ☰ do painel: ele ficava atrás do relógio. As barras
+   do topo (.topbar e .adm-topbar), a lateral do painel e a Questão do Dia descem pela
+   área segura (env(safe-area-inset-top)), e esta faixa fixa pinta o fundo do relógio
+   quando a página rola. O texto do relógio é claro (UIStatusBarStyleLightContent no
+   Info.plist), por isso a faixa é escura nos dois temas.
+   No navegador o recuo vale 0 e nada disto aparece. Abaixo da tela de entrada (1000),
+   que tem fundo e recuo próprios. Teste: scripts/test-app-ios-area-segura.js. */
+body::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:950;pointer-events:none}
+html[data-theme="light"] body::after{background:#1a2744}
+html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-top,0px) 0 0 #1a2744}
 .mobile-nav-head{display:none}
 .mobile-nav-backdrop{display:none}
 .tb-right{display:flex;align-items:center;gap:.6rem}
@@ -955,7 +967,7 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .mural-admin-grid{margin-top:1rem}
 .mural-admin-grid .mural-card{min-height:188px}
 /* Questão do Dia — janela na frente do mural (backdrop esmaece o mural) */
-.qotd-overlay{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.qotd-overlay{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:max(1rem,env(safe-area-inset-top,0px)) 1rem max(1rem,env(safe-area-inset-bottom,0px))}
 .qotd-backdrop{position:absolute;inset:0;background:rgba(6,12,28,.72)}
 .qotd-dialog{position:relative;z-index:1;width:100%;max-width:560px;max-height:90vh;overflow:auto}
 .qa-item{border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:.5rem;overflow:hidden;background:var(--surface)}
@@ -1051,9 +1063,9 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .admin-mode{height:100%;overflow:hidden}
 .admin-mode .workspace{height:100%;display:block;overflow:hidden}
 #panel-adm.on{display:flex;height:100%;width:100%;background:var(--bg)}
-#panel-adm .adm-sidebar{width:240px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+#panel-adm .adm-sidebar{width:240px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 #panel-adm .adm-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0}
-#panel-adm .adm-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 1.6rem;flex-shrink:0}
+#panel-adm .adm-topbar{height:calc(56px + env(safe-area-inset-top,0px));background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,0px) 1.6rem 0;flex-shrink:0}
 #panel-adm .adm-title-wrap{display:flex;align-items:center;gap:.75rem;min-width:0}
 .adm-menu-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--bd2);background:var(--surface);color:var(--tx);align-items:center;justify-content:center;font-size:1.15rem;font-weight:800;cursor:pointer}
 .adm-backdrop{display:none;position:fixed;inset:0;border:0;background:rgba(9,19,43,.42);z-index:30}
@@ -1102,7 +1114,7 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
   .admin-menu-open #panel-adm .adm-sidebar{transform:translateX(0);box-shadow:14px 0 34px rgba(9,19,43,.22)}
   .admin-menu-open #panel-adm .adm-backdrop{display:block}
   #panel-adm .adm-content{width:100%;min-width:0}
-  #panel-adm .adm-topbar{height:54px;padding:0 .85rem;gap:.65rem}
+  #panel-adm .adm-topbar{height:calc(54px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) .85rem 0;gap:.65rem}
   #panel-adm .adm-title-wrap{flex:1}
   .adm-menu-btn{display:inline-flex;flex-shrink:0}
   #adm-sec-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1177,7 +1189,7 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .login-btn{padding:.8rem}
   .login-link{margin-top:.5rem}
   #app-screen{height:auto;min-height:100dvh}
-  .topbar{height:auto;min-height:58px;padding:0 .7rem;gap:.45rem}
+  .topbar{height:auto;min-height:calc(58px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) .7rem 0;gap:.45rem}
   .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:42px;height:42px;border:1px solid var(--bd2);border-radius:11px;background:var(--surface);color:var(--tx);font-family:var(--font);font-size:1.2rem;font-weight:700;cursor:pointer;flex-shrink:0}
   .mobile-menu-btn span{font-size:.72rem;font-weight:700;letter-spacing:.02em}
   .tb-logo{width:auto;min-width:0;background:transparent;padding:.55rem 0;gap:7px;margin-left:.5rem}
