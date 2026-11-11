@@ -1,4 +1,4 @@
-// O BANCO DE QUESTÕES LEMBRA O QUE O ALUNO JÁ RESPONDEU — E EXPLICA AS OUTRAS ALTERNATIVAS.
+// O BANCO DE QUESTÕES LEMBRA O QUE O ALUNO JÁ RESPONDEU.
 //
 // ⚠️ 05/10/2026. Dúvida de um assinante Gold (dia seguinte à assinatura): quer
 // fazer "cerca de 5 questões por dia" por subespecialidade; "as questões que eu
@@ -12,10 +12,9 @@
 // conta); (2) o selo "Acertou/Errou em dd/mm" no card e a contagem no painel;
 // (3) "Mostrar só as que ainda não respondi" respeita os filtros e exclui as
 // feitas (o "Sortear 5" saiu em 11/11/2026, a pedido do professor: a caixa
-// já faz isso); (4) o botão "Por que as outras
-// alternativas estão incorretas?" pede à IA no registro técnico, identifica a
-// alternativa pelo texto (nunca pela letra), memoriza por questão, trata erro e
-// respeita a degustação (sem bloquear enquanto os acessos não chegaram).
+// já faz isso); (4) o botão "Por que as outras alternativas estão incorretas?"
+// (IA, 04/10/2026) saiu em 11/11/2026, a pedido do professor: a análise das
+// demais alternativas é parte do comentário de cada questão. O teste prende a ausência.
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -69,14 +68,12 @@ function caixa(extra) {
   }, extra || {});
   vm.createContext(c);
   vm.runInContext([
-    'var altMemo={};',
     // App das lojas (19/10/2026): aqui é o site, sem a marca do app.
     "var APP_LOJA='';", corpo('isAppLoja'), corpo('textoCompra'),
     corpo('esc'), corpo('ldHTML'), corpo('srsKey'), corpo('groundSys'), corpo('blockIfDegustacao'), corpo('planoAindaNaoConfirmado'), corpo('genCode'),
     'function provasPool(){return provasDB;}',
     corpo('filterProvas'),
     corpo('feitaChave'), corpo('mesclarFeitas'), corpo('feitaDe'), corpo('feitaRegistrar'), corpo('feitaSeloHTML'),
-    corpo('explicarAlternativasPrompt'), corpo('explicarAlternativas'),
   ].join('\n'), c);
   return c;
 }
@@ -127,98 +124,6 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(r3.A && !('X' in r3) && !('Y' in r3), 'mesclar: lado ausente e entradas inválidas não quebram');
   }
 
-  // ── 3. O pedido à IA: técnico, pelo texto da alternativa, com o gabarito ──
-  {
-    const c = caixa();
-    const p = run(c, 'explicarAlternativasPrompt(' + JSON.stringify(Q) + ')');
-    const SENT = '__ENDODIRECT_SYS_SPLIT_b1f7__';
-    ok(p.sys.indexOf(c.CLINICAL_GUIDELINES + SENT) === 0, 'prompt: diretrizes recentes no NÚCLEO (prefixo cacheável) + sentinela — sem ela o servidor cortaria o system em 60 mil caracteres');
-    const persona = p.sys.slice(p.sys.indexOf(SENT) + SENT.length);
-    ok(/registro técnico e formal/.test(persona) && /nunca pela letra/.test(persona) && /Responda somente com JSON/.test(persona), 'prompt: registro técnico, identifica pela alternativa (nunca pela letra), JSON');
-    ok(!/\bvocê\b/i.test(persona) && !/[A-ZÁ-Ú]{4,}/.test(persona.replace(/JSON/g, '')), 'prompt: sem segunda pessoa nem ênfase em caixa alta (regra do professor: sem jargão)');
-    ok(p.usr.indexOf('Enunciado: ' + Q.stem) === 0, 'pedido: começa pelo enunciado');
-    ok(p.usr.indexOf('Cortisol sérico matinal | Cortisol salivar à meia-noite | ACTH basal | Teste de supressão com 8 mg') > 0, 'pedido: as alternativas vão pelo texto, sem letras');
-    ok(/Gabarito: Cortisol salivar à meia-noite/.test(p.usr) && !/Gabarito: B/.test(p.usr), 'pedido: o gabarito vai pelo texto da alternativa certa, não pela letra');
-    ok(/Comentário do professor: Cortisol salivar noturno/.test(p.usr), 'pedido: leva o comentário do professor (para não repeti-lo)');
-    const semExp = run(c, 'explicarAlternativasPrompt(' + JSON.stringify(Object.assign({}, Q, { explanation: '' })) + ')');
-    ok(/\(sem comentário\)/.test(semExp.usr), 'pedido: questão sem comentário diz isso em vez de mandar vazio');
-  }
-
-  // ── 4. O botão: degustação, pendência, memória, erro ──────────────────────
-  {
-    const c = caixa({ scopes: [] });
-    c.genQs = [Q];
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    ok(c.chamadas.assine === 1 && c.chamadas.ia.length === 0 && /exclusiva dos pacotes/.test(c.chamadas.notify[0] || ''), 'degustação: aviso + tela de pacotes, sem gastar IA');
-  }
-  {
-    const c = caixa({ scopes: ['curso:endoteem'] });
-    c.genQs = [Q];
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    ok(c.chamadas.assine === 1 && c.chamadas.ia.length === 0, 'curso avulso (sem pacote): mesma regra dos outros geradores de IA — bloqueado');
-  }
-  {
-    const c = caixa({ acessosPendentes: () => true, scopes: [] });
-    c.genQs = [Q];
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    await new Promise((r) => setImmediate(r));
-    ok(c.chamadas.assine === 0 && c.chamadas.ia.length === 0 && /Confirmando o seu plano/.test(c.chamadas.notify[0] || '') && c.chamadas.retenta === 1, 'acessos pendentes: nem assina nem gasta IA — espera a confirmação e pede a lista de novo');
-  }
-  {
-    const c = caixa();
-    c.genQs = [Q];
-    c.iaResposta = Promise.resolve({ itens: [
-      { alternativa: 'Cortisol sérico matinal', motivo: 'Sofre variação circadiana e não distingue hipercortisolismo.' },
-      { alternativa: 'ACTH basal', motivo: 'Serve à etiologia, não ao rastreio.' },
-      { alternativa: '', motivo: '' }, // item vazio é descartado
-    ] });
-    const btn = c.document.getElementById('btn');
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    ok(btn.disabled === true && /Analisando as alternativas/.test(btn.innerHTML), 'botão: desabilita e mostra que está analisando');
-    await new Promise((r) => setImmediate(r));
-    const ia = c.chamadas.ia[0];
-    ok(ia && ia.maxTok === 1100 && ia.retries === 0 && ia.model === 'modelo-clinico', 'IA: callAIJson(sys, usr, 1100, 0 retentativas, modelo clínico)');
-    const box = c.dom['qalt-gen-0'];
-    ok(/<b>Cortisol sérico matinal<\/b>: Sofre variação circadiana/.test(box.innerHTML) && /<b>ACTH basal<\/b>/.test(box.innerHTML), 'resultado: lista cada alternativa pelo texto, com o motivo');
-    ok((box.innerHTML.match(/<li>/g) || []).length === 2, 'resultado: o item vazio não vira linha');
-    ok(!/gerado por IA/i.test(box.innerHTML), 'resultado: SEM rótulo "gerado por IA" (decisão do professor, 05/10/2026)');
-    ok(btn.style.display === 'none', 'resultado: o botão some');
-    ok(c.altMemo['adr-01'] && c.altMemo['adr-01'].length === 2, 'memória: guarda por questão');
-    // Segunda vez (outra busca, outro card): sem nova chamada.
-    const btn2 = c.document.getElementById('btn2');
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn2"))');
-    ok(c.chamadas.ia.length === 1 && btn2.style.display === 'none' && /ACTH basal/.test(c.dom['qalt-gen-0'].innerHTML), 'memória: a mesma questão não paga a IA de novo na sessão');
-  }
-  {
-    const c = caixa();
-    c.genQs = [Q];
-    c.iaResposta = Promise.reject(new Error('Tempo esgotado.'));
-    const btn = c.document.getElementById('btn');
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    await new Promise((r) => setImmediate(r));
-    ok(/Não foi possível comentar as alternativas agora: Tempo esgotado\./.test(c.dom['qalt-gen-0'].innerHTML), 'erro: explica na caixa');
-    ok(btn.disabled === false && btn.textContent === 'Por que as outras alternativas estão incorretas?', 'erro: o botão volta a ficar clicável com o rótulo original');
-    ok(!c.altMemo['adr-01'], 'erro: nada memorizado');
-  }
-  {
-    const c = caixa();
-    c.genQs = [Q];
-    c.iaResposta = Promise.resolve({ itens: [] });
-    run(c, 'explicarAlternativas("gen","0",document.getElementById("btn"))');
-    await new Promise((r) => setImmediate(r));
-    ok(/Resposta vazia/.test(c.dom['qalt-gen-0'].innerHTML), 'IA sem itens: tratado como erro, não como "tudo certo"');
-  }
-  {
-    const c = caixa();
-    c.DB.q = [Q];
-    c.iaResposta = Promise.resolve({ itens: [{ alternativa: 'ACTH basal', motivo: 'm' }] });
-    run(c, 'explicarAlternativas("saved","0",null)');
-    await new Promise((r) => setImmediate(r));
-    ok(c.chamadas.ia.length === 1 && /ACTH basal/.test(c.dom['qalt-saved-0'].innerHTML), 'banco salvo: a mesma função atende a fonte "saved" (DB.q) e sem botão');
-    run(c, 'explicarAlternativas("gen","9",null)');
-    ok(c.chamadas.ia.length === 1, 'índice inexistente: não chama a IA');
-  }
-
   // ── 4b. genCode não repete depois de uma exclusão ─────────────────────────
   {
     const c = caixa();
@@ -238,9 +143,9 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(/'perf','feitas','ck_billing'/.test(clr) && /DB\.feitas=\{\};/.test(clr), 'clearLocalUserData: trocar de conta no mesmo navegador não herda as respondidas da conta anterior');
     const so = corpo('selectOpt');
     ok(/if\(q\)\{try\{feitaRegistrar\(q,anulada\?null:ok,src,idx,anulada\?'anulada':''\);\}catch\(e\)\{\}\}/.test(so), 'selectOpt: toda resposta registra a questão como feita — anulada inclusive (como vista)');
-    ok(/if\(!anulada&&q&&q\.options&&fb&&\(src==='gen'\|\|src==='saved'\)&&\(hasScope\('plano'\)\|\|acessosPendentes\(\)\)\)\{\s*fb\.innerHTML\+=.*data-exp-alt="'\+esc\(src\)\+'\|'\+esc\(String\(idx\)\)\+'".*Por que as outras alternativas estão incorretas\?/.test(so), 'selectOpt: depois de responder, oferece "Por que as outras alternativas estão incorretas?" só a quem tem pacote (ou enquanto não se sabe)');
+    ok(!/data-exp-alt|qalt-|function explicarAlternativas|var altMemo|outras alternativas estão incorretas\?<\/button>/.test(html), '🧨 sem o botão "Por que as outras alternativas estão incorretas?" (saiu em 11/11/2026, pedido do professor), nem o código que chamava a IA');
+    ok(/O botão "Por que as outras alternativas estão incorretas\?" \(IA, 04\/10\/2026\) saiu/.test(so), 'selectOpt: comentário registra por que o botão saiu');
     ok(/try\{feitaRegistrar\(q,null,src,i,'disc'\);\}catch\(e\)\{\}/.test(corpo('evalDisc')), 'evalDisc: discursiva avaliada vira respondida');
-    ok(/id="qalt-'\+esc\(src\)\+'-'\+esc\(String\(idx\)\)\+'"/.test(so), 'selectOpt: cria a caixa onde a explicação aparece');
     ok(/margin-bottom:\.45rem">'\+feitaSeloHTML\(q,src,i\)\+\(q\.code\?/.test(corpo('qFullHTML')), 'qFullHTML: o selo entra nas etiquetas do card (objetivas e discursivas)');
     ok(/align-items:center">'\+feitaSeloHTML\(q,'saved',i\)\+\(q\.code\?/.test(corpo('renderSavedQ')), 'renderSavedQ: o banco salvo também mostra o selo');
     ok((html.match(/\{code:q\.code\|\|genCode\(q\.area\),type:qtype,at:Date\.now\(\)\}/g) || []).length === 2, 'salvar: a cópia preserva o código original — responder no banco salvo marca a mesma questão do Banco');
@@ -257,7 +162,6 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     const bind = html.slice(iBind, iBind + 2600);
     ok(/if\(soNao&&soNao\.checked\)qs=qs\.filter\(function\(q\)\{return !feitaDe\(q\);\}\);\s*renderProvaResults\(qs\);/.test(bind), 'Buscar: com a caixa marcada, tira as respondidas da lista');
     ok(/_soNao\.addEventListener\('change',updateProvaInfo\)/.test(bind), 'caixa: marcar/desmarcar refaz a contagem na hora');
-    ok(/var ea=c\('\[data-exp-alt\]'\);\s*if\(ea\)\{var _p=String\(ea\.dataset\.expAlt\|\|''\)\.split\('\|'\);explicarAlternativas\(_p\[0\],_p\[1\],ea\);return;\}/.test(html), 'clique: o botão das alternativas está ligado (delegação global)');
     // O Simulado continua usando filterProvas com a semântica de sempre (sem feitas).
     ok(/function filterProvas\(inst,ano,area,type\)\{\s*return provasPool\(\)\.filter\(/.test(html), 'filterProvas: inalterada (o Simulado depende dela)');
   }
@@ -267,5 +171,5 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     falhas.forEach((f) => console.error('  ✗ ' + f));
     process.exit(1);
   }
-  console.log('test-banco-feitas: ok (respondidas persistidas e sincronizadas, selo no card, filtro das não feitas, explicação das alternativas pela IA)');
+  console.log('test-banco-feitas: ok (respondidas persistidas e sincronizadas, selo no card, filtro das não feitas, sem o botão das outras alternativas)');
 })().catch((e) => { console.error(e); process.exit(1); });

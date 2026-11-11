@@ -11774,12 +11774,9 @@ function selectOpt(letter,answer,explanation,src,idx){
   if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada};updateGenCounter();}
   if(q){try{feitaRegistrar(q,anulada?null:ok,src,idx,anulada?'anulada':'');}catch(e){}} // anulada também "foi vista": não volta no sorteio
   if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;try{studyEvent(q,ok);}catch(e){}persist();try{refreshDash();}catch(e){}}
-  // Alternativas incorretas: o banco só tem o comentário do gabarito. O botão
-  // pede à IA, a partir do enunciado, do gabarito e do comentário do professor,
-  // por que cada uma das outras está errada (pergunta de um assinante, 04/10/2026).
-  if(!anulada&&q&&q.options&&fb&&(src==='gen'||src==='saved')&&(hasScope('plano')||acessosPendentes())){
-    fb.innerHTML+='<div style="margin-top:.45rem"><button type="button" class="btn btn-outline btn-sm" data-exp-alt="'+esc(src)+'|'+esc(String(idx))+'">Por que as outras alternativas estão incorretas?</button></div><div id="qalt-'+esc(src)+'-'+esc(String(idx))+'"></div>';
-  }
+  // O botão "Por que as outras alternativas estão incorretas?" (IA, 04/10/2026) saiu
+  // em 11/11/2026, a pedido do professor: a análise das demais alternativas é parte
+  // do comentário de cada questão.
 }
 // ── QUESTÕES JÁ RESPONDIDAS NO BANCO (05/10/2026) ────────────────────────────
 // Chave estável da questão (código ou enunciado), a mesma do caderno de erros.
@@ -11822,42 +11819,6 @@ function feitaSeloHTML(q,src,idx){
   else if(f.ok===0){rot='Errou';cls='tag-red';}
   else{rot='Respondida';cls='tag-pur';}
   return '<span'+id+' class="tag '+cls+'" style="font-size:.57rem">'+rot+(d?' em '+d:'')+'</span>';
-}
-// Alternativas incorretas explicadas pela IA, com o registro do material da
-// plataforma: técnico, formal, sem citar letra (a ordem pode variar), sem
-// repetir o comentário do gabarito. Uma vez por questão por sessão.
-var altMemo={};
-function explicarAlternativasPrompt(q){
-  var letras=Object.keys(q.options||{});
-  // ⚠️ groundSys, não concatenação: sem a sentinela o servidor corta o system em
-  // 60.000 caracteres e as diretrizes (≈80 mil) perderiam as ~30 últimas em silêncio.
-  var sys=groundSys('Endocrinologista que comenta questões de prova para médicos e residentes, em português do Brasil, registro técnico e formal. Tarefa: explicar, em uma a três frases cada, por que cada alternativa incorreta está errada, com base no enunciado, no gabarito e no comentário do professor fornecidos. Regras: não repita o comentário do gabarito; identifique cada alternativa pelo seu texto, nunca pela letra, porque a ordem pode variar; sem introdução, conclusão, símbolos ou emojis; não acrescente dados ausentes do enunciado; quando o erro for de valor de corte, dose ou critério, informe o valor correto. Responda somente com JSON: {"itens":[{"alternativa":"texto da alternativa incorreta","motivo":"por que está incorreta"}]}');
-  var usr='Enunciado: '+String(q.stem||'')+'\nAlternativas: '+letras.map(function(k){return String(q.options[k]||'');}).join(' | ')+'\nGabarito: '+String(q.options[q.answer]||q.answer||'')+'\nComentário do professor: '+String(q.explanation||'(sem comentário)');
-  return {sys:sys,usr:usr};
-}
-function explicarAlternativas(src,idx,btn){
-  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];if(!q||!q.options)return;
-  if(acessosPendentes()){planoAindaNaoConfirmado();return;}
-  if(blockIfDegustacao())return; // exige PACOTE (degustação e curso avulso ficam de fora), com aviso
-  var box=document.getElementById('qalt-'+src+'-'+idx);if(!box)return;
-  var k=feitaChave(q);
-  function mostra(itens){
-    box.innerHTML='<div class="q-fb" style="margin-top:.5rem"><div style="font-weight:700;font-size:.78rem;margin-bottom:.3rem">Por que as outras alternativas estão incorretas</div>'
-      +'<ul style="margin:0;padding-left:1.1rem;font-size:.8rem;line-height:1.6">'+itens.map(function(it){return '<li><b>'+esc(it.alternativa||'')+'</b>: '+esc(it.motivo||'')+'</li>';}).join('')+'</ul></div>';
-      // Sem rótulo "gerado por IA": decisão do professor (05/10/2026).
-  }
-  if(k&&altMemo[k]){mostra(altMemo[k]);if(btn)btn.style.display='none';return;}
-  if(btn){btn.disabled=true;btn.innerHTML=ldHTML('Analisando as alternativas…');}
-  var p=explicarAlternativasPrompt(q);
-  callAIJson(p.sys,p.usr,1100,0,AI_MODEL_CLINICO).then(function(d){
-    var itens=(d&&Array.isArray(d.itens))?d.itens.filter(function(it){return it&&it.motivo;}):[];
-    if(!itens.length)throw new Error('Resposta vazia.');
-    if(k)altMemo[k]=itens;
-    mostra(itens);if(btn)btn.style.display='none';
-  }).catch(function(e){
-    box.innerHTML='<div style="color:var(--red);font-size:.75rem">Não foi possível comentar as alternativas agora: '+esc((e&&e.message)||e)+'</div>';
-    if(btn){btn.disabled=false;btn.textContent='Por que as outras alternativas estão incorretas?';}
-  });
 }
 function revealDisc(i,src){
   var q=src==='gen'?genQs[i]:DB.q[i];if(!q)return;
@@ -22109,8 +22070,6 @@ document.addEventListener('click',function(e){
   if(rv){revealDisc(parseInt(rv.dataset.revealDisc),rv.dataset.revealSrc);return;}
   var sq=c('[data-save-q]');
   if(sq){saveOneQ(parseInt(sq.dataset.saveQ));return;}
-  var ea=c('[data-exp-alt]');
-  if(ea){var _p=String(ea.dataset.expAlt||'').split('|');explicarAlternativas(_p[0],_p[1],ea);return;}
   var dq=c('[data-del-q]');
   if(dq){if(!confirm('Excluir esta questão do seu banco salvo? Esta ação não pode ser desfeita.'))return;DB.q.splice(parseInt(dq.dataset.delQ),1);persist();renderSavedQ();refreshDash();return;}
   // flashcards
