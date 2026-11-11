@@ -199,6 +199,14 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       outra (Admin) e trocar `ASC_KEY_ID` e `ASC_KEY_P8` no GitHub; a cópia local do print foi apagada.
       Depois da troca, rodar um envio de teste ao TestFlight. Regra: print de arquivo .p8 nunca,
       só o nome do arquivo.
+    - **11/11, 00h12: APP ENVIADO À REVISÃO DA APPLE** (iOS App 1.0, build 5; "Aguardando revisão";
+      a Apple fala em até 48 h). Antes do envio: declarado "não é dispositivo médico regulamentado"
+      (exigência de 03/2026 para Medicina + "Frequente"), lançamento **manual**, e a Apple exigiu
+      captura de **iPad 13"** (o projeto é iPhone + iPad, `TARGETED_DEVICE_FAMILY = "1,2"`): 4 capturas
+      2064 × 2752 geradas em Chromium com a conta do revisor (Flashcards, Resumos, Tireoide,
+      Calculadoras). Depois do envio, no site (vale sem build): no app do iPhone some a faixa do Mural
+      "instale na tela inicial", o cartão "Tenha o app no celular" das novidades vira só do site e o
+      cartão de notificações das novidades some (o WKWebView não tem web push).
     - **Email Sources cadastrados pelo professor (10/11, 23h33):** domínios endodirect.com.br e
       send.endodirect.com.br; e-mails nao-responda@, newsletter@, noticias@, suporte@ e contato@.
     - **Falta do professor:** chave "Sign in with Apple" no portal (Keys) e as envs da Vercel

@@ -63,6 +63,11 @@ const ai = fs.readFileSync(path.join(RAIZ, 'api', 'ai.js'), 'utf8');
 ok('🧨 o servidor não manda identidade do aluno à Anthropic',
   /montarCorpo\(\{ max_tokens: maxTokens, system, messages: \[\{ role: 'user', content \}\] \}/.test(ai) && !/metadata\s*:/.test(ai));
 
+// ---- 2b. nada de "instale na tela inicial" nem web push dentro do app do iPhone -----------
+ok('🧨 faixa do Mural vazia no app do iPhone', /function muralPushCtaHTML\(\)\{\n(?:\s*\/\/[^\n]*\n)*\s*if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)return '';/.test(html));
+ok('cartão "Tenha o app no celular" só no site', /<div class="so-site"[^>]*>\s*<div[^>]*>📲<\/div>/.test(html));
+ok('cartão de notificações das novidades some no app do iPhone', /id="wn-push-card"/.test(html) && /if\(wpc&&typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)wpc\.style\.display='none';/.test(html));
+
 // ---- 3. consentimento da IA: comportamento ---------------------------------------------------
 const ini = html.indexOf("var IA_CONSENT_CHAVE='endo_ia_consent_v1'");
 const fimBloco = html.indexOf('function aiRequestEnviar(payload){');
