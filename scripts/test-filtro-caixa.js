@@ -67,6 +67,7 @@ ok('🧨 Resumidor: sem "Gerar flashcards" (não pede, não salva e não mostra 
   !/id="art-gen-fc"/.test(html) && !/genFCck/.test(html) && !/Gere 5 flashcards/.test(html) && !/data-afcflip/.test(html)
   && !/cat:'Artigos'/.test(html));
 ok('Resumidor: o "Gerar questões" continua', /<input type="checkbox" id="art-gen-q" checked/.test(html) && /\(genQ\?'Gere 3 questões\.':''\)/.test(html));
+ok('🧨 Questão do Dia: sem a legenda embaixo do título (pedido de 11/11/2026)', !/Responda as questões do dia já publicadas/.test(html) && /<div class="ph"><h1>🧠 Questão do Dia<\/h1><\/div>\s*<div class="pc">\s*<div id="panel-qotd-body"><\/div>/.test(html));
 
 // ---- 5. estilo ---------------------------------------------------------------------------------
 ok('caixa com largura contida e que encolhe no celular', /\.filtro-caixa\{display:flex;flex-direction:column;gap:\.28rem;flex:0 1 19rem;min-width:12rem;max-width:100%\}/.test(html));
