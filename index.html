@@ -11215,6 +11215,13 @@ var qotdArchOpen=null;     // id aberto no arquivo do aluno
 // de junho, uma por dia. O arquivo do PROFESSOR já ordenava por data com padrão
 // 'recent', então da tela dele o defeito era invisível.
 var qotdArchSort='recent'; // aluno: 'recent' = mais recente primeiro; 'old' = mais antiga
+// Paginação (pedido do professor, 11/11/2026: "um filtro para o aluno escolher se na página
+// vai ter uma visualização de 10 ou 30 questões ... e o restante na próxima página"). A
+// escolha fica no aparelho; a página volta à 1ª ao trocar a ordem ou o tamanho.
+var QOTD_POR_OPCOES=[10,30,50];
+var qotdArchPor=(function(){var v=+lsGet('qotd_por_pagina');return QOTD_POR_OPCOES.indexOf(v)>=0?v:10;})();
+var qotdArchPagina=0;
+var qotdArchIrAberto=false; // abriu sozinha (a de hoje) ou por link: a lista vai à página dela
 var qotdArchAuto=true;     // 1ª abertura do painel escancara a de hoje, se ainda não respondida
 var qotdArchRolar=false;   // link direto (/#qotd/<id>): rola até a questão aberta quando ela aparecer na lista
 var admQotdArchOpen=null;  // id aberto no arquivo do professor
@@ -11237,15 +11244,33 @@ function qotdArchAnswer(q,letter){
 // A lista do arquivo, a mesma no painel do aluno e na aba "Como o aluno vê" do
 // professor: muda só o prefixo do id e do atributo (`pre`: 'qa' no aluno), para as
 // duas nunca se cruzarem quando o professor tem as duas telas no DOM.
-function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre){
-  var list=all.slice().sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return ordem==='old'?(da-db):(db-da);});
+function qotdArchOrdenadas(all,ordem){
+  return all.slice().sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return ordem==='old'?(da-db):(db-da);});
+}
+// Página (0, 1, …) em que a questão `id` cai, na ordem e no tamanho de página dados; -1 se não está.
+function qotdArchPaginaDe(all,ordem,id,por){
+  var l=qotdArchOrdenadas(all,ordem);
+  for(var i=0;i<l.length;i++){if(l[i].id===id)return Math.floor(i/Math.max(1,por));}
+  return -1;
+}
+function qotdArchPaginas(n,por){return Math.max(1,Math.ceil(n/Math.max(1,por)));}
+// `pag` = {por, pagina}: mostra só a página pedida, com a caixa "N por página" e a navegação.
+function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre,pag){
+  var list=qotdArchOrdenadas(all,ordem);
   var done=0;all.forEach(function(q){if(mm[q.id])done++;});
   var sortOpts='<option value="recent"'+(ordem!=='old'?' selected':'')+'>Mais recentes primeiro</option><option value="old"'+(ordem==='old'?' selected':'')+'>Mais antigas primeiro</option>';
+  var por=(pag&&pag.por>0)?pag.por:list.length||1,paginas=qotdArchPaginas(list.length,por);
+  var pagina=pag?Math.min(Math.max(0,pag.pagina|0),paginas-1):0;
+  var porOpts=QOTD_POR_OPCOES.map(function(n){return '<option value="'+n+'"'+(n===por?' selected':'')+'>'+n+' por página</option>';}).join('');
+  var mostra=pag?list.slice(pagina*por,pagina*por+por):list;
   return '<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:.7rem">'
       +'<span style="font-size:.74rem;color:var(--t3)">'+done+' de '+all.length+' respondida'+(all.length===1?'':'s')+'</span>'
-      +'<select id="'+pre+'-sort" style="font-size:.74rem;padding:.3rem .5rem;max-width:220px">'+sortOpts+'</select>'
+      +'<span style="display:flex;gap:.45rem;flex-wrap:wrap;margin-left:auto">'
+        +'<select id="'+pre+'-sort" aria-label="Ordem" style="font-size:.74rem;padding:.3rem .5rem;width:auto;max-width:220px">'+sortOpts+'</select>'
+        +(pag?'<select id="'+pre+'-por" aria-label="Questões por página" style="font-size:.74rem;padding:.3rem .5rem;width:auto;max-width:170px">'+porOpts+'</select>':'')
+      +'</span>'
     +'</div>'
-    +list.map(function(q){
+    +mostra.map(function(q){
       var ans=mm[q.id]||null,open=(aberto===q.id);
       var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
       var pd=qotdArchDate(q);
@@ -11254,7 +11279,16 @@ function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre){
       var head='<button type="button" class="qa-head" data-'+pre+'-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+hj+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
       var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
       return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
-    }).join('');
+    }).join('')
+    +(pag?muralPagerHTML(pagina,paginas,pre+'-pag'):'');
+}
+// Liga a caixa "N por página" e a navegação de uma lista (aluno ou aba do professor).
+function qotdArchLigaPaginacao(el,pre,aoMudarPor,aoMudarPagina){
+  var sp=document.getElementById(pre+'-por');if(sp)sp.addEventListener('change',function(){aoMudarPor(+sp.value||10);});
+  var pv=document.getElementById(pre+'-pag-prev'),nx=document.getElementById(pre+'-pag-next');
+  var topo=function(){try{el.scrollIntoView({block:'start'});}catch(e){}};
+  if(pv)pv.addEventListener('click',function(){aoMudarPagina(-1);topo();});
+  if(nx)nx.addEventListener('click',function(){aoMudarPagina(1);topo();});
 }
 function renderQotdArchive(){
   var el=document.getElementById('panel-qotd-body');if(!el)return;
@@ -11263,10 +11297,14 @@ function renderQotdArchive(){
   // A "de hoje" vem de qotdTodays(), a MESMA fonte do modal do mural — se as duas
   // telas discordassem, o selo apontaria uma questão e a janela outra.
   var hoje=qotdTodays();
-  if(qotdArchAuto){qotdArchAuto=false;if(hoje&&!mm[hoje.id])qotdArchOpen=hoje.id;}
-  el.innerHTML=qotdArchListHTML(all,mm,qotdArchOpen,qotdArchSort,hoje,'qa');
+  if(qotdArchAuto){qotdArchAuto=false;if(hoje&&!mm[hoje.id]){qotdArchOpen=hoje.id;qotdArchIrAberto=true;}}
+  // A aberta sozinha (a de hoje) ou por link vai para a página dela.
+  if((qotdArchIrAberto||qotdArchRolar)&&qotdArchOpen){var _pg=qotdArchPaginaDe(all,qotdArchSort,qotdArchOpen,qotdArchPor);if(_pg>=0){qotdArchPagina=_pg;qotdArchIrAberto=false;}}
+  qotdArchPagina=Math.min(qotdArchPagina,qotdArchPaginas(all.length,qotdArchPor)-1);
+  el.innerHTML=qotdArchListHTML(all,mm,qotdArchOpen,qotdArchSort,hoje,'qa',{por:qotdArchPor,pagina:qotdArchPagina});
   try{ensureLightbox();}catch(e){}
-  var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;renderQotdArchive();});
+  var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;qotdArchPagina=0;renderQotdArchive();});
+  qotdArchLigaPaginacao(el,'qa',function(n){qotdArchPor=n;lsSet('qotd_por_pagina',n);qotdArchPagina=0;renderQotdArchive();},function(d){qotdArchPagina+=d;renderQotdArchive();});
   el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;qotdArchRolar=false;renderQotdArchive();});});
   if(qotdArchOpen){
     el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){
@@ -11338,7 +11376,7 @@ function bindAdmQotdArchive(){
 // arquivo do aluno, com a prancheta; a de hoje abre sozinha. A resposta aqui é só de
 // TESTE: fica na memória da página — nada em DB.qotd, nada de studyEvent, nada de
 // sincronizar —, senão o professor entraria nas contas de quem respondeu.
-var admQotdAlunoOpen=null,admQotdAlunoSort='recent',admQotdAlunoAuto=true,admQotdAlunoAns={};
+var admQotdAlunoOpen=null,admQotdAlunoSort='recent',admQotdAlunoAuto=true,admQotdAlunoAns={},admQotdAlunoPor=10,admQotdAlunoPagina=0;
 function admQotdAlunoHTML(){
   return '<div class="card" style="margin-bottom:1rem"><div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between">'
     +'<div style="font-size:.79rem;color:var(--t2);line-height:1.55;flex:1;min-width:220px">É assim que o aluno vê a Questão do Dia: a de hoje aberta no topo e as anteriores por data. Toque numa alternativa para ver o gabarito comentado como ele vê. Aqui a resposta <b>não é gravada</b> nem entra nas estatísticas.</div>'
@@ -11350,10 +11388,12 @@ function renderAdmQotdAluno(){
   var all=qotdPublished();
   if(!all.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda.</div>';return;}
   var hoje=qotdTodays();
-  if(admQotdAlunoAuto){admQotdAlunoAuto=false;if(hoje&&!admQotdAlunoAns[hoje.id])admQotdAlunoOpen=hoje.id;}
-  el.innerHTML=qotdArchListHTML(all,admQotdAlunoAns,admQotdAlunoOpen,admQotdAlunoSort,hoje,'admqal');
+  if(admQotdAlunoAuto){admQotdAlunoAuto=false;if(hoje&&!admQotdAlunoAns[hoje.id]){admQotdAlunoOpen=hoje.id;var _pa=qotdArchPaginaDe(all,admQotdAlunoSort,hoje.id,admQotdAlunoPor);if(_pa>=0)admQotdAlunoPagina=_pa;}}
+  admQotdAlunoPagina=Math.min(admQotdAlunoPagina,qotdArchPaginas(all.length,admQotdAlunoPor)-1);
+  el.innerHTML=qotdArchListHTML(all,admQotdAlunoAns,admQotdAlunoOpen,admQotdAlunoSort,hoje,'admqal',{por:admQotdAlunoPor,pagina:admQotdAlunoPagina});
   try{ensureLightbox();}catch(e){}
-  var so=document.getElementById('admqal-sort');if(so)so.addEventListener('change',function(){admQotdAlunoSort=so.value;renderAdmQotdAluno();});
+  var so=document.getElementById('admqal-sort');if(so)so.addEventListener('change',function(){admQotdAlunoSort=so.value;admQotdAlunoPagina=0;renderAdmQotdAluno();});
+  qotdArchLigaPaginacao(el,'admqal',function(n){admQotdAlunoPor=n;admQotdAlunoPagina=0;renderAdmQotdAluno();},function(d){admQotdAlunoPagina+=d;renderAdmQotdAluno();});
   el.querySelectorAll('[data-admqal-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqal-toggle');admQotdAlunoOpen=(admQotdAlunoOpen===id)?null:id;renderAdmQotdAluno();});});
   el.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){
     if(b.disabled||!admQotdAlunoOpen)return;

@@ -1175,6 +1175,17 @@ try {
   fail('regressão do OSCE (alternativas/leitor) falhou:\n' + out);
 }
 
+// 17c-undecies-ag. QUESTÃO DO DIA EM PÁGINAS (11/11/2026). Pedido do professor: o aluno escolhe
+//      10, 30 ou 50 por página e o restante vai para a próxima; a de hoje (ou do link) abre na
+//      página dela; a aba "Como o aluno vê" tem a mesma paginação.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-qotd-paginacao.js')], { stdio: 'pipe' });
+  ok('Questão do Dia em páginas de 10/30/50: fatia certa, navegação, escolha lembrada, a de hoje na página dela');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da paginação da Questão do Dia falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e
