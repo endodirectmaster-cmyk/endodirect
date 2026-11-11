@@ -152,6 +152,13 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
     `env(safe-area-inset-top)`; faixa fixa escura (`body::after`) pinta o fundo do relógio quando
     a página rola. No app, `UIStatusBarStyleLightContent` no Info.plist deixa o relógio claro
     (vale a partir do build 5). Teste: `scripts/test-app-ios-area-segura.js` (ci 17c-undecies-aa).
+  - **11/11: build 5 enviado** (run 42929484795, com o relógio claro) e distribuído sozinho ao
+    grupo "Equipe".
+  - **11/11: ROTEIRO DE TESTE NO IPHONE — TUDO PASSOU** (professor, iPhone 12 Pro, iOS 27.0.1):
+    tela de entrada sem preços; Continuar com a Apple (e-mail compartilhado); Google; e-mail e
+    senha; sair e entrar; modo avião mostra "Sem conexão" com "Tentar de novo". Próximo: preparar
+    o envio à revisão da Apple (página do produto, privacidade, conta do revisor, revogação do
+    token da Apple ao excluir a conta, Email Sources do relay privado).
 - **10/11: O MAC DO PROFESSOR NÃO SERVE PARA ENVIAR O APP.** É um MacBook Air Retina 13" de 2019
   (Intel Core i5, 8 GB, macOS Sonoma 14.8). O Sequoia só vai do MacBook Air de 2020 em diante e o
   Tahoe só nos de chip da Apple, então esse Mac fica no Sonoma. O Xcode 26 exige Sequoia 15.6 ou
