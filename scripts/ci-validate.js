@@ -1127,6 +1127,18 @@ try {
   fail('regressão do app do iPhone para a revisão da Apple (index.html) falhou:\n' + out);
 }
 
+// 17c-undecies-ac. REVOGAÇÃO NA APPLE AO EXCLUIR A CONTA (11/11/2026). A App Store exige revogar,
+//      pela API da Apple, o acesso de quem entrou com a Apple e excluiu a conta. O app do iPhone
+//      manda um código novo da folha da Apple; o servidor troca e revoga na hora, sem guardar
+//      token, conferindo que o código é da Apple desta conta. Falha da Apple não trava a exclusão.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-apple-revogar.js')], { stdio: 'pipe' });
+  ok('revogação na Apple ao excluir a conta: client_secret ES256, conta conferida, exclusão nunca travada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da revogação na Apple (lib/apple-revogar.js, lib/excluir-conta.js, index.html) falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e

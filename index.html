@@ -22353,13 +22353,49 @@ function excluirContaConfirmada(){
   if(bt){bt.disabled=true;bt.textContent='Excluindo…';}
   supSessionToken().then(function(token){
     if(!token){falha('Sua sessão expirou. Entre de novo e repita a exclusão.');return;}
-    return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify({kind:'excluir_conta',confirmar:'EXCLUIR'})})
+    return codigoAppleParaExclusao().then(function(appleCode){
+      var corpo={kind:'excluir_conta',confirmar:'EXCLUIR'};
+      if(appleCode)corpo.apple_code=appleCode;
+      return fetch(AI_API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},credentials:'same-origin',body:JSON.stringify(corpo)});
+    })
       .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:!!(r.ok&&d&&d.ok),d:d||{}};});})
       .then(function(x){
         if(!x.ok){falha(x.d.error||'A exclusão não terminou. Tente de novo em alguns minutos.');return;}
         contaExcluidaNoAparelho();
       });
-  }).catch(function(){falha('Não foi possível falar com o servidor. Confira a conexão e tente de novo.');});
+  }).catch(function(e){
+    if(e&&e.appleCancelado){falha(e.message);return;}
+    falha('Não foi possível falar com o servidor. Confira a conexão e tente de novo.');
+  });
+}
+// 🍎 EXCLUSÃO DE QUEM ENTROU COM A APPLE (11/11/2026). A App Store exige revogar, na
+// Apple, o acesso do app quando a conta é excluída. No app do iPhone, a folha da Apple
+// abre de novo e o código novo (5 min, uso único) vai junto com o pedido; o servidor
+// troca e revoga na hora (lib/apple-revogar.js), sem guardar token nenhum. Conta sem
+// identidade Apple, ou fora do app do iPhone: segue sem código. Fechar a folha da
+// Apple para a exclusão; outra falha da Apple não impede a exclusão (fica no log).
+var EXCLUSAO_APPLE_CANCELADA='Para excluir uma conta criada com a Apple, confirme na janela da Apple que abre ao tocar em Excluir definitivamente.';
+function contaEntrouComApple(){
+  var client=getSupabaseClient();
+  if(!client||!client.auth||!client.auth.getSession)return Promise.resolve(false);
+  return client.auth.getSession().then(function(r){
+    var u=r&&r.data&&r.data.session&&r.data.session.user;
+    var prov=(u&&u.app_metadata&&u.app_metadata.providers)||[];
+    var ids=(u&&u.identities)||[];
+    return prov.indexOf('apple')>=0||ids.some(function(i){return i&&i.provider==='apple';});
+  }).catch(function(){return false;});
+}
+function codigoAppleParaExclusao(){
+  if(!appleDisponivel())return Promise.resolve('');
+  return contaEntrouComApple().then(function(tem){
+    if(!tem)return '';
+    return pluginNativo('AppleSignIn').entrar({nonce:''}).then(function(r){
+      return String((r&&r.authorizationCode)||'');
+    },function(e){
+      if(String((e&&e.code)||'')==='CANCELADO'){var x=new Error(EXCLUSAO_APPLE_CANCELADA);x.appleCancelado=true;throw x;}
+      return '';
+    });
+  });
 }
 // Depois da exclusão: nada da conta apagada fica neste aparelho, e nada é
 // regravado (o save pendente morreria no banco, mas nem chega a sair). A página
