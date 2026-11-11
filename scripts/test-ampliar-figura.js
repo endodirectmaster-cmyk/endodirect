@@ -111,6 +111,11 @@ if (ov) {
   ok(r.aberto && !r.rola && r.max === '96vw', 'no notebook o esquema cabe na tela, sem mudança: ' + JSON.stringify(r));
   const botao = ov.querySelector('button');
   ok(botao && botao.style.position === 'fixed', 'o botão de fechar fica fixo na tela mesmo com a figura rolando');
+  // iPhone: o ✕ ficava embaixo do relógio/bateria e não dava para tocar (11/11/2026).
+  ok(/position:fixed;top:calc\(env\(safe-area-inset-top,0px\) \+ 10px\);right:calc\(env\(safe-area-inset-right,0px\) \+ 14px\);width:44px;height:44px;/.test(html),
+     '🧨 o botão de fechar desce abaixo da barra de status do iPhone (safe area) e tem 44 px para o dedo');
+  ok(/id='img-lightbox';[\s\S]{0,400}?padding:max\(20px,calc\(env\(safe-area-inset-top,0px\) \+ 56px\)\)/.test(html),
+     'a figura começa abaixo do botão de fechar e da barra de status (margem com safe area)');
 }
 
 // 5) A tela de Resumos precisa CRIAR o ampliador — quem entra direto em Resumos
