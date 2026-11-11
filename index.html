@@ -624,6 +624,20 @@ textarea{resize:vertical;line-height:1.6}
 .study-c{position:relative;min-height:200px;cursor:pointer;-webkit-perspective:1200px;perspective:1200px;margin-bottom:.75rem}
 .study-inner{position:relative;width:100%;height:100%;min-height:200px;transition:-webkit-transform .55s cubic-bezier(.4,.2,.2,1);transition:transform .55s cubic-bezier(.4,.2,.2,1);-webkit-transform-style:preserve-3d;transform-style:preserve-3d}
 .study-c.fl .study-inner{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+/* Avançar/voltar deslizando (11/11/2026): o palco corta o que sai da área durante o
+   movimento; o fantasma é a cópia inerte do conteúdo que está saindo. */
+.desl-palco{position:relative;display:flow-root}
+/* o conteúdo segura as próprias margens: na cópia (absoluta) elas não vazam, e sem isto o
+   que sai aparecia deslocado para baixo (ex.: a prancheta do Caderno de erros) */
+.desl-palco>*{display:flow-root}
+.desl-palco.desl-ativo{overflow:hidden}
+.desl-fantasma{position:absolute!important;margin:0!important;pointer-events:none;box-sizing:border-box}
+.desl-marca{position:absolute;left:0;top:0;-webkit-transform-origin:0 0;transform-origin:0 0;pointer-events:none;background:var(--blue)}
+.desl-realce-pilula{background:var(--surface)}
+.desl-realce-pilula .tog-btn{background:transparent!important;position:relative;z-index:1}
+.desl-realce-tinta .presc-tabbtn.on{border-bottom-color:transparent}
+.tog-btn,.presc-tabbtn{transition:color .22s ease}
+@media (prefers-reduced-motion:reduce){.tog-btn,.presc-tabbtn{transition:none}}
 .study-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--surface);border:1.5px solid var(--bd);border-radius:16px;padding:1.6rem 1.3rem;-webkit-backface-visibility:hidden;backface-visibility:hidden;overflow:auto}
 .study-face-back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);background:var(--grn-l);border-color:#86efac}
 .sr-card{background:var(--surface);border:2px solid var(--bd);border-radius:16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:1.4rem;text-align:center;margin-bottom:.7rem}
@@ -2670,6 +2684,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="tog-btn on" data-qmode="provas">🏛️ Provas anteriores</button>
           <button class="tog-btn" data-qmode="salvo">💾 Banco Salvo</button>
         </div>
+        <div class="desl-palco"><div id="q-modo-corpo">
         <div class="gen-box" id="q-panel-provas">
           <span class="sec-title" style="display:block;margin-bottom:.7rem">🏛️ Questões de provas anteriores</span>
           <div class="g4" style="margin-bottom:.65rem">
@@ -2688,6 +2703,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div style="font-size:.72rem;color:var(--t3);margin:-.3rem 0 .7rem">Questões que você salvou, incluindo as geradas no Resumidor de Artigos.</div>
           <div id="q-saved-list"></div>
         </div>
+        </div></div>
       </div>
     </div>
 
@@ -2720,7 +2736,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div style="max-width:440px;margin:0 auto">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Modo estudo</span><button class="btn btn-outline btn-sm" id="fc-end-study">Sair</button></div>
             <div style="font-size:.68rem;color:var(--t3);text-align:center;margin-bottom:.55rem" id="study-prog"></div>
-            <div class="study-c" id="study-c"><div class="study-inner"><div class="study-face study-face-front"><div id="study-front" style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55"></div><div style="font-size:.62rem;color:var(--t3);margin-top:.65rem">Clique para virar ↻</div></div><div class="study-face study-face-back"><div id="study-back" style="font-size:.81rem;color:#34d399;line-height:1.6"></div><div style="font-size:.62rem;color:#4ade80;margin-top:.65rem">Clique para voltar ↺</div></div></div></div>
+            <div class="desl-palco"><div class="study-c" id="study-c"><div class="study-inner"><div class="study-face study-face-front"><div id="study-front" style="font-size:.93rem;font-weight:600;color:var(--tx);line-height:1.55"></div><div style="font-size:.62rem;color:var(--t3);margin-top:.65rem">Clique para virar ↻</div></div><div class="study-face study-face-back"><div id="study-back" style="font-size:.81rem;color:#34d399;line-height:1.6"></div><div style="font-size:.62rem;color:#4ade80;margin-top:.65rem">Clique para voltar ↺</div></div></div></div></div>
             <div style="display:flex;gap:.55rem;justify-content:center"><button class="btn btn-outline btn-sm" id="study-prev">← Anterior</button><button class="btn btn-outline btn-sm" id="study-next">Próximo →</button></div>
           </div>
         </div>
@@ -2854,7 +2870,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div id="err-session" style="display:none">
           <div style="max-width:600px;margin:0 auto">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem"><span class="sec-title" id="err-prog"></span><button class="btn btn-ghost btn-sm" id="btn-err-stop">Encerrar</button></div>
-            <div id="err-card"></div>
+            <div class="desl-palco"><div id="err-card"></div></div>
             <div id="err-next" style="text-align:center;margin-top:.7rem;display:none"><button class="btn btn-primary" id="btn-err-next">Próxima →</button></div>
           </div>
         </div>
@@ -2933,9 +2949,11 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
             <div style="display:flex;flex-wrap:wrap;gap:4px" id="sf-nav"></div>
           </div>
           <div style="flex:1;overflow-y:auto;padding:1.1rem 1.5rem">
+            <div class="desl-palco"><div id="sf-q-corpo">
             <div style="font-size:.68rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem" id="sf-q-counter"></div>
             <div style="font-size:.86rem;line-height:1.72;color:var(--tx);margin-bottom:.85rem;font-weight:500" id="sf-q-stem"></div>
             <div id="sf-q-opts"></div>
+            </div></div>
             <div style="display:flex;gap:.5rem;margin-top:.8rem">
               <button class="btn btn-outline btn-sm" id="btn-sf-prev">← Anterior</button>
               <button class="btn btn-outline btn-sm" id="btn-sf-flag">🚩 Marcar</button>
@@ -12053,13 +12071,104 @@ function endStudy(){
   var g=document.getElementById('fc-grid');if(g)g.style.display='';
   renderFC();
 }
+// ── AVANÇAR/VOLTAR DESLIZANDO (11/11/2026) ──
+// Pedido do professor, com vídeo de referência (abas de um prontuário): ao avançar, o
+// conteúdo atual sai pela esquerda e o novo entra pela direita; ao voltar, o contrário.
+// Mais curto que o vídeo (0,26 s): no estudo o clique se repete centenas de vezes.
+// Quem pede "reduzir movimento" no aparelho vê a troca seca. O conteúdo que muda fica
+// dentro de um `.desl-palco` (corta o que sai da área); o que sai é uma cópia inerte,
+// sem id nem name, posta por cima só durante o movimento.
+var DESL_MS=260,DESL_CURVA='cubic-bezier(.22,.61,.36,1)';
+function deslizeOk(){
+  try{
+    if(!document.documentElement.animate)return false;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
+    return !document.hidden;
+  }catch(e){return false;}
+}
+function deslizeFantasma(velho){
+  var f=velho.cloneNode(true);
+  f.removeAttribute('id');
+  [].forEach.call(f.querySelectorAll('[id]'),function(n){n.removeAttribute('id');});
+  [].forEach.call(f.querySelectorAll('[name]'),function(n){n.removeAttribute('name');});
+  // a cópia não leva o que foi digitado/escolhido: copia à mão (senão o que sai "pisca" vazio)
+  var o=velho.querySelectorAll('input,select,textarea'),k=f.querySelectorAll('input,select,textarea');
+  for(var i=0;i<o.length&&i<k.length;i++){try{if(o[i].type==='checkbox'||o[i].type==='radio')k[i].checked=o[i].checked;else k[i].value=o[i].value;}catch(e){}}
+  f.classList.add('desl-fantasma');
+  f.setAttribute('aria-hidden','true');f.setAttribute('inert','');
+  return f;
+}
+// pegar(): o elemento que muda (lido antes e depois de trocar); dir: 1 avança, -1 volta, 0 sem animação.
+function deslizar(pegar,dir,trocar){
+  var velho=null;try{velho=pegar();}catch(e){}
+  var palco0=velho&&velho.parentNode;
+  if(palco0&&palco0.__desl)palco0.__desl(); // clique no meio do movimento anterior: encerra o anterior
+  if(!dir||!velho||!palco0||!palco0.classList||!palco0.classList.contains('desl-palco')||!deslizeOk()||!velho.getClientRects().length){trocar();return;}
+  var rv=velho.getBoundingClientRect(),fant=deslizeFantasma(velho);
+  trocar();
+  var novo=null;try{novo=pegar();}catch(e){}
+  var palco=novo&&novo.parentNode;
+  if(!novo||!palco||!palco.classList||!palco.classList.contains('desl-palco')||!novo.getClientRects().length)return;
+  if(palco.__desl)palco.__desl();
+  var rp=palco.getBoundingClientRect();
+  fant.style.left=(rv.left-rp.left)+'px';fant.style.top=(rv.top-rp.top)+'px';
+  fant.style.width=rv.width+'px';fant.style.height=rv.height+'px';
+  palco.classList.add('desl-ativo');palco.appendChild(fant);
+  var opt={duration:DESL_MS,easing:DESL_CURVA},a1=null,a2=null;
+  var fim=function(){
+    if(palco.__desl!==fim)return;palco.__desl=null;
+    if(fant.parentNode)fant.parentNode.removeChild(fant);
+    palco.classList.remove('desl-ativo');
+    try{if(a1)a1.cancel();}catch(e){}try{if(a2)a2.cancel();}catch(e){}
+  };
+  palco.__desl=fim;
+  try{
+    a1=fant.animate([{transform:'translateX(0)'},{transform:'translateX('+(dir>0?-100:100)+'%)'}],opt);
+    a2=novo.animate([{transform:'translateX('+(dir>0?100:-100)+'%)'},{transform:'translateX(0)'}],opt);
+    a2.onfinish=fim;
+  }catch(e){fim();}
+}
+// Abas: a marca da aba (pílula azul ou linha azul) desliza da aba antiga até a nova.
+function deslizarRealce(linha,velho,novo,tipo){
+  if(!linha||!velho||!novo||velho===novo||!deslizeOk())return;
+  if(linha.__realce)linha.__realce();
+  var rl=linha.getBoundingClientRect(),rv=velho.getBoundingClientRect(),rn=novo.getBoundingClientRect();
+  if(!rv.width||!rn.width)return;
+  var bx=rl.left+linha.clientLeft,by=rl.top+linha.clientTop;
+  var m=document.createElement('span');m.className='desl-marca';m.setAttribute('aria-hidden','true');
+  m.style.width=rn.width+'px';
+  if(tipo==='pilula'){m.style.top=(rn.top-by)+'px';m.style.height=rn.height+'px';}
+  else{m.style.top=(rn.bottom-by-2)+'px';m.style.height='2px';}
+  var estatica=getComputedStyle(linha).position==='static';
+  if(estatica)linha.style.position='relative';
+  linha.classList.add('desl-realce-'+tipo);linha.insertBefore(m,linha.firstChild);
+  var a=null,fim=function(){
+    if(linha.__realce!==fim)return;linha.__realce=null;
+    if(m.parentNode)m.parentNode.removeChild(m);
+    linha.classList.remove('desl-realce-'+tipo);if(estatica)linha.style.position='';
+    try{if(a)a.cancel();}catch(e){}
+  };
+  linha.__realce=fim;
+  try{
+    a=m.animate([{transform:'translateX('+(rv.left-bx)+'px) scaleX('+(rv.width/rn.width)+')'},{transform:'translateX('+(rn.left-bx)+'px) scaleX(1)'}],{duration:DESL_MS,easing:DESL_CURVA});
+    a.onfinish=fim;
+  }catch(e){fim();}
+}
+// Direção entre duas abas de um mesmo grupo: 1 se a nova está à direita, -1 à esquerda.
+function deslizeDirecao(lista,velho,novo){
+  if(!velho||!novo||velho===novo)return 0;
+  return lista.indexOf(novo)>lista.indexOf(velho)?1:-1;
+}
 function renderStudyCard(){
   var c=studyCards[studyIdx];if(!c)return;
   var col=fcCatColor(c.cat);
   setText('study-prog','Card '+(studyIdx+1)+' de '+studyCards.length+(c.cat?' · '+c.cat:''));
   setText('study-front',c.front);setText('study-back',c.back);
   document.querySelectorAll('#study-c .study-face').forEach(function(f){f.style.borderLeft='5px solid '+col;});
-  document.getElementById('study-c').classList.remove('fl');
+  // Desvira sem o giro: com o giro, a resposta do card NOVO aparecia por meio segundo.
+  var sc=document.getElementById('study-c'),si=sc&&sc.querySelector('.study-inner');
+  if(sc&&sc.classList.contains('fl')&&si){si.style.transition='none';sc.classList.remove('fl');void si.offsetWidth;si.style.transition='';}
+  else if(sc)sc.classList.remove('fl');
 }
 function flipStudy(){
   document.getElementById('study-c').classList.toggle('fl');
@@ -13856,10 +13965,19 @@ function renderPrescTool(){
     +'<div class="fld2" style="margin:.5rem 0 0"><label>Endereço do emitente (consultório/instituição)</label><input type="text" id="presc-presc-end" value="'+esc(pend)+'" placeholder="Rua, nº, sala, bairro, cidade/UF"></div>'
     +'<div class="fld2" style="margin:.5rem 0 0"><label>Telefone do emitente</label><input type="text" id="presc-presc-fone" value="'+esc(pfone)+'" placeholder="(DDD) 00000-0000" inputmode="tel"></div></div>'
     +'<div class="presc-tabs">'+tabBtn('rx','🧾 Receituário')+tabBtn('lme','📄 LME')+tabBtn('exames','🧪 Exames')+'</div>'
+    +'<div class="desl-palco"><div class="presc-tab-corpo">'
     +'<div id="presc-tab-rx" class="presc-tab"></div>'
     +'<div id="presc-tab-lme" class="presc-tab"></div>'
-    +'<div id="presc-tab-exames" class="presc-tab"></div>';
+    +'<div id="presc-tab-exames" class="presc-tab"></div>'
+    +'</div></div>';
   renderRxList();renderLme();renderExList();prescSetTab(prescTab);
+}
+// Clique na aba: o conteúdo desliza para o lado da aba escolhida e a linha azul acompanha.
+function prescTrocaAba(t){
+  var bs=[].slice.call(document.querySelectorAll('.presc-tabbtn')),antes=document.querySelector('.presc-tabbtn.on');
+  var novoB=bs.filter(function(x){return x.dataset.tab===t;})[0]||null;
+  if(antes&&novoB)deslizarRealce(antes.parentNode,antes,novoB,'tinta');
+  deslizar(function(){return document.querySelector('#presc-tool .presc-tab-corpo');},deslizeDirecao(bs,antes,novoB),function(){prescSetTab(t);});
 }
 function prescSetTab(t){
   prescTab=t;
@@ -13945,7 +14063,7 @@ function prescDrop(q,list,act){
 function prescClick(e){
   var t=e.target.closest&&e.target.closest('[data-act]');if(!t)return;
   var act=t.dataset.act,i=parseInt(t.dataset.i,10);
-  if(act==='tab'){prescSetTab(t.dataset.tab);return;}
+  if(act==='tab'){prescTrocaAba(t.dataset.tab);return;}
   if(act==='addrx'){var m=prescMedAll[i];if(m){prescRx.push({n:m.n,apres:(m.apres||['—']),apresSel:(m.apres?m.apres[0]:'—'),pos:m.pos||'',r:m.r,lme:!!m.lme,qtd:''});var s=document.getElementById('presc-rx-search');if(s)s.value='';var d=document.getElementById('presc-rx-drop');if(d)d.innerHTML='';renderRxList();}return;}
   if(act==='delrx'){prescRx.splice(i,1);renderRxList();return;}
   if(act==='addex'){var ex=PRESC_EXAMS[i];if(ex&&prescExamsSel.indexOf(ex)<0)prescExamsSel.push(ex);var es=document.getElementById('presc-ex-search');if(es)es.value='';var ed=document.getElementById('presc-ex-drop');if(ed)ed.innerHTML='';renderExList();return;}
@@ -15430,10 +15548,10 @@ function dirCardHTML(d,i){
       var idx=refFlashIdx[i]||0; if(idx<0)idx=0; if(idx>cards.length-1)idx=cards.length-1;
       var c=cards[idx];
       body='<div class="dir-flash-solo">'
-        +'<div class="dir-flip" data-dir-flash="'+i+'-'+idx+'" tabindex="0"><div class="dir-flip-inner">'
+        +'<div class="desl-palco"><div class="dir-flip" data-dir-flash="'+i+'-'+idx+'" tabindex="0"><div class="dir-flip-inner">'
           +'<div class="dir-flip-face dir-flip-front"><div class="dfl-q">'+esc(c.q||'')+'</div><div class="dfl-hint">clique para ver a resposta</div></div>'
           +'<div class="dir-flip-face dir-flip-back"><div class="dfl-a">'+esc(c.a||'')+'</div><div class="dfl-hint">↩︎ clique para voltar</div></div>'
-          +'</div></div>'
+          +'</div></div></div>'
         +'<div class="dir-flash-nav">'
           +'<button class="dfn-btn" data-dir-flashnav="'+i+':prev"'+(idx===0?' disabled':'')+'>← Anterior</button>'
           +'<span class="dfn-count">'+(idx+1)+' / '+cards.length+'</span>'
@@ -15903,11 +16021,13 @@ function bindDiretrizesView(root){
   root.querySelectorAll('[data-dir-flashnav]').forEach(function(b){b.addEventListener('click',function(){
     var parts=String(b.dataset.dirFlashnav).split(':'),di=+parts[0],dir=parts[1];
     var cards=(diretrizes[di]&&Array.isArray(diretrizes[di].flashcards))?diretrizes[di].flashcards:[];
-    var cur=refFlashIdx[di]||0; cur+=(dir==='next'?1:-1);
+    var antes=refFlashIdx[di]||0,cur=antes+(dir==='next'?1:-1);
     if(cur<0)cur=0; if(cur>cards.length-1)cur=cards.length-1;
-    refFlashIdx[di]=cur;
-    Object.keys(refFlashOpen).forEach(function(k){if(k.indexOf(di+'-')===0)delete refFlashOpen[k];});
-    renderDiretrizesInto(root);
+    deslizar(function(){return root.querySelector('[data-dir-flash^="'+di+'-"]');},cur>antes?1:(cur<antes?-1:0),function(){
+      refFlashIdx[di]=cur;
+      Object.keys(refFlashOpen).forEach(function(k){if(k.indexOf(di+'-')===0)delete refFlashOpen[k];});
+      renderDiretrizesInto(root);
+    });
   });});
   // Mapa mental: abre/fecha os subramos ao clicar no ramo.
   root.querySelectorAll('[data-dir-mm-branch]').forEach(function(b){b.addEventListener('click',function(){if(b.parentNode)b.parentNode.classList.toggle('open');});});
@@ -16147,6 +16267,7 @@ function buildSFNav(){
   var nav=document.getElementById('sf-nav');
   nav.innerHTML=sfState.qs.map(function(q,i){return'<button class="sf-nav-btn'+(sfState.answers[i]?' ans':'')+(sfState.flags[i]?' flag':'')+(i===sfState.idx?'" style="outline:2px solid #fff;outline-offset:1px':'')+'" data-sfnav="'+i+'">'+(i+1)+'</button>';}).join('');
 }
+function sfPegaCorpo(){return document.getElementById('sf-q-corpo');}
 function renderSFQuestion(){
   var q=sfState.qs[sfState.idx];if(!q)return;
   setText('sf-q-counter','Questão '+(sfState.idx+1)+' de '+sfState.total);
@@ -21981,7 +22102,7 @@ document.addEventListener('click',function(e){
   if(c('#btn-sim-submit-open')){submitSimOpen();return;}
   // simfull
   var sfo=c('[data-sfopt]');if(sfo){sfSelectOpt(sfo.dataset.sfopt);return;}
-  var sfn=c('[data-sfnav]');if(sfn){sfState.idx=parseInt(sfn.dataset.sfnav);renderSFQuestion();return;}
+  var sfn=c('[data-sfnav]');if(sfn){var _ni=parseInt(sfn.dataset.sfnav,10);deslizar(sfPegaCorpo,_ni>sfState.idx?1:(_ni<sfState.idx?-1:0),function(){sfState.idx=_ni;renderSFQuestion();});return;}
   // notas
   var note=c('[data-note]');if(note){openNote(parseInt(note.dataset.note));return;}
   var ncmd=c('[data-cmd]');if(ncmd){execNoteCmd(ncmd.dataset.cmd);return;}
@@ -23929,6 +24050,10 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // QUESTÕES
   document.querySelectorAll('[data-qmode]').forEach(function(b){b.addEventListener('click',function(){
+    // Troca de aba deslizando (o conteúdo vai para o lado da aba escolhida) e a pílula azul acompanha.
+    var _abas=[].slice.call(document.querySelectorAll('[data-qmode]')),_antes=document.querySelector('[data-qmode].on');
+    deslizarRealce(document.getElementById('q-mode-row'),_antes,b,'pilula');
+    deslizar(function(){return document.getElementById('q-modo-corpo');},deslizeDirecao(_abas,_antes,b),function(){
     var mode=b.dataset.qmode; // 'provas' | 'salvo'
     document.querySelectorAll('[data-qmode]').forEach(function(x){x.classList.toggle('on',x===b);});
     // Banco de Questões (provas) exige acesso: sem pacote, mostra o cadeado.
@@ -23945,6 +24070,7 @@ document.addEventListener('DOMContentLoaded',function(){
     // Resultados de geração/banco pertencem às abas IA/Provas, não ao Banco Salvo.
     document.getElementById('q-gen-results').style.display=mode==='salvo'?'none':'block';
     if(mode==='salvo')renderSavedQ();
+    });
   });});
   document.querySelectorAll('[data-qt]').forEach(function(b){b.addEventListener('click',function(){qtype=b.dataset.qt;document.querySelectorAll('[data-qt]').forEach(function(x){x.classList.toggle('on',x===b);});});});
   ['q-inst','q-ano','q-parea','q-ptype'].forEach(function(id){var e=document.getElementById(id);if(e)e.addEventListener('change',updateProvaInfo);});
@@ -23971,8 +24097,9 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('fc-save-btn').addEventListener('click',saveFC);
   document.getElementById('fc-end-study').addEventListener('click',endStudy);
   document.getElementById('study-c').addEventListener('click',flipStudy);
-  document.getElementById('study-prev').addEventListener('click',function(){if(studyIdx>0){studyIdx--;renderStudyCard();}});
-  document.getElementById('study-next').addEventListener('click',function(){if(studyIdx<studyCards.length-1){studyIdx++;renderStudyCard();}else{notify('Fim dos cards!','ok');endStudy();}});
+  var _pegaStudy=function(){return document.getElementById('study-c');};
+  document.getElementById('study-prev').addEventListener('click',function(){if(studyIdx>0)deslizar(_pegaStudy,-1,function(){studyIdx--;renderStudyCard();});});
+  document.getElementById('study-next').addEventListener('click',function(){if(studyIdx<studyCards.length-1){deslizar(_pegaStudy,1,function(){studyIdx++;renderStudyCard();});}else{notify('Fim dos cards!','ok');endStudy();}});
 
   // MIND MAP
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
@@ -24006,7 +24133,7 @@ document.addEventListener('DOMContentLoaded',function(){
   if(_be=document.getElementById('btn-err-start'))_be.addEventListener('click',function(){startErr(false);});
   if(_be=document.getElementById('btn-err-all'))_be.addEventListener('click',function(){startErr(true);});
   if(_be=document.getElementById('btn-err-stop'))_be.addEventListener('click',finishErr);
-  if(_be=document.getElementById('btn-err-next'))_be.addEventListener('click',errNext);
+  if(_be=document.getElementById('btn-err-next'))_be.addEventListener('click',function(){deslizar(function(){return document.getElementById('err-card');},1,errNext);});
 
   // SIMULADOR
   document.getElementById('btn-sim-start').addEventListener('click',startSim);
@@ -24023,8 +24150,8 @@ document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('sf-prova-filters').style.display=(r.value==='provas'||r.value==='misto')?'block':'none';if(r.value!=='ia')populateInst('sf-inst');
   });});
   var sfInst=document.getElementById('sf-inst');if(sfInst)sfInst.addEventListener('change',function(){populateAno('sf-ano-prova',sfInst.value);});
-  document.getElementById('btn-sf-prev').addEventListener('click',function(){if(sfState.idx>0){sfState.idx--;renderSFQuestion();}});
-  document.getElementById('btn-sf-next').addEventListener('click',function(){if(sfState.idx<sfState.total-1){sfState.idx++;renderSFQuestion();}});
+  document.getElementById('btn-sf-prev').addEventListener('click',function(){if(sfState.idx>0)deslizar(sfPegaCorpo,-1,function(){sfState.idx--;renderSFQuestion();});});
+  document.getElementById('btn-sf-next').addEventListener('click',function(){if(sfState.idx<sfState.total-1)deslizar(sfPegaCorpo,1,function(){sfState.idx++;renderSFQuestion();});});
   document.getElementById('btn-sf-flag').addEventListener('click',function(){sfState.flags[sfState.idx]=!sfState.flags[sfState.idx];buildSFNav();});
   document.getElementById('btn-sf-submit').addEventListener('click',function(){if(confirm('Entregar o simulado?'))submitSF();});
   document.getElementById('btn-sf-redo').addEventListener('click',function(){document.getElementById('sf-report').style.display='none';document.getElementById('sf-setup').style.display='block';renderSFPrev();});
