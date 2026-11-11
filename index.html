@@ -7476,6 +7476,18 @@ function parseJ(raw){
   try{return JSON.parse(c);}catch(e){}
   var m=c.match(/(\{[\s\S]*\})/)||c.match(/(\[[\s\S]*\])/);
   if(m){try{return JSON.parse(m[1]);}catch(e){}}
+  // Conserto do erro mais comum da IA nos geradores (medido no OSCE em 11/11/2026: 3 de
+  // 20 respostas): fechar o objeto das alternativas com chave+colchete, ou só colchete, em
+  // vez de só a chave, logo antes de "correct"/"answer". Só roda quando a leitura normal
+  // falhou, e o resultado ainda passa pelo JSON.parse: nada é inventado, só a pontuação é
+  // acertada. Sem isto, o gerador pedia tudo de novo (o dobro da espera). (Sem chaves
+  // literais neste comentário: os testes extraem a função contando chaves.)
+  var fx=c.replace(/"\s*\x7d\s*\x5d\s*,\s*"(correct|answer)"/g,'"\x7d,"$1"').replace(/"\s*\x5d\s*,\s*"(correct|answer)"/g,'"\x7d,"$1"');
+  if(fx!==c){
+    try{return JSON.parse(fx);}catch(e){}
+    var m2=fx.match(/(\{[\s\S]*\})/);
+    if(m2){try{return JSON.parse(m2[1]);}catch(e){}}
+  }
   return null;
 }
 // Recupera JSON TRUNCADO (resposta cortada pelo teto de tokens): fecha a string
@@ -23286,15 +23298,15 @@ function updateSimCounter(){
 // roteiro na mão (coerência). Mesmo modelo, mesmas diretrizes, mesmo aprofundamento (o
 // cache das diretrizes e da área é o mesmo das duas chamadas) e as mesmas regras.
 var SIM_PASSOS=4;
-var SIM_REGRAS=' Os feedbacks podem ser ricos. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").';
+var SIM_REGRAS=' Alternativas curtas (até 15 palavras cada). Cada feedback com 2 a 4 frases, técnico e direto, como num gabarito comentado de prova. Valores de corte, doses e diretrizes corretos. As distratoras devem ser plausíveis. Terminologia atual: use "doença renal do diabetes" (não "nefropatia diabética") e "albuminúria"/RAC (não "microalbuminúria" nem "macroalbuminúria").';
 function simPassoSchema(mode){
   return '{"pergunta":"conduta/raciocínio solicitado"'+(mode==='mc'?',"options":{"A":"","B":"","C":"","D":""},"correct":"A","feedback":"justificativa técnica (2-4 frases) citando alvo/critério/dose/diretriz (SBEM, SBD, ADA, Endocrine Society, AACE) quando pertinente"':',"ideal":"resposta ideal detalhada com valores de corte, doses e monitorização"')+'}';
 }
 function simSysParte1(mode){
-  return groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL). O caso tem EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Planeje os 4 agora, mas escreva SÓ a vinheta, o roteiro e o PASSO 1: os passos 2 a 4 serão escritos depois, a partir da vinheta, do passo 1 e do roteiro. JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","roteiro":"diagnóstico final e o que cada um dos passos 2, 3 e 4 vai cobrar, uma linha por passo (o aluno não vê)","steps":['+simPassoSchema(mode)+']} com UM item em steps (o passo 1).'+SIM_REGRAS);
+  return groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta (intro) deve trazer dados objetivos: idade, sexo, queixa, antecedentes, exame físico e EXAMES LABORATORIAIS com valores e unidades (ex.: TSH 8,4 mUI/L; cortisol 2,1 µg/dL), num parágrafo de 120 a 160 palavras. O caso tem EXATAMENTE 4 passos PROGRESSIVOS (anamnese dirigida → exames complementares → diagnóstico → conduta/titulação). Escreva agora SÓ a vinheta, o roteiro e o PASSO 1; os passos 2 a 4 serão escritos depois, a partir deles. JSON APENAS: {"intro":"vinheta com dados objetivos e laboratoriais","roteiro":"até 40 palavras (o aluno não vê): o diagnóstico final e o que os passos 2, 3 e 4 vão cobrar","steps":['+simPassoSchema(mode)+']} com UM item em steps (o passo 1).'+SIM_REGRAS);
 }
 function simSysParte2(mode){
-  return groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta e o passo 1 já foram apresentados ao aluno: NÃO os reescreva nem os repita, e não contradiga nenhum dado deles. Escreva agora os passos 2, 3 e 4, seguindo o roteiro e a progressão (2: exames complementares → 3: diagnóstico → 4: conduta/titulação). Cada passo avança a partir do anterior. JSON APENAS: {"steps":['+simPassoSchema(mode)+']} com EXATAMENTE 3 itens (os passos 2, 3 e 4).'+SIM_REGRAS);
+  return groundSys('Você é preceptor de endocrinologia conduzindo um caso clínico passo a passo (estilo OSCE), em português do Brasil, com RIGOR TÉCNICO. A vinheta e o passo 1 já foram apresentados ao aluno: NÃO os reescreva nem os repita, e não contradiga nenhum dado deles. Escreva agora os passos 2, 3 e 4, seguindo o roteiro e a progressão (2: exames complementares → 3: diagnóstico → 4: conduta/titulação). Cada passo avança a partir do anterior, no mesmo formato e tamanho do passo 1 (pergunta objetiva, alternativas curtas). JSON APENAS: {"steps":['+simPassoSchema(mode)+']} com EXATAMENTE 3 itens (os passos 2, 3 e 4).'+SIM_REGRAS);
 }
 function simPedidoParte2(st){
   var p1=(st.data&&st.data.steps&&st.data.steps[0])||{};

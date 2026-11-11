@@ -131,6 +131,22 @@ process.on('exit', () => { if (!terminouTeste) { console.log('  ✗ o teste não
     ok('na 2ª tentativa, o caso segue', st.data.steps.length === 4 && !st.restoErro);
   }
 
+  // ---- 4b. o leitor conserta o fechamento errado das alternativas --------------------------------
+  {
+    const ctxP = { JSON, String }; vm.createContext(ctxP);
+    vm.runInContext(bloco('function parseJ(raw){') + ';this.p=parseJ;', ctxP);
+    const A = '{"intro":"v","steps":[{"pergunta":"p","options":{"A":"a","B":"b","C":"c","D":"d"';
+    const r1 = ctxP.p(A + '}],"correct":"A","feedback":"f"}]}');   // chave+colchete (visto 2×)
+    const r2 = ctxP.p(A + '],"correct":"A","feedback":"f"}]}');    // só colchete (visto 1×)
+    ok('🧨 alternativas fechadas com chave+colchete: lidas, sem pedir tudo de novo', r1 && r1.steps[0].correct === 'A' && Object.keys(r1.steps[0].options).join('') === 'ABCD');
+    ok('🧨 alternativas fechadas só com colchete: lidas', r2 && r2.steps[0].correct === 'A' && r2.steps[0].feedback === 'f');
+    const q = ctxP.p('{"questions":[{"stem":"s","options":{"A":"a","B":"b"}],"answer":"B"}]}');
+    ok('o mesmo conserto vale para "answer" (outros geradores)', q && q.questions[0].answer === 'B');
+    ok('JSON válido com alternativas em lista fica igual', JSON.stringify(ctxP.p('{"q":[{"options":["a","b"],"answer":"A"}]}')) === '{"q":[{"options":["a","b"],"answer":"A"}]}');
+    ok('texto que não é JSON continua sem leitura', ctxP.p('nada aqui') === null);
+    ok('leitor sem chaves literais na expressão do conserto (os testes extraem funções contando chaves)', !/var fx=c\.replace\([^\n]*[{}]/.test(bloco('function parseJ(raw){').replace(/\(\\\{\[\\s\\S\]\*\\\}\)/g, '')));
+  }
+
   // ---- 5. a fiação no startSim ------------------------------------------------------------------------
   const iS = html.lastIndexOf('startSim=function(){');
   const start = html.slice(iS, html.indexOf('renderSimStep=function(){', iS));
