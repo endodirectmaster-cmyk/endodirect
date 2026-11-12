@@ -11,12 +11,14 @@ atualizado: 2026-11-12
 - [ ] **Revisar as questões seguradas** (nada foi alterado nelas): 6 do lote de 26 (314, 1310, 327, 1098, 1017,
   TEEM2021-080); 86 do lote de 300 (`triagem/lote300/questoes-para-revisar.html`); 49 do lote de 200 + 20
   referências a conferir em comentários já completados (`triagem/lote300/questoes-para-revisar-200.html`).
+  E 33 do 3º lote (mais 200) + 16 referências (`triagem/lote300/questoes-para-revisar-3.html`).
   Prioridade: os gabaritos provavelmente trocados (ENDODIRECT-330, -204, -1248, -209) e as alternativas com texto
   truncado/duplicado (-1092, -985).
 - [ ] **Referências que não conferem** em comentários atuais: dgaa383, dgaa050, 2359-3997000000315/292/341 e as 20 da
   lista do lote de 200 (todas de Osteometabolismo; vários "Arquivos Brasileiros de Endocrinologia & Metabologia" com
   DOI de 2019+, nome que o periódico não usa desde 2015).
-- Restam ~121 questões que só explicam o gabarito (das 321, fora TEEM), se o professor quiser outro lote.
+- [ ] **Remover a função temporária `endodirect_tmp_comentarios` do 3º lote** (acesso já revogado e token apagado).
+- Nenhuma questão (fora TEEM) explica só o gabarito agora; restam ~137 com 2 alternativas faltando e ~293 com 1, e as TEEM.
 
 ## 📱 FAQ do site quando o app do iPhone estiver na App Store (pedido de 11/11)
 
