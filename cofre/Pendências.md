@@ -5,6 +5,15 @@ atualizado: 2026-11-12
 
 # Pendências
 
+## 🆕 Questão do Dia: novidades de 2026 (levantamento de 12/11)
+- Levantamento entregue ao professor: ~92 questões de múltipla escolha sobre 2026 (FDA ~8, Anvisa ~4, diretrizes e
+  consensos ~25, ensaios de obesidade/diabetes/lípides/pediatria/osso ~35, metanálises ~10, 1º semestre fora do radar
+  ~10). Página no scratchpad (`qotd2026/novidades-2026.html`). Fontes: `radar_avisos` (≈2.000 itens de 2026) + web.
+- **Ficam de fora, a pedido do professor ("Isso não"):** semaglutida oral Lynavoy no FDA (fonte única), Yorvipath na
+  Anvisa (datas divergentes) e a contagem de canetas GLP-1 da Anvisa (totais divergentes).
+- [ ] Gerar as questões (consertador + revisor, sem API, com figura e referência no PubMed, na fila para aprovação) —
+  aguardando o OK do professor; sugerido depois da renovação do limite semanal (13/11, 17h).
+
 ## 🧩 Comentários do banco: listas à espera do professor (12/11)
 - [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
   `pg_proc`: não existe mais.
