@@ -25,6 +25,14 @@ O professor, em 17/10: *"está tudo em inglês"*. As linhas curtas de andamento 
 resposta inteira tinham saído em inglês. **Toda mensagem ao professor é em português:**
 resposta final, linha de andamento durante o trabalho, legenda de arquivo e pergunta.
 
+## ⏸️ LIMITES ATUAIS (2026-11-12): 80% DA SEMANA, 90% DA JANELA DE 5 H
+
+Professor, em 12/11/2026: *"80% do limite semanal e 90% do limite de 5 horas"*. Em trabalho longo
+com agentes, parar ao atingir qualquer um dos dois. O percentual não chega à sessão: valem o
+aviso do professor (painel de uso), o estado `rejected` no `get_session` e a mensagem de limite de
+um agente. Parar = não lançar agente novo, gravar o que já foi revisado, registrar o que falta e
+agendar a retomada para depois da renovação.
+
 ## ⏸️ LIMITE DE USO: PAUSAR EM 90% E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06; 90% desde 2026-10-16)
 
 **Regra em vigor (16/10/2026).** Pedido do professor: *"Programe sempre para
