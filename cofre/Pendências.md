@@ -11,8 +11,13 @@ atualizado: 2026-11-12
   ~10). Página no scratchpad (`qotd2026/novidades-2026.html`). Fontes: `radar_avisos` (≈2.000 itens de 2026) + web.
 - **Ficam de fora, a pedido do professor ("Isso não"):** semaglutida oral Lynavoy no FDA (fonte única), Yorvipath na
   Anvisa (datas divergentes) e a contagem de canetas GLP-1 da Anvisa (totais divergentes).
-- [ ] Gerar as questões (consertador + revisor, sem API, com figura e referência no PubMed, na fila para aprovação) —
-  aguardando o OK do professor; sugerido depois da renovação do limite semanal (13/11, 17h).
+- [ ] **Gerar as 92 em 13/11 a partir das 18h (BRT)** — professor: *"vamos fazer essas 92 questões amanhã, a partir das
+  18 horas. A ideia é já introduzi-las nas questões do dia, mas de forma intercalada com as que já existem"* e *"alterne
+  também entre questões diretas e questões de casos clínicos"*. Retomada agendada (trig_01VqU5Jcm6b8BLT9ys6xjnuk).
+  Regras: metade diretas e metade casos clínicos, alternadas; gerador + revisor, sem API; referência no PubMed; figura
+  só se adequada (Resumos ou Open-i CC BY/CC0). Fila (`ig_stories`): intercalar com as 15 em `queued` (posições
+  121–135 em 12/11) — existente, nova, existente, nova…, começando por uma existente; depois, rodízio por
+  subespecialidade. Backup, guarda, conferência, DROP com o professor no computador.
 
 ## 🧩 Comentários do banco: listas à espera do professor (12/11)
 - [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
