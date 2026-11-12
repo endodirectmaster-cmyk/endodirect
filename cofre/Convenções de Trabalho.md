@@ -25,6 +25,15 @@ O professor, em 17/10: *"está tudo em inglês"*. As linhas curtas de andamento 
 resposta inteira tinham saído em inglês. **Toda mensagem ao professor é em português:**
 resposta final, linha de andamento durante o trabalho, legenda de arquivo e pergunta.
 
+## 🖥️ CARTÃO DE CONFIRMAÇÃO DO SUPABASE SÓ APARECE NO COMPUTADOR (2026-11-12)
+
+O conector do Supabase pede confirmação do professor para comandos destrutivos (DROP). O cartão
+não aparece no app do celular, e o limite de espera é fixo (230 s, não configurável daqui): duas
+tentativas expiraram em 12/11. Com a conversa aberta no computador (claude.ai ou app), passou na
+hora. Antes de pedir um DROP, perguntar se o professor está no computador; se não estiver, deixar
+para depois (a função temporária fica fechada e vence sozinha) ou passar a linha de SQL para ele
+rodar no SQL Editor do Supabase.
+
 ## ⏸️ LIMITES ATUAIS (2026-11-12): 80% DA SEMANA, 90% DA JANELA DE 5 H
 
 Professor, em 12/11/2026: *"80% do limite semanal e 90% do limite de 5 horas"*. Em trabalho longo

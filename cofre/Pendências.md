@@ -17,7 +17,7 @@ atualizado: 2026-11-12
 - [ ] **Referências que não conferem** em comentários atuais: dgaa383, dgaa050, 2359-3997000000315/292/341 e as 20 da
   lista do lote de 200 (todas de Osteometabolismo; vários "Arquivos Brasileiros de Endocrinologia & Metabologia" com
   DOI de 2019+, nome que o periódico não usa desde 2015).
-- [ ] **Remover a função temporária `endodirect_tmp_comentarios` do 3º lote** (acesso já revogado e token apagado).
+- [x] **Função temporária do 3º lote removida** (12/11, confirmada pelo professor no computador; conferido em `pg_proc`).
 - Nenhuma questão (fora TEEM) explica só o gabarito agora; restam ~137 com 2 alternativas faltando e ~293 com 1, e as TEEM.
 
 ## 📱 FAQ do site quando o app do iPhone estiver na App Store (pedido de 11/11)
