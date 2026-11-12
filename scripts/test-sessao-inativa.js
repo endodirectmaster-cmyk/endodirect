@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-// SESSÃO: 6 HORAS SEM USO E ENTÃO A JANELA "PERMANECER CONECTADO" (11/11/2026).
+// SESSÃO: 12 HORAS SEM USO E ENTÃO A JANELA "PERMANECER CONECTADO" (11/11/2026; 12 h desde 12/11).
 //
 // Pedido do professor: "vamos aumentar o tempo de permanência de login na plataforma. Acho
 // que dá para deixar 6 horas e após isso gerar a janela se deseja permanecer conectado."
-// Antes eram 30 minutos. A janela dá 60 s para responder; sem resposta, sai.
+// Antes eram 30 minutos. Em 12/11: "Aumenta ... para 12h" (login na plataforma). A janela dá
+// 60 s para responder; sem resposta, sai.
 //
 // 🧨 Os modos de quebrar isto em silêncio:
 //  - o tempo voltar a 30 min (ou qualquer outro) sem decisão do professor;
@@ -17,11 +18,11 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 let bad = 0;
 const ok = (n, c) => { if (!c) { bad++; console.log('  ✗ ' + n); } };
 
-ok('🧨 6 horas sem uso até a janela', /var SESSION_IDLE_MS=6\*60\*60\*1000,SESSION_COUNTDOWN_S=60;/.test(html));
-ok('janela pergunta se deseja permanecer conectado e diz o tempo', /id="session-modal"[\s\S]{0,400}sem usar a plataforma há 6 horas[\s\S]{0,200}Deseja permanecer conectado\?/.test(html));
+ok('🧨 12 horas sem uso até a janela', /var SESSION_IDLE_MS=12\*60\*60\*1000,SESSION_COUNTDOWN_S=60;/.test(html));
+ok('janela pergunta se deseja permanecer conectado e diz o tempo', /id="session-modal"[\s\S]{0,400}sem usar a plataforma há 12 horas[\s\S]{0,200}Deseja permanecer conectado\?/.test(html));
 ok('🧨 botões "Permanecer conectado" e "Sair" na janela', /id="btn-session-stay"[^>]*>Permanecer conectado</.test(html) && /id="btn-session-logout"/.test(html));
 
-// O vigia, rodando: antes de 6 h não abre; depois de 6 h abre; "Permanecer" zera.
+// O vigia, rodando: antes de 12 h não abre; depois de 12 h abre; "Permanecer" zera.
 function corpo(nome) {
   const i = html.indexOf('function ' + nome + '(');
   let j = html.indexOf('{', i), n = 0;
@@ -40,14 +41,14 @@ vm.createContext(ctx);
 vm.runInContext((html.match(/var SESSION_IDLE_MS=[^\n]*\n/) || [''])[0] + 'var sessionLastActivity=Date.now(),sessionCountdownTimer=null,sessionWatcher=null;\n'
   + ['markSessionActivity', 'startSessionWatcher', 'showSessionWarning', 'hideSessionWarning', 'keepSessionAlive'].map(corpo).join('\n'), ctx);
 vm.runInContext('startSessionWatcher()', ctx);
-agora += 5 * 3600 * 1000 + 59 * 60 * 1000; tique();
-ok('🧨 5 h 59 min sem uso: a janela não abre', modal.style.display === 'none');
+agora += 11 * 3600 * 1000 + 59 * 60 * 1000; tique();
+ok('🧨 11 h 59 min sem uso: a janela não abre', modal.style.display === 'none');
 agora += 60 * 1000; tique();
-ok('🧨 6 h sem uso: a janela abre', modal.style.display === 'flex');
+ok('🧨 12 h sem uso: a janela abre', modal.style.display === 'flex');
 vm.runInContext('keepSessionAlive()', ctx);
 ok('"Permanecer conectado" fecha a janela', modal.style.display === 'none');
-agora += 3 * 3600 * 1000; tique();
-ok('"Permanecer conectado" zera o relógio (3 h depois, nada)', modal.style.display === 'none');
+agora += 6 * 3600 * 1000; tique();
+ok('"Permanecer conectado" zera o relógio (6 h depois, nada)', modal.style.display === 'none');
 
 if (bad) { console.log('\n' + bad + ' falha(s): sessão por inatividade'); process.exit(1); }
-console.log('✓ sessão: 6 h sem uso e então a janela "Permanecer conectado" (60 s para responder)');
+console.log('✓ sessão: 12 h sem uso e então a janela "Permanecer conectado" (60 s para responder)');
