@@ -6,8 +6,8 @@ atualizado: 2026-11-12
 # Pendências
 
 ## 🧩 Comentários do banco: listas à espera do professor (12/11)
-- [ ] **Confirmar no conector o DROP da função temporária `endodirect_tmp_comentarios`.** Já está fechada: acesso de
-  `anon`/`authenticated`/`public` revogado e token apagado em 12/11 (madrugada); o DROP pede o clique do professor.
+- [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
+  `pg_proc`: não existe mais.
 - [ ] **Revisar as questões seguradas** (nada foi alterado nelas): 6 do lote de 26 (314, 1310, 327, 1098, 1017,
   TEEM2021-080); 86 do lote de 300 (`triagem/lote300/questoes-para-revisar.html`); 49 do lote de 200 + 20
   referências a conferir em comentários já completados (`triagem/lote300/questoes-para-revisar-200.html`).
