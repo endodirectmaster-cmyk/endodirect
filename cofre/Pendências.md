@@ -9,7 +9,7 @@ atualizado: 2026-11-12
 - [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
   `pg_proc`: não existe mais.
 - [x] **Questões seguradas e referências: CONSERTADAS** (12/11, "Consertar tudo"): as 174 seguradas e 38 referências; 16 gabaritos trocados. Ver Decisões e `triagem/consertos/questoes-consertadas.html`.
-- [ ] **Remover a função temporária `endodirect_tmp_consertos`** (acesso já revogado e token apagado; pedir com o professor no computador).
+- [x] **Função temporária `endodirect_tmp_consertos` removida** (12/11, professor no MacBook; conferido: nenhuma função `endodirect_tmp_*` no banco).
 - [x] **Função temporária do 3º lote removida** (12/11, confirmada pelo professor no computador; conferido em `pg_proc`).
 - Nenhuma questão (fora TEEM) explica só o gabarito agora; restam ~137 com 2 alternativas faltando e ~293 com 1, e as TEEM.
 
