@@ -1175,11 +1175,11 @@ try {
   fail('regressão do OSCE (alternativas/leitor) falhou:\n' + out);
 }
 
-// 17c-undecies-ah. SESSÃO: 6 HORAS SEM USO (11/11/2026). Pedido do professor: a sessão dura 6 h
-//      sem uso (antes, 30 min) e então abre a janela "Deseja permanecer conectado?".
+// 17c-undecies-ah. SESSÃO: 12 HORAS SEM USO (12/11/2026; 6 h em 11/11, antes 30 min). Pedido do
+//      professor; depois abre a janela "Deseja permanecer conectado?".
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-sessao-inativa.js')], { stdio: 'pipe' });
-  ok('sessão: 6 h sem uso e então a janela "Permanecer conectado"');
+  ok('sessão: 12 h sem uso e então a janela "Permanecer conectado"');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão da sessão por inatividade falhou:\n' + out);
