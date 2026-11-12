@@ -1717,7 +1717,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
   .dir-card .dfx-branch .dfx-node{font-size:.67rem;padding:.4rem .5rem}
 }
 .dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
-/* Videoaulas do capítulo (02/11/2026): vídeos curtos (até ~15 min) na aba ao lado de Mapas mentais. */
+/* Videoaulas do capítulo (02/11/2026): vídeos curtos (até ~30 min desde 12/11/2026; antes 15) na aba ao lado de Mapas mentais. */
 .dir-videos{display:grid;gap:1rem}
 .dir-video{border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;background:var(--surface);min-width:0}
 .dir-video-player{background:#000}
@@ -15453,7 +15453,8 @@ function dirPontoLI(p){
 }
 // VIDEOAULAS DO CAPÍTULO (02/11/2026). Pedido do professor: "Insira ao lado de 'Mapas
 // mentais' o botão de 'Videoaulas'. Dentro dela, iremos inserir aos poucos pequenos vídeos
-// (...) de no máx 15 min cada". Ficam em `videos` do item: [{titulo, src, dur?, path?, at}].
+// (...) de no máx 15 min cada". Em 12/11/2026: "Deixa até 30 min" (o limite passou a 30 min).
+// Ficam em `videos` do item: [{titulo, src, dur?, path?, at}].
 // `src` é arquivo no Storage (upload retomável do painel), .m3u8 do Bunny, YouTube ou Vimeo.
 // O aluno só vê a aba no capítulo que tem vídeo; o professor vê sempre, para adicionar.
 function dirVideosDe(d){return Array.isArray(d&&d.videos)?d.videos.filter(function(v){return v&&typeof v.src==='string'&&v.src;}):[];}
@@ -19943,12 +19944,12 @@ function admRefVideoHTML(d,i){
       +'<span>'+(aulaCaps(v).length?aulaCaps(v).length+' capítulos':'Sem capítulos ainda: o Claude lê os slides do vídeo e preenche na madrugada seguinte.')+'</span></div></div></div>';
   }).join('');
   return '<div class="dir-card">'
-    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.7rem;line-height:1.5">Vídeos curtos do capítulo (até 15 min cada). Para os assinantes, a aba <b>🎬 Videoaulas</b> só aparece quando o capítulo tem pelo menos um vídeo.</div>'
+    +'<div style="font-size:.72rem;color:var(--t2);margin-bottom:.7rem;line-height:1.5">Vídeos curtos do capítulo (até 30 min cada). Para os assinantes, a aba <b>🎬 Videoaulas</b> só aparece quando o capítulo tem pelo menos um vídeo.</div>'
     +info
     +(lista?'<div class="dir-videos">'+lista+'</div>':'<div class="dir-empty-fmt">Nenhuma videoaula neste capítulo ainda.</div>')
     +'<div class="adm-vid-form"><div style="font-size:.78rem;font-weight:800;color:var(--tx)">＋ Nova videoaula</div>'
       +'<div class="fld2"><label>Título</label><input type="text" id="adm-vid-titulo-'+i+'" placeholder="Ex.: Rastreio do hiperaldosteronismo primário"></div>'
-      +'<div class="fld2"><label>Arquivo de vídeo (MP4, até 15 min)</label><input type="file" id="adm-vid-file-'+i+'" accept="video/mp4,video/webm,video/quicktime,video/*"></div>'
+      +'<div class="fld2"><label>Arquivo de vídeo (MP4, até 30 min)</label><input type="file" id="adm-vid-file-'+i+'" accept="video/mp4,video/webm,video/quicktime,video/*"></div>'
       +'<div class="fld2"><label>Ou cole um link (Bunny .m3u8, YouTube ou Vimeo)</label><input type="text" id="adm-vid-link-'+i+'" placeholder="https://…"></div>'
       +'<div class="adm-vid-prog" id="adm-vid-prog-'+i+'" hidden><span></span></div><div class="adm-vid-msg" id="adm-vid-msg-'+i+'"></div>'
       +'<div><button class="btn btn-primary btn-sm" data-advid-add="'+i+'">⬆ Adicionar videoaula</button></div></div>'
@@ -19983,7 +19984,7 @@ function admAddRefVideo(i,btn){
   if(!/^video\//.test(arq.type||'')&&!/\.(mp4|m4v|webm|mov)$/i.test(arq.name||'')){notify('O arquivo escolhido não é um vídeo.','err');return;}
   btn.disabled=true;if(msg)msg.textContent='Lendo o vídeo…';
   admVidDuracao(arq).then(function(dur){
-    if(dur>15*60+5&&!confirm('Este vídeo tem '+dirVideoDur(dur)+', acima dos 15 min combinados. Subir mesmo assim?')){btn.disabled=false;if(msg)msg.textContent='';return;}
+    if(dur>30*60+5&&!confirm('Este vídeo tem '+dirVideoDur(dur)+', acima dos 30 min combinados. Subir mesmo assim?')){btn.disabled=false;if(msg)msg.textContent='';return;}
     if(barra)barra.hidden=false;if(msg)msg.textContent='Enviando…';
     return uploadAdminAssetResumable(arq,'resumos/videos',function(env,tot){
       var pc=tot?Math.round(env*100/tot):0;if(barra&&barra.firstChild)barra.firstChild.style.width=pc+'%';if(msg)msg.textContent='Enviando… '+pc+'%';

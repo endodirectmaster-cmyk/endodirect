@@ -11,7 +11,8 @@
 //   4. para o ALUNO a aba só aparece na aba Resumos (não nas Diretrizes nem nos artigos) e só
 //      quando o capítulo tem vídeo; ao lado de "Mapas mentais", depois dele;
 //   5. no PAINEL ela aparece em todo capítulo dos Resumos, para o professor adicionar;
-//   6. o envio do painel usa o upload retomável em resumos/videos e pede confirmação acima de 15 min;
+//   6. o envio do painel usa o upload retomável em resumos/videos e pede confirmação acima de 30 min
+//      (15 min até 12/11/2026; professor: "Deixa até 30 min");
 //   7. a renderização do aluno e a do painel montam o HLS.
 'use strict';
 const fs = require('fs');
@@ -97,7 +98,8 @@ const bind = extrai('bindAdmSec');
 // ---- 6. o envio ----------------------------------------------------------------------------
 const add = extrai('admAddRefVideo');
 ok('envio: upload retomável em resumos/videos', add.indexOf("uploadAdminAssetResumable(arq,'resumos/videos',") > 0);
-ok('envio: confirmação acima de 15 min', add.indexOf('if(dur>15*60+5&&!confirm(') > 0);
+ok('envio: confirmação acima de 30 min', add.indexOf('if(dur>30*60+5&&!confirm(') > 0);
+ok('tela do painel: limite de 30 min no texto e no rótulo', /Vídeos curtos do capítulo \(até 30 min cada\)/.test(SRC) && /Arquivo de vídeo \(MP4, até 30 min\)/.test(SRC) && !/até 15 min/.test(SRC));
 ok('envio: título obrigatório', add.indexOf("if(!titulo){notify('Dê um título à videoaula.','err');return;}") > 0);
 ok('envio: grava título, src, duração, caminho e data', add.indexOf('grava({titulo:titulo,src:up.url,dur:isFinite(dur)?Math.round(dur):undefined,path:up.path,at:Date.now()})') > 0);
 ok('envio: link precisa ser Bunny, YouTube ou Vimeo (http)', add.indexOf('if(!(ytId(link)||vimeoId(link)||safeHttpUrl(link)))') > 0);
