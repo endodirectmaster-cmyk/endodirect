@@ -1036,12 +1036,12 @@ try {
 }
 
 // 17c-undecies-o. VIDEOAULAS NOS RESUMOS (02/11/2026). Pedido do professor: botão "Videoaulas" ao
-//      lado de "Mapas mentais", com vídeos curtos (até 15 min). Campo `videos` do item; para o aluno
+//      lado de "Mapas mentais", com vídeos curtos (até 30 min desde 12/11/2026; antes 15). Campo `videos` do item; para o aluno
 //      a aba só aparece nos capítulos dos Resumos que têm vídeo; no painel, em todos, com upload
 //      retomável (resumos/videos) ou link (Bunny .m3u8, YouTube, Vimeo).
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-videoaulas.js')], { stdio: 'pipe' });
-  ok('videoaulas: player (Storage, HLS, YouTube, Vimeo) com escape, aba só com vídeo para o aluno, editor no painel, upload retomável e confirmação acima de 15 min');
+  ok('videoaulas: player (Storage, HLS, YouTube, Vimeo) com escape, aba só com vídeo para o aluno, editor no painel, upload retomável e confirmação acima de 30 min');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão das videoaulas falhou:\n' + out);
