@@ -33,6 +33,14 @@ aviso do professor (painel de uso), o estado `rejected` no `get_session` e a men
 um agente. Parar = não lançar agente novo, gravar o que já foi revisado, registrar o que falta e
 agendar a retomada para depois da renovação.
 
+**Controle aproximado (12/11, o professor perguntou por que eu "sempre consegui fazer esse controle"):**
+nunca vi o percentual; o controle sempre foi aproximação (teto de tokens + mensagem de limite) e já
+errou (17/10). Agora: ledger dos tokens dos agentes por janela de 5 h (a janela renova no `resetsAt`
+do `get_session`); nos registros a janela caiu entre ~7 e ~12 milhões de tokens totais; ao passar de
+~6 milhões na janela, não lançar agente novo até a renovação (`send_later` para logo depois), salvo
+"pode seguir" do professor olhando o painel. Semana: sem medida; vale o aviso dele. Primeira
+aplicação: 12/11, janela até 01h10 BRT com ~6 M gastos; retomada agendada para 01h15.
+
 ## ⏸️ LIMITE DE USO: PAUSAR EM 90% E RETOMAR NO HORÁRIO DA RENOVAÇÃO (2026-10-06; 90% desde 2026-10-16)
 
 **Regra em vigor (16/10/2026).** Pedido do professor: *"Programe sempre para
