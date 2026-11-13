@@ -351,6 +351,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .filtro-caixa{display:flex;flex-direction:column;gap:.28rem;flex:0 1 19rem;min-width:12rem;max-width:100%}
 .filtro-caixa-rot{font-size:.6rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
 .filtro-caixa select{height:38px;font-weight:600;cursor:pointer}
+.filtro-caixa.filtro-curta{flex:0 0 10.5rem;min-width:9rem}
 .filtro-linha{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;margin:.2rem 0 .9rem}
 /* A cor do card vem das classes `mural-card-*`, que só definem
    `border-left-color` — por isso a borda em si é declarada aqui. Card de área
@@ -741,6 +742,11 @@ body.mm-tela-cheia #mm-live-title{color:#fff!important;flex:1 1 auto;min-width:0
 body.mm-tela-cheia .mm-voltar{display:inline-flex;flex:0 0 auto;color:#fff;border:1px solid rgba(255,255,255,.35);background:transparent}
 body.mm-tela-cheia #btn-mm-close{display:none}
 body.mm-tela-cheia #btn-mm-save{white-space:nowrap}
+/* Voltar, Editar e Salvar um pouco maiores (professor, 13/11/2026: "ligeiramente maiores"):
+   eram btn-sm (.68rem, ~25 px de altura). */
+body.mm-tela-cheia #mm-live .mm-live-head .btn{font-size:.8rem;font-weight:600;padding:.45rem .8rem;min-height:36px;white-space:nowrap}
+body.mm-tela-cheia #mm-live-title{font-size:.95rem!important}
+@media (min-width:900px){body.mm-tela-cheia #mm-live .mm-live-head .btn{font-size:.88rem;padding:.55rem 1.05rem;min-height:40px}body.mm-tela-cheia #mm-live-title{font-size:1.05rem!important}}
 body.mm-tela-cheia #mm-svg-wrap{flex:1 1 auto;min-height:0!important;max-height:none!important;border:0;border-radius:12px;padding:.6rem;display:flex}
 /* Tela cheia (13/11/2026, vídeo do professor: "ele abre desfocado"). O mapa abre encaixado na
    tela só com a raiz e os ramos principais (pedido do professor, print do Hipotireoidismo).
@@ -10746,7 +10752,7 @@ function goPanel(id){
   if(id==='qotd'){try{renderQotdArchive();}catch(e){}}
   if(id==='quest'){applyQuestDegustacao();renderSavedQ();populateInst('q-inst');updateProvaInfo();}
   if(id==='sim'||id==='rx')try{popularTemasFerramentas();}catch(e){}
-  if(id==='flash'){fcFilter=null;renderFC();} // abre na grade de subespecialidades
+  if(id==='flash'){fcFilter=null;fcPagina=0;renderFC();} // abre na grade de subespecialidades
   if(id==='favs')renderFavoritos();
   if(id==='mmap')renderMMList();
   if(id==='podcast')renderPodcasts();
@@ -12246,6 +12252,13 @@ function renderProvaResults(qs){
 }
 // ── FLASHCARDS ──
 var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null,fcTema='';
+// Paginação dos flashcards (professor, 13/11/2026: "Limitar o número de aparecimentos de
+// flashcards por página e o restante nas páginas seguintes. E deixar um campo também de filtro
+// de números por página. Por exemplo, 10, 30 ou 50"). Mesmas opções da Questão do Dia; a
+// escolha fica guardada no aparelho. Trocar de subespecialidade, de subtópico ou o tamanho da
+// página volta para a 1ª página.
+var FC_POR_OPCOES=[10,30,50];
+var fcPor=(function(){var v=+lsGet('fc_por_pagina');return FC_POR_OPCOES.indexOf(v)>=0?v:10;})(),fcPagina=0;
 function renderFcCatPills(){
   var el=document.getElementById('fc-cat-pills');if(!el)return;
   el.innerHTML=FC_CATS.map(function(c){return'<button class="cat-pill'+(c===fcSelectedCat?' on':'')+'" data-fccat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
@@ -12283,6 +12296,7 @@ function saveFC(){
   document.getElementById('fc-f').value='';document.getElementById('fc-b').value='';
   document.getElementById('fc-create').style.display='none';
   fcFilter=fcSelectedCat; // mostra a categoria do card recém-criado
+  fcTema='';fcPagina=1e9; // e a última página, onde o card novo (o último da lista) aparece
   renderFC();refreshDash();notify('Flashcard criado!','ok');
 }
 function fcCatColor(cat){
@@ -12322,15 +12336,27 @@ function renderFC(){
     tabs+=filtroCaixaHTML('Subtópico','fctema',
       [{v:'',t:'Todos ('+subList.length+')'}].concat(temaListFor(subList,fcFilter).map(function(o){return {v:o.tema,t:o.tema+' ('+o.count+')'};})),
       fcTema);
+    tabs+=filtroCaixaHTML('Por página','fcpor',FC_POR_OPCOES.map(function(n){return {v:String(n),t:n+' por página'};}),String(fcPor),true);
     frow.innerHTML=tabs;
   }
   el.className='fc-grid';
   var list=fcTema?subList.filter(function(c){return temaOf(c,fcFilter)===fcTema;}):subList;
   if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhum flashcard nesta subespecialidade ainda.</div>';return;}
+  var fcPaginas=Math.max(1,Math.ceil(list.length/fcPor));
+  fcPagina=Math.min(Math.max(0,fcPagina|0),fcPaginas-1);
+  var fcIni=fcPagina*fcPor,todos=list;
+  list=list.slice(fcIni,fcIni+fcPor);
   el.innerHTML=list.map(function(c){var i=DB.fc.indexOf(c);var col=fcCatColor(c.cat);return'<div class="fc-card" data-fctoggle="'+i+'" data-fav-tit="'+esc(c.front||'')+'" data-fav-sub="'+esc(c.cat||'')+'">'
       // A estrela fica FORA do .fc-inner que gira: dentro, ela viraria de cabeca
       // para baixo junto com o card ao ser revelado.
-      +'<span style="position:absolute;top:.4rem;right:2rem;z-index:3">'+favStarHTML('flashcard',c)+'</span>'+'<div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+(c.shared?novoSeloHTML(c):'')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('');
+      +'<span style="position:absolute;top:.4rem;right:2rem;z-index:3">'+favStarHTML('flashcard',c)+'</span>'+'<div class="fc-inner"><div class="fc-face fc-face-front" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">'+esc(c.cat||'Geral')+(c.shared?novoSeloHTML(c):'')+'</div><div class="fc-front">'+esc(c.front)+'</div><div class="fc-hint">Clique para virar ↻</div></div><div class="fc-face fc-face-back" style="border-left:5px solid '+col+'"><div class="fc-cat" style="color:'+col+'">Resposta</div><div class="fc-back">'+esc(c.back)+'</div><div class="fc-hint">Clique para voltar ↺</div></div></div></div>';}).join('')
+    +(fcPaginas>1?'<div class="fc-pag" style="grid-column:1/-1">'
+      +'<div style="text-align:center;font-size:.72rem;color:var(--t3);margin-top:.4rem">'+(fcIni+1)+'–'+(fcIni+list.length)+' de '+todos.length+' flashcards</div>'
+      +muralPagerHTML(fcPagina,fcPaginas,'fc-pag')+'</div>':'');
+  var topo=function(){try{(document.getElementById('fc-filter-row')||el).scrollIntoView({block:'start'});}catch(e){}};
+  var pv=document.getElementById('fc-pag-prev'),nx=document.getElementById('fc-pag-next');
+  if(pv)pv.addEventListener('click',function(e){e.stopPropagation();fcPagina--;renderFC();topo();});
+  if(nx)nx.addEventListener('click',function(e){e.stopPropagation();fcPagina++;renderFC();topo();});
 }
 function toggleFC(i){
   var cards=document.querySelectorAll('[data-fctoggle]');
@@ -22507,8 +22533,8 @@ function initAll(){
 
 // ── DELEGAÇÃO DE EVENTOS GLOBAL ──
 // Caixa de filtro (ver .filtro-caixa). `opcoes`: [{v:'',t:'Todos (49)'}, ...].
-function filtroCaixaHTML(rotulo,chave,opcoes,atual){
-  return '<label class="filtro-caixa"><span class="filtro-caixa-rot">'+esc(rotulo)+'</span>'
+function filtroCaixaHTML(rotulo,chave,opcoes,atual,curta){
+  return '<label class="filtro-caixa'+(curta?' filtro-curta':'')+'"><span class="filtro-caixa-rot">'+esc(rotulo)+'</span>'
     +'<select data-filtro="'+chave+'" aria-label="'+esc(rotulo)+'">'
     +opcoes.map(function(o){return '<option value="'+esc(o.v)+'"'+(o.v===(atual||'')?' selected':'')+'>'+esc(o.t)+'</option>';}).join('')
     +'</select></label>';
@@ -22523,7 +22549,8 @@ document.addEventListener('change',function(e){
   var sel=e.target;if(!sel||!sel.matches||!sel.matches('select[data-filtro]'))return;
   var v=sel.value||'',k=sel.getAttribute('data-filtro');
   if(k==='calcarea'){calcAreaFiltro=v;renderCalcGrid();}
-  else if(k==='fctema'){fcTema=v;renderFC();}
+  else if(k==='fctema'){fcTema=v;fcPagina=0;renderFC();}
+  else if(k==='fcpor'){var _n=+v;if(FC_POR_OPCOES.indexOf(_n)>=0){fcPor=_n;lsSet('fc_por_pagina',_n);}fcPagina=0;renderFC();}
   else if(k==='mmtema'){mmTema=v;renderMMList();}
   else if(k==='admfctema'){admFcTema=v;admFcEditId=null;renderAdmSec('flashcards');}
   else if(k==='admmmtema'){admMMTema=v;renderAdmSec('mapas');}
@@ -22556,7 +22583,7 @@ document.addEventListener('click',function(e){
   var fccat=c('[data-fccat]');
   if(fccat){fcSelectedCat=fccat.dataset.fccat;renderFcCatPills();return;}
   var fcsub=c('[data-fcsub]');
-  if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;fcTema='';renderFC();return;}
+  if(fcsub){var _fv=fcsub.dataset.fcsub;fcFilter=_fv===''?null:_fv;fcTema='';fcPagina=0;renderFC();return;}
   // mind map
   var mmss=c('[data-mmsubsel]');if(mmss){mmSubSel=mmss.dataset.mmsubsel;mmTema='';renderMMList();return;}
   var mmbk=c('[data-mmback]');if(mmbk){mmSubSel='';mmTema='';renderMMList();return;}

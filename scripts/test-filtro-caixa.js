@@ -32,12 +32,12 @@ const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 // ---- 3. um ouvinte de 'change' trata as cinco ----------------------------------------------
 const ouv = (html.match(/document\.addEventListener\('change',function\(e\)\{[\s\S]*?\n\}\);/) || [''])[0];
 ok('🧨 ouvinte de change para select[data-filtro]', /sel\.matches\('select\[data-filtro\]'\)/.test(ouv));
-[["calcarea", /calcAreaFiltro=v;renderCalcGrid\(\);/], ["fctema", /fcTema=v;renderFC\(\);/], ["mmtema", /mmTema=v;renderMMList\(\);/],
+[["calcarea", /calcAreaFiltro=v;renderCalcGrid\(\);/], ["fctema", /fcTema=v;fcPagina=0;renderFC\(\);/], ["mmtema", /mmTema=v;renderMMList\(\);/],
  ["admfctema", /admFcTema=v;admFcEditId=null;renderAdmSec\('flashcards'\);/], ["admmmtema", /admMMTema=v;renderAdmSec\('mapas'\);/], ["podfilter", /podFilter=v;renderPodcasts\(\);/]].forEach(([k, re]) =>
   ok('🧨 escolher em ' + k + ' filtra e redesenha', new RegExp("k==='" + k + "'\\)\\{" + re.source).test(ouv)));
 
 // ---- 4. o HTML da caixa ----------------------------------------------------------------------
-const fn = (html.match(/function filtroCaixaHTML\(rotulo,chave,opcoes,atual\)\{[\s\S]*?\n\}/) || [''])[0];
+const fn = (html.match(/function filtroCaixaHTML\(rotulo,chave,opcoes,atual,curta\)\{[\s\S]*?\n\}/) || [''])[0];
 ok('função filtroCaixaHTML encontrada', !!fn);
 const ctx = { esc: (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;') };
 vm.createContext(ctx);

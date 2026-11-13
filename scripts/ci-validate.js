@@ -1185,6 +1185,16 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-am. FLASHCARDS EM PÁGINAS (13/11/2026). Pedido do professor: limitar quantos cards
+//      aparecem por vez, o resto nas páginas seguintes, com a caixa "10, 30 ou 50 por página".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-flashcards-paginacao.js')], { stdio: 'pipe' });
+  ok('flashcards em páginas: 10/30/50 por página, navegação e volta à 1ª ao trocar o filtro');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da paginação dos flashcards falhou:\n' + out);
+}
+
 // 17c-undecies-al. MAPA MENTAL: ABRE COM A RAIZ E OS RAMOS, E "EDITAR" NO TOPO (13/11/2026).
 //      Vídeo do professor: o mapa "abre desfocado". Agora abre encaixado na tela, só com a raiz e
 //      os ramos principais; tocar numa caixa abre os ramos dela; "✏️ Editar" ao lado de "Salvar"
