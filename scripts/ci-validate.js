@@ -1185,6 +1185,16 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-aj. MAPA MENTAL EM TELA CHEIA (13/11/2026). Pedido do professor: o mapa aberto
+//      ocupa a tela toda, com "Voltar" no topo; nada do app por cima.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mapa-mental-tela-cheia.js')], { stdio: 'pipe' });
+  ok('mapa mental em tela cheia: abre ocupando a tela, Voltar no topo, sai certo e fica abaixo das janelas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do mapa mental em tela cheia falhou:\n' + out);
+}
+
 // 17c-undecies-ai. MAPA MENTAL: PINÇA EM VOLTA DOS DEDOS (13/11/2026). Vídeo do professor no
 //      iPhone: "Quando aproxime, fica desconfigurado" — o zoom partia do canto e o trecho entre
 //      os dedos fugia da tela; com zoom, as linhas eram redesenhadas fora do lugar.
