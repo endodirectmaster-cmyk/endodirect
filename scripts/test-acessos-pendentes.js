@@ -257,7 +257,9 @@ const run = (c, codigo) => vm.runInContext(codigo, c);
   const rp = corpo('reavaliarPainelAtual');
   ok(/if\(!currentUser\|\|currentUser\.role==='admin'\)return;/.test(rp) && /querySelector\('\.sb-item\[data-p\]\.on'\)/.test(rp) && /getElementById\('panel-locked'\)/.test(rp), 'reavaliarPainelAtual: só aluno; lê o item aceso e a tela de bloqueio');
   ok(/if\(naTelaDeBloqueio\|\|\(id&&!canSeePanel\(id\)\)\)\{goPanel\(id\|\|homePanel\(\)\);return;\}/.test(rp), 'reavaliarPainelAtual: navega de novo só se estava bloqueado ou o painel deixou de ser permitido');
-  ok(/if\(isDegustacao\(\)&&genQs\.length\)\{var _b=document\.getElementById\('btn-filter-provas'\);if\(_b\)_b\.click\(\);\}/.test(rp), 'reavaliarPainelAtual: busca feita enquanto pendente é refeita se a lista chegou como degustação (amostra)');
+  // 13/11/2026: o Banco passou a abrir "Estudar" em tela cheia; refaz só se o estudo estiver aberto
+  // (sem isso, o "click" abriria o estudo sozinho para quem só estava olhando os filtros).
+  ok(/if\(isDegustacao\(\)&&qzAberto\(\)\)\{var _b=document\.getElementById\('btn-filter-provas'\);if\(_b\)_b\.click\(\);\}/.test(rp), 'reavaliarPainelAtual: estudo aberto enquanto pendente é refeito se a lista chegou como degustação (amostra)');
   ok(/if\(id==='mmap'\)\{try\{renderMMList\(\);/.test(rp) && /if\(id==='cursos'\)\{try\{renderCursosAluno\(\);/.test(rp) && /renderDiretrizesInto\(_rb\)/.test(rp), 'reavaliarPainelAtual: mapas, cursos e diretrizes/resumos são repintados (dependem do plano)');
   ok(/if\(bloq&&bloq\.classList\.contains\('on'\)\)/.test(corpo('showLockedPanel').replace(/\s+/g, ' ')) || /p\.classList\.add\('on'\)/.test(corpo('showLockedPanel')), 'showLockedPanel: o cartão de bloqueio é o painel #panel-locked com classe on (é o que reavaliarPainelAtual procura)');
 }

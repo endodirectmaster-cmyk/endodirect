@@ -1185,6 +1185,17 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-ak. BANCO: "ESTUDAR" EM TELA CHEIA, UMA QUESTÃO POR VEZ (13/11/2026). Pedido do
+//      professor: os filtros já mostram quantas questões há; "Estudar" (no lugar de "Buscar")
+//      abre uma por vez, com Anterior/Próxima; voltar a uma respondida não conta de novo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-banco-estudar.js')], { stdio: 'pipe' });
+  ok('Banco: contagem nos filtros e "Estudar" em tela cheia, uma questão por vez, sem contar duas vezes');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Estudar do Banco falhou:\n' + out);
+}
+
 // 17c-undecies-aj. MAPA MENTAL EM TELA CHEIA (13/11/2026). Pedido do professor: o mapa aberto
 //      ocupa a tela toda, com "Voltar" no topo; nada do app por cima.
 try {
