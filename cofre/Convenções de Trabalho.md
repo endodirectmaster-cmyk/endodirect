@@ -1,9 +1,18 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-10-31
+atualizado: 2026-11-13
 ---
 
 # Convenções de Trabalho
+
+## 🌐 REDE DO AMBIENTE: FONTES MÉDICAS LIBERADAS (2026-11-13)
+
+Com aprovação do professor (pedido de rede pelo `update_environment`), o ambiente Default passou a abrir
+www.fda.gov, www.accessdata.fda.gov (Drugs@FDA e bulas em PDF), pmc.ncbi.nlm.nih.gov, www.ncbi.nlm.nih.gov,
+europepmc.org, www.ebi.ac.uk (API do Europe PMC), diabetesjournals.org, academic.oup.com, link.springer.com,
+www.nature.com e diretriz.diabetes.org.br. Na prática: FDA e PMC funcionam; diabetesjournals, OUP, Springer e Nature
+respondem com desafio Cloudflare ou login (o texto só vem pelo PMC quando é aberto). nejm.org, thelancet.com,
+jamanetwork.com, sagepub (Thyroid) e sites de empresas seguem fechados: usar o resumo do PubMed.
 
 ## 📚 CAPÍTULO × DIRETRIZ: QUANDO O RESUMO SEGUE A DIRETRIZ (2026-10-31)
 

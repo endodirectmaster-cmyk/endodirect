@@ -5,6 +5,14 @@ atualizado: 2026-11-13
 
 # Instagram Stories — "Questão do Dia"
 
+## 🆕 NOVIDADES DE 2026 NA FILA (2026-11-13)
+
+92 questões novas (FDA/Anvisa, diretrizes, ensaios, metanálises de 2026) entraram intercaladas com as 14 que
+esperavam: 106 na fila, até fim de fevereiro. Cada uma passou por gerador e revisor independente (nenhum gabarito
+trocado). Figura no comentário (`expImg`): 53 gráficos próprios em `figuras/qotd/` e 14 esquemas dos Resumos; 3 fotos
+do Open-i (CC BY) no enunciado. Ao postar, a questão entra no Banco com a figura do comentário (regra
+`qotdNoBanco`, PR #1022). Detalhes em [[Decisões]] (2026-11-13).
+
 ## 📚 POSTADA ENTRA NO BANCO DE QUESTÕES (2026-11-13)
 
 Pedido do professor: as questões do dia, ao serem postadas, entram sozinhas no Banco (e as já

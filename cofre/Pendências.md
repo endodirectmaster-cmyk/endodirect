@@ -1,14 +1,15 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-12
+atualizado: 2026-11-13
 ---
 
 # Pendências
 
-## 📚 Banco: questões de diretrizes desatualizadas (pedido de 12/11; AGENDADO para 13/11, 20h30 BRT)
+## 📚 Banco: questões de diretrizes desatualizadas (pedido de 12/11; FASE 1 ENTREGUE em 13/11, aguarda o "pode")
 
 Pedido do professor: *"no banco de questões, algumas questões estão desatualizadas com relação ao tempo. Por exemplo, tem uma questão que pergunta segundo a diretriz brasileira de diabetes de 2023, sendo que a diretriz já foi atualizada ... fazer um levantamento ... e atualizar para as diretrizes mais atuais ... apenas quando renovar o limite semanal ... amanhã à noite"*.
-- Agendado (send_later, `trig_01C9huwBLm2BiCu4E9fBUC8B`) para 13/11 às 20h30 BRT, depois da renovação do limite semanal (17h) e da geração das 92 Questões do Dia (18h).
+- **Fase 1 entregue em 13/11** (o professor antecipou: "Manda bala nos agendamentos. Pode começar agora"; o agendamento foi desligado): página https://claude.ai/artifact/5TphsnFdrkVmmyek1diJJP. **92 questões** citam documento já substituído: classe A (só nome/ano) 45, B (nota no comentário) 38, C (gabarito ou alternativa mudaria) 9; 37 Endodirect e 55 de prova oficial (TEEM 50). Outras 250 citam a versão vigente e não precisam de nada. Achados à parte: TEEM2024-044 com comentário de outra questão; TEEM2026-038/084 com comentário contrário à diretriz vigente; ENDODIRECT-824 cita diretriz inexistente; 1047/1049/1051 atribuem a Diretriz Internacional de SOP à Endocrine Society. Arquivos (com texto das questões) só no scratchpad `diretrizes-banco/`.
+- [ ] **Fase 2 só com o "pode" do professor.**
 - **Fase 1 (levantamento, sem gravar):** questões que citam diretriz/consenso com ano, separadas em autoria Endodirect × prova oficial, com a diretriz atual e a proposta; página para o professor aprovar.
 - **Fase 2 (só com o "pode"):** Endodirect → atualizar enunciado/alternativas/comentário; prova oficial → enunciado e gabarito intocados, só nota de atualização no comentário. Troca de gabarito só com o revisor independente concordando. Backup, função temporária com token e guarda md5, verificação; DROP só com o professor no computador.
 
@@ -18,16 +19,10 @@ Pedido do professor: *"no banco de questões, algumas questões estão desatuali
   ~10). Página no scratchpad (`qotd2026/novidades-2026.html`). Fontes: `radar_avisos` (≈2.000 itens de 2026) + web.
 - **Ficam de fora, a pedido do professor ("Isso não"):** semaglutida oral Lynavoy no FDA (fonte única), Yorvipath na
   Anvisa (datas divergentes) e a contagem de canetas GLP-1 da Anvisa (totais divergentes).
-- [ ] **Gerar as 92 em 13/11 a partir das 18h (BRT)** — professor: *"vamos fazer essas 92 questões amanhã, a partir das
-  18 horas. A ideia é já introduzi-las nas questões do dia, mas de forma intercalada com as que já existem"* e *"alterne
-  também entre questões diretas e questões de casos clínicos"*. Retomada agendada (trig_01VqU5Jcm6b8BLT9ys6xjnuk).
-  Regras: metade diretas e metade casos clínicos, alternadas; gerador + revisor, sem API; referência no PubMed.
-  **Imagem ilustrativa sempre que possível** (professor: *"É sempre interessante, se possível, em alguma dessas
-  questões, ter alguma imagem ilustrativa, seja do caso direto, seja do caso clínico"*): figura dos Resumos, Open-i só
-  CC BY/CC0/domínio público (com imgRef) ou ilustração própria (gráfico do resultado, esquema do mecanismo ou do
-  algoritmo); conferir antes como o app guarda `img` e o peso do payload (preferir URL; data URI webp ≤ ~40 KB). Fila (`ig_stories`): intercalar com as 15 em `queued` (posições
-  121–135 em 12/11) — existente, nova, existente, nova…, começando por uma existente; depois, rodízio por
-  subespecialidade. Backup, guarda, conferência, DROP com o professor no computador.
+- [x] **Geradas, revisadas e na fila em 13/11** (ver [[Decisões]] 2026-11-13 e [[Instagram Stories (Questão do Dia)]]).
+- [ ] **DROP da função temporária `endodirect_tmp_qotd_novidades`** — sem acesso do anon desde 13/11, token apagado, prazo vencido em 14/11 08:51 UTC. DROP só com o professor no computador (o cartão do Supabase não aparece no celular).
+- [ ] **Item 82 (alça fechada em menores de 7 anos, JCEM 2026):** conferir a errata (PMID 42090273) num navegador antes de a questão sair; o site da revista não abre daqui (Cloudflare). A resposta não depende dela (ICs sem sobreposição).
+- [ ] **Esquema dos Resumos `diabetes--rastreamento-do-diabetes-mellitus-tipo-1.svg`** diz "estágio 2, ≥ 8 anos" (regra da Anvisa); o FDA ampliou o teplizumabe no estágio 2 para ≥ 1 ano em 20/04/2026. Atualizar o esquema para citar as duas.
 
 ## 🧩 Comentários do banco: listas à espera do professor (12/11)
 - [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
