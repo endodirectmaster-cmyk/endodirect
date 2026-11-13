@@ -72,5 +72,14 @@ const letraFb = parseFloat((regraCss('.q-fb').match(/font-size:([\d.]+)rem/) || 
 ok('🧨 letra do comentário maior que antes (.75rem) e igual à da Questão do Dia (veio ' + letraFb + 'rem)', letraFb > 0.75 && letraFb === parseFloat((regraCss('.qp-fb').match(/font-size:([\d.]+)rem/) || [, '0'])[1]));
 ok('link da referência quebra dentro do comentário (não estoura a tela)', /overflow-wrap:anywhere/.test(regraCss('.q-fb')));
 
+// No computador: coluna central, botões com largura própria logo abaixo da questão (professor,
+// 13/11/2026, print no desktop: "os botões ... não precisam ocupar a tela inteira, assim como
+// também a caixa da questão").
+const desk = (html.match(/@media \(min-width:900px\)\{\n  \.qz-tela\{[\s\S]*?\n\}\n/) || [''])[0];
+ok('🧨 no computador, topo, questão e botões numa coluna central (max-width)', /\.qz-topo,\.qz-corpo,\.qz-rodape\{width:100%;max-width:\d+px;margin-left:auto;margin-right:auto\}/.test(desk));
+ok('🧨 no computador, os botões não esticam (largura própria, um em cada canto)', /\.qz-rodape \.btn\{flex:0 0 auto;/.test(desk) && /\.qz-rodape\{[^}]*justify-content:space-between/.test(desk));
+ok('🧨 no computador, os botões vêm logo abaixo da questão e grudam no pé quando ela é comprida', /\.qz-corpo\{flex:0 0 auto;/.test(desk) && /\.qz-rodape\{position:sticky;bottom:0/.test(desk) && /\.qz-tela\{overflow-y:auto/.test(desk));
+ok('trocar de questão no computador volta ao topo (a tela inteira rola)', /var tela=document\.getElementById\('qz-tela'\);if\(tela\)tela\.scrollTop=0;/.test(corpo('qzRender')));
+
 if (bad) { console.log('✗ Banco — Estudar: ' + bad + ' falha(s)'); process.exit(1); }
 console.log('✓ Banco — Estudar: contagem nos filtros, uma questão por vez em tela cheia, Anterior/Próxima, sem contar duas vezes');
