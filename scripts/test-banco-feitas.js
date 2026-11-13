@@ -72,7 +72,7 @@ function caixa(extra) {
     "var APP_LOJA='';", corpo('isAppLoja'), corpo('textoCompra'),
     corpo('esc'), corpo('ldHTML'), corpo('srsKey'), corpo('groundSys'), corpo('blockIfDegustacao'), corpo('planoAindaNaoConfirmado'), corpo('genCode'),
     'function provasPool(){return provasDB;}',
-    corpo('filterProvas'),
+    corpo('canonSub'), corpo('filterProvas'),
     corpo('feitaChave'), corpo('mesclarFeitas'), corpo('feitaDe'), corpo('feitaRegistrar'), corpo('feitaSeloHTML'),
   ].join('\n'), c);
   return c;

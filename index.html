@@ -12107,7 +12107,8 @@ function qRowHTML(q,i,src,isMC){
 function qFullHTML(q,i,src,isMC){
   var mc=q.type?(q.type!=='disc'):isMC;
   var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+feitaSeloHTML(q,src,i)+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
-  var img=q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'';
+  var img=q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">'
+    +(q.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;margin:-.3rem 0 .6rem;font-style:italic">'+esc(igShortRef(q.imgRef))+'</div>':''):'';
   var body;
   if(mc){
     var opts=Object.keys(q.options||{}).map(function(k){return'<div class="qo" id="qo-'+src+'-'+i+'-'+k+'" data-letter="'+k+'" data-answer="'+esc(q.answer||'')+'" data-exp="'+esc(q.explanation||'')+'" data-src="'+src+'" data-idx="'+i+'"><span class="qo-ltr">'+k+'</span>'+esc(q.options[k])+'</div>';}).join('');
@@ -12267,11 +12268,25 @@ function populateAno(selId,inst){
   sel.innerHTML='<option value="">Todos</option>'+anos.map(function(a){return'<option value="'+a+'">'+a+'</option>';}).join('');
   if(cur)sel.value=cur; // se o ano não existir nesta instituição, o select cai para "Todos" sozinho
 }
+// ⚠️ A caixa "Subespecialidade" do Banco era uma lista FIXA (13/11/2026): faltavam Lípides
+// (200 questões), Endocrinologia Básica (167) e Endocrinopatias (21), e "Endocrinologia
+// Esportiva" não batia com nenhuma ("Endocrinologia do Esporte", 40). Agora a lista sai das
+// questões que o aluno tem, na taxonomia das Diretrizes (canonSub), na ordem de DIR_SUBS.
+function populateArea(selId,inst){
+  var sel=document.getElementById(selId);if(!sel)return;
+  var cur=sel.value,vistas={};
+  provasPool().forEach(function(q){if(!q||(inst&&q.inst!==inst))return;var a=String(q.area||'').trim();if(a)vistas[canonSub(a)]=1;});
+  var ordem=(typeof DIR_SUBS!=='undefined'&&Array.isArray(DIR_SUBS))?DIR_SUBS:[];
+  var areas=Object.keys(vistas).sort(function(a,b){var ia=ordem.indexOf(a),ib=ordem.indexOf(b);ia=ia<0?999:ia;ib=ib<0?999:ib;return (ia-ib)||a.localeCompare(b,'pt');});
+  if(cur&&!vistas[canonSub(cur)])cur='';
+  sel.innerHTML='<option value="">Todas</option>'+areas.map(function(a){return'<option value="'+esc(a)+'">'+esc(a)+'</option>';}).join('');
+  sel.value=cur?canonSub(cur):'';
+}
 function filterProvas(inst,ano,area,type){
   return provasPool().filter(function(q){
     var isDisc=(q.type==='disc');
     var typeOk=!type||(type==='disc'?isDisc:!isDisc);
-    return(!inst||q.inst===inst)&&(!ano||String(q.ano)===String(ano))&&(!area||q.area===area)&&typeOk;
+    return(!inst||q.inst===inst)&&(!ano||String(q.ano)===String(ano))&&(!area||canonSub(q.area)===canonSub(area))&&typeOk;
   });
 }
 function updateProvaInfo(){
@@ -12281,6 +12296,7 @@ function updateProvaInfo(){
   var type=(document.getElementById('q-ptype')||{}).value||'';
   populateAno('q-ano',inst);
   ano=(document.getElementById('q-ano')||{}).value||''; // re-lê após repopular (mantém contagem e dropdown coerentes)
+  try{populateArea('q-parea',inst);area=(document.getElementById('q-parea')||{}).value||'';}catch(e){}
   // O banco Endodirect não é organizado por ano de prova (anos são genéricos),
   // então o filtro de Ano só faz sentido para instituições com provas datadas
   // (ex.: TEEM). Esconde o filtro para Endodirect / degustação.
@@ -15521,6 +15537,7 @@ function dirMigrateSub(s){var v=String(s||'').trim();if(v==='Reprodução')retur
 function canonSub(s){
   var v=String(s||'Geral').trim()||'Geral';
   if(v==='Dislipidemia e Aterosclerose')return 'Lípides';
+  if(v==='Básica')return 'Endocrinologia Básica'; // rótulo de 141 questões do Banco (13/11/2026)
   if(v==='Endocrinologia Feminina e Andrologia')return 'Endocrinologia Feminina';
   if(v==='Endocrinologia Esportiva'||v==='Esportiva')return 'Endocrinologia do Esporte';
   if(v==='Pediatria')return 'Endocrinologia Pediátrica';
@@ -17818,6 +17835,54 @@ function igExpCampos(it){
   return {expImg:String(it.expImg),expImgRef:String(it.expImgRef||''),expImgTema:String(it.expImgTema||''),expImgOrigem:String(it.expImgOrigem||'')};
 }
 function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}return queueRemoteStateSave(immediate);}
+// ── QUESTÃO DO DIA → BANCO DE QUESTÕES (13/11/2026) ─────────────────────────────────────
+// Professor: "à medida que elas forem subindo para a plataforma e forem lançadas, forem
+// postadas, serem incorporadas automaticamente no banco de questões. Isso já vale para as
+// questões anteriores que já foram postadas."
+// A MESMA regra mora em lib/instagram.js (o robô das 10h, que posta sozinho e confere se
+// alguma postada ficou de fora); scripts/test-qotd-no-banco.js roda as duas cópias e exige
+// saída idêntica. Identidade no Banco: sourceId 'qotd:<id da questão do dia>'.
+//  - postar: entra no Banco (código ENDODIRECT novo); postar de novo depois de Reabrir e
+//    corrigir ATUALIZA a cópia, sem duplicar;
+//  - Reabrir ("voltou para a fila"): sai do Banco, porque deixou de estar postada;
+//  - enunciado que já está no Banco (o professor já tinha posto lá) não duplica;
+//  - atribuição TEEM não entra: questão do TEEM mora no Banco como TEEM, com o acesso dele;
+//  - questão que o professor apagou do Banco (foraDoBanco) não volta sozinha.
+function qotdNoBanco(s,provas,agora){
+  if(!s||!s.id||!s.stem||!s.answer||!s.options||typeof s.options!=='object'||!Array.isArray(provas))return null;
+  if(String(s.teem||'').trim())return null;
+  var sid='qotd:'+s.id,stem=String(s.stem).trim(),existente=null,max=0;
+  for(var i=0;i<provas.length;i++){
+    var p=provas[i];if(!p)continue;
+    if(p.sourceId===sid){existente=p;continue;}
+    if(String(p.stem||'').trim()===stem)return null;
+    var m=/^ENDODIRECT-(\d+)$/i.exec(String(p.code||''));if(m&&+m[1]>max)max=+m[1];
+  }
+  var quando=+s.postedAt||agora;
+  var conteudo={stem:s.stem,options:JSON.parse(JSON.stringify(s.options)),answer:s.answer,explanation:s.explanation||'',
+    area:s.sub||'',ano:new Date(quando-3*3600000).getUTCFullYear(),img:s.img||'',imgRef:s.imgRef||''};
+  if(existente){
+    var mudou=Object.keys(conteudo).some(function(k){return JSON.stringify(existente[k]===undefined?'':existente[k])!==JSON.stringify(conteudo[k]);});
+    if(!mudou)return null;
+    Object.keys(conteudo).forEach(function(k){existente[k]=conteudo[k];});
+    if(!existente.img){delete existente.img;delete existente.imgRef;}
+    existente.qotdPostedAt=quando;
+    return 'atualizado';
+  }
+  var it={id:'qotd-'+s.id,code:'ENDODIRECT-'+(max+1),stem:conteudo.stem,options:conteudo.options,answer:conteudo.answer,
+    explanation:conteudo.explanation,area:conteudo.area,inst:'Endodirect',instituicao:'Endodirect',banca:'Endodirect',
+    ano:conteudo.ano,type:'mc',active:true,free:false,origem:'Questão do Dia',sourceId:sid,qotdPostedAt:quando,
+    importedAt:new Date(agora).toISOString()};
+  if(conteudo.img){it.img=conteudo.img;if(conteudo.imgRef)it.imgRef=conteudo.imgRef;}
+  provas.push(it);
+  return 'novo';
+}
+function qotdForaDoBanco(s,provas){
+  if(!s||!s.id||!Array.isArray(provas))return false;
+  var sid='qotd:'+s.id,antes=provas.length;
+  for(var i=provas.length-1;i>=0;i--){if(provas[i]&&provas[i].sourceId===sid)provas.splice(i,1);}
+  return provas.length!==antes;
+}
 function igSetV(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
 function igXml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 var _igMeas=null;
@@ -18968,7 +19033,10 @@ function bindAdmStories(){
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;stShowView('manual');igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
   main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
-  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();var pr=persistIgStories(true);renderAdmSec('stories');var okMsg=post?'✅ Publicada para os alunos!':'↺ Voltou para a fila.';if(pr&&pr.then){pr.then(function(ok){notify(ok?okMsg:'⚠️ Não consegui salvar agora — verifique a conexão e tente de novo.',ok?'ok':'err');});}else{notify(okMsg,'ok');}});});
+  main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();
+    // A postada entra no Banco; a reaberta sai (ver qotdNoBanco). Antes do save, para ir no mesmo.
+    var noBanco=null;try{if(post){delete it.foraDoBanco;noBanco=qotdNoBanco(it,provasDB,Date.now());}else if(qotdForaDoBanco(it,provasDB))noBanco='saiu';if(noBanco)lsSet('provas',provasDB);}catch(e){noBanco=null;}
+    var pr=persistIgStories(true);renderAdmSec('stories');var okMsg=post?('✅ Publicada para os alunos'+(noBanco==='novo'?' e incluída no Banco de Questões!':noBanco==='atualizado'?' e atualizada no Banco de Questões!':'!')):('↺ Voltou para a fila'+(noBanco==='saiu'?' e saiu do Banco de Questões.':'.'));if(pr&&pr.then){pr.then(function(ok){notify(ok?okMsg:'⚠️ Não consegui salvar agora — verifique a conexão e tente de novo.',ok?'ok':'err');});}else{notify(okMsg,'ok');}});});
   // Reordenar a fila é por ARRASTE na alça ⠿ (pedido do professor, 11/08) — as
   // setas ↑/↓ saíram. `igMoveQueued` continua existindo: é a mesma troca de
   // posições, e serve de caminho testável sem simular ponteiro.
@@ -21696,7 +21764,10 @@ function bindAdmSec(sec){
     if(bc)bc.addEventListener('click',function(){['adm-mq-stem','adm-mq-a','adm-mq-b','adm-mq-c','adm-mq-d','adm-mq-exp','adm-mq-inst'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});mqImgData=null;var pv=document.getElementById('adm-mq-imgprev');if(pv){pv.style.display='none';pv.innerHTML='';}});
   }
   if(sec==='provas'&&admProvaSubtab==='banco'){
-    function bindProvaDel(){main.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){if(!confirm('Deseja realmente excluir esta questão e o seu comentário? Esta ação não pode ser desfeita.'))return;provasDB.splice(parseInt(b.dataset.admDelprova),1);persistProvas();admBancoEditIdx=null;renderAdmSec('provas');});});}
+    function bindProvaDel(){main.querySelectorAll('[data-adm-delprova]').forEach(function(b){b.addEventListener('click',function(){if(!confirm('Deseja realmente excluir esta questão e o seu comentário? Esta ação não pode ser desfeita.'))return;var _ex=provasDB.splice(parseInt(b.dataset.admDelprova),1)[0];
+      // Questão do Dia apagada do Banco pelo professor: marca a origem para o robô diário não a repor.
+      var _sid=_ex&&String(_ex.sourceId||'');if(_sid.indexOf('qotd:')===0){var _st=igStories.filter(function(s){return s&&'qotd:'+s.id===_sid;})[0];if(_st){_st.foraDoBanco=true;try{lsSet('ig_stories',igStories);}catch(e){}}}
+      persistProvas();admBancoEditIdx=null;renderAdmSec('provas');});});}
     function bindBancoNav(){var pv=document.getElementById('adm-bq-prev');if(pv)pv.addEventListener('click',function(){admBancoEditIdx=null;admBancoPage--;refreshBanco();});var nx=document.getElementById('adm-bq-next');if(nx)nx.addEventListener('click',function(){admBancoEditIdx=null;admBancoPage++;refreshBanco();});}
     function renderBancoEditPreview(){var pv=document.getElementById('adm-bq-edit-imgprev');if(!pv)return;var q=provasDB[admBancoEditIdx];var cur=admBancoEditImg!==undefined?admBancoEditImg:((q&&q.expImg)||'');pv.innerHTML=cur?'<div style="display:flex;align-items:center;gap:.6rem;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .7rem"><img src="'+esc(cur)+'" style="height:50px;border-radius:6px"><span style="flex:1;font-size:.74rem;color:var(--t2)">Imagem do comentário</span><button class="btn btn-ghost btn-sm" id="adm-bq-edit-imgclear">✕</button></div>':'';var cl=document.getElementById('adm-bq-edit-imgclear');if(cl)cl.addEventListener('click',function(){admBancoEditImg='';renderBancoEditPreview();});}
     function handleBancoEditImg(f){if(!/^image\//.test(f.type)){notify('Selecione uma imagem.','err');return;}if(f.size>5*1024*1024){notify('Imagem muito grande (máx 5 MB).','err');return;}var r=new FileReader();r.onload=function(ev){admBancoEditImg=ev.target.result;renderBancoEditPreview();};r.readAsDataURL(f);}

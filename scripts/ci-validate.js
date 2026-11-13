@@ -1185,6 +1185,18 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-ao. QUESTÃO DO DIA → BANCO DE QUESTÕES (13/11/2026). Pedido do professor: as
+//      questões do dia, ao serem postadas, entram sozinhas no Banco (e as já postadas também).
+//      A regra mora no painel (botão "Postada") e no robô das 10h (lib/instagram.js): cópias
+//      idênticas, sem duplicar, sem TEEM, reaberta sai, apagada pelo professor não volta.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-qotd-no-banco.js')], { stdio: 'pipe' });
+  ok('questão do dia no banco: postou, entrou (painel e robô, mesma regra); sem duplicar; filtro oferece a área');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da questão do dia no banco falhou:\n' + out);
+}
+
 // 17c-undecies-an. MURAL DE AVISOS NO DASHBOARD (13/11/2026). Pedido do professor: avisos de
 //      videoaula nova, aula nova da EMC, edital e prova no Dashboard. A função do aluno
 //      (member_content_sem_provas) entrega `avisos_alunos`; o painel do professor escreve.
