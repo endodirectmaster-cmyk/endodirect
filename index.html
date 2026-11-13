@@ -515,6 +515,8 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .btn-ghost:hover:not(:disabled){color:var(--tx);background:var(--s2)}
 .btn-danger{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .btn-sm{padding:.26rem .6rem;font-size:.68rem}
+/* Flashcards: "+ Novo card" e "Estudar" maiores (13/11/2026, pedido do professor). */
+.fc-acoes .btn{padding:.6rem 1.1rem;font-size:.86rem;font-weight:600;min-height:42px}
 /* App das lojas (APP_LOJA, no <head>): sem preço, "assine" nem checkout. As
    portas para a tela de pacotes também param em showAssineScreen; aqui somem os
    botões que levariam até ela. */
@@ -655,6 +657,20 @@ textarea{resize:vertical;line-height:1.6}
 .mm-generate-row{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content;gap:8px;align-items:end}
 .mm-help{font-size:.68rem;color:var(--t3);margin-top:.65rem}
 .mm-live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.45rem}
+/* Mapa mental em TELA CHEIA (13/11/2026, pedido do professor: "quando abrisse o mapa mental,
+   aparecesse na tela toda ... com um botão lá em cima de voltar"). Só o mapa e uma barra com
+   Voltar, título e Salvar; nada do app por cima; respeita o entalhe do iPhone. */
+.mm-voltar{display:none}
+body.mm-tela-cheia{overflow:hidden}
+/* 850: acima do app (barra, menu), abaixo das janelas (sessão 900, login 1000, avisos 1100). */
+body.mm-tela-cheia::after{background:#1c2a48}
+body.mm-tela-cheia #mm-live{position:fixed;inset:0;z-index:850;margin:0!important;display:flex!important;flex-direction:column;background:#1c2a48;padding:calc(env(safe-area-inset-top,0px) + .45rem) calc(env(safe-area-inset-right,0px) + .5rem) calc(env(safe-area-inset-bottom,0px) + .45rem) calc(env(safe-area-inset-left,0px) + .5rem)}
+body.mm-tela-cheia #mm-live .mm-live-head{flex:0 0 auto;flex-wrap:nowrap;margin-bottom:.4rem}
+body.mm-tela-cheia #mm-live-title{color:#fff!important;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+body.mm-tela-cheia .mm-voltar{display:inline-flex;flex:0 0 auto;color:#fff;border:1px solid rgba(255,255,255,.35);background:transparent}
+body.mm-tela-cheia #btn-mm-close{display:none}
+body.mm-tela-cheia #btn-mm-save{white-space:nowrap}
+body.mm-tela-cheia #mm-svg-wrap{flex:1 1 auto;min-height:0!important;max-height:none!important;border:0;border-radius:12px;padding:.6rem}
 .mm-live-actions{display:flex;gap:5px;align-items:center}
 .mm-map-wrap{background:#1c2a48;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:640px;touch-action:pan-x pan-y}
 .mm-svg-stage{min-width:max-content;min-height:620px;position:relative}
@@ -2720,9 +2736,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Flashcards</b></div>
       <div class="ph"><h1>Flashcards</h1></div>
       <div class="pc">
-        <div style="display:flex;gap:7px;margin-bottom:.85rem;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" id="fc-btn-create">+ Novo card</button>
-          <button class="btn btn-outline btn-sm" id="fc-btn-study">📖 Estudar</button>
+        <div class="fc-acoes" style="display:flex;gap:8px;margin-bottom:.85rem;flex-wrap:wrap">
+          <button class="btn btn-primary" id="fc-btn-create">+ Novo card</button>
+          <button class="btn btn-outline" id="fc-btn-study">📖 Estudar</button>
         </div>
         <div id="fc-create" style="display:none" class="gen-box">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Novo card</span><button class="btn btn-ghost btn-sm" id="fc-create-cancel">✕</button></div>
@@ -2780,6 +2796,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         </div>
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
           <div class="mm-live-head">
+            <button class="btn btn-ghost btn-sm mm-voltar" id="btn-mm-voltar" type="button" aria-label="Voltar para a lista de mapas">← Voltar</button>
             <span style="font-size:.87rem;font-weight:600;color:var(--tx)" id="mm-live-title"></span>
             <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">×</button></div>
           </div>
@@ -9115,6 +9132,7 @@ var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (at�
 // Confirmação no logout iniciado pelo usuário (o auto-logout por inatividade chama doLogout direto, sem prompt).
 function confirmLogout(){ if(confirm('Deseja realmente encerrar a sessão?'))doLogout(); }
 function doLogout(){
+  try{mmTelaCheia(false);}catch(e){}
   hideSessionWarning();
   loggingOut=true;
   try{lsSet('demo_session',null);lsSet('last_panel',null);lsSet('adm_sec',null);}catch(e){}
@@ -10582,6 +10600,9 @@ function goPanel(id){
   try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
   try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',menuAlvo);}catch(e){} // lembra o item do MENU p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  // Saiu do painel (menu, voltar do navegador, link de notificação): a tela cheia do mapa não
+  // pode ficar cobrindo o painel novo.
+  if(id!=='mmap')try{mmTelaCheia(false);}catch(e){}
   var el=document.getElementById('panel-'+id);
   if(el)el.classList.add('on');
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.classList.toggle('on',b.dataset.p===menuAlvo);});
@@ -12399,6 +12420,7 @@ function newBlankMM(){
   if(!topic){notify('Digite um tema.','err');return;}
   curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:sampleMMData(topic),at:Date.now()};
   document.getElementById('mm-live').style.display='block';
+  mmTelaCheia(true);
   setText('mm-live-title',curMM.data.root||topic);
   renderMMEditor();
 }
@@ -12491,6 +12513,7 @@ function viewMMShared(j){
   curMM={id:Date.now(),topic:m.topic,sub:m.sub||mmSubSel||'',data:normalizeMMData(m.data),at:Date.now()};
   document.getElementById('mm-live').style.display='block';
   document.getElementById('panel-mmap').classList.add('mm-open');
+  mmTelaCheia(true);
   setText('mm-live-title',curMM.data.root||m.topic);
   renderMMEditor();
   document.getElementById('panel-mmap').scrollTop=0;
@@ -12500,10 +12523,13 @@ function viewMM(i){
   curMM={id:m.id||Date.now(),topic:m.topic,sub:m.sub||mmSubSel||'',data:normalizeMMData(m.data),at:m.at||Date.now()};
   document.getElementById('mm-live').style.display='block';
   document.getElementById('panel-mmap').classList.add('mm-open');
+  mmTelaCheia(true);
   setText('mm-live-title',curMM.data.root||m.topic);
   renderMMEditor();
   document.getElementById('panel-mmap').scrollTop=0;
 }
+// Liga/desliga a tela cheia do mapa (ver o CSS .mm-tela-cheia).
+function mmTelaCheia(on){document.body.classList.toggle('mm-tela-cheia',!!on);}
 function mmRedraw(){
   if(curMM)renderMMEditor();
 }
@@ -16685,6 +16711,7 @@ function admMMEditPanel(m,j){
 // professor edita; __mmLiveHome guarda o lugar original p/ devolver ao sair.
 var mmAdminEdit=false,__mmLiveHome=null;
 function restoreMMLive(){
+  mmTelaCheia(false);
   var live=document.getElementById('mm-live');
   if(live&&__mmLiveHome&&live.parentNode!==__mmLiveHome){
     live.style.display='none';
@@ -24144,11 +24171,14 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
   document.getElementById('btn-mm-close').addEventListener('click',function(){
+    mmTelaCheia(false);
     if(mmAdminEdit){admMMDraft=null;admMMEditId=null;restoreMMLive();try{renderAdmSec('mapas');}catch(e){}return;}
     document.getElementById('mm-live').style.display='none';
     document.getElementById('panel-mmap').classList.remove('mm-open');
     curMM=null;
   });
+  // "← Voltar" da tela cheia faz o mesmo que o × (sai do mapa e volta à lista).
+  document.getElementById('btn-mm-voltar').addEventListener('click',function(){document.getElementById('btn-mm-close').click();});
 
   // CRONOGRAMA
   document.getElementById('btn-crono-gen').addEventListener('click',genCrono);
