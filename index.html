@@ -516,6 +516,22 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .btn-danger{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .btn-sm{padding:.26rem .6rem;font-size:.68rem}
 /* Flashcards: "+ Novo card" e "Estudar" maiores (13/11/2026, pedido do professor). */
+/* Banco de questões: "Estudar" em tela cheia, uma questão por vez (13/11/2026). Camada 850, como o
+   mapa mental: acima do app, abaixo da janela de sessão (900), do login (1000) e dos avisos (1100). */
+.qz-estudar{min-height:44px;font-size:.86rem;font-weight:600;padding:.6rem 1.15rem}
+.qz-tela{position:fixed;inset:0;z-index:850;background:var(--bg);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + .5rem) calc(env(safe-area-inset-right,0px) + .75rem) calc(env(safe-area-inset-bottom,0px) + .6rem) calc(env(safe-area-inset-left,0px) + .75rem)}
+.qz-topo{display:flex;align-items:center;gap:.6rem;flex:0 0 auto;margin-bottom:.55rem}
+.qz-info{display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;text-align:right;gap:2px}
+#qz-prog{font-weight:700;color:var(--tx);font-size:.92rem;font-variant-numeric:tabular-nums}
+#gen-counter{font-size:.74rem;font-weight:600;color:var(--blue);font-variant-numeric:tabular-nums}
+.qz-corpo{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.qz-rodape{display:flex;gap:.6rem;flex:0 0 auto;padding-top:.6rem}
+.qz-rodape .btn,.qz-sair{min-height:46px;font-size:.9rem;font-weight:600;padding:.6rem 1rem;justify-content:center}
+.qz-rodape .btn{flex:1 1 0}
+.qz-rodape .btn:disabled{opacity:.45}
+.qz-sair{background:var(--surface);border:1px solid var(--bd);color:var(--tx)}
+body.qz-aberto{overflow:hidden}
+body.qz-aberto::after{background:var(--bg)}
 .fc-acoes .btn{padding:.6rem 1.1rem;font-size:.86rem;font-weight:600;min-height:42px}
 /* App das lojas (APP_LOJA, no <head>): sem preço, "assine" nem checkout. As
    portas para a tela de pacotes também param em showAssineScreen; aqui somem os
@@ -2546,6 +2562,18 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:#9aa6ba"><a href="/privacidade" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Privacidade</a> · <a href="/termos" target="_blank" rel="noopener" style="color:#8a93a3;text-decoration:none">Termos</a></div>
   </div>
 </div>
+<!-- Banco de questões: Estudar em tela cheia, uma questão por vez (13/11/2026). -->
+<div id="qz-tela" class="qz-tela" style="display:none" role="dialog" aria-modal="true" aria-labelledby="qz-prog">
+  <div class="qz-topo">
+    <button type="button" class="btn qz-sair" id="qz-sair" aria-label="Sair do estudo e voltar aos filtros">← Voltar</button>
+    <div class="qz-info"><span id="qz-prog"></span><span id="gen-counter"></span></div>
+  </div>
+  <div class="qz-corpo" id="qz-corpo"><div class="desl-palco"><div id="qz-card"></div></div></div>
+  <div class="qz-rodape">
+    <button type="button" class="btn btn-outline" id="qz-ant">← Anterior</button>
+    <button type="button" class="btn btn-primary" id="qz-prox">Próxima →</button>
+  </div>
+</div>
 <div id="checkout-modal" style="display:none;position:fixed;inset:0;z-index:1200;background:rgba(6,11,22,.82);align-items:flex-start;justify-content:center;overflow:auto;padding:1.2rem">
   <div style="max-width:440px;width:100%;margin:auto;background:#121c33;border:1px solid #2a3a5c;border-radius:16px;padding:1.6rem 1.4rem;box-shadow:0 24px 60px rgba(0,0,0,.5)">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.2rem">
@@ -2712,7 +2740,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           </div>
           <label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--t2);margin:0 0 .6rem;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="q-naofeitas" style="width:16px;height:16px;flex-shrink:0"> Mostrar só as que ainda não respondi</label>
           <div style="background:var(--blue-l);border-radius:var(--rs);padding:.55rem .8rem;font-size:.74rem;color:var(--blue);margin-bottom:.7rem" id="q-prova-info">Selecione filtros para ver questões.</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" id="btn-filter-provas">🔍 Buscar questões</button></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary qz-estudar" id="btn-filter-provas" disabled>▶ Estudar</button></div>
         </div>
         <div id="q-gen-results"></div>
         <div id="q-panel-salvo" style="display:none">
@@ -3170,7 +3198,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         </div>
         <div class="card">
           <div class="faq-item"><div class="faq-q">Como usar o Chat IA? <span>▾</span></div><div class="faq-a">Acesse Chat IA no menu e faça perguntas sobre endocrinologia. A IA responde com base em evidências científicas.</div></div>
-          <div class="faq-item"><div class="faq-q">Como filtrar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de questões, aba Provas anteriores, escolha a subespecialidade (diabetes, tireoide, etc.), a instituição, o ano e o tipo, e clique em "Buscar questões".</div></div>
+          <div class="faq-item"><div class="faq-q">Como filtrar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de questões, aba Provas anteriores, escolha a subespecialidade (diabetes, tireoide, etc.), a instituição, o ano e o tipo: a contagem aparece na hora. Depois clique em "Estudar" para responder uma questão por vez, em tela cheia, com os botões "Anterior" e "Próxima".</div></div>
           <div class="faq-item"><div class="faq-q">Como funciona a revisão espaçada? <span>▾</span></div><div class="faq-a">Utiliza o algoritmo SM-2. Os cards com maior dificuldade aparecem com mais frequência até serem dominados.</div></div>
           <div class="faq-item so-site"><div class="faq-q">📱 Como deixar o app na tela do iPhone/Android? <span>▾</span></div><div class="faq-a">O Endodirect é instalável (PWA): fica com ícone na tela inicial e abre em tela cheia, sem baixar nada da loja.<br><br><b>iPhone (Safari):</b> toque em <b>Compartilhar</b> (quadrado com a seta ↑) → <b>Adicionar à Tela de Início</b> → <b>Adicionar</b>.<br><br><b>Android (Chrome):</b> toque no menu <b>⋮</b> → <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>) → confirme.</div></div>
         </div>
@@ -9133,6 +9161,7 @@ var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (at�
 function confirmLogout(){ if(confirm('Deseja realmente encerrar a sessão?'))doLogout(); }
 function doLogout(){
   try{mmTelaCheia(false);}catch(e){}
+  try{if(qzAberto())qzFechar();}catch(e){}
   hideSessionWarning();
   loggingOut=true;
   try{lsSet('demo_session',null);lsSet('last_panel',null);lsSet('adm_sec',null);}catch(e){}
@@ -10050,7 +10079,7 @@ function reavaliarPainelAtual(){
   if(id==='quest'){try{applyQuestDegustacao();populateInst('q-inst');updateProvaInfo();
     // Uma busca feita enquanto pendente mostrava o banco inteiro guardado no aparelho; se a lista
     // chegou como degustação, refaz a busca para a amostra valer também no que já estava na tela.
-    if(isDegustacao()&&genQs.length){var _b=document.getElementById('btn-filter-provas');if(_b)_b.click();}}catch(e){}}
+    if(isDegustacao()&&qzAberto()){var _b=document.getElementById('btn-filter-provas');if(_b)_b.click();}}catch(e){}}
   if(id==='mmap'){try{renderMMList();}catch(e){}}
   if(id==='cursos'){try{renderCursosAluno();}catch(e){}}
   if(id==='ref'||id==='resu'){try{var _rb=document.getElementById(id==='ref'?'ref-body':'resu-body');if(_rb&&(id==='resu'||DIRETRIZES_PUBLICADO)){refPrivadoMode=(id==='resu');renderDiretrizesInto(_rb);}}catch(e){}}
@@ -10603,6 +10632,7 @@ function goPanel(id){
   // Saiu do painel (menu, voltar do navegador, link de notificação): a tela cheia do mapa não
   // pode ficar cobrindo o painel novo.
   if(id!=='mmap')try{mmTelaCheia(false);}catch(e){}
+  if(id!=='quest')try{if(qzAberto())qzFechar();}catch(e){}
   var el=document.getElementById('panel-'+id);
   if(el)el.classList.add('on');
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.classList.toggle('on',b.dataset.p===menuAlvo);});
@@ -11712,26 +11742,55 @@ function pickQuestions(data){
 // `q-topic`) que não existem mais — código morto apontando para elemento
 // inexistente é a semente do apagão que o cofre registra duas vezes.
 // O Resumidor de Artigos continua gerando questões, por outro caminho.
-var genPage=0;
-var GEN_PER_PAGE=3;
-function renderGenQ(isMC){
-  var res=document.getElementById('q-gen-results');
-  var total=genQs.length;
-  var pages=Math.max(1,Math.ceil(total/GEN_PER_PAGE));
-  if(genPage>=pages)genPage=pages-1;
-  if(genPage<0)genPage=0;
-  var start=genPage*GEN_PER_PAGE,end=Math.min(start+GEN_PER_PAGE,total);
-  var rows='';for(var i=start;i<end;i++){rows+=qFullHTML(genQs[i],i,'gen',isMC);}
-  var nav=pages>1?'<div style="display:flex;align-items:center;justify-content:center;gap:.7rem;margin-top:.8rem;flex-wrap:wrap">'
-    +'<button class="btn btn-outline btn-sm" id="gen-prev"'+(genPage===0?' disabled':'')+'>← Anterior</button>'
-    +'<span style="font-size:.76rem;color:var(--t2)">Página '+(genPage+1)+' de '+pages+'</span>'
-    +'<button class="btn btn-outline btn-sm" id="gen-next"'+(genPage>=pages-1?' disabled':'')+'>Próxima →</button>'
-    +'</div>':'';
-  res.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin:.15rem 0 .5rem"><div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap"><span class="sec-title">'+total+' questão(ões)</span><span id="gen-counter" style="font-size:.74rem;font-weight:600;color:var(--blue)"></span></div><button class="btn btn-primary btn-sm" id="btn-save-all-q">💾 Salvar todas</button></div><div class="q-list">'+rows+'</div>'+nav;
-  document.getElementById('btn-save-all-q').addEventListener('click',saveAllQ);
+// ── BANCO DE QUESTÕES: ESTUDAR EM TELA CHEIA, UMA QUESTÃO POR VEZ (13/11/2026) ──
+// Pedido do professor: os filtros já mostram quantas questões há; no lugar de "Buscar questões",
+// "Estudar" abre uma questão por vez em tela cheia, e o aluno passa com "Próxima" e "Anterior"
+// (não avança sozinho ao responder). Voltar a uma questão já respondida mostra a resposta dada,
+// sem registrar de novo. Substitui a lista de 3 por página com "Salvar todas".
+var qzIdx=0;
+function qzAberto(){var t=document.getElementById('qz-tela');return !!(t&&t.style.display!=='none');}
+function qzAbrir(){
+  var t=document.getElementById('qz-tela');if(!t||!genQs.length)return;
+  qzIdx=0;t.style.display='flex';document.body.classList.add('qz-aberto');
+  qzRender(0);
+  try{document.getElementById('qz-prox').focus({preventScroll:true});}catch(e){}
+}
+function qzFechar(){
+  var t=document.getElementById('qz-tela');if(!t)return;
+  t.style.display='none';document.body.classList.remove('qz-aberto');
+  try{updateProvaInfo();}catch(e){}
+}
+function qzRender(dir){
+  var n=genQs.length;if(!n){qzFechar();return;}
+  if(qzIdx<0)qzIdx=0;if(qzIdx>n-1)qzIdx=n-1;
+  deslizar(function(){return document.getElementById('qz-card');},dir,function(){
+    var card=document.getElementById('qz-card');if(!card)return;
+    card.innerHTML=qFullHTML(genQs[qzIdx],qzIdx,'gen',true);
+    qzRestaura(qzIdx);
+  });
+  setText('qz-prog','Questão '+(qzIdx+1)+' de '+n);
+  var ant=document.getElementById('qz-ant'),prox=document.getElementById('qz-prox');
+  if(ant)ant.disabled=qzIdx===0;
+  if(prox)prox.textContent=qzIdx>=n-1?'Concluir ✓':'Próxima →';
+  var corpo=document.getElementById('qz-corpo');if(corpo)corpo.scrollTop=0;
   updateGenCounter();
-  var pv=document.getElementById('gen-prev');if(pv)pv.addEventListener('click',function(){genPage--;renderGenQ(isMC);res.scrollIntoView({behavior:'smooth',block:'start'});});
-  var nx=document.getElementById('gen-next');if(nx)nx.addEventListener('click',function(){genPage++;renderGenQ(isMC);res.scrollIntoView({behavior:'smooth',block:'start'});});
+}
+// Questão já respondida nesta sessão: mostra de novo a marcação e o comentário, sem contar outra vez.
+function qzRestaura(i){
+  var r=genAnswered[i],q=genQs[i];if(!r||!q||r.letra===undefined)return;
+  marcaResposta(r.letra,q.answer||'',q.explanation||'','gen',i,q);
+}
+function qzVai(passo){
+  var n=genQs.length;
+  if(passo>0&&qzIdx>=n-1){
+    var keys=Object.keys(genAnswered).filter(function(k){return genAnswered[k]&&!genAnswered[k].anulada;});
+    var ac=keys.filter(function(k){return genAnswered[k].ok;}).length;
+    qzFechar();
+    notify(keys.length?('Fim! Você respondeu '+keys.length+' de '+n+' e acertou '+ac+' ('+Math.round(ac/keys.length*100)+'%).'):'Fim das questões.','ok');
+    return;
+  }
+  if(passo<0&&qzIdx<=0)return;
+  qzIdx+=passo;qzRender(passo);
 }
 function updateGenCounter(){
   var el=document.getElementById('gen-counter');if(!el)return;
@@ -11772,10 +11831,10 @@ function toggleQDetail(i,src,isMC){
     el.innerHTML='<div class="q-detail">'+(src==='saved'?'<div class="q-stem">'+esc(q.stem)+'</div>':'')+(q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">':'')+'<div class="fld2"><label>Sua resposta</label><textarea id="disc-'+src+'-'+i+'" rows="4" placeholder="Escreva…"></textarea></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-eval-disc="'+i+'" data-eval-src="'+src+'">Avaliar</button>'+((q.expected||q.explanation)?'<button class="btn btn-outline btn-sm" data-reveal-disc="'+i+'" data-reveal-src="'+src+'">📋 Ver expectativa</button>':'')+(src==='gen'?'<button class="btn btn-outline btn-sm" data-save-q="'+i+'">💾 Salvar</button>':'')+'</div><div id="qexp-'+src+'-'+i+'" style="display:none;white-space:pre-wrap;background:var(--grn-l);border:1px solid #1e5436;border-radius:var(--rs);padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.55rem"></div><div id="qfb-'+src+'-'+i+'"></div></div>';
   }
 }
-function selectOpt(letter,answer,explanation,src,idx){
+// Marca as alternativas (certa/errada/anulada) e escreve o comentário. Sem registrar nada:
+// usada pela resposta (selectOpt) e para remostrar uma questão já respondida (qzRestaura).
+function marcaResposta(letter,answer,explanation,src,idx,q){
   var pfx='qo-'+src+'-'+idx+'-';
-  if(document.querySelector('[id^="'+pfx+'"].correct,[id^="'+pfx+'"].wrong,[id^="'+pfx+'"].annul'))return;
-  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
   var anulada=!answer; // gabarito vazio = questão anulada pela banca (não pontua)
   var ok=!anulada&&letter===answer;
   document.querySelectorAll('[id^="'+pfx+'"]').forEach(function(el){
@@ -11794,7 +11853,14 @@ function selectOpt(letter,answer,explanation,src,idx){
       fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+esc(answer))+(expTxt?' — '+expTxt:'')+'</div>'+expImg;
     }
   }
-  if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada};updateGenCounter();}
+  return {ok:ok,anulada:anulada};
+}
+function selectOpt(letter,answer,explanation,src,idx){
+  var pfx='qo-'+src+'-'+idx+'-';
+  if(document.querySelector('[id^="'+pfx+'"].correct,[id^="'+pfx+'"].wrong,[id^="'+pfx+'"].annul'))return;
+  var q=src==='gen'?genQs[parseInt(idx)]:DB.q[parseInt(idx)];
+  var _r=marcaResposta(letter,answer,explanation,src,idx,q),ok=_r.ok,anulada=_r.anulada;
+  if(src==='gen'){genAnswered[parseInt(idx)]={ok:ok,anulada:anulada,letra:letter};updateGenCounter();}
   if(q){try{feitaRegistrar(q,anulada?null:ok,src,idx,anulada?'anulada':'');}catch(e){}} // anulada também "foi vista": não volta no sorteio
   if(!anulada&&q&&q.area){if(!DB.perf[q.area])DB.perf[q.area]={correct:0,total:0};DB.perf[q.area].total++;if(ok)DB.perf[q.area].correct++;try{studyEvent(q,ok);}catch(e){}persist();try{refreshDash();}catch(e){}}
   // O botão "Por que as outras alternativas estão incorretas?" (IA, 04/10/2026) saiu
@@ -11859,15 +11925,6 @@ function evalDisc(i,src,btn){
   .then(function(r){fb.innerHTML='<div style="background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:.6rem .8rem;font-size:.75rem;color:var(--t2);line-height:1.6;margin-top:.65rem">'+esc(r)+'</div>';try{feitaRegistrar(q,null,src,i,'disc');}catch(e){}})
   .catch(function(e){fb.innerHTML='<div style="color:var(--red);font-size:.74rem">Erro: '+esc(e.message)+'</div>';})
   .then(function(){btn.disabled=false;btn.textContent='Avaliar';});
-}
-function saveAllQ(){
-  var n=0;
-  genQs.forEach(function(q){
-    if(!DB.q.find(function(x){return x.stem===q.stem;})){
-      DB.q.push(Object.assign({},q,{code:q.code||genCode(q.area),type:qtype,at:Date.now()}));n++;
-    }
-  });
-  persist();refreshDash();renderSavedQ();notify(n+' questão(ões) salva(s)!','ok');
 }
 function saveOneQ(i){
   var q=genQs[i];if(!q)return;
@@ -11958,6 +12015,9 @@ function updateProvaInfo(){
   // Enquanto carrega ou depois de falhar, a área de resultados explica — em vez
   // de o aluno clicar em Buscar e ler "Nenhuma questão encontrada".
   if(estado){var rs=document.getElementById('q-gen-results');if(rs)rs.innerHTML=bancoEstadoHTML(estado);}
+  // O botão "Estudar" diz quantas questões entram (pedido do professor, 13/11/2026).
+  var bt=document.getElementById('btn-filter-provas');
+  if(bt){var podeN=(!estado&&n>0)?n:0;bt.disabled=!podeN;bt.textContent=podeN?('▶ Estudar '+podeN+(podeN===1?' questão':' questões')):'▶ Estudar';}
 }
 // ⚠️ TELA VAZIA NUNCA (24/09/2026). O banco do aluno só existe no aparelho
 // depois de UM carregamento completo (applyStatePayload guarda as chaves de
@@ -11989,16 +12049,16 @@ function bancoTentarDeNovo(btn){
   return Promise.all(cargas).then(function(){
     try{populateInst('q-inst');}catch(e){}
     updateProvaInfo();
-    // Chegou: refaz a busca com os filtros que o aluno já escolheu.
-    if(!bancoEstado()){var b=document.getElementById('btn-filter-provas');if(b)b.click();}
+    // Chegou: a contagem dos filtros já se atualizou acima; o estudo só abre quando o aluno pedir.
+    if(!bancoEstado()){var rs=document.getElementById('q-gen-results');if(rs)rs.innerHTML='';}
   });
 }
 function renderProvaResults(qs){
   if(!qs.length){var _est=bancoEstado();document.getElementById('q-gen-results').innerHTML=_est?bancoEstadoHTML(_est):'<div class="empty">Nenhuma questão encontrada.</div>';return;}
   genQs=qs.map(function(q){return Object.assign({},q,{type:q.type||(q.options&&Object.keys(q.options).length?'mc':'disc')});});
   genAnswered={};
-  genPage=0;
-  renderGenQ(true);
+  var rs=document.getElementById('q-gen-results');if(rs)rs.innerHTML='';
+  qzAbrir();
 }
 // ── FLASHCARDS ──
 var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null,fcTema='';
@@ -24146,6 +24206,17 @@ document.addEventListener('DOMContentLoaded',function(){
     var soNao=document.getElementById('q-naofeitas');
     if(soNao&&soNao.checked)qs=qs.filter(function(q){return !feitaDe(q);});
     renderProvaResults(qs);
+  });
+  // Estudar (tela cheia, uma por vez): Voltar sai; Anterior/Próxima andam; setas e Esc no teclado.
+  document.getElementById('qz-sair').addEventListener('click',qzFechar);
+  document.getElementById('qz-ant').addEventListener('click',function(){qzVai(-1);});
+  document.getElementById('qz-prox').addEventListener('click',function(){qzVai(1);});
+  document.addEventListener('keydown',function(e){
+    if(!qzAberto())return;
+    var tg=e.target&&e.target.tagName;if(tg==='TEXTAREA'||tg==='INPUT')return;
+    if(e.key==='ArrowRight'){e.preventDefault();qzVai(1);}
+    else if(e.key==='ArrowLeft'){e.preventDefault();qzVai(-1);}
+    else if(e.key==='Escape'){e.preventDefault();qzFechar();}
   });
   // "Só as que ainda não respondi" muda a contagem na hora.
   var _soNao=document.getElementById('q-naofeitas');if(_soNao)_soNao.addEventListener('change',updateProvaInfo);

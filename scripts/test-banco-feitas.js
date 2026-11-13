@@ -148,7 +148,9 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(/try\{feitaRegistrar\(q,null,src,i,'disc'\);\}catch\(e\)\{\}/.test(corpo('evalDisc')), 'evalDisc: discursiva avaliada vira respondida');
     ok(/margin-bottom:\.45rem">'\+feitaSeloHTML\(q,src,i\)\+\(q\.code\?/.test(corpo('qFullHTML')), 'qFullHTML: o selo entra nas etiquetas do card (objetivas e discursivas)');
     ok(/align-items:center">'\+feitaSeloHTML\(q,'saved',i\)\+\(q\.code\?/.test(corpo('renderSavedQ')), 'renderSavedQ: o banco salvo também mostra o selo');
-    ok((html.match(/\{code:q\.code\|\|genCode\(q\.area\),type:qtype,at:Date\.now\(\)\}/g) || []).length === 2, 'salvar: a cópia preserva o código original — responder no banco salvo marca a mesma questão do Banco');
+    // 13/11/2026: "Salvar todas" saiu com a lista paginada (o Banco passou a "Estudar" uma por vez);
+    // fica o "💾 Salvar" de cada questão.
+    ok(/\{code:q\.code\|\|genCode\(q\.area\),type:qtype,at:Date\.now\(\)\}/.test(corpo('saveOneQ')) && !/function saveAllQ\(/.test(html), 'salvar: a cópia preserva o código original — responder no banco salvo marca a mesma questão do Banco');
     ok(/lsSet\(k,k==='feitas'\?DB\.feitas:payload\[k\]\)/.test(corpo('applyStatePayload')), 'applyStatePayload: a cópia local recebe a UNIÃO, não o payload cru do servidor');
     const iDl = html.lastIndexOf('doLogin=function(u){');
     ok(/if\(!ownLocal\)\{try\{DB\.feitas=\{\};lsSet\('feitas',null\);\}catch\(e\)\{\}\}/.test(html.slice(iDl, iDl + 2500)), 'doLogin: trocou a conta neste navegador (qualquer papel) → as respondidas da anterior não se unem às desta');

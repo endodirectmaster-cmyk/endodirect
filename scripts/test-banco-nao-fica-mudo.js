@@ -499,7 +499,7 @@ process.on('exit', (code) => {
     ok(/bancoEstado\(\)/.test(rpr) && /bancoEstadoHTML\(_est\)/.test(rpr), 'renderProvaResults: busca vazia durante carga/erro mostra o estado, não "Nenhuma questão encontrada"');
     ok(/document\.getElementById\('q-gen-results'\)\.addEventListener\('click',function\(e\)\{\s*var b=e\.target&&e\.target\.closest\?e\.target\.closest\('#btn-banco-retry'\):null;\s*if\(b\)bancoTentarDeNovo\(b\);/.test(html), 'Banco: o clique em Tentar de novo está ligado (delegado no contêiner)');
     const tdn = corpo('bancoTentarDeNovo');
-    ok(/var cargas=\[recarregarProvas\(\)\];/.test(tdn) && /if\(conteudoErro\)cargas\.push\(recarregarConteudo\(\)\);/.test(tdn) && /btn-filter-provas/.test(tdn), 'Tentar de novo: recarrega as questões (e o conteúdo, se também caiu) e refaz a busca do aluno');
+    ok(/var cargas=\[recarregarProvas\(\)\];/.test(tdn) && /if\(conteudoErro\)cargas\.push\(recarregarConteudo\(\)\);/.test(tdn) && /updateProvaInfo\(\);/.test(tdn) && !/btn-filter-provas/.test(tdn), 'Tentar de novo: recarrega as questões (e o conteúdo, se também caiu) e atualiza a contagem, sem abrir o estudo sozinho (13/11/2026)');
     const be = corpo('bancoEstado');
     ok(/if\(provasErro\)return 'erro';/.test(be) && /if\(provasEmVooDesta\(\)\)return 'carregando';/.test(be) && be.indexOf('conteudo') < 0, 'bancoEstado: segue a carga das QUESTÕES, não a do conteúdo');
   }
