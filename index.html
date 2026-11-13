@@ -691,13 +691,14 @@ body.mm-tela-cheia #btn-mm-close{display:none}
 body.mm-tela-cheia #btn-mm-save{white-space:nowrap}
 body.mm-tela-cheia #mm-svg-wrap{flex:1 1 auto;min-height:0!important;max-height:none!important;border:0;border-radius:12px;padding:.6rem;display:flex}
 /* Tela cheia (13/11/2026, vídeo do professor: "ele abre desfocado"). O mapa abre encaixado na
-   tela e só até o 2º nível (raiz, ramos e subramos). Tocar numa caixa abre ou fecha os ramos
-   dela. Para editar, o botão "Editar" ao lado de "Salvar" (pedido do professor: o botão fica em
+   tela só com a raiz e os ramos principais (pedido do professor, print do Hipotireoidismo).
+   Tocar numa caixa abre ou fecha os ramos dela. Para editar, o botão "Editar" ao lado de "Salvar" (pedido do professor: o botão fica em
    cima, "não ficaria aparecendo em cada caixa"): aí as caixas viram texto editável, e a caixa
    tocada mostra + (cria um ramo a partir dela) e × (remove). O "+N" de um ramo fechado abre o
    ramo nos dois modos. Centralizado com margin:auto (num flex, o excesso continua alcançável
    pela rolagem). */
 body.mm-tela-cheia .mm-svg-stage{min-width:0;min-height:0;margin:auto;flex:0 0 auto}
+body.mm-tela-cheia .mm-central{box-shadow:0 0 0 1.5px rgba(255,255,255,.4),0 10px 22px rgba(0,0,0,.25)}
 body.mm-tela-cheia .mm-fechado>.mm-gap,body.mm-tela-cheia .mm-fechado>.mm-children,body.mm-tela-cheia .mm-fechado>.mm-subs-block{display:none}
 body.mm-tela-cheia .mm-add-sub,body.mm-tela-cheia .mm-add-branch{display:none}
 body.mm-tela-cheia [data-mm-branch],body.mm-tela-cheia [data-mm-leaf]{cursor:pointer;-webkit-user-select:none;user-select:none}
@@ -2856,7 +2857,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
             <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
             <button class="btn btn-outline" id="btn-mmblank">✏️ Manual</button>
           </div>
-          <div class="mm-help">💡 O mapa abre inteiro na tela. Toque numa caixa para abrir ou fechar os ramos dela. Para mudar o texto, toque em <b>✏️ Editar</b> (ao lado de Salvar) e depois na caixa: <b>+</b> cria um ramo a partir dela e <b>×</b> remove. <b>✓ Concluir</b> volta a abrir e fechar os ramos.</div>
+          <div class="mm-help">💡 O mapa abre com o tema e os ramos principais. Toque numa caixa para abrir ou fechar os ramos dela. Para mudar o texto, toque em <b>✏️ Editar</b> (ao lado de Salvar) e depois na caixa: <b>+</b> cria um ramo a partir dela e <b>×</b> remove. <b>✓ Concluir</b> volta a abrir e fechar os ramos.</div>
         </div>
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
           <div class="mm-live-head">
@@ -12633,10 +12634,12 @@ function mmTelaCheia(on){document.body.classList.toggle('mm-tela-cheia',!!on);}
 // ── Tela cheia = modo leitura (13/11/2026) ──────────────────────────────────────────────
 // Vídeo do professor no iPhone: "quando eu clico em um mapa mental, ele abre desfocado" (abria
 // num trecho do meio, sem a raiz, e só com a pinça dava para ver o todo, em letra minúscula).
-// Pedido: abrir mostrando o mapa todo, "até no máximo o segundo ramo" aberto, abrir os ramos
-// seguintes tocando em cada caixa e "um botão no canto superior de editar" em cada caixa.
+// Pedido (com print do mapa de Hipotireoidismo): "abrisse apenas o primeiro, no caso é o de
+// hipotireoidismo, e os nós subsequentes, que é manifestação clínica, laboratório, só abrisse
+// esses. E se o aluno quisesse, à medida que ele fosse clicando em uma dessas caixas, abririam os
+// nós subsequentes." Editar: botão "Editar" ao lado de "Salvar" (não um em cada caixa).
 //  - mmAberto: o que o aluno abriu ou fechou, por caminho da linha ("2" = ramo 2, "2-1" = subramo
-//    1 do ramo 2, "2-1-0"...). Sem registro: ramo aberto (mostra os subramos), subramo fechado.
+//    1 do ramo 2, "2-1-0"...). Sem registro: FECHADO (o mapa abre com a raiz e os ramos).
 //  - mmAjustar: a próxima renderização encaixa o mapa na tela (só ao abrir um mapa; editar
 //    mantém o zoom e a rolagem).
 //  - mmEditando: o botão "Editar" (ao lado de "Salvar") está ligado; as caixas viram editáveis.
@@ -12649,7 +12652,7 @@ function mmBotaoEditar(){
   b.textContent=mmEditando?'✓ Concluir':'✏️ Editar';
 }
 function mmLeitura(){return document.body.classList.contains('mm-tela-cheia');}
-function mmLinhaAberta(k){k=String(k);return Object.prototype.hasOwnProperty.call(mmAberto,k)?!!mmAberto[k]:k.indexOf('-')<0;}
+function mmLinhaAberta(k){k=String(k);return Object.prototype.hasOwnProperty.call(mmAberto,k)?!!mmAberto[k]:false;}
 // Remover a linha "p" desloca as irmãs de baixo: o estado aberto/fechado vai junto.
 function mmDeslocaAberto(p){
   var ps=String(p).split('-'),pai=ps.slice(0,-1).join('-'),i=+ps[ps.length-1],novo={};
@@ -12673,10 +12676,6 @@ function mmAplicaEscala(sc){
 }
 // Encaixa o mapa inteiro na tela (nunca amplia além de 1×). Se nem no mínimo couber, mostra a
 // raiz: rolagem no começo e, na vertical, no meio (a raiz fica centralizada na altura).
-// Na ABERTURA (primeira=true), se com os subramos abertos a letra deles ficar abaixo de
-// MM_LETRA_MIN na tela, o mapa abre só até os ramos ("até no MÁXIMO o segundo ramo", nas palavras
-// do professor): tocar num ramo abre os subramos dele.
-var MM_LETRA_MIN=8;
 function mmMelhorLargura(e,pw,ph){
   // Testa as larguras (normal e duas mais estreitas) e fica com a que deixa a letra maior; no
   // empate, a mais larga (menos quebra de linha).
@@ -12691,22 +12690,14 @@ function mmMelhorLargura(e,pw,ph){
   if(melhor.cl)e.classList.add(melhor.cl);
   return melhor;
 }
-function mmEncaixa(primeira){
+function mmEncaixa(){
   var w=document.getElementById('mm-svg-wrap'),e=document.getElementById('mm-editor');
   if(!w||!e)return;
   var cs=getComputedStyle(w);
   var pw=w.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);
   var ph=w.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
   e.style.transform='';
-  var melhor=mmMelhorLargura(e,pw,ph),sub=e.querySelector('.mm-sub-txt');
-  var letra=sub?parseFloat(getComputedStyle(sub).fontSize)||12:12;
-  if(primeira&&letra*melhor.f<MM_LETRA_MIN){
-    e.querySelectorAll('.mm-branch-row').forEach(function(r){
-      var k=r.getAttribute('data-mm-row');if(k==null)return;
-      mmAberto[k]=false;r.classList.add('mm-fechado');
-    });
-    melhor=mmMelhorLargura(e,pw,ph);
-  }
+  var melhor=mmMelhorLargura(e,pw,ph);
   mmLarg=melhor.cl;
   var ew=e.offsetWidth||1,eh=e.offsetHeight||1;
   var sc=Math.max(MM_ENCAIXE_MIN,Math.min(1,pw/ew,ph/eh));
@@ -12829,7 +12820,7 @@ function renderMMEditor(){
   stage.innerHTML=html;
   stage.style.width='';stage.style.height='';
   var editor=document.getElementById('mm-editor');
-  if(mmAjustar){mmAjustar=false;if(ler)mmEncaixa(true);else if(_pzw){_pzw.__scale=1;_pzw.__min=MM_ZOOM_MIN;}}
+  if(mmAjustar){mmAjustar=false;if(ler)mmEncaixa();else if(_pzw){_pzw.__scale=1;_pzw.__min=MM_ZOOM_MIN;}}
   else if(_pzw){mmAplicaEscala(sc0);_pzw.scrollLeft=sl0;_pzw.scrollTop=st0;}
   editor.addEventListener('input',function(){syncMMFromDOM();setTimeout(drawMMConnections,0);});
   if(ler){

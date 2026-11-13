@@ -1185,13 +1185,13 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
-// 17c-undecies-al. MAPA MENTAL: ABRE INTEIRO, ATÉ O 2º NÍVEL, E "EDITAR" NO TOPO (13/11/2026).
-//      Vídeo do professor: o mapa "abre desfocado". Agora abre encaixado na tela, só até os
-//      subramos (ou só até os ramos, se a letra ficaria ilegível); tocar numa caixa abre os ramos
-//      dela; "✏️ Editar" ao lado de "Salvar" liga a edição (sem botão em cada caixa).
+// 17c-undecies-al. MAPA MENTAL: ABRE COM A RAIZ E OS RAMOS, E "EDITAR" NO TOPO (13/11/2026).
+//      Vídeo do professor: o mapa "abre desfocado". Agora abre encaixado na tela, só com a raiz e
+//      os ramos principais; tocar numa caixa abre os ramos dela; "✏️ Editar" ao lado de "Salvar"
+//      liga a edição (sem botão em cada caixa).
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-mapa-mental-abertura.js')], { stdio: 'pipe' });
-  ok('mapa mental: abre inteiro e até o 2º nível, tocar abre os ramos, "Editar" no topo');
+  ok('mapa mental: abre com a raiz e os ramos, encaixado; tocar abre os seguintes; "Editar" no topo');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão da abertura do mapa mental falhou:\n' + out);

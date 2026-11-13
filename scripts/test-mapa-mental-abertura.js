@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// MAPA MENTAL: ABRE INTEIRO NA TELA, ATÉ O 2º NÍVEL, E "EDITAR" NO TOPO (13/11/2026).
+// MAPA MENTAL: ABRE COM A RAIZ E OS RAMOS, TOCAR ABRE OS SEGUINTES, "EDITAR" NO TOPO (13/11/2026).
 //
 // Vídeo do professor no iPhone: "quando eu clico em um mapa mental, ele abre desfocado. A ideia é
 // que ele abrisse já aparecendo todo o mapa mental. Como ele ia ficar muito pequeno, a letra, a
@@ -8,11 +8,14 @@
 // E, logo depois: "A ideia seria um botão de 'editar' ao lado de 'Salvar'. Não ficaria aparecendo
 // em cada caixa de texto. Normalmente sem clicar em editar, ao clicar na caixa de texto, abriria o
 // nó subsequente."
+// E, com print do mapa de Hipotireoidismo: "abrisse apenas o primeiro, no caso é o de
+// hipotireoidismo, e os nós subsequentes, que é manifestação clínica, laboratório, só abrisse
+// esses. E se o aluno quisesse, à medida que ele fosse clicando em uma dessas caixas, abririam os
+// nós subsequentes."
 //
 // 🧨 Os modos de quebrar isto em silêncio:
 //  - o mapa voltar a abrir sem encaixar na tela (num trecho do meio, sem a raiz);
-//  - abrir com tudo aberto (letra minúscula) ou com os subramos fechados sem necessidade;
-//  - num mapa grande, abrir com os subramos em letra ilegível em vez de só até os ramos;
+//  - abrir com mais do que a raiz e os ramos principais (letra minúscula, mapa "desfocado");
 //  - tocar numa caixa abrir o teclado (caixa editável) em vez de abrir os ramos dela;
 //  - o botão de editar voltar para dentro de cada caixa, ou sumir do topo;
 //  - remover uma caixa e o "aberto/fechado" das irmãs de baixo ficar trocado;
@@ -33,10 +36,8 @@ function corpo(nome) {
   return html.slice(i, j + 1);
 }
 const declEstado = (html.match(/var mmAberto=\{\},mmAjustar=false,[^\n]*\n/) || [''])[0];
-const declLetra = (html.match(/var MM_LETRA_MIN=\d+;/) || [''])[0];
 const declZoom = (html.match(/var MM_ZOOM_MIN=[\d.]+,MM_ZOOM_MAX=[\d.]+;/) || [''])[0];
 ok('estado do mapa declarado (mmAberto, mmEditando, larguras)', /mmEditando=false/.test(declEstado) && /MM_LARGURAS=\['','mm-l1','mm-l2'\]/.test(declEstado));
-ok('letra mínima na abertura declarada (MM_LETRA_MIN)', !!declLetra);
 
 // ── 1. O que abre por padrão e o deslocamento ao remover ─────────────────────────────────
 {
@@ -44,8 +45,8 @@ ok('letra mínima na abertura declarada (MM_LETRA_MIN)', !!declLetra);
   vm.createContext(ctx);
   vm.runInContext(declEstado + ['mmLinhaAberta', 'mmDeslocaAberto'].map(corpo).join('\n'), ctx);
   const ab = (k) => vm.runInContext('mmLinhaAberta(' + JSON.stringify(k) + ')', ctx);
-  ok('🧨 ramo (1º nível) abre por padrão: os subramos aparecem', ab('2') === true);
-  ok('🧨 subramo (2º nível) com filhos abre FECHADO: "até no máximo o segundo ramo"', ab('2-1') === false && ab('2-1-0') === false);
+  ok('🧨 ramo principal abre FECHADO: o mapa abre só com a raiz e os ramos ("só abrisse esses")', ab('2') === false);
+  ok('🧨 subramos e netos também abrem fechados', ab('2-1') === false && ab('2-1-0') === false);
   vm.runInContext("mmAberto={'2':false,'1-3':true}", ctx);
   ok('o que o aluno abriu ou fechou vale mais que o padrão', ab('2') === false && ab('1-3') === true);
   vm.runInContext("mmAberto={'1-0':true,'1-1':false,'1-2':true,'1-2-0':true,'1-3':true,'2-0':true,'1':false}", ctx);
@@ -96,13 +97,14 @@ const ce = (h) => (h.match(/contenteditable="(true|false)"/g) || []).map((x) => 
   const h = renderiza({ telaCheia: true, editando: false });
   ok('o HTML do mapa foi gerado (renderMMEditor rodou)', h.includes('data-mm-root') && h.includes('Raiz &lt;b&gt;'));
   ok('🧨 leitura: nenhuma caixa editável (tocar abre os ramos, não o teclado)', ce(h).length > 0 && ce(h).every((v) => v === 'false'));
-  ok('🧨 leitura: ramo aberto, subramo com filhos fechado, neto com filhos fechado',
-    !/mm-fechado/.test(linha(h, '0')) && /mm-fechado/.test(linha(h, '0-0')) && /mm-fechado/.test(linha(h, '0-0-1')));
+  ok('🧨 leitura: os ramos principais vêm fechados (só raiz e ramos à vista), e o que vem abaixo também',
+    /mm-fechado/.test(linha(h, '0')) && /mm-fechado/.test(linha(h, '1')) && /mm-fechado/.test(linha(h, '0-0')) && /mm-fechado/.test(linha(h, '0-0-1')));
+  ok('o "+N" do ramo mostra quantos subramos ele tem ("+2" no Ramo A)', /data-mmaddsub="0" title="Adicionar subramo">\+<\/button><\/div><span class="mm-qtd"[^>]*>\+2<\/span>/.test(h));
   ok('subramo sem filhos não leva "fechado" nem "+N"', !/mm-fechado/.test(linha(h, '0-1')) && !/mm-qtd/.test(h.slice(h.indexOf('data-mm-row="0-1"'), h.indexOf('data-mm-row="1"'))));
   ok('o "+N" mostra quantos ramos estão fechados ("+2" no Sub A1)', /data-mm-leaf="0-0"[\s\S]*?<\/div><span class="mm-qtd"[^>]*>\+2<\/span>/.test(h));
   ok('🧨 nenhum botão de editar dentro das caixas ("não ficaria aparecendo em cada caixa")', !/class="mm-edit"/.test(h) && !/✏️/.test(h));
-  const h2 = renderiza({ telaCheia: true, editando: false, aberto: { '0-0': true, '0': false } });
-  ok('o que o aluno abriu ou fechou sobrevive a um redesenho (+ ou ×)', !/mm-fechado/.test(linha(h2, '0-0')) && /mm-fechado/.test(linha(h2, '0')));
+  const h2 = renderiza({ telaCheia: true, editando: false, aberto: { '0': true, '0-0': true, '1': false } });
+  ok('o que o aluno abriu ou fechou sobrevive a um redesenho (+ ou ×)', !/mm-fechado/.test(linha(h2, '0')) && !/mm-fechado/.test(linha(h2, '0-0')) && /mm-fechado/.test(linha(h2, '1')));
   const he = renderiza({ telaCheia: true, editando: true });
   ok('🧨 "Editar" ligado: todas as caixas viram editáveis e o editor ganha mm-modo-edicao',
     ce(he).length > 0 && ce(he).every((v) => v === 'true') && /class="mm-editor[^"]*mm-modo-edicao/.test(he));
@@ -112,54 +114,40 @@ const ce = (h) => (h.match(/contenteditable="(true|false)"/g) || []).map((x) => 
 }
 
 // ── 3. O encaixe na tela, com um layout simulado ─────────────────────────────────────────
-// Cada largura (normal, mm-l1, mm-l2) dá um tamanho ao mapa; com os ramos fechados ele encolhe.
-function encaixa(tamanhos, primeira) {
+// Cada largura (normal, mm-l1, mm-l2) dá um tamanho ao mapa.
+function encaixa(tamanhos) {
   const classes = new Set();
-  const linhas = [0, 1, 2].map((i) => {
-    const c = new Set();
-    return { getAttribute: () => String(i), classList: { add: (x) => c.add(x), contains: (x) => c.has(x) }, _c: c };
-  });
-  const fechados = () => linhas.every((r) => r._c.has('mm-fechado'));
-  const med = () => { const cl = classes.has('mm-l2') ? 'mm-l2' : classes.has('mm-l1') ? 'mm-l1' : ''; return tamanhos[(fechados() ? 'f' : 'a') + cl]; };
+  const med = () => tamanhos[classes.has('mm-l2') ? 'mm-l2' : classes.has('mm-l1') ? 'mm-l1' : ''];
   const editor = {
     style: { setProperty() {} },
     classList: { add: (x) => classes.add(x), remove: (x) => classes.delete(x) },
     get offsetWidth() { return med()[0]; }, get offsetHeight() { return med()[1]; },
-    querySelector: (s) => (s === '.mm-sub-txt' ? { fs: 12.16 } : null),
-    querySelectorAll: (s) => (s === '.mm-branch-row' ? linhas : []),
+    querySelector: () => null, querySelectorAll: () => [],
   };
   const wrap = { clientWidth: 374, clientHeight: 802, scrollLeft: 50, scrollTop: 50 };
   const stage = { style: {} };
   const ctx = {
     Math, parseFloat, Object,
     document: { getElementById: (id) => ({ 'mm-svg-wrap': wrap, 'mm-editor': editor, 'mm-svg': stage })[id] || null },
-    getComputedStyle: (el) => (el === wrap ? { paddingLeft: '0', paddingRight: '0', paddingTop: '0', paddingBottom: '0' } : { fontSize: '12.16px' }),
+    getComputedStyle: () => ({ paddingLeft: '0', paddingRight: '0', paddingTop: '0', paddingBottom: '0' }),
   };
   vm.createContext(ctx);
-  vm.runInContext(declZoom + declEstado + declLetra + ['mmAplicaEscala', 'mmMelhorLargura', 'mmEncaixa'].map(corpo).join('\n'), ctx);
-  vm.runInContext('mmEncaixa(' + !!primeira + ')', ctx);
-  return { wrap, stage, classes: [...classes], fechados: fechados(), aberto: JSON.parse(vm.runInContext('JSON.stringify(mmAberto)', ctx)), larg: vm.runInContext('mmLarg', ctx) };
+  vm.runInContext(declZoom + declEstado + ['mmAplicaEscala', 'mmMelhorLargura', 'mmEncaixa'].map(corpo).join('\n'), ctx);
+  vm.runInContext('mmEncaixa()', ctx);
+  return { wrap, stage, classes: [...classes], aberto: JSON.parse(vm.runInContext('JSON.stringify(mmAberto)', ctx)), larg: vm.runInContext('mmLarg', ctx) };
 }
 {
-  // Mapa médio (o do vídeo): na largura mais estreita cabe com letra legível.
-  const r = encaixa({ a: [900, 600], 'amm-l1': [600, 800], 'amm-l2': [480, 1000], f: [700, 300], 'fmm-l1': [450, 350], 'fmm-l2': [360, 420] }, true);
+  const r = encaixa({ '': [900, 600], 'mm-l1': [600, 800], 'mm-l2': [480, 1000] });
   const sc = r.wrap.__scale;
-  ok('🧨 abre com o mapa INTEIRO na tela (zoom ' + (sc && sc.toFixed(3)) + ', mapa ' + r.stage.style.width + ' × ' + r.stage.style.height + ' numa tela 374 × 802)',
+  ok('🧨 o mapa aparece INTEIRO na tela (zoom ' + (sc && sc.toFixed(3)) + ', mapa ' + r.stage.style.width + ' × ' + r.stage.style.height + ' numa tela 374 × 802)',
     Math.abs(sc - 0.779) < 0.002 && parseFloat(r.stage.style.width) <= 374.5 && parseFloat(r.stage.style.height) <= 802.5);
   ok('🧨 escolhe a largura que deixa a letra maior (mm-l2 aqui)', r.larg === 'mm-l2' && r.classes.includes('mm-l2') && !r.classes.includes('mm-l1'));
   ok('abre do começo: rolagem zerada', r.wrap.scrollLeft === 0 && r.wrap.scrollTop === 0);
-  ok('🧨 letra legível com os subramos: abre até o 2º nível (nenhum ramo fechado)', !r.fechados && Object.keys(r.aberto).length === 0);
+  ok('encaixar não abre nem fecha ramos (isso é só do toque)', Object.keys(r.aberto).length === 0);
   ok('a pinça pode afastar até o zoom do encaixe', r.wrap.__min <= 0.5);
-  // Mapa grande: com os subramos, letra < 8 px na tela.
-  const g = { a: [900, 1000], 'amm-l1': [600, 1300], 'amm-l2': [480, 1600], f: [700, 300], 'fmm-l1': [450, 350], 'fmm-l2': [360, 420] };
-  const rg = encaixa(g, true);
-  ok('🧨 mapa grande: abre só até os ramos (subramos ficariam ilegíveis) e com zoom ' + rg.wrap.__scale,
-    rg.fechados && rg.aberto['0'] === false && rg.aberto['2'] === false && rg.wrap.__scale === 1);
-  const rr = encaixa(g, false);
-  ok('🧨 reencaixe (virar o celular) não fecha o que o aluno abriu', !rr.fechados && Object.keys(rr.aberto).length === 0);
-  ok('nunca amplia além de 1× (mapa pequeno fica no tamanho real)', encaixa({ a: [200, 200], 'amm-l1': [190, 210], 'amm-l2': [180, 220], f: [100, 100], 'fmm-l1': [100, 100], 'fmm-l2': [100, 100] }, true).wrap.__scale === 1);
+  ok('🧨 nunca amplia além de 1× (raiz + ramos cabem no tamanho real)', encaixa({ '': [300, 400], 'mm-l1': [280, 420], 'mm-l2': [260, 440] }).wrap.__scale === 1);
   ok('mapa enorme: zoom não desce abaixo do mínimo do encaixe (0,3) e abre com a raiz à vista (meio da altura)',
-    (() => { const x = encaixa({ a: [3000, 4000], 'amm-l1': [3000, 4000], 'amm-l2': [3000, 4000], f: [3000, 4000], 'fmm-l1': [3000, 4000], 'fmm-l2': [3000, 4000] }, true); return x.wrap.__scale === 0.3 && x.wrap.scrollTop === Math.max(0, (4000 * 0.3 - 802) / 2); })());
+    (() => { const x = encaixa({ '': [3000, 4000], 'mm-l1': [3000, 4000], 'mm-l2': [3000, 4000] }); return x.wrap.__scale === 0.3 && x.wrap.scrollTop === Math.max(0, (4000 * 0.3 - 802) / 2); })());
 }
 
 // ── 4. Tocar numa caixa: abre os ramos e a caixa fica parada na tela ─────────────────────
@@ -213,4 +201,4 @@ ok('virar o celular reencaixa, mas não com o cursor numa caixa', /a&&a\.isConte
 ok('a pinça respeita o mínimo do encaixe', /Math\.max\(wrap\.__min\|\|MM_ZOOM_MIN,/.test(corpo('setupMMPinchZoom')));
 
 if (bad) { console.log('✗ abertura do mapa mental: ' + bad + ' falha(s)'); process.exit(1); }
-console.log('✓ mapa mental: abre inteiro e até o 2º nível, tocar abre os ramos, "Editar" no topo');
+console.log('✓ mapa mental: abre com a raiz e os ramos, encaixado; tocar abre os seguintes; "Editar" no topo');
