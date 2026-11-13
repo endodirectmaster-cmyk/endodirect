@@ -1186,10 +1186,10 @@ try {
 }
 
 // 17c-undecies-am. FLASHCARDS EM PÁGINAS (13/11/2026). Pedido do professor: limitar quantos cards
-//      aparecem por vez, o resto nas páginas seguintes, com a caixa "10, 30 ou 50 por página".
+//      aparecem por vez, o resto nas páginas seguintes, com a caixa "5, 10 ou 30 por página" (padrão 5).
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-flashcards-paginacao.js')], { stdio: 'pipe' });
-  ok('flashcards em páginas: 10/30/50 por página, navegação e volta à 1ª ao trocar o filtro');
+  ok('flashcards em páginas: 5/10/30 por página (padrão 5), navegação e volta à 1ª ao trocar o filtro');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão da paginação dos flashcards falhou:\n' + out);
