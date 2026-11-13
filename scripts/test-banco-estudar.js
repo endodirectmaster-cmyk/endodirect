@@ -20,6 +20,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 let bad = 0;
 const ok = (n, c) => { if (!c) { bad++; console.log('  ✗ ' + n); } };
@@ -50,11 +51,12 @@ ok('🧨 tela cheia abaixo da janela de sessão e do login (z ' + zq + ')', zq >
 ok('o card rola por dentro; a página por baixo não rola', /\.qz-corpo\{flex:1 1 auto;min-height:0;overflow-y:auto/.test(html) && /body\.qz-aberto\{overflow:hidden\}/.test(html));
 
 const rnd = corpo('qzRender');
-ok('🧨 "Questão x de n", Anterior desligado na 1ª, "Concluir ✓" na última',
-  /setText\('qz-prog','Questão '\+\(qzIdx\+1\)\+' de '\+n\);/.test(rnd) && /ant\.disabled=qzIdx===0;/.test(rnd) && /prox\.textContent=qzIdx>=n-1\?'Concluir ✓':'Próxima →';/.test(rnd));
+ok('🧨 "Questão x de n", Anterior desligado na 1ª, "✓ Finalizar" na última (e o Finalizar do lado some nela)',
+  /setText\('qz-prog','Questão '\+\(qzIdx\+1\)\+' de '\+n\);/.test(rnd) && /ant\.disabled=qzIdx===0;/.test(rnd) && /prox\.textContent=qzIdx>=n-1\?'✓ Finalizar':'Próxima →';/.test(rnd)
+  && /fin\.style\.display=qzIdx>=n-1\?'none':'';/.test(rnd));
 ok('troca de questão desliza (mesma animação de Flashcards/Simulado)', /deslizar\(function\(\)\{return document\.getElementById\('qz-card'\);\},dir,/.test(rnd));
 const vai = corpo('qzVai');
-ok('🧨 não avança sozinho: só Próxima/Anterior; no fim fecha com o resumo', /if\(passo>0&&qzIdx>=n-1\)\{/.test(vai) && /qzFechar\(\);/.test(vai) && /Fim! Você respondeu/.test(vai));
+ok('🧨 não avança sozinho: só Próxima/Anterior; na última, Próxima mostra o resultado', /if\(passo>0&&qzIdx>=n-1\)\{qzFinalizar\(\);return;\}/.test(vai) && /if\(qzResultado\)return;/.test(vai));
 ok('🧨 selectOpt guarda a letra respondida', /genAnswered\[parseInt\(idx\)\]=\{ok:ok,anulada:anulada,letra:letter\};/.test(corpo('selectOpt')));
 const mr = corpo('marcaResposta');
 ok('🧨 voltar a uma respondida remostra SEM registrar de novo (marcaResposta não conta)',
@@ -80,6 +82,43 @@ ok('🧨 no computador, topo, questão e botões numa coluna central (max-width)
 ok('🧨 no computador, os botões não esticam (largura própria, um em cada canto)', /\.qz-rodape \.btn\{flex:0 0 auto;/.test(desk) && /\.qz-rodape\{[^}]*justify-content:space-between/.test(desk));
 ok('🧨 no computador, os botões vêm logo abaixo da questão e grudam no pé quando ela é comprida', /\.qz-corpo\{flex:0 0 auto;/.test(desk) && /\.qz-rodape\{position:sticky;bottom:0/.test(desk) && /\.qz-tela\{overflow-y:auto/.test(desk));
 ok('trocar de questão no computador volta ao topo (a tela inteira rola)', /var tela=document\.getElementById\('qz-tela'\);if\(tela\)tela\.scrollTop=0;/.test(corpo('qzRender')));
+
+// ── "Finalizar" e o resultado do estudo (professor, 13/11/2026: "ter um botão ao lado de próximo
+// de finalizar ... o seu total de acertos, de erros, quais as áreas de adrenal ele errou mais e
+// acertou"). O resumo, rodando com questões de verdade.
+ok('🧨 botão "✓ Finalizar" entre Anterior e Próxima, desligado até a 1ª resposta',
+  /id="qz-ant">← Anterior<\/button>\s*<button[^>]*class="btn btn-outline qz-nav qz-fin" id="qz-fin" disabled[^>]*>✓ Finalizar<\/button>\s*<button[^>]*id="qz-prox">Próxima →/.test(html)
+  && /fin\.disabled=!Object\.keys\(genAnswered\)\.some/.test(corpo('updateGenCounter')));
+ok('🧨 o Finalizar está ligado ao resultado', /getElementById\('qz-fin'\)\.addEventListener\('click',qzFinalizar\)/.test(html));
+ok('🧨 o tema do resultado é o MESMO do Desempenho (temaDaQuestao nos dois)', /var _t=temaDaQuestao\(q\),sub=_t\.sub,tema=_t\.tema;/.test(corpo('studyEvent')) && /temaDaQuestao\(q\)/.test(corpo('qzResumo')));
+{
+  const ctx2 = { Object, Math, String, Array, parseInt,
+    classifyTema: (t) => (/aldosteron|renina/.test(t) ? 'Hiperaldosteronismo' : /cushing|dexametason/.test(t) ? 'Cushing' : /feocromocit/.test(t) ? 'Feocromocitoma' : 'Geral') };
+  vm.createContext(ctx2);
+  vm.runInContext('var genQs=[],genAnswered={};' + ['esc', 'temaDaQuestao', 'qzResumo', 'qzResultadoHTML'].map(corpo).join('\n'), ctx2);
+  vm.runInContext(`genQs=[
+    {stem:'hiperaldosteronismo com renina baixa',area:'Adrenal'},{stem:'feocromocitoma',area:'Adrenal'},
+    {stem:'aldosterona elevada',area:'Adrenal'},{stem:'cushing com dexametasona',area:'Adrenal'},
+    {stem:'questão anulada',area:'Adrenal'},{stem:'feocromocitoma de novo',area:'Adrenal'},{stem:'sem resposta',area:'Adrenal'},
+    {stem:'tireoide',area:'Tireoide',tema:'Nódulo'}];
+    genAnswered={0:{ok:false},1:{ok:true},2:{ok:false},3:{ok:true},4:{ok:false,anulada:true},5:{ok:true},7:{ok:false}};`, ctx2);
+  const r = JSON.parse(vm.runInContext('JSON.stringify(qzResumo())', ctx2));
+  ok('🧨 resultado: 3 acertos, 3 erros, 50%, anulada fora da conta, 1 sem resposta (veio ' + [r.ac, r.er, r.pct, r.anuladas, r.naoResp].join('/') + ')',
+    r.ac === 3 && r.er === 3 && r.pct === 50 && r.anuladas === 1 && r.naoResp === 1 && r.respondidas === 6);
+  ok('🧨 por tema, do que mais errou para o que mais acertou (Hiperaldosteronismo primeiro)', r.temas[0].tema === 'Hiperaldosteronismo' && r.temas[0].er === 2 && r.temas[r.temas.length - 1].ac === 2);
+  ok('por subespecialidade quando o estudo mistura áreas', r.subs.length === 2);
+  ok('🧨 lista das erradas, em ordem (questões 1, 3 e 8)', JSON.stringify(r.erradas) === '[0,2,7]');
+  const h = vm.runInContext('qzResultadoHTML(qzResumo())', ctx2);
+  ok('🧨 a tela mostra acertos, erros e aproveitamento', />3<\/b><span>Acertos/.test(h) && />3<\/b><span>Erros/.test(h) && />50%<\/b><span>Aproveitamento/.test(h));
+  ok('🧨 a tela diz onde mais errou e onde mais acertou', /Onde mais errou: <b>Hiperaldosteronismo/.test(h) && /Onde mais acertou: <b>Feocromocitoma/.test(h));
+  ok('a tela leva de volta a cada questão errada', (h.match(/data-qz-ir="\d+"/g) || []).length === 3 && /data-qz-ir="7">Questão 8</.test(h));
+  ok('a tela avisa que já entrou no Desempenho e no Caderno de erros', /Desempenho, no Dashboard, e as que você errou foram para o Caderno de erros/.test(h));
+}
+ok('no resultado: Anterior/Finalizar/Próxima somem e aparecem "← Questões" e "Encerrar"',
+  /\.qz-tela\.qz-modo-resultado \.qz-rodape \.qz-nav\{display:none\}/.test(html) && /\.qz-tela\.qz-modo-resultado \.qz-rodape \.qz-res-bt\{display:inline-flex\}/.test(html)
+  && /getElementById\('qz-encerrar'\)\.addEventListener\('click',qzFechar\)/.test(html));
+ok('no resultado as setas não andam; Esc sai', /if\(qzResultado\)\{if\(e\.key==='Escape'\)\{e\.preventDefault\(\);qzFechar\(\);\}return;\}/.test(html));
+ok('🧨 sair ou abrir de novo tira o modo resultado', /qzModoResultado\(false\);/.test(corpo('qzFechar')) && /qzModoResultado\(false\);/.test(corpo('qzAbrir')));
 
 if (bad) { console.log('✗ Banco — Estudar: ' + bad + ' falha(s)'); process.exit(1); }
 console.log('✓ Banco — Estudar: contagem nos filtros, uma questão por vez em tela cheia, Anterior/Próxima, sem contar duas vezes');

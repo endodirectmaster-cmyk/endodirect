@@ -531,6 +531,36 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .qz-rodape .btn:disabled{opacity:.45}
 .qz-sair{background:var(--surface);border:1px solid var(--bd);color:var(--tx)}
 body.qz-aberto{overflow:hidden}
+/* "Finalizar" e a tela de resultado (professor, 13/11/2026). */
+.qz-fin{border-color:var(--grn)!important;color:var(--grn)!important}
+.qz-fin:disabled{opacity:.45}
+.qz-rodape .qz-res-bt{display:none}
+.qz-tela.qz-modo-resultado .qz-rodape .qz-nav{display:none}
+.qz-tela.qz-modo-resultado .qz-rodape .qz-res-bt{display:inline-flex}
+.qz-res{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:1rem 1.05rem}
+.qz-res h2{font-size:1.05rem;font-weight:800;color:var(--tx);margin:0 0 .2rem}
+.qz-res-sub{font-size:.74rem;color:var(--t3);margin-bottom:.85rem}
+.qz-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin-bottom:.8rem}
+.qz-kpi{border:1px solid var(--bd);border-radius:10px;padding:.6rem .2rem;text-align:center;background:var(--s2)}
+.qz-kpi b{display:block;font-size:1.35rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums}
+.qz-kpi span{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:0;white-space:nowrap}
+@media (max-width:359px){.qz-kpis{grid-template-columns:1fr 1fr}.qz-kpi:last-child{grid-column:1/-1}}
+.qz-res-nota{font-size:.74rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.5}
+.qz-res-dest{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.9rem}
+.qz-res-dest div{font-size:.8rem;line-height:1.45;padding:.5rem .7rem;border-radius:9px}
+.qz-res-dest .ruim{background:var(--red-l);color:var(--red)}
+.qz-res-dest .bom{background:var(--grn-l);color:var(--grn)}
+.qz-res-tit{font-size:.72rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin:.9rem 0 .45rem}
+.qz-res-linha{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.15rem .7rem;align-items:center;margin-bottom:.55rem}
+.qz-res-linha .nome{font-size:.8rem;color:var(--tx);font-weight:600;overflow-wrap:anywhere}
+.qz-res-linha .nome small{font-weight:500;color:var(--t3)}
+.qz-res-linha .num{font-size:.74rem;color:var(--t2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qz-res-barra{grid-column:1/-1;height:7px;border-radius:99px;background:var(--bd);overflow:hidden}
+.qz-res-barra i{display:block;height:100%;border-radius:99px}
+.qz-res-erradas{display:flex;flex-wrap:wrap;gap:.35rem}
+.qz-res-erradas button{border:1px solid var(--red);background:transparent;color:var(--red);border-radius:8px;padding:.32rem .6rem;font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font)}
+.qz-res-erradas button:hover{background:var(--red-l)}
+.qz-res-rodape{font-size:.7rem;color:var(--t3);margin-top:1rem;line-height:1.5}
 body.qz-aberto::after{background:var(--bg)}
 /* No computador (print do professor, 13/11/2026: "os botões de 'próximo' e 'voltar' não precisam
    ocupar a tela inteira, assim como também a caixa da questão"): uma coluna central de leitura,
@@ -543,6 +573,11 @@ body.qz-aberto::after{background:var(--bg)}
   .qz-corpo{flex:0 0 auto;overflow:visible;min-height:0}
   .qz-rodape{position:sticky;bottom:0;z-index:2;justify-content:space-between;background:var(--bg);padding:.9rem 0 1.4rem}
   .qz-rodape .btn{flex:0 0 auto;min-width:190px}
+  .qz-rodape .qz-fin{margin-left:auto;min-width:160px}
+  .qz-res{padding:1.5rem 1.7rem}
+  .qz-res h2{font-size:1.25rem}
+  .qz-kpi b{font-size:1.7rem}
+  .qz-res-linha .nome,.qz-res-dest div{font-size:.9rem}
   .qz-tela .q-card-full{padding:1.5rem 1.7rem!important;border-radius:14px!important}
   .qz-tela .q-stem{font-size:1.02rem;line-height:1.7;margin-bottom:1.1rem}
   .qz-tela .qo{font-size:.93rem;line-height:1.55;padding:.7rem 1rem;margin-bottom:7px}
@@ -2626,8 +2661,11 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
   </div>
   <div class="qz-corpo" id="qz-corpo"><div class="desl-palco"><div id="qz-card"></div></div></div>
   <div class="qz-rodape">
-    <button type="button" class="btn btn-outline" id="qz-ant">← Anterior</button>
-    <button type="button" class="btn btn-primary" id="qz-prox">Próxima →</button>
+    <button type="button" class="btn btn-outline qz-nav" id="qz-ant">← Anterior</button>
+    <button type="button" class="btn btn-outline qz-nav qz-fin" id="qz-fin" disabled title="Ver o resultado deste estudo">✓ Finalizar</button>
+    <button type="button" class="btn btn-primary qz-nav" id="qz-prox">Próxima →</button>
+    <button type="button" class="btn btn-outline qz-res-bt" id="qz-voltar-q" title="Voltar às questões deste estudo">← Questões</button>
+    <button type="button" class="btn btn-primary qz-res-bt" id="qz-encerrar">Encerrar</button>
   </div>
 </div>
 <div id="checkout-modal" style="display:none;position:fixed;inset:0;z-index:1200;background:rgba(6,11,22,.82);align-items:flex-start;justify-content:center;overflow:auto;padding:1.2rem">
@@ -6026,11 +6064,17 @@ function srsAdd(q){
 // diária (DB.act) — reusado pelo painel de Desempenho, pela Ofensiva e pela
 // Revisão de erros. NÃO substitui DB.perf (por subespecialidade), só adiciona.
 // Os callers (recordAnswer/qotdSaveAns) chamam persist() logo em seguida.
+// Subespecialidade e tema de uma questão. UMA CONTA SÓ: o Desempenho (DB.perfTema) e o resultado
+// do "Finalizar" do Banco usam esta, para o aluno não ver um tema num lugar e outro no outro.
+function temaDaQuestao(q){
+  var sub=(q&&(q.area||q.sub))||'Geral';
+  var tema=(q&&q.tema)||(typeof classifyTema==='function'?classifyTema((((q&&q.stem)||'')+' '+((q&&q.explanation)||'')),sub):'Geral')||'Geral';
+  return {sub:sub,tema:tema};
+}
 function studyEvent(q,ok){
   try{
     if(!q)return;
-    var sub=q.area||q.sub||'Geral';
-    var tema=q.tema||(typeof classifyTema==='function'?classifyTema(((q.stem||'')+' '+(q.explanation||'')),sub):'Geral')||'Geral';
+    var _t=temaDaQuestao(q),sub=_t.sub,tema=_t.tema;
     if(!DB.perfTema||typeof DB.perfTema!=='object')DB.perfTema={};
     if(!DB.perfTema[sub])DB.perfTema[sub]={};
     if(!DB.perfTema[sub][tema])DB.perfTema[sub][tema]={correct:0,total:0};
@@ -11803,18 +11847,103 @@ function pickQuestions(data){
 // "Estudar" abre uma questão por vez em tela cheia, e o aluno passa com "Próxima" e "Anterior"
 // (não avança sozinho ao responder). Voltar a uma questão já respondida mostra a resposta dada,
 // sem registrar de novo. Substitui a lista de 3 por página com "Salvar todas".
-var qzIdx=0;
+var qzIdx=0,qzResultado=false;
 function qzAberto(){var t=document.getElementById('qz-tela');return !!(t&&t.style.display!=='none');}
 function qzAbrir(){
   var t=document.getElementById('qz-tela');if(!t||!genQs.length)return;
-  qzIdx=0;t.style.display='flex';document.body.classList.add('qz-aberto');
+  qzIdx=0;qzModoResultado(false);t.style.display='flex';document.body.classList.add('qz-aberto');
   qzRender(0);
   try{document.getElementById('qz-prox').focus({preventScroll:true});}catch(e){}
 }
 function qzFechar(){
   var t=document.getElementById('qz-tela');if(!t)return;
   t.style.display='none';document.body.classList.remove('qz-aberto');
+  qzModoResultado(false);
   try{updateProvaInfo();}catch(e){}
+}
+// ── "FINALIZAR" E O RESULTADO DO ESTUDO (13/11/2026) ─────────────────────────────────────
+// Professor: "ter um botão ao lado de próximo de finalizar, onde o aluno saberia o seu desempenho
+// daquele determinado teste ... o seu total de acertos, de erros, quais as áreas de adrenal ele
+// errou mais e acertou". Só lê o que já foi registrado nesta sessão (genAnswered): o resultado
+// não conta nada de novo, quem conta é a resposta (selectOpt → DB.perf, DB.perfTema, feitas,
+// caderno de erros).
+function qzModoResultado(on){
+  qzResultado=!!on;
+  var t=document.getElementById('qz-tela');if(t)t.classList.toggle('qz-modo-resultado',qzResultado);
+}
+function qzResumo(){
+  var n=genQs.length,ac=0,er=0,an=0,porTema={},porSub={},erradas=[];
+  Object.keys(genAnswered).forEach(function(k){
+    var r=genAnswered[k],q=genQs[+k];if(!r||!q)return;
+    if(r.anulada){an++;return;}
+    var t=temaDaQuestao(q),kt=t.sub+'\u0001'+t.tema;
+    if(!porTema[kt])porTema[kt]={sub:t.sub,tema:t.tema,ac:0,er:0};
+    if(!porSub[t.sub])porSub[t.sub]={sub:t.sub,ac:0,er:0};
+    if(r.ok){ac++;porTema[kt].ac++;porSub[t.sub].ac++;}
+    else{er++;porTema[kt].er++;porSub[t.sub].er++;erradas.push(+k);}
+  });
+  var lista=function(o){return Object.keys(o).map(function(k){return o[k];});};
+  var temas=lista(porTema).sort(function(a,b){return (b.er-a.er)||(a.ac-b.ac)||a.tema.localeCompare(b.tema);});
+  return {n:n,ac:ac,er:er,anuladas:an,respondidas:ac+er,naoResp:Math.max(0,n-ac-er-an),
+    pct:(ac+er)?Math.round(ac/(ac+er)*100):0,temas:temas,subs:lista(porSub),erradas:erradas.sort(function(a,b){return a-b;})};
+}
+function qzResultadoHTML(r){
+  var cor=function(p){return p>=70?'var(--grn)':p>=50?'var(--gold)':'var(--red)';};
+  var pctDe=function(x){var t=x.ac+x.er;return t?Math.round(x.ac/t*100):0;};
+  var varias=r.subs.length>1;
+  var linha=function(nome,x){var p=pctDe(x),t=x.ac+x.er;
+    return '<div class="qz-res-linha"><div class="nome">'+nome+'</div><div class="num">'+x.ac+' de '+t+' · '+p+'%</div>'
+      +'<div class="qz-res-barra"><i style="width:'+Math.max(p,2)+'%;background:'+cor(p)+'"></i></div></div>';};
+  var nomeTema=function(x){return esc(x.tema)+(varias?' <small>· '+esc(x.sub)+'</small>':'');};
+  // Onde mais errou e onde mais acertou (por número de erros e de acertos no tema).
+  var pior=r.temas.filter(function(x){return x.er>0;})[0];
+  var melhor=r.temas.slice().filter(function(x){return x.ac>0;}).sort(function(a,b){return (b.ac-a.ac)||(a.er-b.er);})[0];
+  var dest='';
+  if(pior)dest+='<div class="ruim">Onde mais errou: <b>'+nomeTema(pior)+'</b> ('+pior.er+(pior.er===1?' erro':' erros')+' em '+(pior.ac+pior.er)+')</div>';
+  if(melhor)dest+='<div class="bom">Onde mais acertou: <b>'+nomeTema(melhor)+'</b> ('+melhor.ac+(melhor.ac===1?' acerto':' acertos')+' em '+(melhor.ac+melhor.er)+')</div>';
+  var notas=[];
+  if(r.naoResp)notas.push(r.naoResp+(r.naoResp===1?' questão ficou sem resposta':' questões ficaram sem resposta'));
+  if(r.anuladas)notas.push(r.anuladas+(r.anuladas===1?' anulada (não conta)':' anuladas (não contam)'));
+  return '<div class="qz-res">'
+    +'<h2>Resultado do estudo</h2>'
+    +'<div class="qz-res-sub">'+r.respondidas+(r.respondidas===1?' questão respondida':' questões respondidas')+' de '+r.n+'</div>'
+    +'<div class="qz-kpis">'
+      +'<div class="qz-kpi"><b style="color:var(--grn)">'+r.ac+'</b><span>Acertos</span></div>'
+      +'<div class="qz-kpi"><b style="color:var(--red)">'+r.er+'</b><span>Erros</span></div>'
+      +'<div class="qz-kpi"><b style="color:'+cor(r.pct)+'">'+(r.respondidas?r.pct+'%':'–')+'</b><span>Aproveitamento</span></div>'
+    +'</div>'
+    +(notas.length?'<div class="qz-res-nota">'+esc(notas.join(' · '))+'.</div>':'')
+    +(dest?'<div class="qz-res-dest">'+dest+'</div>':'')
+    +(varias?'<div class="qz-res-tit">Por subespecialidade</div>'+r.subs.slice().sort(function(a,b){return pctDe(a)-pctDe(b);}).map(function(x){return linha(esc(x.sub),x);}).join(''):'')
+    +(r.temas.length?'<div class="qz-res-tit">Por tema</div>'+r.temas.map(function(x){return linha(nomeTema(x),x);}).join(''):'')
+    +(r.erradas.length?'<div class="qz-res-tit">Rever as que errou</div><div class="qz-res-erradas">'
+      +r.erradas.map(function(i){return '<button type="button" data-qz-ir="'+i+'">Questão '+(i+1)+'</button>';}).join('')+'</div>':'')
+    +'<div class="qz-res-rodape">Estas respostas já entraram no seu Desempenho, no Dashboard'+(r.er?', e as que você errou foram para o Caderno de erros':'')+'.</div>'
+    +'</div>';
+}
+function qzFinalizar(){
+  var r=qzResumo();
+  if(!r.respondidas&&!r.anuladas){
+    // Nada respondido: na última questão, "Finalizar" só fecha (como antes).
+    if(qzIdx>=genQs.length-1){qzFechar();notify('Fim das questões.','ok');}
+    else notify('Responda pelo menos uma questão para ver o resultado.','err');
+    return;
+  }
+  qzModoResultado(true);
+  deslizar(function(){return document.getElementById('qz-card');},1,function(){
+    var card=document.getElementById('qz-card');if(card)card.innerHTML=qzResultadoHTML(r);
+  });
+  setText('qz-prog','Resultado');
+  var corpo=document.getElementById('qz-corpo');if(corpo)corpo.scrollTop=0;
+  var tela=document.getElementById('qz-tela');if(tela)tela.scrollTop=0;
+  try{document.getElementById('qz-voltar-q').focus({preventScroll:true});}catch(e){}
+}
+// Sai do resultado de volta às questões (na que estava, ou na escolhida em "Rever as que errou").
+function qzVoltarQuestoes(i){
+  if(!qzResultado)return;
+  qzModoResultado(false);
+  if(typeof i==='number'&&i>=0&&i<genQs.length)qzIdx=i;
+  qzRender(-1);
 }
 function qzRender(dir){
   var n=genQs.length;if(!n){qzFechar();return;}
@@ -11827,7 +11956,8 @@ function qzRender(dir){
   setText('qz-prog','Questão '+(qzIdx+1)+' de '+n);
   var ant=document.getElementById('qz-ant'),prox=document.getElementById('qz-prox');
   if(ant)ant.disabled=qzIdx===0;
-  if(prox)prox.textContent=qzIdx>=n-1?'Concluir ✓':'Próxima →';
+  if(prox)prox.textContent=qzIdx>=n-1?'✓ Finalizar':'Próxima →';
+  var fin=document.getElementById('qz-fin');if(fin)fin.style.display=qzIdx>=n-1?'none':''; // na última, a Próxima já finaliza
   var corpo=document.getElementById('qz-corpo');if(corpo)corpo.scrollTop=0;
   var tela=document.getElementById('qz-tela');if(tela)tela.scrollTop=0; // no computador a tela inteira rola
   updateGenCounter();
@@ -11839,17 +11969,14 @@ function qzRestaura(i){
 }
 function qzVai(passo){
   var n=genQs.length;
-  if(passo>0&&qzIdx>=n-1){
-    var keys=Object.keys(genAnswered).filter(function(k){return genAnswered[k]&&!genAnswered[k].anulada;});
-    var ac=keys.filter(function(k){return genAnswered[k].ok;}).length;
-    qzFechar();
-    notify(keys.length?('Fim! Você respondeu '+keys.length+' de '+n+' e acertou '+ac+' ('+Math.round(ac/keys.length*100)+'%).'):'Fim das questões.','ok');
-    return;
-  }
+  if(qzResultado)return;
+  if(passo>0&&qzIdx>=n-1){qzFinalizar();return;} // na última, "✓ Finalizar" mostra o resultado
   if(passo<0&&qzIdx<=0)return;
   qzIdx+=passo;qzRender(passo);
 }
 function updateGenCounter(){
+  var fin=document.getElementById('qz-fin');
+  if(fin)fin.disabled=!Object.keys(genAnswered).some(function(k){return !!genAnswered[k];});
   var el=document.getElementById('gen-counter');if(!el)return;
   var keys=Object.keys(genAnswered).filter(function(k){return genAnswered[k]&&!genAnswered[k].anulada;});
   var respondidas=keys.length;
@@ -24448,9 +24575,17 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('qz-sair').addEventListener('click',qzFechar);
   document.getElementById('qz-ant').addEventListener('click',function(){qzVai(-1);});
   document.getElementById('qz-prox').addEventListener('click',function(){qzVai(1);});
+  document.getElementById('qz-fin').addEventListener('click',qzFinalizar);
+  document.getElementById('qz-voltar-q').addEventListener('click',function(){qzVoltarQuestoes();});
+  document.getElementById('qz-encerrar').addEventListener('click',qzFechar);
+  document.getElementById('qz-card').addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('[data-qz-ir]'):null;
+    if(b)qzVoltarQuestoes(parseInt(b.getAttribute('data-qz-ir'),10));
+  });
   document.addEventListener('keydown',function(e){
     if(!qzAberto())return;
     var tg=e.target&&e.target.tagName;if(tg==='TEXTAREA'||tg==='INPUT')return;
+    if(qzResultado){if(e.key==='Escape'){e.preventDefault();qzFechar();}return;}
     if(e.key==='ArrowRight'){e.preventDefault();qzVai(1);}
     else if(e.key==='ArrowLeft'){e.preventDefault();qzVai(-1);}
     else if(e.key==='Escape'){e.preventDefault();qzFechar();}
