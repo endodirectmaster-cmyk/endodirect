@@ -1,9 +1,19 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-10-21
+atualizado: 2026-11-13
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 📚 POSTADA ENTRA NO BANCO DE QUESTÕES (2026-11-13)
+
+Pedido do professor: as questões do dia, ao serem postadas, entram sozinhas no Banco (e as já
+postadas também). "✓ Postada" põe no Banco; "↺ Reabrir" tira; repostar depois de corrigir
+atualiza a cópia; o robô das 10h põe a que ele posta e confere todo dia as postadas que faltam.
+Regra `qotdNoBanco` (cópias idênticas no `index.html` e em `lib/instagram.js`). Questão com
+atribuição TEEM não entra (é do TEEM). Excluir a cópia no painel do Banco marca a questão do
+dia com `foraDoBanco:true` e o robô não a repõe. Detalhes em [[Decisões]] (2026-11-13) e
+[[Banco de Questões]].
 
 ## 🖼️ FIGURA NO COMENTÁRIO (2026-10-21)
 
