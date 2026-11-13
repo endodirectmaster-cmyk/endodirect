@@ -99,9 +99,10 @@ const ce = (h) => (h.match(/contenteditable="(true|false)"/g) || []).map((x) => 
   ok('🧨 leitura: nenhuma caixa editável (tocar abre os ramos, não o teclado)', ce(h).length > 0 && ce(h).every((v) => v === 'false'));
   ok('🧨 leitura: os ramos principais vêm fechados (só raiz e ramos à vista), e o que vem abaixo também',
     /mm-fechado/.test(linha(h, '0')) && /mm-fechado/.test(linha(h, '1')) && /mm-fechado/.test(linha(h, '0-0')) && /mm-fechado/.test(linha(h, '0-0-1')));
-  ok('o "+N" do ramo mostra quantos subramos ele tem ("+2" no Ramo A)', /data-mmaddsub="0" title="Adicionar subramo">\+<\/button><\/div><span class="mm-qtd"[^>]*>\+2<\/span>/.test(h));
-  ok('subramo sem filhos não leva "fechado" nem "+N"', !/mm-fechado/.test(linha(h, '0-1')) && !/mm-qtd/.test(h.slice(h.indexOf('data-mm-row="0-1"'), h.indexOf('data-mm-row="1"'))));
-  ok('o "+N" mostra quantos ramos estão fechados ("+2" no Sub A1)', /data-mm-leaf="0-0"[\s\S]*?<\/div><span class="mm-qtd"[^>]*>\+2<\/span>/.test(h));
+  ok('🧨 sem "+N" ao lado das caixas (o professor pediu para tirar)', !/mm-qtd/.test(h) && !/>\+\d+</.test(h));
+  ok('🧨 caixa com ramos para abrir é marcada (mm-tem-filhos); a última caixa não',
+    /mm-tem-filhos/.test(linha(h, '0')) && /mm-tem-filhos/.test(linha(h, '0-0')) && /mm-tem-filhos/.test(linha(h, '0-0-1')) && !/mm-tem-filhos/.test(linha(h, '0-1')));
+  ok('subramo sem filhos não leva "fechado"', !/mm-fechado/.test(linha(h, '0-1')));
   ok('🧨 nenhum botão de editar dentro das caixas ("não ficaria aparecendo em cada caixa")', !/class="mm-edit"/.test(h) && !/✏️/.test(h));
   const h2 = renderiza({ telaCheia: true, editando: false, aberto: { '0': true, '0-0': true, '1': false } });
   ok('o que o aluno abriu ou fechou sobrevive a um redesenho (+ ou ×)', !/mm-fechado/.test(linha(h2, '0')) && !/mm-fechado/.test(linha(h2, '0-0')) && /mm-fechado/.test(linha(h2, '1')));
@@ -182,7 +183,9 @@ function encaixa(tamanhos) {
 const render = corpo('renderMMEditor');
 ok('🧨 sem "Editar", tocar na caixa abre/fecha os ramos; com "Editar", não (põe o cursor)',
   /if\(mmEditando\)return;[^\n]*\n\s*var box=t\.closest\('\[data-mm-branch\],\[data-mm-leaf\]'\);\s*if\(box\)mmAlterna\(box\);/.test(render));
-ok('o "+N" de um ramo fechado abre o ramo também no modo de edição', /closest\('\.mm-qtd'\)[^\n]*mmAlterna\(bx\)/.test(render));
+ok('🧨 "mãozinha" só nas caixas com ramos para abrir (e não no modo de edição)',
+  /body\.mm-tela-cheia \[data-mm-branch\],body\.mm-tela-cheia \[data-mm-leaf\]\{cursor:default;/.test(html)
+  && /body\.mm-tela-cheia \.mm-editor:not\(\.mm-modo-edicao\) \.mm-tem-filhos>\.mm-node-wrap>\[data-mm-branch\],body\.mm-tela-cheia \.mm-editor:not\(\.mm-modo-edicao\) \.mm-tem-filhos>\.mm-node-wrap>\[data-mm-leaf\]\{cursor:pointer\}/.test(html));
 ok('🧨 abrir um mapa (do professor, salvo ou novo) pede o encaixe', ['viewMM', 'viewMMShared', 'newBlankMM'].every((f) => /mmNovaAbertura\(\)/.test(corpo(f))));
 ok('mapa novo, feito à mão, já abre no modo de edição', /mmNovaAbertura\(\);\s*mmEditando=true;mmBotaoEditar\(\);/.test(corpo('newBlankMM')));
 ok('o editor do professor também começa do zero ao abrir', /mmNovaAbertura\(\);\s*renderMMEditor\(\);/.test(html));
@@ -190,7 +193,7 @@ ok('🧨 botão "✏️ Editar" no topo, ao lado de "Salvar"', /<button[^>]*id="
 ok('🧨 o botão liga e desliga o modo de edição', /getElementById\('btn-mm-editar'\)\.addEventListener\('click',function\(\)\{mmModoEdicao\(!mmEditando\);\}\)/.test(html));
 ok('o botão diz o que faz: "✏️ Editar" ↔ "✓ Concluir"', /mmEditando\?'✓ Concluir':'✏️ Editar'/.test(corpo('mmBotaoEditar')));
 ok('concluir a edição grava o texto no mapa (syncMMFromDOM)', /syncMMFromDOM\(\)/.test(corpo('mmModoEdicao')));
-ok('o botão "Editar" só aparece na tela cheia', /\.mm-qtd,\.mm-editar\{display:none\}/.test(html) && /body\.mm-tela-cheia \.mm-editar\{display:inline-flex/.test(html));
+ok('o botão "Editar" só aparece na tela cheia', /\n\.mm-editar\{display:none\}/.test(html) && /body\.mm-tela-cheia \.mm-editar\{display:inline-flex/.test(html));
 ok('🧨 esconder os filhos de um ramo fechado SÓ na tela cheia (o editor do professor mostra tudo)',
   /body\.mm-tela-cheia \.mm-fechado>\.mm-children/.test(html) && !/\n\.mm-fechado>/.test(html));
 ok('🧨 ligações pulam caixas escondidas (ramo fechado)', /if\(!container\|\|!container\.getClientRects\(\)\.length\)return;/.test(corpo('drawMMConnections')));

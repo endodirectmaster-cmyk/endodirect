@@ -532,6 +532,23 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .qz-sair{background:var(--surface);border:1px solid var(--bd);color:var(--tx)}
 body.qz-aberto{overflow:hidden}
 body.qz-aberto::after{background:var(--bg)}
+/* No computador (print do professor, 13/11/2026: "os botões de 'próximo' e 'voltar' não precisam
+   ocupar a tela inteira, assim como também a caixa da questão"): uma coluna central de leitura,
+   letra maior, e os botões logo abaixo da questão, com largura própria. A tela inteira rola; os
+   botões grudam no pé quando o comentário é comprido (sticky). O celular segue como está. */
+@media (min-width:900px){
+  .qz-tela{overflow-y:auto;overscroll-behavior:contain;padding:1.4rem 1.5rem 0}
+  .qz-topo,.qz-corpo,.qz-rodape{width:100%;max-width:860px;margin-left:auto;margin-right:auto}
+  .qz-topo{margin-bottom:.9rem}
+  .qz-corpo{flex:0 0 auto;overflow:visible;min-height:0}
+  .qz-rodape{position:sticky;bottom:0;z-index:2;justify-content:space-between;background:var(--bg);padding:.9rem 0 1.4rem}
+  .qz-rodape .btn{flex:0 0 auto;min-width:190px}
+  .qz-tela .q-card-full{padding:1.5rem 1.7rem!important;border-radius:14px!important}
+  .qz-tela .q-stem{font-size:1.02rem;line-height:1.7;margin-bottom:1.1rem}
+  .qz-tela .qo{font-size:.93rem;line-height:1.55;padding:.7rem 1rem;margin-bottom:7px}
+  .qz-tela .qo-ltr{width:18px}
+  .qz-tela .q-fb{font-size:.93rem;line-height:1.7;padding:.85rem 1.1rem}
+}
 .fc-acoes .btn{padding:.6rem 1.1rem;font-size:.86rem;font-weight:600;min-height:42px}
 /* App das lojas (APP_LOJA, no <head>): sem preço, "assine" nem checkout. As
    portas para a tela de pacotes também param em showAssineScreen; aqui somem os
@@ -694,16 +711,19 @@ body.mm-tela-cheia #mm-svg-wrap{flex:1 1 auto;min-height:0!important;max-height:
    tela só com a raiz e os ramos principais (pedido do professor, print do Hipotireoidismo).
    Tocar numa caixa abre ou fecha os ramos dela. Para editar, o botão "Editar" ao lado de "Salvar" (pedido do professor: o botão fica em
    cima, "não ficaria aparecendo em cada caixa"): aí as caixas viram texto editável, e a caixa
-   tocada mostra + (cria um ramo a partir dela) e × (remove). O "+N" de um ramo fechado abre o
-   ramo nos dois modos. Centralizado com margin:auto (num flex, o excesso continua alcançável
+   tocada mostra + (cria um ramo a partir dela) e × (remove). Sem "+N" ao lado das caixas
+   (o professor pediu para tirar). Centralizado com margin:auto (num flex, o excesso continua alcançável
    pela rolagem). */
 body.mm-tela-cheia .mm-svg-stage{min-width:0;min-height:0;margin:auto;flex:0 0 auto}
 body.mm-tela-cheia .mm-central{box-shadow:0 0 0 1.5px rgba(255,255,255,.4),0 10px 22px rgba(0,0,0,.25)}
 body.mm-tela-cheia .mm-fechado>.mm-gap,body.mm-tela-cheia .mm-fechado>.mm-children,body.mm-tela-cheia .mm-fechado>.mm-subs-block{display:none}
 body.mm-tela-cheia .mm-add-sub,body.mm-tela-cheia .mm-add-branch{display:none}
-body.mm-tela-cheia [data-mm-branch],body.mm-tela-cheia [data-mm-leaf]{cursor:pointer;-webkit-user-select:none;user-select:none}
+body.mm-tela-cheia [data-mm-branch],body.mm-tela-cheia [data-mm-leaf]{cursor:default;-webkit-user-select:none;user-select:none}
+/* A "mãozinha" só nas caixas que têm ramos para abrir; a última caixa de um ramo não abre nada
+   (professor, 13/11/2026: "quando for a última caixa, não aparecer a 'mãozinha'"). */
+body.mm-tela-cheia .mm-editor:not(.mm-modo-edicao) .mm-tem-filhos>.mm-node-wrap>[data-mm-branch],body.mm-tela-cheia .mm-editor:not(.mm-modo-edicao) .mm-tem-filhos>.mm-node-wrap>[data-mm-leaf]{cursor:pointer}
 body.mm-tela-cheia .mm-node-wrap .mm-del,body.mm-tela-cheia .mm-node-wrap .mm-add-child{display:none}
-.mm-qtd,.mm-editar{display:none}
+.mm-editar{display:none}
 body.mm-tela-cheia .mm-editar{display:inline-flex;white-space:nowrap;color:#fff;border:1px solid rgba(255,255,255,.35);background:transparent}
 body.mm-tela-cheia .mm-editar.on{background:#fbbf24;border-color:#fbbf24;color:#1c2a48;font-weight:700}
 /* --mm-bt: tamanho dos botões nas medidas do mapa; o JS aumenta quando o mapa está reduzido,
@@ -713,7 +733,6 @@ body.mm-tela-cheia .mm-modo-edicao .mm-node-wrap.mm-foco>.mm-del{top:calc(var(--
 body.mm-tela-cheia .mm-modo-edicao .mm-node-wrap.mm-foco>.mm-add-child{bottom:calc(var(--mm-bt,24px)*-.5);right:calc(var(--mm-bt,24px)*-.5);top:auto}
 body.mm-tela-cheia .mm-modo-edicao [contenteditable="true"]{cursor:text;-webkit-user-select:text;user-select:text;outline:1px dashed rgba(255,255,255,.45);outline-offset:2px}
 body.mm-tela-cheia .mm-modo-edicao .mm-foco>[contenteditable="true"]{outline:2px solid #fbbf24}
-body.mm-tela-cheia .mm-fechado>.mm-qtd{display:inline-flex;flex:0 0 auto;cursor:pointer;align-items:center;margin-left:6px;padding:.1rem .42rem;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font-size:.66rem;font-weight:700;white-space:nowrap}
 /* Larguras mais estreitas (texto quebra em mais linhas): num celular em pé o mapa fica mais alto
    e menos largo, e cabe na tela com letra maior. O JS testa as três e fica com a de letra maior. */
 body.mm-tela-cheia .mm-editor.mm-l1 .mm-gap{width:26px}
@@ -11810,6 +11829,7 @@ function qzRender(dir){
   if(ant)ant.disabled=qzIdx===0;
   if(prox)prox.textContent=qzIdx>=n-1?'Concluir ✓':'Próxima →';
   var corpo=document.getElementById('qz-corpo');if(corpo)corpo.scrollTop=0;
+  var tela=document.getElementById('qz-tela');if(tela)tela.scrollTop=0; // no computador a tela inteira rola
   updateGenCounter();
 }
 // Questão já respondida nesta sessão: mostra de novo a marcação e o comentário, sem contar outra vez.
@@ -12784,11 +12804,11 @@ function mmLeafHTML(lf,path,col){
   var label=typeof lf==='string'?lf:((lf&&lf.label)||'');
   var kids=(lf&&typeof lf==='object'&&Array.isArray(lf.children))?lf.children:[];
   var st=mmLeafStyle(col),ler=mmLeitura()&&!mmEditando;
-  var h='<div class="mm-leaf-row'+(kids.length&&!mmLinhaAberta(path)?' mm-fechado':'')+'" data-mm-row="'+path+'"><div class="mm-node-wrap">'
+  var h='<div class="mm-leaf-row'+(kids.length?' mm-tem-filhos':'')+(kids.length&&!mmLinhaAberta(path)?' mm-fechado':'')+'" data-mm-row="'+path+'"><div class="mm-node-wrap">'
     +'<div class="mm-sub-txt" contenteditable="'+(ler?'false':'true')+'" spellcheck="false" data-mm-leaf="'+path+'"'+(st?' style="'+st+'"':'')+'>'+esc(label)+'</div>'
     +'<button class="mm-del" data-mmdelleaf="'+path+'" title="Remover">×</button>'
     +'<button class="mm-add-child" data-mmaddchild="'+path+'" title="Adicionar subramo a partir desta caixa">+</button>'
-    +'</div>'+(kids.length?'<span class="mm-qtd" aria-label="'+kids.length+' ramos fechados">+'+kids.length+'</span>':'');
+    +'</div>';
   if(kids.length){
     h+='<div class="mm-gap"></div><div class="mm-children">'+kids.map(function(c,ci){return mmLeafHTML(c,path+'-'+ci,col);}).join('')+'</div>';
   }
@@ -12804,9 +12824,9 @@ function renderMMEditor(){
     +'<div class="mm-gap"></div><div class="mm-branches">';
   html+=(curMM.data.branches||[]).map(function(b,bi){
     var col=BCOLORS[bi%BCOLORS.length],leaves=b.leaves||[];
-    return'<div class="mm-branch-row'+(leaves.length&&!mmLinhaAberta(bi)?' mm-fechado':'')+'" data-mm-branch-row="'+bi+'" data-mm-row="'+bi+'">'
+    return'<div class="mm-branch-row'+(leaves.length?' mm-tem-filhos':'')+(leaves.length&&!mmLinhaAberta(bi)?' mm-fechado':'')+'" data-mm-branch-row="'+bi+'" data-mm-row="'+bi+'">'
       +'<div class="mm-node-wrap"><div class="mm-branch-txt" contenteditable="'+ce+'" spellcheck="false" data-mm-branch="'+bi+'" style="background:'+col+'">'+esc(b.label||'Ramo')+'</div><button class="mm-del" data-mmdelbranch="'+bi+'" title="Remover ramo">×</button>'
-      +'<button class="mm-add-child" data-mmaddsub="'+bi+'" title="Adicionar subramo">+</button></div>'+(leaves.length?'<span class="mm-qtd" aria-label="'+leaves.length+' ramos fechados">+'+leaves.length+'</span>':'')
+      +'<button class="mm-add-child" data-mmaddsub="'+bi+'" title="Adicionar subramo">+</button></div>'
       +'<div class="mm-gap"></div>'
       +'<div class="mm-subs-block">'
       +leaves.map(function(lf,li){return mmLeafHTML(lf,bi+'-'+li,col);}).join('')
@@ -12827,8 +12847,6 @@ function renderMMEditor(){
     editor.addEventListener('click',function(ev){
       if(!mmLeitura())return;
       var t=ev.target;
-      // "+N" de um ramo fechado: abre nos dois modos.
-      var q=t.closest('.mm-qtd');if(q){var row=q.parentNode,bx=mmCaixaDe(row.querySelector(':scope > .mm-node-wrap'));if(bx)mmAlterna(bx);return;}
       if(mmEditando)return; // editando: tocar na caixa põe o cursor nela
       var box=t.closest('[data-mm-branch],[data-mm-leaf]');
       if(box)mmAlterna(box);
