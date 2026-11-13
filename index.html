@@ -17860,12 +17860,14 @@ function qotdNoBanco(s,provas,agora){
   }
   var quando=+s.postedAt||agora;
   var conteudo={stem:s.stem,options:JSON.parse(JSON.stringify(s.options)),answer:s.answer,explanation:s.explanation||'',
-    area:s.sub||'',ano:new Date(quando-3*3600000).getUTCFullYear(),img:s.img||'',imgRef:s.img?(s.imgRef||''):''};
+    area:s.sub||'',ano:new Date(quando-3*3600000).getUTCFullYear(),img:s.img||'',imgRef:s.img?(s.imgRef||''):'',
+    expImg:s.expImg||'',expImgRef:s.expImg?(s.expImgRef||''):'',expImgTema:s.expImg?(s.expImgTema||''):'',expImgOrigem:s.expImg?(s.expImgOrigem||''):''};
   if(existente){
     var mudou=Object.keys(conteudo).some(function(k){return JSON.stringify(existente[k]===undefined?'':existente[k])!==JSON.stringify(conteudo[k]);});
     if(!mudou)return null;
     Object.keys(conteudo).forEach(function(k){existente[k]=conteudo[k];});
     if(!existente.img){delete existente.img;delete existente.imgRef;}
+    if(!existente.expImg){delete existente.expImg;delete existente.expImgRef;delete existente.expImgTema;delete existente.expImgOrigem;}
     existente.qotdPostedAt=quando;
     return 'atualizado';
   }
@@ -17874,6 +17876,7 @@ function qotdNoBanco(s,provas,agora){
     ano:conteudo.ano,type:'mc',active:true,free:false,origem:'Questão do Dia',sourceId:sid,qotdPostedAt:quando,
     importedAt:new Date(agora).toISOString()};
   if(conteudo.img){it.img=conteudo.img;if(conteudo.imgRef)it.imgRef=conteudo.imgRef;}
+  if(conteudo.expImg){it.expImg=conteudo.expImg;['expImgRef','expImgTema','expImgOrigem'].forEach(function(k){if(conteudo[k])it[k]=conteudo[k];});}
   provas.push(it);
   return 'novo';
 }

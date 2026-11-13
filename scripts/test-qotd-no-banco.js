@@ -83,6 +83,21 @@ function ambos(s, provas, rotulo) {
   ok('🧨 a figura vai junto, com o crédito (CC BY pede atribuição)', it.img === 'data:image/webp;base64,AAAA' && it.imgRef === 'Autor X, 2020. CC BY 4.0');
 }
 {
+  const fig = { expImg: 'https://www.endodirect.com.br/figuras/qotd/x.svg', expImgRef: 'Gráfico Endodirect a partir de Autor Y, 2026.', expImgTema: '', expImgOrigem: 'upload' };
+  const { provas } = ambos(story(fig), banco0(), 'com figura no comentário');
+  const it = provas[provas.length - 1];
+  ok('🧨 a figura do COMENTÁRIO vai junto (expImg e legenda); campo vazio não entra', it.expImg === fig.expImg && it.expImgRef === fig.expImgRef
+    && it.expImgOrigem === 'upload' && !('expImgTema' in it));
+  const r = ambos(story(fig), provas, 'mesma figura de novo');
+  ok('repostar com a mesma figura do comentário não conta como mudança', r.r === null);
+  const r2 = ambos(story(), provas, 'figura do comentário retirada');
+  ok('figura do comentário retirada sai da cópia', r2.r === 'atualizado' && !('expImg' in r2.provas[2]) && !('expImgRef' in r2.provas[2]));
+  const orfa = ambos(story({ expImgRef: 'legenda órfã', expImgOrigem: 'upload' }), r2.provas, 'legenda do comentário sem figura');
+  ok('legenda do comentário sem figura não conta como mudança (nem entra)', orfa.r === null && !('expImgRef' in orfa.provas[2]));
+  const semFig = ambos(story(), banco0(), 'sem figura no comentário');
+  ok('sem figura no comentário, nenhum campo expImg', !Object.keys(semFig.provas[2]).some((k) => /^expImg/.test(k)));
+}
+{
   // 01/01/2026 01:00 UTC = 31/12/2025 22:00 em Brasília
   const { provas } = ambos(story({ postedAt: Date.UTC(2026, 0, 1, 1, 0, 0) }), banco0(), 'virada do ano');
   ok('ano da postagem no horário de Brasília', provas[provas.length - 1].ano === 2025);
