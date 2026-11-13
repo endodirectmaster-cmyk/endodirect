@@ -12254,11 +12254,11 @@ function renderProvaResults(qs){
 var studyCards=[],studyIdx=0,fcSelectedCat='Diabetes',fcFilter=null,fcTema='';
 // Paginação dos flashcards (professor, 13/11/2026: "Limitar o número de aparecimentos de
 // flashcards por página e o restante nas páginas seguintes. E deixar um campo também de filtro
-// de números por página. Por exemplo, 10, 30 ou 50"). Mesmas opções da Questão do Dia; a
-// escolha fica guardada no aparelho. Trocar de subespecialidade, de subtópico ou o tamanho da
-// página volta para a 1ª página.
-var FC_POR_OPCOES=[10,30,50];
-var fcPor=(function(){var v=+lsGet('fc_por_pagina');return FC_POR_OPCOES.indexOf(v)>=0?v:10;})(),fcPagina=0;
+// de números por página"; e, logo depois: "Deixa 5, 10 ou 30, é melhor. E o padrão sendo de 5").
+// A escolha fica guardada no aparelho (uma escolha antiga fora da lista, como 50, volta a 5).
+// Trocar de subespecialidade, de subtópico ou o tamanho da página volta para a 1ª página.
+var FC_POR_OPCOES=[5,10,30];
+var fcPor=(function(){var v=+lsGet('fc_por_pagina');return FC_POR_OPCOES.indexOf(v)>=0?v:5;})(),fcPagina=0;
 function renderFcCatPills(){
   var el=document.getElementById('fc-cat-pills');if(!el)return;
   el.innerHTML=FC_CATS.map(function(c){return'<button class="cat-pill'+(c===fcSelectedCat?' on':'')+'" data-fccat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
