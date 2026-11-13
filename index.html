@@ -515,6 +515,8 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .btn-ghost:hover:not(:disabled){color:var(--tx);background:var(--s2)}
 .btn-danger{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .btn-sm{padding:.26rem .6rem;font-size:.68rem}
+/* Flashcards: "+ Novo card" e "Estudar" maiores (13/11/2026, pedido do professor). */
+.fc-acoes .btn{padding:.6rem 1.1rem;font-size:.86rem;font-weight:600;min-height:42px}
 /* App das lojas (APP_LOJA, no <head>): sem preço, "assine" nem checkout. As
    portas para a tela de pacotes também param em showAssineScreen; aqui somem os
    botões que levariam até ela. */
@@ -2734,9 +2736,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Flashcards</b></div>
       <div class="ph"><h1>Flashcards</h1></div>
       <div class="pc">
-        <div style="display:flex;gap:7px;margin-bottom:.85rem;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" id="fc-btn-create">+ Novo card</button>
-          <button class="btn btn-outline btn-sm" id="fc-btn-study">📖 Estudar</button>
+        <div class="fc-acoes" style="display:flex;gap:8px;margin-bottom:.85rem;flex-wrap:wrap">
+          <button class="btn btn-primary" id="fc-btn-create">+ Novo card</button>
+          <button class="btn btn-outline" id="fc-btn-study">📖 Estudar</button>
         </div>
         <div id="fc-create" style="display:none" class="gen-box">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem"><span class="sec-title">Novo card</span><button class="btn btn-ghost btn-sm" id="fc-create-cancel">✕</button></div>
