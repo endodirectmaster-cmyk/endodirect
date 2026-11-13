@@ -615,14 +615,17 @@ textarea{resize:vertical;line-height:1.6}
 .q-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.7rem}
 .q-stem-prev{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1}
 .q-detail{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:.9rem 1.1rem;margin-top:3px}
-.q-stem{font-size:.84rem;line-height:1.7;color:var(--tx);margin-bottom:.85rem;font-weight:500}
-.qo{background:var(--surface);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px}
+/* Enunciado, alternativas e comentário justificados, como na Questão do Dia (.qp-*); comentário
+   um pouco maior, .75 → .82rem, o mesmo da Questão do Dia (professor, 13/11/2026: "Deixar tudo em
+   modo justificado e aumentar ligeiramente o tamanho da letra nos comentários"). */
+.q-stem{font-size:.84rem;line-height:1.7;color:var(--tx);margin-bottom:.85rem;font-weight:500;text-align:justify;text-align-last:left;overflow-wrap:break-word}
+.qo{background:var(--surface);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px;text-align:justify;text-align-last:left}
 .qo:hover{border-color:var(--blue);color:var(--tx);background:var(--blue-l)}
 .qo.correct{border-color:var(--grn)!important;color:#34d399!important;background:var(--grn-l)!important}
 .qo.wrong{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-l)!important}
 .qo.annul{border-color:#f59e0b!important;color:#fbbf24!important;background:#33270c!important}
 .qo-ltr{font-weight:700;flex-shrink:0;width:14px}
-.q-fb{border-radius:var(--rs);padding:.55rem .8rem;font-size:.75rem;line-height:1.6;margin:.65rem 0}
+.q-fb{border-radius:var(--rs);padding:.6rem .85rem;font-size:.82rem;line-height:1.65;margin:.65rem 0;text-align:justify;text-align-last:left;overflow-wrap:anywhere}
 .q-fb.ok{background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .q-fb.annul{background:#33270c;color:#fbbf24;border:1px solid #5a4a1e}

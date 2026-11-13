@@ -65,5 +65,12 @@ ok('🧨 trocar de painel fecha o estudo', /if\(id!=='quest'\)try\{if\(qzAberto\
 ok('sair da conta fecha o estudo', /if\(qzAberto\(\)\)qzFechar\(\);/.test(corpo('doLogout')));
 ok('🧨 "Tentar de novo" não abre o estudo sozinho', !/btn-filter-provas/.test(corpo('bancoTentarDeNovo')));
 
+// Texto da questão justificado e comentário um pouco maior (professor, 13/11/2026, com print do Estudar).
+const regraCss = (sel) => (html.match(new RegExp('\\n' + sel.replace(/[.]/g, '\\.') + '\\{([^}]*)\\}')) || [, ''])[1];
+ok('🧨 enunciado, alternativas e comentário justificados', ['.q-stem', '.qo', '.q-fb'].every((c) => /text-align:justify/.test(regraCss(c)) && /text-align-last:left/.test(regraCss(c))));
+const letraFb = parseFloat((regraCss('.q-fb').match(/font-size:([\d.]+)rem/) || [, '0'])[1]);
+ok('🧨 letra do comentário maior que antes (.75rem) e igual à da Questão do Dia (veio ' + letraFb + 'rem)', letraFb > 0.75 && letraFb === parseFloat((regraCss('.qp-fb').match(/font-size:([\d.]+)rem/) || [, '0'])[1]));
+ok('link da referência quebra dentro do comentário (não estoura a tela)', /overflow-wrap:anywhere/.test(regraCss('.q-fb')));
+
 if (bad) { console.log('✗ Banco — Estudar: ' + bad + ' falha(s)'); process.exit(1); }
 console.log('✓ Banco — Estudar: contagem nos filtros, uma questão por vez em tela cheia, Anterior/Próxima, sem contar duas vezes');
