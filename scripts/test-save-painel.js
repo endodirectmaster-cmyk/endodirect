@@ -46,7 +46,7 @@ const DECL = (html.match(/^var globalReadRetries=[^\n]*;$/m) || [])[0];
 ok(DECL, 'index.html tem de declarar globalReadRetries e globalReadRetryTimer');
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const VAZIAS = ['provasDB', 'podcasts', 'admCursos', 'admCursoModsExtra', 'admEstudantes', 'sharedMM', 'fcShared',
-  'dirTemasExtra', 'igStories', 'igPending', 'admAvisos', 'radarAvisos', 'radarHidden', 'admQuestoes'];
+  'dirTemasExtra', 'igStories', 'igPending', 'admAvisos', 'radarAvisos', 'radarHidden', 'admQuestoes', 'avisosAlunos'];
 
 function cenario(servidor) {
   const sb = {
@@ -65,7 +65,7 @@ function cenario(servidor) {
   sb.canonProvaArea = (x) => { sb.canon++; return x; };
   ['normalizeAdmEstudantes', 'dirMigrateSub', 'mergeRadarAvisos'].forEach((f) => { sb[f] = (x) => x; });
   ['lsSet', 'invalidateSharedMeta', 'renderMMList', 'updateAdmPendBadge', 'maybePendAlert', 'renderQotdArchive',
-    'renderEnqueteCme', 'renderDashAcervo', 'definirAcessos'].forEach((f) => { sb[f] = () => {}; });
+    'renderEnqueteCme', 'renderDashAcervo', 'renderDashAvisos', 'definirAcessos'].forEach((f) => { sb[f] = () => {}; });
   sb.mesclarFeitas = (a) => a;
   sb.isRadarAuto = () => false;
   sb.avisoKeyStr = (it) => String(it && it.k);

@@ -5,6 +5,13 @@ atualizado: 2026-11-12
 
 # Pendências
 
+## 📚 Banco: questões de diretrizes desatualizadas (pedido de 12/11; AGENDADO para 13/11, 20h30 BRT)
+
+Pedido do professor: *"no banco de questões, algumas questões estão desatualizadas com relação ao tempo. Por exemplo, tem uma questão que pergunta segundo a diretriz brasileira de diabetes de 2023, sendo que a diretriz já foi atualizada ... fazer um levantamento ... e atualizar para as diretrizes mais atuais ... apenas quando renovar o limite semanal ... amanhã à noite"*.
+- Agendado (send_later, `trig_01C9huwBLm2BiCu4E9fBUC8B`) para 13/11 às 20h30 BRT, depois da renovação do limite semanal (17h) e da geração das 92 Questões do Dia (18h).
+- **Fase 1 (levantamento, sem gravar):** questões que citam diretriz/consenso com ano, separadas em autoria Endodirect × prova oficial, com a diretriz atual e a proposta; página para o professor aprovar.
+- **Fase 2 (só com o "pode"):** Endodirect → atualizar enunciado/alternativas/comentário; prova oficial → enunciado e gabarito intocados, só nota de atualização no comentário. Troca de gabarito só com o revisor independente concordando. Backup, função temporária com token e guarda md5, verificação; DROP só com o professor no computador.
+
 ## 🆕 Questão do Dia: novidades de 2026 (levantamento de 12/11)
 - Levantamento entregue ao professor: ~92 questões de múltipla escolha sobre 2026 (FDA ~8, Anvisa ~4, diretrizes e
   consensos ~25, ensaios de obesidade/diabetes/lípides/pediatria/osso ~35, metanálises ~10, 1º semestre fora do radar

@@ -352,6 +352,22 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .filtro-caixa-rot{font-size:.6rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
 .filtro-caixa select{height:38px;font-weight:600;cursor:pointer}
 .filtro-caixa.filtro-curta{flex:0 0 10.5rem;min-width:9rem}
+/* Mural de avisos do Dashboard (13/11/2026). */
+.dash-avisos .card-head{margin-bottom:.55rem}
+.dav-lista{display:flex;flex-direction:column;gap:.5rem}
+.dav-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:.7rem;align-items:start;padding:.65rem .75rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2)}
+.dav-item.dav-manual{border-left:4px solid var(--gold)}
+.dav-ico{font-size:1.15rem;line-height:1.3;flex:0 0 auto}
+.dav-corpo{min-width:0}
+.dav-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-bottom:.15rem}
+.dav-tipo{font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.dav-data{font-size:.66rem;color:var(--t3);font-variant-numeric:tabular-nums}
+.dav-novo{font-size:.6rem;font-weight:800;color:#fff;background:var(--blue);border-radius:999px;padding:.05rem .45rem}
+.dav-tit{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.4;overflow-wrap:anywhere}
+.dav-txt{font-size:.78rem;color:var(--t2);line-height:1.55;margin-top:.2rem;overflow-wrap:anywhere;text-align:justify;text-align-last:left}
+.dav-abrir{flex:0 0 auto;align-self:center;white-space:nowrap}
+.dav-mais{margin-top:.6rem;background:none;border:0;color:var(--blue);font-family:var(--font);font-size:.76rem;font-weight:600;cursor:pointer;padding:.2rem 0}
+@media (max-width:520px){.dav-item{grid-template-columns:auto minmax(0,1fr)}.dav-abrir{grid-column:2;justify-self:start;margin-top:.45rem}}
 .filtro-linha{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;margin:.2rem 0 .9rem}
 /* A cor do card vem das classes `mural-card-*`, que só definem
    `border-left-color` — por isso a borda em si é declarada aqui. Card de área
@@ -2800,6 +2816,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
              Os dois continuam onde alcançam quem precisa: na JANELA DE ENTRADA
              (que abre sozinha) e no card do MURAL DE ARTIGOS. O Dashboard é
              painel — o que ele mostra é estado, não pedido. -->
+        <div id="dash-avisos" style="display:none;margin-bottom:10px"></div>
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
         <div class="g3" style="margin-bottom:10px">
@@ -3331,6 +3348,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
           <button class="adm-nav" data-asec="pendencias">📥 Pendências <span id="adm-pend-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
           <button class="adm-nav" data-asec="mural">📣 Mural de artigos</button>
+          <button class="adm-nav" data-asec="avisos">📌 Avisos aos alunos</button>
           <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
           <button class="adm-nav" data-asec="resumos">📄 Resumos</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
@@ -6573,6 +6591,11 @@ var globalServerKeys={};
 // É gravada pelo admin (vai no globalStatePayload); o cron do radar só LÊ (lembrete
 // diário). A trava ig_notice_sent é do SERVIDOR (preservada como as newsletter_*).
 var igStories=lsGet('ig_stories')||[];
+// AVISOS AOS ALUNOS (13/11/2026): o que o professor escreve para o mural do Dashboard (edital,
+// prova, aviso geral). Estado GLOBAL, gravado pelo painel do professor; o aluno recebe por
+// endodirect_member_content_sem_provas (ver supabase/avisos-aos-alunos.sql).
+// Item: {id, tipo:'aviso'|'edital'|'prova', titulo, texto, link, at, ate (fim do dia, opcional)}.
+var avisosAlunos=lsGet('avisos_alunos')||[];
 // Curadoria DISTRIBUÍDA da Questão do Dia (confirmado pelo usuário 2026-06-24): o
 // dono (Rodolpho) gera e DISTRIBUI; cada professor revisa/aprova só as SUAS
 // subespecialidades na aba "Pendências". igPending vive no estado GLOBAL (os outros
@@ -6652,7 +6675,8 @@ var GLOBAL_MERGE_KEYS={
   curso_mods_extra:function(it){return (it.curso||'')+'|'+(it.modulo||'');},
   adm_estudantes:function(it){return (it.email||it.cpf||it.nome||'');},
   ig_stories:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));},
-  ig_pending:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));}
+  ig_pending:function(it){return it.id||((it.stem||'')+'|'+(it.answer||''));},
+  avisos_alunos:function(it){return it.id||((it.titulo||'')+'|'+(it.at||''));}
 };
 
 // Rótulo humano do item em conflito. ⚠️🐛 FIX (10/08/2026): o aviso usava o 2º campo
@@ -6661,7 +6685,7 @@ var GLOBAL_MERGE_KEYS={
 // olhava a aba Resumos, sem como saber que o conflito era de duas QUESTÕES noutra aba.
 // Agora cada conflito carrega a coleção, e o rótulo nomeia a ABA e um trecho que
 // identifica o item.
-var MERGE_ABAS={provas:'Provas & Questões',diretrizes:'Diretrizes/Resumos',diretrizes_temas:'Temas de Diretrizes',adm_cursos:'Cursos',podcasts:'Podcasts',mm_shared:'Mapas Mentais',fc_shared:'Flashcards',curso_mods_extra:'Módulos de curso',adm_estudantes:'Estudantes',ig_stories:'Stories',ig_pending:'Stories (pendentes)'};
+var MERGE_ABAS={provas:'Provas & Questões',diretrizes:'Diretrizes/Resumos',diretrizes_temas:'Temas de Diretrizes',adm_cursos:'Cursos',podcasts:'Podcasts',mm_shared:'Mapas Mentais',fc_shared:'Flashcards',curso_mods_extra:'Módulos de curso',adm_estudantes:'Estudantes',ig_stories:'Stories',ig_pending:'Stories (pendentes)',avisos_alunos:'Avisos aos alunos'};
 var MERGE_ROTULOS={
   provas:function(pr){return pr[0]||'';},            // o enunciado, não a alternativa
   ig_stories:function(pr){return pr[0]||'';},
@@ -6683,7 +6707,8 @@ var MERGE_ITEM_ROTULO={
   mm_shared:function(it){return it.topic||it.title||'';},
   fc_shared:function(it){return it.front||'';},
   curso_mods_extra:function(it){return it.modulo||it.curso||'';},
-  adm_estudantes:function(it){return it.nome||it.email||'';}
+  adm_estudantes:function(it){return it.nome||it.email||'';},
+  avisos_alunos:function(it){return it.titulo||'';}
 };
 function rotuloConflito(c){
   var k=String((c&&c.key)!==undefined?c.key:c),coll=(c&&c.coll)||'';
@@ -6827,7 +6852,7 @@ function globalStatePayload(){
   // professor grava apenas os avisos manuais em adm_avisos. A leitura
   // (member_content/public_content) mescla os dois.
   // Mescla as chaves geridas pelo servidor (newsletter_*) para NÃO apagá-las no save.
-  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories,ig_pending:igPending,aovivo:aoVivoAgendada});
+  return Object.assign({},globalServerKeys,{provas:provasDB,adm_avisos:admAvisos.filter(function(a){return !isRadarAuto(a);}),radar_avisos:radarAvisos,radar_hidden:radarHidden,adm_questoes:admQuestoes,podcasts:podcasts,adm_cursos:admCursos,curso_mods_extra:admCursoModsExtra,adm_estudantes:admEstudantes,mm_shared:sharedMM,fc_shared:fcShared,diretrizes:diretrizes,diretrizes_temas:dirTemasExtra,ig_stories:igStories,ig_pending:igPending,aovivo:aoVivoAgendada,avisos_alunos:avisosAlunos});
 }
 function currentStatePayload(){
   return Object.assign({},userStatePayload(),globalStatePayload());
@@ -6887,8 +6912,9 @@ function applyStatePayload(payload,personalOnly){
       admAvisos=mergeRadarAvisos((Array.isArray(payload.adm_avisos)?payload.adm_avisos:[]).concat(Array.isArray(payload.radar_avisos)?payload.radar_avisos:[]));
     }
     if(Array.isArray(payload.adm_questoes))admQuestoes=payload.adm_questoes;
+    if(Array.isArray(payload.avisos_alunos)){avisosAlunos=payload.avisos_alunos;try{lsSet('avisos_alunos',avisosAlunos);}catch(e){}try{renderDashAvisos();}catch(e){}}
     if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
-    if(Array.isArray(payload.adm_cursos))admCursos=payload.adm_cursos;
+    if(Array.isArray(payload.adm_cursos)){admCursos=payload.adm_cursos;try{renderDashAvisos();}catch(e){}} // aulas novas da EMC entram no mural
     if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
     if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
     if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
@@ -7116,6 +7142,7 @@ function aplicarResumos(lista){
   diretrizes=caps;
   try{lsSet('diretrizes',diretrizes);}catch(e){}
   resumosErro=false;
+  try{renderDashAvisos();}catch(e){} // videoaulas novas entram no mural de avisos
 }
 // `uid` é quem PEDIU (null = demo/visitante). Os capítulos privados de um
 // assinante em voo não podem ser aplicados — nem guardados no aparelho — na
@@ -10896,11 +10923,94 @@ function acervoNovosHTML(){
   var txt=partes.length?('Novos '+quando+': '+partes.join(' · ')+'.'):('<span class="n0">Nenhum conteúdo novo '+quando+'.</span>');
   return '<div class="acv-novos">'+txt+'</div>';
 }
+// ── MURAL DE AVISOS NO DASHBOARD (13/11/2026) ──────────────────────────────────────────
+// Professor: "Acho que vale a pena também aqui no dashboard o mural de avisos. Por exemplo,
+// quando for introduzida uma nova videoaula, uma nova aula do Educação Médica Continuada, algum
+// aviso importante de edital, de alguma prova, etc."
+//  - Avisos do professor (avisosAlunos): ficam até o "mostrar até" (ou para sempre) e vêm
+//    primeiro, os mais novos em cima.
+//  - Sozinhos, pela data (`at`) do que o aluno já recebe: videoaula nova dos Resumos/Diretrizes
+//    e aula nova da Educação Médica Continuada dos últimos AVISOS_AUTO_DIAS dias.
+//  - "Novo" = depois da última visita (a mesma marca do "Novos desde a sua última visita").
+//  - Sem aviso nenhum, o cartão não aparece (o Dashboard mostra estado, não espaço vazio).
+var AVISOS_AUTO_DIAS=30,AVISOS_VISIVEIS=4,dashAvisosTodos=false,dashAvisosItens=[];
+var AVISO_TIPOS={
+  aviso:{ico:'📢',nome:'Aviso'},edital:{ico:'📄',nome:'Edital'},prova:{ico:'📝',nome:'Prova'},
+  video:{ico:'🎬',nome:'Videoaula nova'},emc:{ico:'🎓',nome:'Aula nova · Educação Médica Continuada'}
+};
+function avisoLinkSeguro(u){u=String(u||'').trim();return /^https?:\/\/[^\s"'<>]+$/i.test(u)?u:'';}
+function avisosDoMural(agora){
+  agora=agora||Date.now();
+  var limite=agora-AVISOS_AUTO_DIAS*86400000,hoje0=new Date(agora);hoje0.setHours(0,0,0,0);
+  var manuais=[],autos=[];
+  (Array.isArray(avisosAlunos)?avisosAlunos:[]).forEach(function(a){
+    if(!a||!String(a.titulo||'').trim())return;
+    if(a.ate&&+a.ate<hoje0.getTime())return; // venceu
+    manuais.push({tipo:AVISO_TIPOS[a.tipo]&&a.tipo!=='video'&&a.tipo!=='emc'?a.tipo:'aviso',titulo:String(a.titulo),texto:String(a.texto||''),link:avisoLinkSeguro(a.link),at:+a.at||0,manual:true});
+  });
+  (typeof diretrizes!=='undefined'&&Array.isArray(diretrizes)?diretrizes:[]).forEach(function(d){
+    if(!d||!Array.isArray(d.videos)||!d.videos.length)return;
+    try{if(typeof dirIsVisibleAnyTipo==='function'&&!dirIsVisibleAnyTipo(d))return;}catch(e){}
+    d.videos.forEach(function(v){
+      var at=+((v&&v.at)||0);if(!v||!v.src||at<limite||at>agora+60000)return;
+      autos.push({tipo:'video',titulo:String(v.titulo||'Videoaula'),texto:dirTemaOf(d)+' · '+(String(d.sub||'Geral').trim()||'Geral'),at:at,dir:d,src:v.src});
+    });
+  });
+  (typeof admCursos!=='undefined'&&Array.isArray(admCursos)?admCursos:[]).forEach(function(c){
+    if(!c||c.curso!==EMC_SLUG)return;
+    var at=+c.at||0;if(at<limite||at>agora+60000)return;
+    autos.push({tipo:'emc',titulo:String(c.title||'Aula nova'),texto:String(c.modulo||'').trim(),at:at,emcAt:at});
+  });
+  var porData=function(a,b){return b.at-a.at;};
+  return manuais.sort(porData).concat(autos.sort(porData));
+}
+function renderDashAvisos(){
+  var el=document.getElementById('dash-avisos');if(!el)return;
+  var itens=avisosDoMural();dashAvisosItens=itens;
+  if(!itens.length){el.style.display='none';el.innerHTML='';return;}
+  var ref=0;try{ref=acervoRefVisita()||0;}catch(e){}
+  var mostra=dashAvisosTodos?itens:itens.slice(0,AVISOS_VISIVEIS);
+  el.style.display='';
+  el.innerHTML='<div class="card dash-avisos"><div class="card-head"><span class="card-title">📌 Mural de avisos</span></div>'
+    +'<div class="dav-lista">'+mostra.map(function(a,k){
+      var t=AVISO_TIPOS[a.tipo]||AVISO_TIPOS.aviso,novo=ref&&a.at>ref;
+      var abre=a.tipo==='video'||a.tipo==='emc'||!!a.link;
+      var data=a.at?new Date(a.at).toLocaleDateString('pt-BR'):'';
+      return '<div class="dav-item'+(a.manual?' dav-manual':'')+'">'
+        +'<span class="dav-ico" aria-hidden="true">'+t.ico+'</span>'
+        +'<div class="dav-corpo"><div class="dav-meta"><span class="dav-tipo">'+esc(t.nome)+'</span>'+(data?'<span class="dav-data">'+esc(data)+'</span>':'')+(novo?'<span class="dav-novo">Novo</span>':'')+'</div>'
+        +'<div class="dav-tit">'+esc(a.titulo)+'</div>'
+        +(a.texto?'<div class="dav-txt">'+esc(a.texto).replace(/\n/g,'<br>')+'</div>':'')
+        +'</div>'
+        +(abre?'<button type="button" class="btn btn-outline btn-sm dav-abrir" data-aviso-abrir="'+k+'">'+(a.link?'Abrir ↗':'Ver →')+'</button>':'')
+        +'</div>';
+    }).join('')+'</div>'
+    +(itens.length>AVISOS_VISIVEIS?'<button type="button" class="dav-mais" id="dav-mais">'+(dashAvisosTodos?'Mostrar menos':'Ver todos os avisos ('+itens.length+')')+'</button>':'')
+    +'</div>';
+  el.querySelectorAll('[data-aviso-abrir]').forEach(function(b){b.addEventListener('click',function(){avisoAbrir(dashAvisosItens[+b.getAttribute('data-aviso-abrir')]);});});
+  var mais=document.getElementById('dav-mais');if(mais)mais.addEventListener('click',function(){dashAvisosTodos=!dashAvisosTodos;renderDashAvisos();});
+}
+// Abre o que o aviso anuncia: o link do professor (aba nova), a videoaula no capítulo dela, ou o
+// curso da Educação Médica Continuada na subespecialidade da aula (o mesmo caminho da notificação).
+function avisoAbrir(a){
+  if(!a)return;
+  if(a.link){try{window.open(a.link,'_blank','noopener');}catch(e){}return;}
+  if(a.tipo==='emc'){cursoLinkPendente={slug:EMC_SLUG,at:a.emcAt||0};goPanel('cursos');return;}
+  if(a.tipo==='video'&&a.dir){
+    var d=a.dir,priv=!!d.privado,painel=priv?'resu':'ref';
+    goPanel(painel);
+    var body=document.getElementById(priv?'resu-body':'ref-body');if(!body)return;
+    refPrivadoMode=priv;refSubSel=String(d.sub||'Geral').trim()||'Geral';refTemaSel=dirTemaOf(d);
+    refTipoSel=dirTipoOf(d);refFormat='video';refVideoAberto=a.src||'';refFlashOpen={};
+    try{renderDiretrizesInto(body);}catch(e){}
+  }
+}
 function refreshDash(){
   DB.fc.forEach(function(c){srInit(c);});
   var due=srSessionCount();
   setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   try{renderDashAcervo();}catch(e){}
+  try{renderDashAvisos();}catch(e){}
   try{renderDashRail();}catch(e){}
   try{renderStreakCard();}catch(e){}
   try{renderAtivacao();}catch(e){}
@@ -19156,7 +19266,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',avisos:'Avisos aos alunos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -19166,6 +19276,7 @@ function renderAdmSec(sec){
   try{restorePrescPanel();}catch(e){}
   try{restoreRxPanel();}catch(e){}
   try{restoreMMLive();}catch(e){}
+  if(sec==='avisos'){m.innerHTML=admAvisosAlunosHTML();bindAdmAvisosAlunos();bindAdmSec(sec);return;}
   if(sec==='cme'){
     m.innerHTML='<div class="adm-ph"><h1>🎓 Enquete — Educação Médica Continuada</h1>'
       +'<p>O que os assinantes <b>Gold</b> pediram para o programa mensal. Cada aluno indica até 3 temas.</p></div>'
@@ -20724,6 +20835,86 @@ function admMuralSecHTML(){
 
 // ---------- PODCASTS (admin) ----------
 var admPodSubtab='ouvir',admPodFiltro='';
+// ── AVISOS AOS ALUNOS (painel do professor, 13/11/2026) ─────────────────────────────────
+// Escreve os avisos do mural do Dashboard (edital, prova, aviso geral). Videoaulas e aulas da
+// Educação Médica Continuada novas entram SOZINHAS no mural (últimos 30 dias); aqui é só o que
+// o professor quer dizer. "Mostrar até" tira o aviso do mural depois do dia escolhido.
+var admAvisoEditId=null;
+function admAvisoDataISO(ms){if(!ms)return '';var d=new Date(+ms);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function admAvisosAlunosHTML(){
+  var ed=admAvisoEditId?(avisosAlunos||[]).filter(function(a){return a&&a.id===admAvisoEditId;})[0]:null;
+  var hoje0=new Date();hoje0.setHours(0,0,0,0);
+  var tipoOpts=[['aviso','📢 Aviso geral'],['edital','📄 Edital'],['prova','📝 Prova']].map(function(t){return '<option value="'+t[0]+'"'+((ed?ed.tipo:'aviso')===t[0]?' selected':'')+'>'+t[1]+'</option>';}).join('');
+  var form='<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">'+(ed?'✏️ Editar aviso':'📌 Novo aviso')+'</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Tipo</label><select id="adm-aviso-tipo">'+tipoOpts+'</select></div>'
+    +'<div class="fld2" style="margin:0"><label>Mostrar até (opcional)</label><input type="date" id="adm-aviso-ate" value="'+esc(admAvisoDataISO(ed&&ed.ate))+'"></div></div>'
+    +'<div class="fld2"><label>Título</label><input type="text" id="adm-aviso-titulo" maxlength="140" placeholder="Ex.: Edital da prova de título da SBEM publicado" value="'+esc(ed?ed.titulo:'')+'"></div>'
+    +'<div class="fld2"><label>Texto (opcional)</label><textarea id="adm-aviso-texto" rows="3" maxlength="1200" placeholder="Detalhes, prazos, o que o aluno precisa fazer…">'+esc(ed?ed.texto:'')+'</textarea></div>'
+    +'<div class="fld2"><label>Link (opcional)</label><input type="url" id="adm-aviso-link" placeholder="https://…" value="'+esc(ed?ed.link:'')+'"></div>'
+    +(ed?'':'<label style="display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--t2);margin:.2rem 0 .8rem;cursor:pointer"><input type="checkbox" id="adm-aviso-push" style="width:auto"> Enviar também como notificação no celular (para todos os alunos com notificações ligadas)</label>')
+    +'<div class="upload-status" id="adm-aviso-status"></div>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-adm-aviso-salvar">'+(ed?'💾 Salvar aviso':'📌 Publicar aviso')+'</button>'
+    +(ed?'<button class="btn btn-ghost" id="btn-adm-aviso-cancelar">Cancelar</button>':'')+'</div></div>';
+  var lista=(avisosAlunos||[]).slice().sort(function(a,b){return (+b.at||0)-(+a.at||0);});
+  var rows=lista.length?lista.map(function(a){
+    var venceu=a.ate&&+a.ate<hoje0.getTime(),t=AVISO_TIPOS[a.tipo]||AVISO_TIPOS.aviso;
+    return '<div class="card" style="margin-bottom:.55rem;display:flex;gap:.75rem;align-items:flex-start'+(venceu?';opacity:.6':'')+'">'
+      +'<div style="font-size:1.2rem">'+t.ico+'</div><div style="flex:1;min-width:0">'
+      +'<div style="font-size:.66rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em">'+esc(t.nome)+' · publicado em '+esc(new Date(+a.at||Date.now()).toLocaleDateString('pt-BR'))
+      +(a.ate?(venceu?' · <span style="color:var(--red)">saiu do mural em '+esc(new Date(+a.ate).toLocaleDateString('pt-BR'))+'</span>':' · até '+esc(new Date(+a.ate).toLocaleDateString('pt-BR'))):'')+(a.pushAt?' · 🔔 notificado':'')+'</div>'
+      +'<div style="font-size:.9rem;font-weight:700;color:var(--tx);margin:.15rem 0">'+esc(a.titulo||'')+'</div>'
+      +(a.texto?'<div style="font-size:.78rem;color:var(--t2);white-space:pre-wrap">'+esc(a.texto)+'</div>':'')
+      +(a.link?'<div style="font-size:.72rem;margin-top:.2rem"><a href="'+esc(avisoLinkSeguro(a.link)||'#')+'" target="_blank" rel="noopener">'+esc(a.link)+'</a></div>':'')
+      +'</div><div style="display:flex;gap:.35rem;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-aviso-edit="'+esc(a.id)+'">✏️ Editar</button>'
+      +'<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" data-adm-aviso-del="'+esc(a.id)+'">🗑 Excluir</button></div></div>';
+  }).join(''):'<div class="empty">Nenhum aviso publicado. Escreva o primeiro acima.</div>';
+  var autos=avisosDoMural().filter(function(x){return !x.manual;});
+  var nota='<div style="font-size:.74rem;color:var(--t3);margin:.2rem 0 .9rem;line-height:1.5">Além destes avisos, o mural do Dashboard mostra <b>sozinho</b> as videoaulas e as aulas da Educação Médica Continuada dos últimos '+AVISOS_AUTO_DIAS+' dias'
+    +(autos.length?' (hoje: '+autos.length+' — '+esc(autos.slice(0,3).map(function(x){return x.titulo;}).join('; '))+(autos.length>3?'…':'')+')':' (hoje: nenhuma)')+'.</div>';
+  return '<div class="adm-ph"><h1>📌 Avisos aos alunos</h1><p>O que aparece no mural de avisos do Dashboard de todos os alunos.</p></div>'
+    +'<div class="adm-pc">'+form+nota+'<div class="sec-h"><span class="sec-title">Publicados ('+lista.length+')</span></div>'+rows+'</div>';
+}
+function persistAvisosAlunos(){try{lsSet('avisos_alunos',avisosAlunos);}catch(e){}try{renderDashAvisos();}catch(e){}return queueRemoteStateSave(true);}
+function bindAdmAvisosAlunos(){
+  var val=function(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';};
+  var salvar=document.getElementById('btn-adm-aviso-salvar');
+  if(salvar)salvar.addEventListener('click',function(){
+    var titulo=val('adm-aviso-titulo'),link=val('adm-aviso-link'),ate=val('adm-aviso-ate');
+    if(!titulo){notify('Dê um título ao aviso.','err');return;}
+    if(link&&!avisoLinkSeguro(link)){notify('O link precisa começar com http:// ou https://.','err');return;}
+    var ateMs=0;if(ate){var pd=ate.split('-');ateMs=new Date(+pd[0],+pd[1]-1,+pd[2],23,59,59,999).getTime();}
+    var dados={tipo:val('adm-aviso-tipo')||'aviso',titulo:titulo.slice(0,140),texto:val('adm-aviso-texto').slice(0,1200),link:link,ate:ateMs||0};
+    if(admAvisoEditId){
+      avisosAlunos=(avisosAlunos||[]).map(function(a){return a&&a.id===admAvisoEditId?Object.assign({},a,dados):a;});
+      admAvisoEditId=null;persistAvisosAlunos();notify('Aviso atualizado. ✓','ok');renderAdmSec('avisos');return;
+    }
+    var novo=Object.assign({id:'av-'+Date.now(),at:Date.now()},dados);
+    avisosAlunos=[novo].concat(avisosAlunos||[]);
+    var pushEl=document.getElementById('adm-aviso-push'),querPush=!!(pushEl&&pushEl.checked);
+    var gravou=persistAvisosAlunos();
+    notify('Aviso publicado no mural. ✓','ok');renderAdmSec('avisos');
+    // Notificação no celular só DEPOIS de o aviso estar no servidor (quem toca já o encontra).
+    if(querPush){
+      Promise.resolve(gravou).then(function(salvo){
+        if(!salvo){notify('O aviso ainda não chegou ao servidor, então a notificação não saiu. Tente de novo em instantes.','err');return;}
+        var t=AVISO_TIPOS[novo.tipo]||AVISO_TIPOS.aviso;
+        return admSendPush({title:t.ico+' '+(novo.tipo==='aviso'?'Aviso':t.nome)+' · Endodirect',body:(novo.titulo+(novo.texto?' — '+novo.texto:'')).slice(0,200),url:'https://www.endodirect.com.br/'}).then(function(r){
+          if(r&&r.ok){avisosAlunos=avisosAlunos.map(function(a){return a&&a.id===novo.id?Object.assign({},a,{pushAt:Date.now()}):a;});persistAvisosAlunos();notify('Notificação enviada. 🔔','ok');if(admCurrentSec==='avisos')renderAdmSec('avisos');}
+          else notify('A notificação não saiu: '+((r&&r.error)||'erro do servidor')+'.','err');
+        });
+      }).catch(function(e){notify('A notificação não saiu: '+((e&&e.message)||e)+'.','err');});
+    }
+  });
+  var canc=document.getElementById('btn-adm-aviso-cancelar');if(canc)canc.addEventListener('click',function(){admAvisoEditId=null;renderAdmSec('avisos');});
+  document.querySelectorAll('[data-adm-aviso-edit]').forEach(function(b){b.addEventListener('click',function(){admAvisoEditId=b.getAttribute('data-adm-aviso-edit');renderAdmSec('avisos');try{document.getElementById('adm-main').scrollIntoView({block:'start'});}catch(e){}});});
+  document.querySelectorAll('[data-adm-aviso-del]').forEach(function(b){b.addEventListener('click',function(){
+    var id=b.getAttribute('data-adm-aviso-del'),a=(avisosAlunos||[]).filter(function(x){return x&&x.id===id;})[0];if(!a)return;
+    if(!confirm('Excluir o aviso "'+(a.titulo||'')+'"? Ele sai do mural de todos os alunos.'))return;
+    avisosAlunos=avisosAlunos.filter(function(x){return !(x&&x.id===id);});
+    if(admAvisoEditId===id)admAvisoEditId=null;
+    persistAvisosAlunos();notify('Aviso excluído.','ok');renderAdmSec('avisos');
+  });});
+}
 function admConteudoHTML(){
   var SUB=['Diabetes','Obesidade','Tireoide','Adrenal','Neuroendocrinologia','Osteometabolismo','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
   var cont={};podcasts.forEach(function(p){if(p.area)cont[p.area]=(cont[p.area]||0)+1;});
