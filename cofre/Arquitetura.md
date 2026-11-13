@@ -1,6 +1,6 @@
 ---
 tags: [cofre, arquitetura]
-atualizado: 2026-06-23
+atualizado: 2026-11-13
 ---
 
 # Arquitetura
@@ -32,6 +32,7 @@ atualizado: 2026-06-23
 - **Aluno** (`renderMMList`): também por grade. Estado `mmSubSel`; `mmSubGrid()` conta `sharedMM` **+ `DB.mm`** por subespecialidade. Nível 1 = só a grade (form de criar escondido via classe `mm-grid` no `#panel-mmap`); nível 2 = cabeçalho voltar (`#mm-subhead`) + form "Gerar IA/Manual" + lista = mapas do professor (tag Professor, "Ver") **e** os pessoais da sub (`DB.mm`, "Ver"+excluir). Criação só dentro da sub: `genMM`/`newBlankMM`/`viewMM*` gravam `sub:mmSubSel`. Delegação: `data-mmsubsel`, `data-mmback`. Removidos o `<select id="mm-sub-filter">` e o card "Meus mapas" (os pessoais entram nas próprias subespecialidades).
 - **`canonSub(s)`**: normaliza **na exibição** rótulos antigos → canônico (Dislipidemia e Aterosclerose→Lípides; Endocrinologia Feminina e Andrologia→Endocrinologia Feminina; Endocrinologia Esportiva→Endocrinologia do Esporte) para não duplicar cards na grade, **sem** alterar os dados salvos. Usado nas 4 agregações/filtros (aluno+professor).
 - Dados em `sharedMM` (`mm_shared`).
+- **Tela cheia do aluno = modo leitura (2026-11-13):** ao abrir, `mmNovaAbertura()` → `mmEncaixa(true)` encaixa o mapa todo (escolhe entre as larguras `''`/`mm-l1`/`mm-l2`), mostra até os subramos (ou só os ramos, se a letra ficaria < `MM_LETRA_MIN` px). Tocar numa caixa → `mmAlterna` (abre/fecha, caixa parada na tela). Edição só pelo botão **"✏️ Editar"** do topo (`#btn-mm-editar` → `mmModoEdicao`): caixas `contenteditable` e + / × na caixa com foco (`.mm-foco`). Estado aberto/fechado em `mmAberto` (caminho da linha: `"2"`, `"2-1"`, `"2-1-0"`), deslocado ao remover (`mmDeslocaAberto`). Fora da tela cheia (editor do professor) nada disso se aplica: caixas editáveis e tudo aberto, como antes. Ver Decisões 2026-11-13.
 
 ### Cursos — por subespecialidade (aluno + professor, 2026-06-15)
 - **Aluno** (`renderCursosAluno`): tiles de pacote (`curso-filter-row`, nome via `cursoNomeBySlug`/catálogo `catalogoCursos`); ao escolher o pacote (`cursoFilter`), o `#curso-list` mostra **grade de subespecialidades** agrupando as aulas por `c.modulo` (`dirSubIcon`), e clicar (`data-cursomod`→`cursoMod`) abre as aulas daquela subespecialidade (voltar `data-cursoback`; back/header usam `grid-column:1/-1` no grid `.g2`).
