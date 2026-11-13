@@ -203,5 +203,9 @@ ok('🧨 + cria a caixa e já põe o cursor nela; × leva o aberto/fechado das i
 ok('virar o celular reencaixa, mas não com o cursor numa caixa', /a&&a\.isContentEditable/.test(html) && /w\.clientWidth===w\.__larg/.test(html));
 ok('a pinça respeita o mínimo do encaixe', /Math\.max\(wrap\.__min\|\|MM_ZOOM_MIN,/.test(corpo('setupMMPinchZoom')));
 
+ok('🧨 Voltar, Editar e Salvar maiores na tela cheia (pedido do professor: "ligeiramente maiores")',
+  /body\.mm-tela-cheia #mm-live \.mm-live-head \.btn\{font-size:\.8rem;font-weight:600;padding:\.45rem \.8rem;min-height:36px;/.test(html)
+  && /@media \(min-width:900px\)\{body\.mm-tela-cheia #mm-live \.mm-live-head \.btn\{font-size:\.88rem;padding:\.55rem 1\.05rem;min-height:40px\}/.test(html));
+
 if (bad) { console.log('✗ abertura do mapa mental: ' + bad + ' falha(s)'); process.exit(1); }
 console.log('✓ mapa mental: abre com a raiz e os ramos, encaixado; tocar abre os seguintes; "Editar" no topo');
