@@ -1185,6 +1185,17 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-ai. MAPA MENTAL: PINÇA EM VOLTA DOS DEDOS (13/11/2026). Vídeo do professor no
+//      iPhone: "Quando aproxime, fica desconfigurado" — o zoom partia do canto e o trecho entre
+//      os dedos fugia da tela; com zoom, as linhas eram redesenhadas fora do lugar.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mapa-mental-pinca.js')], { stdio: 'pipe' });
+  ok('mapa mental: a pinça amplia em volta dos dedos, arrasta com dois dedos e as linhas seguem as caixas');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da pinça do mapa mental falhou:\n' + out);
+}
+
 // 17c-undecies-ag. QUESTÃO DO DIA EM PÁGINAS (11/11/2026). Pedido do professor: o aluno escolhe
 //      10, 30 ou 50 por página e o restante vai para a próxima; a de hoje (ou do link) abre na
 //      página dela; a aba "Como o aluno vê" tem a mesma paginação.

@@ -1,9 +1,34 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-11
+atualizado: 2026-11-12
 ---
 
 # Pendências
+
+## 🆕 Questão do Dia: novidades de 2026 (levantamento de 12/11)
+- Levantamento entregue ao professor: ~92 questões de múltipla escolha sobre 2026 (FDA ~8, Anvisa ~4, diretrizes e
+  consensos ~25, ensaios de obesidade/diabetes/lípides/pediatria/osso ~35, metanálises ~10, 1º semestre fora do radar
+  ~10). Página no scratchpad (`qotd2026/novidades-2026.html`). Fontes: `radar_avisos` (≈2.000 itens de 2026) + web.
+- **Ficam de fora, a pedido do professor ("Isso não"):** semaglutida oral Lynavoy no FDA (fonte única), Yorvipath na
+  Anvisa (datas divergentes) e a contagem de canetas GLP-1 da Anvisa (totais divergentes).
+- [ ] **Gerar as 92 em 13/11 a partir das 18h (BRT)** — professor: *"vamos fazer essas 92 questões amanhã, a partir das
+  18 horas. A ideia é já introduzi-las nas questões do dia, mas de forma intercalada com as que já existem"* e *"alterne
+  também entre questões diretas e questões de casos clínicos"*. Retomada agendada (trig_01VqU5Jcm6b8BLT9ys6xjnuk).
+  Regras: metade diretas e metade casos clínicos, alternadas; gerador + revisor, sem API; referência no PubMed.
+  **Imagem ilustrativa sempre que possível** (professor: *"É sempre interessante, se possível, em alguma dessas
+  questões, ter alguma imagem ilustrativa, seja do caso direto, seja do caso clínico"*): figura dos Resumos, Open-i só
+  CC BY/CC0/domínio público (com imgRef) ou ilustração própria (gráfico do resultado, esquema do mecanismo ou do
+  algoritmo); conferir antes como o app guarda `img` e o peso do payload (preferir URL; data URI webp ≤ ~40 KB). Fila (`ig_stories`): intercalar com as 15 em `queued` (posições
+  121–135 em 12/11) — existente, nova, existente, nova…, começando por uma existente; depois, rodízio por
+  subespecialidade. Backup, guarda, conferência, DROP com o professor no computador.
+
+## 🧩 Comentários do banco: listas à espera do professor (12/11)
+- [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
+  `pg_proc`: não existe mais.
+- [x] **Questões seguradas e referências: CONSERTADAS** (12/11, "Consertar tudo"): as 174 seguradas e 38 referências; 16 gabaritos trocados. Ver Decisões e `triagem/consertos/questoes-consertadas.html`.
+- [x] **Função temporária `endodirect_tmp_consertos` removida** (12/11, professor no MacBook; conferido: nenhuma função `endodirect_tmp_*` no banco).
+- [x] **Função temporária do 3º lote removida** (12/11, confirmada pelo professor no computador; conferido em `pg_proc`).
+- Nenhuma questão (fora TEEM) explica só o gabarito agora; restam ~137 com 2 alternativas faltando e ~293 com 1, e as TEEM.
 
 ## 📱 FAQ do site quando o app do iPhone estiver na App Store (pedido de 11/11)
 

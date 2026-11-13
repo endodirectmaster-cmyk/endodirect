@@ -12557,33 +12557,52 @@ function renderMMEditor(){
   editor.addEventListener('input',function(){syncMMFromDOM();setTimeout(drawMMConnections,0);});
   setTimeout(drawMMConnections,30);
 }
+// Pinça no mapa mental. 13/11/2026 (vídeo do professor no iPhone: "Quando aproxime, fica
+// desconfigurado"): o zoom crescia a partir do canto superior esquerdo e não mexia na rolagem,
+// então o trecho que estava entre os dedos "fugia" da tela a cada pinça. Agora o ponto do mapa
+// que está entre os dedos no começo do gesto continua entre os dedos (e arrastar os dois dedos
+// juntos move o mapa), com um quadro por vez (requestAnimationFrame).
+var MM_ZOOM_MIN=0.5,MM_ZOOM_MAX=3;
 function setupMMPinchZoom(){
   var wrap=document.getElementById('mm-svg-wrap');
   if(!wrap||wrap.__pz)return;
   wrap.__pz=true;wrap.__scale=1;
-  var startDist=0,startScale=1,w0=0,h0=0;
+  var pz=null,quadro=0,ult=null;
   function dist(t){return Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);}
-  function apply(){
+  function meio(t){return {x:(t[0].clientX+t[1].clientX)/2,y:(t[0].clientY+t[1].clientY)/2};}
+  function inicia(t){
+    var e=document.getElementById('mm-editor');
+    if(!e){pz=null;return;}
+    var sc=wrap.__scale||1,m=meio(t),r=e.getBoundingClientRect();
+    // (cx,cy): ponto do mapa, em coordenadas sem zoom, que está entre os dedos.
+    pz={d0:dist(t)||1,s0:sc,w0:e.offsetWidth,h0:e.offsetHeight,cx:(m.x-r.left)/sc,cy:(m.y-r.top)/sc};
+  }
+  function aplica(){
+    quadro=0;
     var e=document.getElementById('mm-editor'),s=document.getElementById('mm-svg');
-    if(!e)return;
-    e.style.transformOrigin='0 0';e.style.transform='scale('+wrap.__scale+')';
-    if(w0){s.style.width=(w0*wrap.__scale)+'px';s.style.height=(h0*wrap.__scale)+'px';}
+    if(!e||!s||!pz||!ult)return;
+    var sc=Math.max(MM_ZOOM_MIN,Math.min(MM_ZOOM_MAX,pz.s0*(ult.d/pz.d0)));
+    wrap.__scale=sc;
+    e.style.transformOrigin='0 0';e.style.transform='scale('+sc+')';
+    s.style.width=(pz.w0*sc)+'px';s.style.height=(pz.h0*sc)+'px';
+    var r=e.getBoundingClientRect();
+    wrap.scrollLeft+=(r.left+pz.cx*sc)-ult.m.x;
+    wrap.scrollTop+=(r.top+pz.cy*sc)-ult.m.y;
   }
   wrap.addEventListener('touchstart',function(ev){
-    if(ev.touches.length===2){
-      var e=document.getElementById('mm-editor');
-      if(e){w0=e.offsetWidth;h0=e.offsetHeight;}
-      startDist=dist(ev.touches);startScale=wrap.__scale||1;ev.preventDefault();
-    }
+    if(ev.touches.length===2){inicia(ev.touches);ev.preventDefault();}
   },{passive:false});
   wrap.addEventListener('touchmove',function(ev){
-    if(ev.touches.length===2&&startDist>0){
-      ev.preventDefault();
-      var ns=startScale*(dist(ev.touches)/startDist);
-      wrap.__scale=Math.max(0.5,Math.min(3,ns));apply();
-    }
+    if(ev.touches.length!==2||!pz)return;
+    ev.preventDefault();
+    ult={d:dist(ev.touches),m:meio(ev.touches)};
+    if(!quadro)quadro=(window.requestAnimationFrame||function(f){return setTimeout(f,16);})(aplica);
   },{passive:false});
-  wrap.addEventListener('touchend',function(ev){if(ev.touches.length<2)startDist=0;});
+  function fim(ev){if(!ev.touches||ev.touches.length<2){pz=null;ult=null;}}
+  wrap.addEventListener('touchend',fim);
+  wrap.addEventListener('touchcancel',fim);
+  // Safari no iPhone também dispara gesture*: sem isto, a página inteira podia ampliar junto.
+  ['gesturestart','gesturechange'].forEach(function(n){wrap.addEventListener(n,function(ev){ev.preventDefault();},{passive:false});});
 }
 // Lê uma folha (e seus subramos, recursivamente) a partir de um .mm-leaf-row.
 function mmReadLeaf(row){
@@ -12631,9 +12650,13 @@ function drawMMConnections(){
   var w=Math.max(editor.scrollWidth,editor.offsetWidth),h=Math.max(editor.scrollHeight,editor.offsetHeight);
   svg.setAttribute('width',w);svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
   svg.style.width=w+'px';svg.style.height=h+'px';
+  // As medidas da tela já vêm multiplicadas pelo zoom da pinça, e o SVG das ligações fica DENTRO
+  // do editor ampliado: sem dividir pelo zoom, editar uma caixa com o mapa ampliado desenhava as
+  // linhas fora do lugar (13/11/2026).
+  var _w=document.getElementById('mm-svg-wrap'),zs=(_w&&_w.__scale)||1;
   var cr=central.getBoundingClientRect();
-  var sx=cr.right-er.left,sy=cr.top-er.top+cr.height/2,paths='';
-  function rc(el){var r=el.getBoundingClientRect();return {l:r.left-er.left,r:r.right-er.left,m:r.top-er.top+r.height/2};}
+  var sx=(cr.right-er.left)/zs,sy=(cr.top-er.top+cr.height/2)/zs,paths='';
+  function rc(el){var r=el.getBoundingClientRect();return {l:(r.left-er.left)/zs,r:(r.right-er.left)/zs,m:(r.top-er.top+r.height/2)/zs};}
   function curve(x1,y1,x2,y2,col,sw,op){return '<path d="M'+x1+' '+y1+' C'+(x1+18)+' '+y1+' '+(x2-18)+' '+y2+' '+x2+' '+y2+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'" opacity="'+op+'"/>';}
   // Conecta um nó-pai a cada folha direta do container e desce recursivamente nos subramos.
   function connect(parentBox,container,col,depth){
