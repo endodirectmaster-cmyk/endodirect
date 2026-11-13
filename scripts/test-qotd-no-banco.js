@@ -99,6 +99,8 @@ function ambos(s, provas, rotulo) {
   ok('🧨 Reabrir → corrigir → Postada ATUALIZA a cópia (mesmo código, sem duplicar)', r3.r === 'atualizado' && r3.provas.length === 3
     && it.answer === 'C' && it.explanation === 'Corrigido.' && it.code === 'ENDODIRECT-2118');
   const r4 = ambos(story({ img: '' }), (() => { const x = clone(p1); x[2].img = 'data:x'; x[2].imgRef = 'ref'; return x; })(), 'figura retirada');
+  const r5 = ambos(story({ imgRef: 'crédito órfão' }), p1, 'crédito sem figura');
+  ok('crédito de figura sem figura não conta como mudança (nem entra)', r5.r === null && !('imgRef' in r5.provas[2]));
   ok('figura retirada da questão sai da cópia', r4.r === 'atualizado' && !('img' in r4.provas[2]) && !('imgRef' in r4.provas[2]));
 }
 {

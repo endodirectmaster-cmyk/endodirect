@@ -17860,7 +17860,7 @@ function qotdNoBanco(s,provas,agora){
   }
   var quando=+s.postedAt||agora;
   var conteudo={stem:s.stem,options:JSON.parse(JSON.stringify(s.options)),answer:s.answer,explanation:s.explanation||'',
-    area:s.sub||'',ano:new Date(quando-3*3600000).getUTCFullYear(),img:s.img||'',imgRef:s.imgRef||''};
+    area:s.sub||'',ano:new Date(quando-3*3600000).getUTCFullYear(),img:s.img||'',imgRef:s.img?(s.imgRef||''):''};
   if(existente){
     var mudou=Object.keys(conteudo).some(function(k){return JSON.stringify(existente[k]===undefined?'':existente[k])!==JSON.stringify(conteudo[k]);});
     if(!mudou)return null;
