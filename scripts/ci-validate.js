@@ -1185,6 +1185,17 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-an. MURAL DE AVISOS NO DASHBOARD (13/11/2026). Pedido do professor: avisos de
+//      videoaula nova, aula nova da EMC, edital e prova no Dashboard. A função do aluno
+//      (member_content_sem_provas) entrega `avisos_alunos`; o painel do professor escreve.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-avisos.js')], { stdio: 'pipe' });
+  ok('mural de avisos: chega ao aluno, só o que vale, abre o que anuncia, e o professor escreve no painel');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do mural de avisos falhou:\n' + out);
+}
+
 // 17c-undecies-am. FLASHCARDS EM PÁGINAS (13/11/2026). Pedido do professor: limitar quantos cards
 //      aparecem por vez, o resto nas páginas seguintes, com a caixa "5, 10 ou 30 por página" (padrão 5).
 try {
