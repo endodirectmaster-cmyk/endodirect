@@ -615,14 +615,17 @@ textarea{resize:vertical;line-height:1.6}
 .q-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.7rem}
 .q-stem-prev{font-size:.77rem;color:var(--tx);line-height:1.5;flex:1}
 .q-detail{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:.9rem 1.1rem;margin-top:3px}
-.q-stem{font-size:.84rem;line-height:1.7;color:var(--tx);margin-bottom:.85rem;font-weight:500}
-.qo{background:var(--surface);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px}
+/* Enunciado, alternativas e comentário justificados, como na Questão do Dia (.qp-*); comentário
+   um pouco maior, .75 → .82rem, o mesmo da Questão do Dia (professor, 13/11/2026: "Deixar tudo em
+   modo justificado e aumentar ligeiramente o tamanho da letra nos comentários"). */
+.q-stem{font-size:.84rem;line-height:1.7;color:var(--tx);margin-bottom:.85rem;font-weight:500;text-align:justify;text-align-last:left;overflow-wrap:break-word}
+.qo{background:var(--surface);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:.48rem .8rem;cursor:pointer;display:flex;gap:.5rem;align-items:flex-start;font-size:.77rem;color:var(--t2);line-height:1.5;margin-bottom:4px;text-align:justify;text-align-last:left}
 .qo:hover{border-color:var(--blue);color:var(--tx);background:var(--blue-l)}
 .qo.correct{border-color:var(--grn)!important;color:#34d399!important;background:var(--grn-l)!important}
 .qo.wrong{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-l)!important}
 .qo.annul{border-color:#f59e0b!important;color:#fbbf24!important;background:#33270c!important}
 .qo-ltr{font-weight:700;flex-shrink:0;width:14px}
-.q-fb{border-radius:var(--rs);padding:.55rem .8rem;font-size:.75rem;line-height:1.6;margin:.65rem 0}
+.q-fb{border-radius:var(--rs);padding:.6rem .85rem;font-size:.82rem;line-height:1.65;margin:.65rem 0;text-align:justify;text-align-last:left;overflow-wrap:anywhere}
 .q-fb.ok{background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .q-fb.annul{background:#33270c;color:#fbbf24;border:1px solid #5a4a1e}
@@ -686,11 +689,45 @@ body.mm-tela-cheia #mm-live-title{color:#fff!important;flex:1 1 auto;min-width:0
 body.mm-tela-cheia .mm-voltar{display:inline-flex;flex:0 0 auto;color:#fff;border:1px solid rgba(255,255,255,.35);background:transparent}
 body.mm-tela-cheia #btn-mm-close{display:none}
 body.mm-tela-cheia #btn-mm-save{white-space:nowrap}
-body.mm-tela-cheia #mm-svg-wrap{flex:1 1 auto;min-height:0!important;max-height:none!important;border:0;border-radius:12px;padding:.6rem}
+body.mm-tela-cheia #mm-svg-wrap{flex:1 1 auto;min-height:0!important;max-height:none!important;border:0;border-radius:12px;padding:.6rem;display:flex}
+/* Tela cheia (13/11/2026, vídeo do professor: "ele abre desfocado"). O mapa abre encaixado na
+   tela só com a raiz e os ramos principais (pedido do professor, print do Hipotireoidismo).
+   Tocar numa caixa abre ou fecha os ramos dela. Para editar, o botão "Editar" ao lado de "Salvar" (pedido do professor: o botão fica em
+   cima, "não ficaria aparecendo em cada caixa"): aí as caixas viram texto editável, e a caixa
+   tocada mostra + (cria um ramo a partir dela) e × (remove). O "+N" de um ramo fechado abre o
+   ramo nos dois modos. Centralizado com margin:auto (num flex, o excesso continua alcançável
+   pela rolagem). */
+body.mm-tela-cheia .mm-svg-stage{min-width:0;min-height:0;margin:auto;flex:0 0 auto}
+body.mm-tela-cheia .mm-central{box-shadow:0 0 0 1.5px rgba(255,255,255,.4),0 10px 22px rgba(0,0,0,.25)}
+body.mm-tela-cheia .mm-fechado>.mm-gap,body.mm-tela-cheia .mm-fechado>.mm-children,body.mm-tela-cheia .mm-fechado>.mm-subs-block{display:none}
+body.mm-tela-cheia .mm-add-sub,body.mm-tela-cheia .mm-add-branch{display:none}
+body.mm-tela-cheia [data-mm-branch],body.mm-tela-cheia [data-mm-leaf]{cursor:pointer;-webkit-user-select:none;user-select:none}
+body.mm-tela-cheia .mm-node-wrap .mm-del,body.mm-tela-cheia .mm-node-wrap .mm-add-child{display:none}
+.mm-qtd,.mm-editar{display:none}
+body.mm-tela-cheia .mm-editar{display:inline-flex;white-space:nowrap;color:#fff;border:1px solid rgba(255,255,255,.35);background:transparent}
+body.mm-tela-cheia .mm-editar.on{background:#fbbf24;border-color:#fbbf24;color:#1c2a48;font-weight:700}
+/* --mm-bt: tamanho dos botões nas medidas do mapa; o JS aumenta quando o mapa está reduzido,
+   para o botão continuar com uns 20 px na tela (dá para acertar com o dedo). */
+body.mm-tela-cheia .mm-modo-edicao .mm-node-wrap.mm-foco>.mm-del,body.mm-tela-cheia .mm-modo-edicao .mm-node-wrap.mm-foco>.mm-add-child{display:inline-flex;position:absolute;width:var(--mm-bt,24px);height:var(--mm-bt,24px);border-radius:50%;align-items:center;justify-content:center;padding:0;line-height:1;cursor:pointer;font-family:var(--font);z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.28);font-size:calc(var(--mm-bt,24px)*.5)}
+body.mm-tela-cheia .mm-modo-edicao .mm-node-wrap.mm-foco>.mm-del{top:calc(var(--mm-bt,24px)*-.5);right:calc(var(--mm-bt,24px)*-.5);left:auto}
+body.mm-tela-cheia .mm-modo-edicao .mm-node-wrap.mm-foco>.mm-add-child{bottom:calc(var(--mm-bt,24px)*-.5);right:calc(var(--mm-bt,24px)*-.5);top:auto}
+body.mm-tela-cheia .mm-modo-edicao [contenteditable="true"]{cursor:text;-webkit-user-select:text;user-select:text;outline:1px dashed rgba(255,255,255,.45);outline-offset:2px}
+body.mm-tela-cheia .mm-modo-edicao .mm-foco>[contenteditable="true"]{outline:2px solid #fbbf24}
+body.mm-tela-cheia .mm-fechado>.mm-qtd{display:inline-flex;flex:0 0 auto;cursor:pointer;align-items:center;margin-left:6px;padding:.1rem .42rem;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font-size:.66rem;font-weight:700;white-space:nowrap}
+/* Larguras mais estreitas (texto quebra em mais linhas): num celular em pé o mapa fica mais alto
+   e menos largo, e cabe na tela com letra maior. O JS testa as três e fica com a de letra maior. */
+body.mm-tela-cheia .mm-editor.mm-l1 .mm-gap{width:26px}
+body.mm-tela-cheia .mm-editor.mm-l1 .mm-central{min-width:110px;max-width:160px}
+body.mm-tela-cheia .mm-editor.mm-l1 .mm-branch-txt{min-width:100px;max-width:150px}
+body.mm-tela-cheia .mm-editor.mm-l1 .mm-sub-txt{min-width:90px;max-width:190px}
+body.mm-tela-cheia .mm-editor.mm-l2 .mm-gap{width:18px}
+body.mm-tela-cheia .mm-editor.mm-l2 .mm-central{min-width:90px;max-width:118px;padding:.7rem .8rem}
+body.mm-tela-cheia .mm-editor.mm-l2 .mm-branch-txt{min-width:84px;max-width:118px}
+body.mm-tela-cheia .mm-editor.mm-l2 .mm-sub-txt{min-width:80px;max-width:150px}
 .mm-live-actions{display:flex;gap:5px;align-items:center}
 .mm-map-wrap{background:#1c2a48;border:1px solid var(--bd);border-radius:var(--r);overflow:auto;padding:.9rem;min-height:640px;touch-action:pan-x pan-y}
 .mm-svg-stage{min-width:max-content;min-height:620px;position:relative}
-.mm-editor{display:flex;align-items:center;gap:0;padding:1.15rem .5rem;min-width:max-content}
+.mm-editor{display:flex;align-items:center;gap:0;padding:1.15rem .5rem;min-width:max-content;width:max-content}
 .mm-editor>*{position:relative;z-index:1}
 .mm-gap{width:42px;flex-shrink:0}
 .mm-central{background:var(--navy);color:#fff;border-radius:14px;padding:.85rem 1.1rem;font-size:.95rem;font-weight:800;min-width:150px;max-width:230px;outline:none;box-shadow:0 10px 22px rgba(26,39,68,.18);line-height:1.35;flex-shrink:0}
@@ -2820,13 +2857,13 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
             <div style="flex:1"><label class="flbl">Tema</label><input type="text" id="mm-topic" placeholder="Ex: Hipotireoidismo…"></div>
             <button class="btn btn-outline" id="btn-mmblank">✏️ Manual</button>
           </div>
-          <div class="mm-help">💡 Clique em qualquer caixa para editar o texto. Passe o mouse sobre uma caixa e clique em <b>+</b> para criar um subramo a partir dela (em qualquer nível) ou em <b>×</b> para remover.</div>
+          <div class="mm-help">💡 O mapa abre com o tema e os ramos principais. Toque numa caixa para abrir ou fechar os ramos dela. Para mudar o texto, toque em <b>✏️ Editar</b> (ao lado de Salvar) e depois na caixa: <b>+</b> cria um ramo a partir dela e <b>×</b> remove. <b>✓ Concluir</b> volta a abrir e fechar os ramos.</div>
         </div>
         <div id="mm-live" style="display:none;margin-bottom:.85rem">
           <div class="mm-live-head">
             <button class="btn btn-ghost btn-sm mm-voltar" id="btn-mm-voltar" type="button" aria-label="Voltar para a lista de mapas">← Voltar</button>
             <span style="font-size:.87rem;font-weight:600;color:var(--tx)" id="mm-live-title"></span>
-            <div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">×</button></div>
+            <div style="display:flex;gap:5px"><button class="btn btn-ghost btn-sm mm-editar" id="btn-mm-editar" type="button" aria-pressed="false">✏️ Editar</button><button class="btn btn-primary btn-sm" id="btn-mm-save">💾 Salvar</button><button class="btn btn-ghost btn-sm" id="btn-mm-close">×</button></div>
           </div>
           <div class="mm-map-wrap" id="mm-svg-wrap"><div class="mm-svg-stage" id="mm-svg"></div></div>
         </div>
@@ -12481,6 +12518,8 @@ function newBlankMM(){
   curMM={id:Date.now(),topic:topic,sub:mmSubSel||'',data:sampleMMData(topic),at:Date.now()};
   document.getElementById('mm-live').style.display='block';
   mmTelaCheia(true);
+  mmNovaAbertura();
+  mmEditando=true;mmBotaoEditar(); // mapa novo, feito à mão: já abre para editar
   setText('mm-live-title',curMM.data.root||topic);
   renderMMEditor();
 }
@@ -12574,6 +12613,7 @@ function viewMMShared(j){
   document.getElementById('mm-live').style.display='block';
   document.getElementById('panel-mmap').classList.add('mm-open');
   mmTelaCheia(true);
+  mmNovaAbertura();
   setText('mm-live-title',curMM.data.root||m.topic);
   renderMMEditor();
   document.getElementById('panel-mmap').scrollTop=0;
@@ -12584,12 +12624,148 @@ function viewMM(i){
   document.getElementById('mm-live').style.display='block';
   document.getElementById('panel-mmap').classList.add('mm-open');
   mmTelaCheia(true);
+  mmNovaAbertura();
   setText('mm-live-title',curMM.data.root||m.topic);
   renderMMEditor();
   document.getElementById('panel-mmap').scrollTop=0;
 }
 // Liga/desliga a tela cheia do mapa (ver o CSS .mm-tela-cheia).
 function mmTelaCheia(on){document.body.classList.toggle('mm-tela-cheia',!!on);}
+// ── Tela cheia = modo leitura (13/11/2026) ──────────────────────────────────────────────
+// Vídeo do professor no iPhone: "quando eu clico em um mapa mental, ele abre desfocado" (abria
+// num trecho do meio, sem a raiz, e só com a pinça dava para ver o todo, em letra minúscula).
+// Pedido (com print do mapa de Hipotireoidismo): "abrisse apenas o primeiro, no caso é o de
+// hipotireoidismo, e os nós subsequentes, que é manifestação clínica, laboratório, só abrisse
+// esses. E se o aluno quisesse, à medida que ele fosse clicando em uma dessas caixas, abririam os
+// nós subsequentes." Editar: botão "Editar" ao lado de "Salvar" (não um em cada caixa).
+//  - mmAberto: o que o aluno abriu ou fechou, por caminho da linha ("2" = ramo 2, "2-1" = subramo
+//    1 do ramo 2, "2-1-0"...). Sem registro: FECHADO (o mapa abre com a raiz e os ramos).
+//  - mmAjustar: a próxima renderização encaixa o mapa na tela (só ao abrir um mapa; editar
+//    mantém o zoom e a rolagem).
+//  - mmEditando: o botão "Editar" (ao lado de "Salvar") está ligado; as caixas viram editáveis.
+//  - mmEditarDepois: caixa a pôr o cursor depois de redesenhar (a recém-criada pelo +).
+var mmAberto={},mmAjustar=false,mmEditando=false,mmEditarDepois=null,MM_ENCAIXE_MIN=0.3,mmLarg='',MM_LARGURAS=['','mm-l1','mm-l2'];
+function mmNovaAbertura(){mmAberto={};mmAjustar=true;mmEditarDepois=null;mmLarg='';mmEditando=false;mmBotaoEditar();}
+function mmBotaoEditar(){
+  var b=document.getElementById('btn-mm-editar');if(!b)return;
+  b.classList.toggle('on',mmEditando);b.setAttribute('aria-pressed',mmEditando?'true':'false');
+  b.textContent=mmEditando?'✓ Concluir':'✏️ Editar';
+}
+function mmLeitura(){return document.body.classList.contains('mm-tela-cheia');}
+function mmLinhaAberta(k){k=String(k);return Object.prototype.hasOwnProperty.call(mmAberto,k)?!!mmAberto[k]:false;}
+// Remover a linha "p" desloca as irmãs de baixo: o estado aberto/fechado vai junto.
+function mmDeslocaAberto(p){
+  var ps=String(p).split('-'),pai=ps.slice(0,-1).join('-'),i=+ps[ps.length-1],novo={};
+  Object.keys(mmAberto).forEach(function(k){
+    if(k===String(p)||k.indexOf(p+'-')===0)return;
+    var ks=k.split('-');
+    if(ks.length>=ps.length&&ks.slice(0,ps.length-1).join('-')===pai&&+ks[ps.length-1]>i){ks[ps.length-1]=String(+ks[ps.length-1]-1);novo[ks.join('-')]=mmAberto[k];}
+    else novo[k]=mmAberto[k];
+  });
+  mmAberto=novo;
+}
+// Aplica o zoom ao editor e ajusta o tamanho da área rolável (o mesmo esquema da pinça).
+function mmAplicaEscala(sc){
+  var w=document.getElementById('mm-svg-wrap'),e=document.getElementById('mm-editor'),s=document.getElementById('mm-svg');
+  if(!w||!e||!s)return;
+  w.__scale=sc;
+  e.style.transformOrigin='0 0';e.style.transform=sc===1?'':'scale('+sc+')';
+  e.style.setProperty('--mm-bt',Math.max(24,20/sc).toFixed(1)+'px');
+  s.style.width=sc===1?'':(e.offsetWidth*sc)+'px';
+  s.style.height=sc===1?'':(e.offsetHeight*sc)+'px';
+}
+// Encaixa o mapa inteiro na tela (nunca amplia além de 1×). Se nem no mínimo couber, mostra a
+// raiz: rolagem no começo e, na vertical, no meio (a raiz fica centralizada na altura).
+function mmMelhorLargura(e,pw,ph){
+  // Testa as larguras (normal e duas mais estreitas) e fica com a que deixa a letra maior; no
+  // empate, a mais larga (menos quebra de linha).
+  var melhor=null;
+  MM_LARGURAS.forEach(function(cl){
+    MM_LARGURAS.forEach(function(x){if(x)e.classList.remove(x);});
+    if(cl)e.classList.add(cl);
+    var f=Math.min(1,pw/(e.offsetWidth||1),ph/(e.offsetHeight||1));
+    if(!melhor||f>melhor.f+0.01)melhor={cl:cl,f:f};
+  });
+  MM_LARGURAS.forEach(function(x){if(x)e.classList.remove(x);});
+  if(melhor.cl)e.classList.add(melhor.cl);
+  return melhor;
+}
+function mmEncaixa(){
+  var w=document.getElementById('mm-svg-wrap'),e=document.getElementById('mm-editor');
+  if(!w||!e)return;
+  var cs=getComputedStyle(w);
+  var pw=w.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);
+  var ph=w.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
+  e.style.transform='';
+  var melhor=mmMelhorLargura(e,pw,ph);
+  mmLarg=melhor.cl;
+  var ew=e.offsetWidth||1,eh=e.offsetHeight||1;
+  var sc=Math.max(MM_ENCAIXE_MIN,Math.min(1,pw/ew,ph/eh));
+  w.__min=Math.min(MM_ZOOM_MIN,sc);w.__larg=w.clientWidth;
+  mmAplicaEscala(sc);
+  w.scrollLeft=0;
+  w.scrollTop=Math.max(0,(eh*sc-ph)/2);
+}
+// Virar o celular (muda a largura) encaixa de novo; o teclado (só a altura muda) e uma caixa em
+// edição não mexem no zoom.
+(function(){
+  var t=0;
+  window.addEventListener('resize',function(){
+    clearTimeout(t);
+    t=setTimeout(function(){
+      if(!curMM||!mmLeitura())return;
+      var w=document.getElementById('mm-svg-wrap');
+      var a=document.activeElement;
+      if(!w||!w.clientWidth||w.clientWidth===w.__larg||(a&&a.isContentEditable))return;
+      mmEncaixa();drawMMConnections();
+    },200);
+  });
+})();
+// Rola o mínimo para "el" aparecer inteiro, sem tirar "fixo" (a caixa tocada) da tela.
+function mmMostra(el,fixo){
+  var w=document.getElementById('mm-svg-wrap');if(!w||!el)return;
+  var wr=w.getBoundingClientRect(),r=el.getBoundingClientRect(),f=(fixo||el).getBoundingClientRect(),m=8;
+  var dx=r.right-(wr.right-m);
+  if(dx>0)w.scrollLeft+=Math.max(0,Math.min(dx,f.left-(wr.left+m)));
+  else if(r.left<wr.left+m)w.scrollLeft-=Math.max(0,Math.min(wr.left+m-r.left,(wr.right-m)-f.right));
+  var dy=r.bottom-(wr.bottom-m);
+  if(dy>0)w.scrollTop+=Math.max(0,Math.min(dy,f.top-(wr.top+m)));
+  else if(r.top<wr.top+m)w.scrollTop-=Math.max(0,Math.min(wr.top+m-r.top,(wr.bottom-m)-f.bottom));
+}
+// Toque numa caixa: abre ou fecha os ramos dela, com a caixa parada no mesmo lugar da tela.
+function mmAlterna(box){
+  var row=box.closest('.mm-leaf-row,.mm-branch-row');if(!row)return;
+  var k=row.getAttribute('data-mm-row'),filhos=row.querySelector(':scope > .mm-children, :scope > .mm-subs-block');
+  if(k==null||!filhos)return;
+  var w=document.getElementById('mm-svg-wrap'),r0=box.getBoundingClientRect();
+  var abrir=row.classList.contains('mm-fechado');
+  mmAberto[k]=abrir;
+  row.classList.toggle('mm-fechado',!abrir);
+  mmAplicaEscala((w&&w.__scale)||1);
+  var r1=box.getBoundingClientRect();
+  if(w){w.scrollLeft+=r1.left-r0.left;w.scrollTop+=r1.top-r0.top;}
+  if(abrir)mmMostra(filhos,box);
+  drawMMConnections();
+}
+function mmCaixaDe(nw){return nw&&nw.querySelector(':scope > [data-mm-root], :scope > [data-mm-branch], :scope > [data-mm-leaf]');}
+// Liga/desliga o modo de edição sem redesenhar o mapa (mantém zoom, rolagem e ramos abertos).
+function mmModoEdicao(on){
+  mmEditando=!!on;mmBotaoEditar();
+  var e=document.getElementById('mm-editor');if(!e)return;
+  if(!mmEditando){var a=document.activeElement;if(a&&e.contains(a))a.blur();}
+  e.classList.toggle('mm-modo-edicao',mmEditando&&mmLeitura());
+  e.querySelectorAll('[data-mm-root],[data-mm-branch],[data-mm-leaf]').forEach(function(b){b.contentEditable=(mmEditando||!mmLeitura())?'true':'false';});
+  e.querySelectorAll('.mm-foco').forEach(function(x){x.classList.remove('mm-foco');});
+  syncMMFromDOM();
+  drawMMConnections();
+}
+// Põe o cursor numa caixa (no modo de edição); "tudo" seleciona o texto (caixa nova).
+function mmFocaCaixa(box,tudo){
+  if(!box)return;
+  mmMostra(box.parentNode);
+  try{box.focus({preventScroll:true});}catch(e){box.focus();}
+  try{var rg=document.createRange();rg.selectNodeContents(box);if(!tudo)rg.collapse(false);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(rg);}catch(e){}
+}
 function mmRedraw(){
   if(curMM)renderMMEditor();
 }
@@ -12607,11 +12783,12 @@ function mmLeafStyle(col){
 function mmLeafHTML(lf,path,col){
   var label=typeof lf==='string'?lf:((lf&&lf.label)||'');
   var kids=(lf&&typeof lf==='object'&&Array.isArray(lf.children))?lf.children:[];
-  var st=mmLeafStyle(col);
-  var h='<div class="mm-leaf-row"><div class="mm-node-wrap">'
-    +'<div class="mm-sub-txt" contenteditable="true" spellcheck="false" data-mm-leaf="'+path+'"'+(st?' style="'+st+'"':'')+'>'+esc(label)+'</div>'
+  var st=mmLeafStyle(col),ler=mmLeitura()&&!mmEditando;
+  var h='<div class="mm-leaf-row'+(kids.length&&!mmLinhaAberta(path)?' mm-fechado':'')+'" data-mm-row="'+path+'"><div class="mm-node-wrap">'
+    +'<div class="mm-sub-txt" contenteditable="'+(ler?'false':'true')+'" spellcheck="false" data-mm-leaf="'+path+'"'+(st?' style="'+st+'"':'')+'>'+esc(label)+'</div>'
     +'<button class="mm-del" data-mmdelleaf="'+path+'" title="Remover">×</button>'
-    +'<button class="mm-add-child" data-mmaddchild="'+path+'" title="Adicionar subramo a partir desta caixa">+</button></div>';
+    +'<button class="mm-add-child" data-mmaddchild="'+path+'" title="Adicionar subramo a partir desta caixa">+</button>'
+    +'</div>'+(kids.length?'<span class="mm-qtd" aria-label="'+kids.length+' ramos fechados">+'+kids.length+'</span>':'');
   if(kids.length){
     h+='<div class="mm-gap"></div><div class="mm-children">'+kids.map(function(c,ci){return mmLeafHTML(c,path+'-'+ci,col);}).join('')+'</div>';
   }
@@ -12620,14 +12797,16 @@ function mmLeafHTML(lf,path,col){
 function renderMMEditor(){
   if(!curMM)return;
   curMM.data=normalizeMMData(curMM.data);
-  var root=curMM.data.root||curMM.topic||'Tema';
-  var html='<div class="mm-editor" id="mm-editor"><svg class="mm-conn-layer" id="mm-conn-layer"></svg>'
-    +'<div class="mm-node-wrap"><div class="mm-central" contenteditable="true" spellcheck="false" data-mm-root>'+esc(root)+'</div></div>'
+  var ler=mmLeitura(),root=curMM.data.root||curMM.topic||'Tema',ce=(ler&&!mmEditando)?'false':'true';
+  var html='<div class="mm-editor'+(ler&&mmLarg?' '+mmLarg:'')+(ler&&mmEditando?' mm-modo-edicao':'')+'" id="mm-editor"><svg class="mm-conn-layer" id="mm-conn-layer"></svg>'
+    +'<div class="mm-node-wrap"><div class="mm-central" contenteditable="'+ce+'" spellcheck="false" data-mm-root>'+esc(root)+'</div>'
+    +'<button class="mm-add-child" data-mmaddbranch title="Adicionar ramo">+</button></div>'
     +'<div class="mm-gap"></div><div class="mm-branches">';
   html+=(curMM.data.branches||[]).map(function(b,bi){
     var col=BCOLORS[bi%BCOLORS.length],leaves=b.leaves||[];
-    return'<div class="mm-branch-row" data-mm-branch-row="'+bi+'">'
-      +'<div class="mm-node-wrap"><div class="mm-branch-txt" contenteditable="true" spellcheck="false" data-mm-branch="'+bi+'" style="background:'+col+'">'+esc(b.label||'Ramo')+'</div><button class="mm-del" data-mmdelbranch="'+bi+'" title="Remover ramo">×</button></div>'
+    return'<div class="mm-branch-row'+(leaves.length&&!mmLinhaAberta(bi)?' mm-fechado':'')+'" data-mm-branch-row="'+bi+'" data-mm-row="'+bi+'">'
+      +'<div class="mm-node-wrap"><div class="mm-branch-txt" contenteditable="'+ce+'" spellcheck="false" data-mm-branch="'+bi+'" style="background:'+col+'">'+esc(b.label||'Ramo')+'</div><button class="mm-del" data-mmdelbranch="'+bi+'" title="Remover ramo">×</button>'
+      +'<button class="mm-add-child" data-mmaddsub="'+bi+'" title="Adicionar subramo">+</button></div>'+(leaves.length?'<span class="mm-qtd" aria-label="'+leaves.length+' ramos fechados">+'+leaves.length+'</span>':'')
       +'<div class="mm-gap"></div>'
       +'<div class="mm-subs-block">'
       +leaves.map(function(lf,li){return mmLeafHTML(lf,bi+'-'+li,col);}).join('')
@@ -12635,12 +12814,49 @@ function renderMMEditor(){
       +'</div></div>';
   }).join('');
   html+='<button class="mm-add-branch" data-mmaddbranch>+ Adicionar ramo</button></div></div>';
-  var stage=document.getElementById('mm-svg');
+  var stage=document.getElementById('mm-svg'),_pzw=document.getElementById('mm-svg-wrap');
+  // Redesenhar depois de + ou × mantém o zoom e a rolagem; só abrir um mapa encaixa de novo.
+  var sc0=(_pzw&&_pzw.__scale)||1,sl0=_pzw?_pzw.scrollLeft:0,st0=_pzw?_pzw.scrollTop:0;
   stage.innerHTML=html;
   stage.style.width='';stage.style.height='';
-  var _pzw=document.getElementById('mm-svg-wrap');if(_pzw)_pzw.__scale=1;
   var editor=document.getElementById('mm-editor');
+  if(mmAjustar){mmAjustar=false;if(ler)mmEncaixa();else if(_pzw){_pzw.__scale=1;_pzw.__min=MM_ZOOM_MIN;}}
+  else if(_pzw){mmAplicaEscala(sc0);_pzw.scrollLeft=sl0;_pzw.scrollTop=st0;}
   editor.addEventListener('input',function(){syncMMFromDOM();setTimeout(drawMMConnections,0);});
+  if(ler){
+    editor.addEventListener('click',function(ev){
+      if(!mmLeitura())return;
+      var t=ev.target;
+      // "+N" de um ramo fechado: abre nos dois modos.
+      var q=t.closest('.mm-qtd');if(q){var row=q.parentNode,bx=mmCaixaDe(row.querySelector(':scope > .mm-node-wrap'));if(bx)mmAlterna(bx);return;}
+      if(mmEditando)return; // editando: tocar na caixa põe o cursor nela
+      var box=t.closest('[data-mm-branch],[data-mm-leaf]');
+      if(box)mmAlterna(box);
+    });
+    // Editando: a caixa com o cursor mostra + e ×. A marca sai com atraso, senão o toque no
+    // botão (que tira o foco da caixa) o esconderia antes do clique.
+    editor.addEventListener('focusin',function(ev){
+      var nw=ev.target.closest&&ev.target.closest('.mm-node-wrap');if(!nw||!mmEditando)return;
+      editor.querySelectorAll('.mm-foco').forEach(function(x){if(x!==nw)x.classList.remove('mm-foco');});
+      nw.classList.add('mm-foco');
+    });
+    editor.addEventListener('focusout',function(ev){
+      var nw=ev.target.closest&&ev.target.closest('.mm-node-wrap');if(!nw)return;
+      setTimeout(function(){if(!nw.contains(document.activeElement))nw.classList.remove('mm-foco');drawMMConnections();},300);
+    });
+    editor.addEventListener('mousedown',function(ev){if(ev.target.closest('.mm-foco > button'))ev.preventDefault();});
+    // Enter conclui a caixa (o teclado do celular fecha); Shift+Enter quebra a linha.
+    editor.addEventListener('keydown',function(ev){
+      if(ev.key!=='Enter'||ev.shiftKey||!mmEditando)return;
+      if(!(ev.target.closest&&ev.target.closest('.mm-node-wrap')))return;
+      ev.preventDefault();ev.target.blur();syncMMFromDOM();drawMMConnections();
+    });
+    if(mmEditarDepois&&mmEditando){
+      var nova=editor.querySelector(mmEditarDepois);
+      if(nova)mmFocaCaixa(nova,true);
+    }
+    mmEditarDepois=null;
+  }
   setTimeout(drawMMConnections,30);
 }
 // Pinça no mapa mental. 13/11/2026 (vídeo do professor no iPhone: "Quando aproxime, fica
@@ -12667,9 +12883,10 @@ function setupMMPinchZoom(){
     quadro=0;
     var e=document.getElementById('mm-editor'),s=document.getElementById('mm-svg');
     if(!e||!s||!pz||!ult)return;
-    var sc=Math.max(MM_ZOOM_MIN,Math.min(MM_ZOOM_MAX,pz.s0*(ult.d/pz.d0)));
+    var sc=Math.max(wrap.__min||MM_ZOOM_MIN,Math.min(MM_ZOOM_MAX,pz.s0*(ult.d/pz.d0)));
     wrap.__scale=sc;
     e.style.transformOrigin='0 0';e.style.transform='scale('+sc+')';
+    if(e.style.setProperty)e.style.setProperty('--mm-bt',Math.max(24,20/sc).toFixed(1)+'px');
     s.style.width=(pz.w0*sc)+'px';s.style.height=(pz.h0*sc)+'px';
     var r=e.getBoundingClientRect();
     wrap.scrollLeft+=(r.left+pz.cx*sc)-ult.m.x;
@@ -12746,7 +12963,7 @@ function drawMMConnections(){
   function curve(x1,y1,x2,y2,col,sw,op){return '<path d="M'+x1+' '+y1+' C'+(x1+18)+' '+y1+' '+(x2-18)+' '+y2+' '+x2+' '+y2+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'" opacity="'+op+'"/>';}
   // Conecta um nó-pai a cada folha direta do container e desce recursivamente nos subramos.
   function connect(parentBox,container,col,depth){
-    if(!container)return;
+    if(!container||!container.getClientRects().length)return; // ramo fechado: filhos escondidos
     var p=rc(parentBox),sw=depth<=1?2:1.55,op=depth<=1?.72:.5;
     container.querySelectorAll(':scope > .mm-leaf-row').forEach(function(lr){
       var box=lr.querySelector(':scope > .mm-node-wrap > [data-mm-leaf]');if(!box)return;
@@ -12759,7 +12976,8 @@ function drawMMConnections(){
     var col=BCOLORS[bi%BCOLORS.length],br=row.querySelector(':scope > .mm-node-wrap > [data-mm-branch]');
     if(!br)return;
     var b=rc(br);
-    paths+='<path d="M'+sx+' '+sy+' C'+(sx+22)+' '+sy+' '+(b.l-24)+' '+b.m+' '+b.l+' '+b.m+'" fill="none" stroke="#1a2744" stroke-width="2.2" opacity=".88"/>';
+    // Clara: o fundo do mapa é azul-marinho, e a linha azul-marinho de antes sumia (13/11/2026).
+    paths+='<path d="M'+sx+' '+sy+' C'+(sx+22)+' '+sy+' '+(b.l-24)+' '+b.m+' '+b.l+' '+b.m+'" fill="none" stroke="#a9b8d6" stroke-width="2.2" opacity=".85"/>';
     connect(br,row.querySelector(':scope > .mm-subs-block'),col,1);
   });
   svg.innerHTML=paths;
@@ -20984,6 +21202,7 @@ function bindAdmSec(sec){
         mmAdminEdit=true;
         live.style.display='block';
         setText('mm-live-title',curMM.data.root||curMM.topic);
+        mmNovaAbertura();
         renderMMEditor();
       }
       var eb0=document.getElementById('adm-mm-editback');
@@ -22201,11 +22420,11 @@ document.addEventListener('click',function(e){
   var mmd=c('[data-mmdel]');if(mmd){DB.mm.splice(parseInt(mmd.dataset.mmdel),1);persist();renderMMList();refreshDash();return;}
   var mmvs=c('[data-mmviewshared]');if(mmvs&&!c('[data-fav-t]')){viewMMShared(parseInt(mmvs.dataset.mmviewshared));return;}
   var mmv=c('[data-mmview]');if(mmv&&!c('[data-fav-t]')){viewMM(parseInt(mmv.dataset.mmview));return;}
-  var mmab=c('[data-mmaddbranch]');if(mmab&&curMM){syncMMFromDOM();curMM.data.branches.push({label:'Novo ramo',leaves:['Novo subramo']});renderMMEditor();return;}
-  var mmas=c('[data-mmaddsub]');if(mmas&&curMM){syncMMFromDOM();var bi=parseInt(mmas.dataset.mmaddsub,10);if(curMM.data.branches[bi]){curMM.data.branches[bi].leaves.push('Novo subramo');renderMMEditor();}return;}
-  var mmac=c('[data-mmaddchild]');if(mmac&&curMM){syncMMFromDOM();var rA=mmResolvePath(mmac.dataset.mmaddchild);if(rA&&rA.arr&&rA.arr[rA.idx]!=null){var nA=rA.arr[rA.idx];if(typeof nA==='string')nA={label:nA,children:[]};if(!nA.children)nA.children=[];nA.children.push('Novo subramo');rA.arr[rA.idx]=nA;renderMMEditor();}return;}
-  var mmdb=c('[data-mmdelbranch]');if(mmdb&&curMM){syncMMFromDOM();curMM.data.branches.splice(parseInt(mmdb.dataset.mmdelbranch,10),1);renderMMEditor();return;}
-  var mmdl=c('[data-mmdelleaf]');if(mmdl&&curMM){syncMMFromDOM();var rD=mmResolvePath(mmdl.dataset.mmdelleaf);if(rD&&rD.arr)rD.arr.splice(rD.idx,1);renderMMEditor();return;}
+  var mmab=c('[data-mmaddbranch]');if(mmab&&curMM){syncMMFromDOM();curMM.data.branches.push({label:'Novo ramo',leaves:['Novo subramo']});mmEditarDepois='[data-mm-branch="'+(curMM.data.branches.length-1)+'"]';renderMMEditor();return;}
+  var mmas=c('[data-mmaddsub]');if(mmas&&curMM){syncMMFromDOM();var bi=parseInt(mmas.dataset.mmaddsub,10);if(curMM.data.branches[bi]){curMM.data.branches[bi].leaves.push('Novo subramo');mmAberto[String(bi)]=true;mmEditarDepois='[data-mm-leaf="'+bi+'-'+(curMM.data.branches[bi].leaves.length-1)+'"]';renderMMEditor();}return;}
+  var mmac=c('[data-mmaddchild]');if(mmac&&curMM){syncMMFromDOM();var pA=mmac.dataset.mmaddchild,rA=mmResolvePath(pA);if(rA&&rA.arr&&rA.arr[rA.idx]!=null){var nA=rA.arr[rA.idx];if(typeof nA==='string')nA={label:nA,children:[]};if(!nA.children)nA.children=[];nA.children.push('Novo subramo');rA.arr[rA.idx]=nA;mmAberto[pA]=true;mmEditarDepois='[data-mm-leaf="'+pA+'-'+(nA.children.length-1)+'"]';renderMMEditor();}return;}
+  var mmdb=c('[data-mmdelbranch]');if(mmdb&&curMM){syncMMFromDOM();curMM.data.branches.splice(parseInt(mmdb.dataset.mmdelbranch,10),1);mmDeslocaAberto(String(parseInt(mmdb.dataset.mmdelbranch,10)));renderMMEditor();return;}
+  var mmdl=c('[data-mmdelleaf]');if(mmdl&&curMM){syncMMFromDOM();var rD=mmResolvePath(mmdl.dataset.mmdelleaf);if(rD&&rD.arr){rD.arr.splice(rD.idx,1);mmDeslocaAberto(mmdl.dataset.mmdelleaf);}renderMMEditor();return;}
   // podcasts
   // cursos
   if(c('[data-curso-upsell]')){showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});return;}
@@ -24241,6 +24460,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // MIND MAP
   document.getElementById('btn-mmblank').addEventListener('click',newBlankMM);
   document.getElementById('btn-mm-save').addEventListener('click',saveMM);
+  document.getElementById('btn-mm-editar').addEventListener('click',function(){mmModoEdicao(!mmEditando);});
   document.getElementById('btn-mm-close').addEventListener('click',function(){
     mmTelaCheia(false);
     if(mmAdminEdit){admMMDraft=null;admMMEditId=null;restoreMMLive();try{renderAdmSec('mapas');}catch(e){}return;}

@@ -1185,6 +1185,18 @@ try {
   fail('regressão da sessão por inatividade falhou:\n' + out);
 }
 
+// 17c-undecies-al. MAPA MENTAL: ABRE COM A RAIZ E OS RAMOS, E "EDITAR" NO TOPO (13/11/2026).
+//      Vídeo do professor: o mapa "abre desfocado". Agora abre encaixado na tela, só com a raiz e
+//      os ramos principais; tocar numa caixa abre os ramos dela; "✏️ Editar" ao lado de "Salvar"
+//      liga a edição (sem botão em cada caixa).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mapa-mental-abertura.js')], { stdio: 'pipe' });
+  ok('mapa mental: abre com a raiz e os ramos, encaixado; tocar abre os seguintes; "Editar" no topo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da abertura do mapa mental falhou:\n' + out);
+}
+
 // 17c-undecies-ak. BANCO: "ESTUDAR" EM TELA CHEIA, UMA QUESTÃO POR VEZ (13/11/2026). Pedido do
 //      professor: os filtros já mostram quantas questões há; "Estudar" (no lugar de "Buscar")
 //      abre uma por vez, com Anterior/Próxima; voltar a uma respondida não conta de novo.
