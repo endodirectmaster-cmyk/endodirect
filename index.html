@@ -233,7 +233,10 @@ body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
 .login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
 .fld{margin-bottom:.95rem}
 .fld label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:6px}
-.login-body .fld input{width:100%;background:var(--surface);border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-family:var(--font);font-size:.95rem;color:var(--tx);outline:none}
+.login-body .fld input{width:100%;background:var(--surface);border:1.5px solid var(--bd2);border-radius:10px;padding:.85rem 1rem;font-family:var(--font);font-size:16px;color:var(--tx);outline:none}
+/* 16px, NÃO .95rem (14/11/2026): no iPhone, tocar num campo com letra abaixo de 16px faz o
+   sistema AMPLIAR a página, e o zoom fica depois do login (print do professor no app de
+   testes: tela cortada à direita até fechar e abrir o app). Ver iosDesfazZoom(). */
 .login-btn{width:100%;background:linear-gradient(135deg,#3b6fd4,#5585e8);color:#fff;border:none;border-radius:10px;padding:.92rem;font-size:1.02rem;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:.4rem;box-shadow:0 2px 12px rgba(59,111,212,.38);transition:filter .12s ease}
 .login-btn:hover{filter:brightness(1.08)}
 .login-link{width:100%;background:none;border:none;color:var(--blue);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;margin-top:.75rem;padding:.25rem}
@@ -9122,6 +9125,7 @@ function fecharJanelaEntrada(id){
 }
 function startApp(){
   var u=currentUser;
+  try{iosDesfazZoom();}catch(e){} // zoom que o iPhone deixou ao digitar e-mail e senha
   try{restorePrescPanel();}catch(e){} // se o admin moveu o #panel-presc, devolve antes de montar a sessão
   try{restoreMMLive();}catch(e){} // idem para o editor visual de mapas (#mm-live)
   medicoHomeApplied=false; // re-avalia a tela inicial do médico a cada login/onboarding
@@ -12986,6 +12990,32 @@ function viewMM(i){
   renderMMEditor();
   document.getElementById('panel-mmap').scrollTop=0;
 }
+// ── ZOOM PRESO NO IPHONE (14/11/2026) ─────────────────────────────────────────────────
+// Print do professor no app de testes, logo depois de entrar na alunopro: a tela ~5% maior e
+// cortada à direita; fechar e abrir o app normalizava. É o iOS: ao tocar num campo com letra
+// abaixo de 16 px ele AMPLIA a página e não desfaz ao terminar. O login passou a 16 px, mas há
+// campos menores no resto do app (busca, chat, editores). Ao sair de um campo, e ao entrar no
+// app, o viewport ganha `maximum-scale=1` por um instante (o iOS volta a 1×) e depois volta ao
+// original — a pinça continua livre (o ampliador de figuras depende dela). Só iPhone/iPad.
+var IOS_TOQUE=(function(){try{var ua=navigator.userAgent||'';return /iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}catch(e){return false;}})();
+function iosDesfazZoom(){
+  if(!IOS_TOQUE)return;
+  var vp=document.querySelector('meta[name="viewport"]');if(!vp)return;
+  var orig=vp.getAttribute('data-orig')||vp.getAttribute('content')||'';
+  vp.setAttribute('data-orig',orig);
+  if(/maximum-scale/.test(orig))return;
+  vp.setAttribute('content',orig+', maximum-scale=1');
+  setTimeout(function(){vp.setAttribute('content',orig);},400);
+}
+(function(){
+  if(!IOS_TOQUE)return;
+  var CAMPO='input,textarea,select,[contenteditable="true"]';
+  document.addEventListener('focusout',function(ev){
+    var t=ev.target;if(!(t&&t.matches&&t.matches(CAMPO)))return;
+    // Pulou de um campo para outro (e-mail → senha): não mexe; só quando o teclado fecha.
+    setTimeout(function(){var a=document.activeElement;if(a&&a.matches&&a.matches(CAMPO))return;iosDesfazZoom();},120);
+  },true);
+})();
 // Liga/desliga a tela cheia do mapa (ver o CSS .mm-tela-cheia).
 function mmTelaCheia(on){document.body.classList.toggle('mm-tela-cheia',!!on);}
 // ── Tela cheia = modo leitura (13/11/2026) ──────────────────────────────────────────────
