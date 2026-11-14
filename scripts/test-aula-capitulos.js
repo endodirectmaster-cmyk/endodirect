@@ -92,13 +92,12 @@ const { playerEmbed, capsParse, capsFmt, capsTexto, aulaCapsHTML } = caixa;
 // ── 3. Fechar o player PARA o vídeo ───────────────────────────────────────
 // Antes, fechar só escondia a caixa: o áudio continuava tocando invisível.
 {
-  // Desde 07/11/2026 o "✕ Fechar" e a volta "← <curso>" (acima do player) passam por
+  // Desde 14/11/2026 só a volta "← Voltar" (acima do player) fecha a aula; ela passa por
   // fecharAulaAluno, que solta o HLS e esvazia a caixa.
-  const fechar = html.match(/getElementById\('curso-player-close'\)[^\n]*/);
   const voltar = html.match(/getElementById\('curso-player-back'\)[^\n]*/);
   const i = html.indexOf('function fecharAulaAluno(');
   const fn = html.slice(i, html.indexOf('\n}', i));
-  ok(fechar && /fecharAulaAluno\(false\)/.test(fechar[0]) && voltar && /fecharAulaAluno\(true\)/.test(voltar[0])
+  ok(voltar && /fecharAulaAluno\(false\)/.test(voltar[0])
     && /aulaSoltarHls\(\)/.test(fn) && /box\.innerHTML=''/.test(fn),
     '🧨 fechar a aula voltou a apenas esconder a caixa — o vídeo segue tocando e o áudio fica órfão na página');
 }
@@ -152,12 +151,16 @@ const { playerEmbed, capsParse, capsFmt, capsTexto, aulaCapsHTML } = caixa;
   ok(aulaCapsHTML({}) === '' && aulaCapsHTML({ caps: [] }) === '',
     '⚠️ aula sem capítulos passou a desenhar um bloco "Nesta aula" vazio');
 
-  // A ORDEM NA TELA é o pedido: vídeo em cima, capítulos embaixo.
+  // A ORDEM NA TELA é o pedido: vídeo em cima, capítulos embaixo. Desde 14/11/2026 (pedido do
+  // professor: o texto da aula "logo abaixo da videoaula e acima dos tópicos"), a descrição vem
+  // entre o vídeo e os capítulos — e nada mais.
   ['aula-tab-body', 'adm-aula-tab-body'].forEach(function (id) {
     const corpoTab = html.slice(0, html.indexOf("'<div id=\"" + id + "\">'"));
     const ultimo = corpoTab.lastIndexOf('playerEmbed(c)');
-    ok(ultimo > 0 && corpoTab.indexOf('aulaCapsHTML(c)', ultimo) === ultimo + 'playerEmbed(c)'.length + "+'</div>'+".length,
-      '🧨 em `' + id + '` os capítulos não vêm logo depois do vídeo — o professor pediu a aula em cima e os capítulos embaixo');
+    const entre = ultimo > 0 ? corpoTab.slice(ultimo + 'playerEmbed(c)'.length, corpoTab.indexOf('aulaCapsHTML(c)', ultimo)) : '';
+    ok(ultimo > 0 && corpoTab.indexOf('aulaCapsHTML(c)', ultimo) > ultimo
+      && /^\+'<\/div>'\+\(c\.desc\?'<div class="aula-desc"[^']*'\+esc\(c\.desc\)\+'<\/div>':''\)\+$/.test(entre),
+      '🧨 em `' + id + '` os capítulos não vêm logo depois do vídeo e da descrição — o professor pediu a aula em cima, o texto da aula e os capítulos embaixo (' + entre + ')');
   });
 }
 

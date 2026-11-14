@@ -91,8 +91,15 @@ const render = corpo('renderCursosAluno');
   ok(!/c\.dur\b/.test(cartao), '🧨 a duração voltou ao cartão da aula — o professor pediu para tirar');
   ok(!/c\.desc\b/.test(cartao), '🧨 a descrição voltou ao cartão da aula — ela só aparece ao clicar na aula');
   const pl = html.indexOf('function renderAulaPlayer(){');
-  ok(pl > 0 && /\(c\.desc\?'<div style="font-size:\.78rem;color:var\(--t2\);line-height:1\.6;margin-top:\.6rem">'\+esc\(c\.desc\)/.test(html.slice(pl, pl + 2600)),
+  ok(pl > 0 && /\(c\.desc\?'<div class="aula-desc" style="font-size:\.78rem;color:var\(--t2\);line-height:1\.6;margin-top:\.6rem">'\+esc\(c\.desc\)/.test(html.slice(pl, pl + 2600)),
     '⚠️ a descrição sumiu também do player — ela tem de aparecer quando o aluno clica na aula');
+  // 14/11/2026, pedido do professor: "Deixar esse título da aula logo abaixo da videoaula e acima
+  // dos tópicos". Ordem no player do aluno e no do professor: vídeo → descrição → "Nesta aula".
+  // 14/11/2026, print da aba Resumo da aula: "Deixar no formato justificado".
+  ok(/\.rsm li\{[^}]*text-align:justify[^}]*hyphens:auto/.test(html) && /\.rsm p\{[^}]*text-align:justify/.test(html),
+    '🧨 o resumo da aula deixou de ser justificado (tópicos e parágrafos)');
+  ok((html.match(/playerEmbed\(c\)\+'<\/div>'\+\(c\.desc\?'<div class="aula-desc"[^']*'\+esc\(c\.desc\)\+'<\/div>':''\)\+aulaCapsHTML\(c\)/g) || []).length === 2,
+    '🧨 a descrição da aula voltou para depois dos capítulos (o professor pediu logo abaixo do vídeo, acima dos tópicos)');
   // O que fica no cartão: amostra grátis e concluída.
   ok(/Amostra grátis/.test(cartao),
     '🧨 o selo de amostra grátis saiu junto: o não-assinante deixaria de saber por que aquela aula abre');
@@ -123,8 +130,13 @@ const render = corpo('renderCursosAluno');
   ok(/fr\.style\.display=mostrar\?'flex':'none'/.test(mostra) && /li\.style\.display=mostrar\?'':'none'/.test(mostra),
     '⚠️ cursoMostrarLista não esconde/mostra a grade e a lista de aulas');
   const pl = fatia('renderAulaPlayer');
-  ok(/box\.innerHTML='<button class="dir-back" id="curso-player-back"[^>]*>← '\+esc\(cursoNomeBySlug\(c\.curso\)\)\+'<\/button>'\s*\+'<div class="card">'/.test(pl),
-    '🧨 a volta "← <curso>" saiu de cima do player (o professor pediu no canto superior esquerdo)');
+  // 14/11/2026: "Retirar esse botão de fechar, esse do X, e trocar o nome Educação Médica
+  // Continuada, lá em cima do botão, por Voltar."
+  ok(/box\.innerHTML='<button class="dir-back" id="curso-player-back"[^>]*>← Voltar<\/button>'\s*\+'<div class="card">'/.test(pl),
+    '🧨 a volta "← Voltar" saiu de cima do player (ou voltou a dizer o nome do curso)');
+  ok(!/curso-player-close|✕ Fechar/.test(pl), '🧨 o "✕ Fechar" voltou à aula aberta — o professor pediu para tirar');
+  ok(/getElementById\('curso-player-back'\);if\(bk\)bk\.addEventListener\('click',function\(\)\{fecharAulaAluno\(false\);\}\);/.test(pl),
+    '🧨 o "← Voltar" deixou de levar à lista de aulas de onde o aluno veio');
   const fecha = fatia('fecharAulaAluno');
   ok(/if\(voltarAoCurso\)cursoMod='';/.test(fecha) && /cursoMostrarLista\(true\);/.test(fecha) && /renderCursosAluno\(\)/.test(fecha),
     '⚠️ fechar a aula não devolve a lista (ou a volta não leva às subespecialidades do curso)');
