@@ -238,6 +238,9 @@ ok('linha da raiz aos ramos visível no fundo azul-marinho (não é mais #1a2744
 ok('🧨 + cria a caixa e já põe o cursor nela; × leva o aberto/fechado das irmãs junto',
   /mmEditarDepois='\[data-mm-leaf="'\+pA\+'-'/.test(html) && /mmDeslocaAberto\(mmdl\.dataset\.mmdelleaf\)/.test(html) && /mmDeslocaAberto\(String\(parseInt\(mmdb\.dataset\.mmdelbranch,10\)\)\)/.test(html));
 ok('virar o celular reencaixa, mas não com o cursor numa caixa', /a&&a\.isContentEditable/.test(html) && /w\.clientWidth===w\.__larg/.test(html));
+// Print do professor (14/11/2026), na tela de Mapas Mentais: "Pode tirar essa legenda onde tem
+// o mapa, entra com o tema." A dica "💡 O mapa abre com o tema e os ramos principais..." saiu.
+ok('🧨 sem a legenda "💡 O mapa abre com o tema..." embaixo do campo Tema', !/class="mm-help"/.test(html) && !/O mapa abre com o tema e os ramos principais/.test(html));
 ok('a pinça respeita o mínimo do encaixe', /Math\.max\(wrap\.__min\|\|MM_ZOOM_MIN,/.test(corpo('setupMMPinchZoom')));
 
 ok('🧨 Voltar, Editar e Salvar maiores na tela cheia (pedido do professor: "ligeiramente maiores")',
