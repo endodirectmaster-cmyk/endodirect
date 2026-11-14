@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-as. IPHONE: ZOOM PRESO DEPOIS DO LOGIN (14/11/2026). Print do professor no app de
+//      testes: tela ampliada e cortada logo após entrar; fechar e abrir normalizava. Login a 16 px
+//      e zoom desfeito ao sair do campo e ao entrar no app, sem travar a pinça das figuras.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ios-zoom-login.js')], { stdio: 'pipe' });
+  ok('iPhone: login a 16 px e o zoom de digitação desfeito ao sair do campo e ao entrar no app');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do zoom do iPhone falhou:\n' + out);
+}
+
 // 17c-undecies-ar. MAPA MENTAL DO CAPÍTULO = VISUALIZADOR DA FERRAMENTA (14/11/2026). Print do
 //      professor (Resumos › Diagnóstico e Classificação do Diabetes): "Deixe no mesmo formato da
 //      ferramenta dos mapas mentais que você já consertou e ficou muito bom."
