@@ -5,6 +5,20 @@ atualizado: 2026-11-14
 
 # Pendências
 
+## 🃏 Flashcards: achados da revisão de 14/11 (os 400 novos já gravados; nada disto foi mexido)
+Ao comparar os novos com os antigos, os revisores acharam pontos a decidir. Card antigo: só se troca o verso (regra do professor).
+- [ ] **Cards antigos que divergem da diretriz vigente:**
+  - Masculina, "Contraindicações à reposição de testosterona?": Ht > 54%; o posicionamento SBEM-SBU-ABEMSS 2026 põe Ht basal > 48% como contraindicação relativa.
+  - Masculina, "Como monitorar a reposição": 6 a 12 meses × anual depois do 1º ano.
+  - Transgeneridade, "bloqueio puberal a partir de Tanner 2": a Resolução CFM 2.427/2025 veda o bloqueio puberal por disforia.
+  - Transgeneridade, cards com "≥ 40/> 40 anos" para preferir o estrogênio transdérmico; a ES 2017 fala em 45 anos.
+  - Osteometabolismo, Paget, meta de "normalizar a FA": a diretriz de 2019 não recomenda tratar com o objetivo de normalizar a FA.
+  - Osteometabolismo, vitamina D com metas ≥ 20/≥ 30 ng/mL × ES 2024 (não define meta nem dosagem de rotina).
+  - Pediátrica, meta de A1C < 7% no DM1 × ISPAD 2024 (≤ 6,5%).
+  - Pediátrica, bariátrica pela AAP a partir de 13 anos × Resolução CFM 2.429/2025 (16 anos).
+- [ ] **Temas mal marcados:** em Lípides, cards de sitosterolemia (SQF) e de disbetalipoproteinemia estão em "Alfalipoproteinemias"; os 49 cards antigos de Obesidade estão sem `tema` (entram só no filtro "todos").
+- [ ] **Divergências entre capítulos (texto dos Resumos, não dos flashcards):** dieta da SQF diz 10–15% (o certo é ≤ 10%, 15–20 g/dia); HAC não clássica com corte de 17-OHP de 1.500 num capítulo e 1.000 em outro; Rastreamento do DM1 ainda diz FDA ≥ 8 anos; herdabilidade da Lp(a) 80–90% × > 90%; reavaliação da acromegalia 6–12 × 12 semanas; momento da dosagem da testosterona na mulher; capítulo de Paget; gestação após bariátrica 18 × 12–24 meses.
+
 ## 📚 Banco: questões de diretrizes desatualizadas (pedido de 12/11; FASE 1 ENTREGUE em 13/11, aguarda o "pode")
 
 Pedido do professor: *"no banco de questões, algumas questões estão desatualizadas com relação ao tempo. Por exemplo, tem uma questão que pergunta segundo a diretriz brasileira de diabetes de 2023, sendo que a diretriz já foi atualizada ... fazer um levantamento ... e atualizar para as diretrizes mais atuais ... apenas quando renovar o limite semanal ... amanhã à noite"*.
