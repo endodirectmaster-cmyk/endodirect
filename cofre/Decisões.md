@@ -8,6 +8,28 @@ atualizado: 2026-11-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📚 BANCO: 84 QUESTÕES COM DIRETRIZ ANTIGA ATUALIZADAS (2026-11-14; professor: "pode", respondendo item a item à lista de pendências).**
+  - **Como:** 7 redatores (um por família de diretriz) e 7 revisores independentes, cada um conferindo na fonte primária. A Diretriz SBD 2026 foi lida pela API do site (`diretriz.diabetes.org.br/wp-json/wp/v2/posts?slug=…`, texto integral). ADA 2026, SBC 2025, HAS 2025 e ATA 2025 vieram do PMC. O revisor resolveu cada Endodirect com sentido mudado antes de ler o comentário do redator.
+  - **Regras:** na prova oficial, só o comentário muda, com o parágrafo final "Atualização (nov/2026): ..." (na discursiva, a `expected`); frase errada é corrigida no lugar. Na Endodirect, a questão passa para a versão vigente com uma única correta.
+  - **Resultado:**
+    - 84 gravadas: 29 Endodirect e 55 oficiais; nenhuma letra de gabarito trocada.
+    - 4 seguradas: 1688, 1970, 464 (ATA 2026 paga) e 1390 (ABESO 2026 sem texto).
+    - 4 sem mudança.
+    - Achados dos revisores:
+      - ESC publicou a diretriz de IC 2026 (ago/2026); a nota da TEEM2024-044 deixou de dizer que a de 2021 é a vigente;
+      - Lp(a)HORIZON (pelacarsen) publicado no NEJM em 07/11/2026, neutro, citado na ENDODIRECT-1210;
+      - TEEM2020-048 tinha frase invertida sobre pasireotida e glicemia, corrigida.
+  - **Gravação:**
+    - Backup `main-antes-diretrizes-banco-2026-11-14`.
+    - Função temporária `endodirect_tmp_diretrizes_banco` (token sha256, prazo, só as 92, md5 por questão, oficial só comentário); 7 chamadas de 12.
+    - Conferido no banco:
+      - 3.137 itens;
+      - as outras 3.053 e o resto do payload idênticos ao backup;
+      - md5 das 84 igual ao calculado aqui;
+      - 0 gabaritos mudados;
+      - 0 oficiais com campo além do comentário.
+    - Depois: anon revogado, token apagado; DROP pendente com o professor no computador.
+  - Relatório: https://claude.ai/artifact/H2yUczdKAvvn5jirDXvevY.
 - **📝 RESUMO DA AULA JUSTIFICADO (2026-11-14; professor, com print da aba 📝 Resumo da aula da EMC: "Deixar no formato justificado").** `.rsm li` e `.rsm p` (só o resumo da aula usa `.rsm`) com `text-align:justify` e hifenização; os títulos das seções seguem à esquerda. `test-navegacao-cursos.js` prende. Mesmo PR do "← Voltar" (#1029).
 - **🎬 AULA ABERTA: O TEXTO DA AULA LOGO ABAIXO DO VÍDEO (2026-11-14; professor, com print do fim da aula aberta: "Deixar esse título da aula logo abaixo da videoaula e acima dos tópicos").** A descrição ("Nesta aula discutimos...") ficava no fim, depois dos capítulos. Agora vem entre o vídeo e o "Nesta aula", no player do aluno e no do professor (`.aula-desc`). Li "esse título" como esse texto, que era o que estava no print; o título da aula continua no topo do cartão. `test-navegacao-cursos.js` e `test-aula-capitulos.js` prendem a ordem vídeo → descrição → capítulos. Mesmo PR do "← Voltar" (#1029).
 - **🎬 AULA ABERTA: SÓ "← VOLTAR" (2026-11-14; professor, com print da aula aberta: "Retirar esse botão de fechar, esse do X, e trocar o nome Educação Médica Continuada, lá em cima do botão, por Voltar").** No player do aluno (`renderAulaPlayer`), saiu o "✕ Fechar" ao lado do título. A volta acima do player diz "← Voltar" (não mais o nome do curso) e leva à lista de aulas de onde o aluno veio, que é o que o Fechar fazia (`fecharAulaAluno(false)`, que para o vídeo). O player do professor no painel ficou igual. `test-navegacao-cursos.js` e `test-aula-capitulos.js` atualizados (as 3 checagens novas falham no código antigo). Conferido no Chromium: abrir a aula e voltar devolve a lista. sw v392.
