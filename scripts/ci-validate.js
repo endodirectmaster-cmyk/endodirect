@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-aq. QUESTÃO DO DIA SÓ NO DASHBOARD (14/11/2026). Print do professor com a
+//      janela aberta sobre o Mural de artigos: "Deixa ela somente no dashboard [...] Não é
+//      para aparecer no mural de artigos." Roda a linha real de goPanel com DOM falso.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-qotd-so-no-dashboard.js')], { stdio: 'pipe' });
+  ok('Questão do Dia: janela só no Dashboard (tela de entrada), nunca no Mural de artigos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da janela da Questão do Dia falhou:\n' + out);
+}
+
 // 17c-undecies-ap. PODCASTS: DESCRIÇÃO EM PARÁGRAFOS E JUSTIFICADA (14/11/2026). Print do
 //      professor: "Deixar em modo justificado. As frases ficaram todas juntas. Separar em
 //      parágrafos." A importação do feed guarda as quebras; a tela justifica e separa.

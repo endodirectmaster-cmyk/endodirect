@@ -18,7 +18,7 @@ atualizado: 2026-11-14
 - **Estado por usuário** (`endodirect_app_state`): `userStatePayload` / `REMOTE_STATE_KEYS` espelham chaves para o localStorage. Inclui `user_profile`, `ck_billing`, `deg_trials`.
 
 ### Navegação (tela inicial vs. reload) — #284
-- **Reload mantém a tela**; **logout+login volta ao padrão** (professor → Analytics; aluno → Mural). Mecanismo: `goPanel()` persiste `last_panel` (aluno) e `renderAdmSec()` persiste `adm_sec` (professor); `doLogout()` **limpa** `last_panel`+`adm_sec`. No `startApp`: admin chama `goPanel('adm')` (que restaura via `admRestoreSec()`, default `analytics`); aluno restaura `last_panel` se visível, senão `homePanel()` (Mural-first).
+- **Reload mantém a tela**; **logout+login volta ao padrão** (professor → Analytics; aluno → Dashboard, desde 30/08/2026). Mecanismo: `goPanel()` persiste `last_panel` (aluno) e `renderAdmSec()` persiste `adm_sec` (professor); `doLogout()` **limpa** `last_panel`+`adm_sec`. No `startApp`: admin chama `goPanel('adm')` (que restaura via `admRestoreSec()`, default `analytics`); aluno restaura `last_panel` se visível, senão `homePanel()` (Mural-first).
 - ⚠️ `admRestoreSec()` default passou de `ref` → `analytics`.
 
 ### Diretrizes (antiga "Referência") — #276–#284
@@ -40,6 +40,7 @@ atualizado: 2026-11-14
 - Catálogo de nomes: `member_content` já devolve `cursos`; a RPC `endodirect_public_content` passou a devolver `cursos` também (2026-06-15) para o **demo/preview** não exibir o slug ("endo_essencial" → "Endocrinologia Essencial"). `applyStatePayload` aplica `payload.cursos`→`catalogoCursos`.
 
 ### Menu lateral do aluno (ordem)
+- **Janela da Questão do Dia: só no Dashboard** (14/11/2026, professor: "Não é para aparecer no mural de artigos"). `goPanel` abre/esconde a janela (`renderQotd`) só quando o painel é `dash`; o carregamento tardio de `ig_stories` também olha `panel-dash`. 1x por sessão ou até responder. `test-qotd-so-no-dashboard.js`.
 - ESTUDO: **Dashboard** (1º), **Mural de artigos** (2º, subiu de PESSOAL em 2026-08-30), Plano de estudo, Banco de questões, Questão do Dia, Flashcards, Mapas Mentais, Favoritos, Podcasts, Cursos, Cronograma, Revisão, Caderno de erros, **Diretrizes**, Resumos.
 - ⚠️ **O menu é o MESMO para todos os perfis** desde 2026-08-30. `applyProfileMenuLayout()` — que escondia o Dashboard de quem tem perfil de médico e subia o Mural para o lugar dele — **foi removida**. Não voltar a manipular `.sb-item[data-p="dash"]` em tempo de execução: guardado em `test-dashboard-aluno.js`.
 - **Desempenho não é item de menu**: foi incorporado ao Dashboard (`renderDesempenhoNoDash`). O painel `#panel-desemp` continua montável por caminho legado, sem porta no menu.
