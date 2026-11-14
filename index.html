@@ -13685,7 +13685,8 @@ function renderCursosAluno(){
     var mods=Object.keys(seen).sort(function(a,b){return a.localeCompare(b,'pt-BR');});
     var cnome=cursoNomeBySlug(cursoFilter);
     var ccat=(Array.isArray(catalogoCursos)?catalogoCursos:[]).filter(function(x){return x&&x.slug===cursoFilter;})[0];
-    el.innerHTML='<button class="dir-back" data-cursobackcursos style="grid-column:1/-1;justify-self:start;margin-bottom:.4rem">← Voltar aos cursos</button>'
+    // SÓ "← VOLTAR" (14/11/2026; print do professor na tela do curso: "Apenas 'Voltar'"), como na aula aberta.
+    el.innerHTML='<button class="dir-back" data-cursobackcursos style="grid-column:1/-1;justify-self:start;margin-bottom:.4rem">← Voltar</button>'
       +'<div class="ph" style="grid-column:1/-1;margin-top:0;display:flex;align-items:center;gap:.7rem"><div style="width:62px;flex-shrink:0">'+cursoCapaHTML(cnome,cursoFilter,ccat&&ccat.capa,44,false)+'</div><h1 style="font-size:1.05rem;margin:0">'+esc(cnome)+'</h1></div>'
       +mods.map(function(m){return '<button class="dir-sub-btn" data-cursomod="'+esc(m)+'"><div class="dsb-ico">'+dirSubIcon(m)+'</div><h3>'+esc(m)+'</h3><div class="dsb-cnt">'+seen[m]+' aula'+(seen[m]===1?'':'s')+'</div></button>';}).join('')
       +cursoAmostraCTA(cursoFilter);
@@ -13693,7 +13694,7 @@ function renderCursosAluno(){
   }
   // Nível 2 — aulas da subespecialidade escolhida.
   var lessons=scope.filter(function(c){return (c.modulo||'Geral').trim()===cursoMod;});
-  el.innerHTML='<button class="dir-back" data-cursoback style="grid-column:1/-1;justify-self:start;margin-bottom:.4rem">← '+esc(cursoNomeBySlug(cursoFilter))+'</button>'
+  el.innerHTML='<button class="dir-back" data-cursoback style="grid-column:1/-1;justify-self:start;margin-bottom:.4rem">← Voltar</button>'
     +'<div class="ph" style="grid-column:1/-1;margin-top:0"><h1 style="font-size:1.05rem">'+dirSubIcon(cursoMod)+' '+esc(cursoMod)+'</h1></div>'
     +(lessons.length?lessons.map(lessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade.</div>')
     +cursoAmostraCTA(cursoFilter);

@@ -42,10 +42,13 @@ const render = corpo('renderCursosAluno');
 // ── 2. Cada degrau tem a sua saída ───────────────────────────────────────
 // Sem isso o aluno entra num curso e não sai.
 {
-  ok(/data-cursobackcursos[^>]*>← Voltar aos cursos/.test(render),
-    '🧨 o nível das subespecialidades ficou sem volta para a grade de cursos — o aluno fica preso dentro do curso');
-  ok(/data-cursoback [^>]*>← '\+esc\(cursoNomeBySlug\(cursoFilter\)\)/.test(render),
-    '🧨 a volta do nível das aulas deixou de nomear o curso (o painel do professor nomeia)');
+  // 14/11/2026, print do professor: "Apenas 'Voltar'" — as duas voltas do aluno dizem só "← Voltar".
+  ok(/data-cursobackcursos[^>]*>← Voltar<\/button>/.test(render),
+    '🧨 o nível das subespecialidades ficou sem a volta "← Voltar" para a grade de cursos — o aluno fica preso dentro do curso');
+  ok(/data-cursoback [^>]*>← Voltar<\/button>/.test(render),
+    '🧨 a volta do nível das aulas deixou de ser só "← Voltar" (o professor pediu "Apenas Voltar")');
+  ok(!/Voltar aos cursos|← '\+esc\(cursoNomeBySlug\(cursoFilter\)\)\+'<\/button>/.test(render),
+    '🧨 voltou "Voltar aos cursos" ou o nome do curso na volta da tela do aluno');
 
   const disp = html.slice(html.indexOf('function dispatchClick'), html.indexOf('function dispatchClick') + 6000);
   const alvo = disp || html;

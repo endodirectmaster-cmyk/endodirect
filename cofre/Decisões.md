@@ -8,6 +8,7 @@ atualizado: 2026-11-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 CURSOS: AS VOLTAS DO ALUNO DIZEM SÓ "← VOLTAR" (2026-11-14; professor, com print da tela do curso com "← Voltar aos cursos": "Apenas 'Voltar'").** As duas voltas da tela de Cursos do aluno (nível das subespecialidades, que dizia "Voltar aos cursos", e nível das aulas, que dizia o nome do curso) passaram a "← Voltar", como na aula aberta. O painel do professor ficou igual. `test-navegacao-cursos.js` prende (3 checagens novas, que falham no código antigo).
 - **🧭 SKILL NOVA: TRILHA DA AULA DA EMC — TÓPICOS, RESUMO E QUESTÕES (2026-11-14; professor: "Coloque isso como uma skill sua, conforme novas aulas vão subindo para o curso de Educação Médica Continuada, acrescentar também questões das respectivas aulas, assim como também os tópicos de cada aula" e "além das questões, os resumos").** `.claude/skills/trilha-aula-emc/SKILL.md`. Para cada aula da EMC ela grava:
   - os tópicos, pela skill `capitulos-videoaula`;
   - o resumo fiel aos slides, no formato `FUNDAMENTAÇÃO`/`DEFINIÇÕES`/… com itens "•"; refaz o rascunho `resumoAuto` do painel;
