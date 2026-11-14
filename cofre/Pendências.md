@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-13
+atualizado: 2026-11-14
 ---
 
 # Pendências
@@ -9,7 +9,8 @@ atualizado: 2026-11-13
 
 Pedido do professor: *"no banco de questões, algumas questões estão desatualizadas com relação ao tempo. Por exemplo, tem uma questão que pergunta segundo a diretriz brasileira de diabetes de 2023, sendo que a diretriz já foi atualizada ... fazer um levantamento ... e atualizar para as diretrizes mais atuais ... apenas quando renovar o limite semanal ... amanhã à noite"*.
 - **Fase 1 entregue em 13/11** (o professor antecipou: "Manda bala nos agendamentos. Pode começar agora"; o agendamento foi desligado): página https://claude.ai/artifact/5TphsnFdrkVmmyek1diJJP. **92 questões** citam documento já substituído: classe A (só nome/ano) 45, B (nota no comentário) 38, C (gabarito ou alternativa mudaria) 9; 37 Endodirect e 55 de prova oficial (TEEM 50). Outras 250 citam a versão vigente e não precisam de nada. Achados à parte: TEEM2024-044 com comentário de outra questão; TEEM2026-038/084 com comentário contrário à diretriz vigente; ENDODIRECT-824 cita diretriz inexistente; 1047/1049/1051 atribuem a Diretriz Internacional de SOP à Endocrine Society. Arquivos (com texto das questões) só no scratchpad `diretrizes-banco/`.
-- [ ] **Fase 2 só com o "pode" do professor.**
+- [x] **"pode" dado em 14/11** (professor, respondendo item a item). Fase 2 EM ANDAMENTO: 7 redatores + 7 revisores independentes (scratchpad `diretrizes-banco/fase2/`).
+- [ ] **Função temporária `endodirect_tmp_diretrizes_banco`** (criada em 14/11; ler/gravar só as 92, token por sha256, prazo 14/11 10:33 UTC, gravar exige o backup `main-antes-diretrizes-banco-2026-11-14` e o md5 de cada questão; prova oficial só muda o comentário). Depois de gravar: revogar o anon, apagar o token; DROP só com o professor no computador.
 - **Fase 1 (levantamento, sem gravar):** questões que citam diretriz/consenso com ano, separadas em autoria Endodirect × prova oficial, com a diretriz atual e a proposta; página para o professor aprovar.
 - **Fase 2 (só com o "pode"):** Endodirect → atualizar enunciado/alternativas/comentário; prova oficial → enunciado e gabarito intocados, só nota de atualização no comentário. Troca de gabarito só com o revisor independente concordando. Backup, função temporária com token e guarda md5, verificação; DROP só com o professor no computador.
 
@@ -20,9 +21,10 @@ Pedido do professor: *"no banco de questões, algumas questões estão desatuali
 - **Ficam de fora, a pedido do professor ("Isso não"):** semaglutida oral Lynavoy no FDA (fonte única), Yorvipath na
   Anvisa (datas divergentes) e a contagem de canetas GLP-1 da Anvisa (totais divergentes).
 - [x] **Geradas, revisadas e na fila em 13/11** (ver [[Decisões]] 2026-11-13 e [[Instagram Stories (Questão do Dia)]]).
-- [ ] **DROP da função temporária `endodirect_tmp_qotd_novidades`** — sem acesso do anon desde 13/11, token apagado, prazo vencido em 14/11 08:51 UTC. DROP só com o professor no computador (o cartão do Supabase não aparece no celular).
+- [x] **DROP da função temporária `endodirect_tmp_qotd_novidades`: feito em 14/11** (professor: "Pode mandar pra mim", no computador); conferido em `pg_proc`: nenhuma `endodirect_tmp_*`.
 - [ ] **Item 82 (alça fechada em menores de 7 anos, JCEM 2026):** conferir a errata (PMID 42090273) num navegador antes de a questão sair; o site da revista não abre daqui (Cloudflare). A resposta não depende dela (ICs sem sobreposição).
-- [ ] **Esquema dos Resumos `diabetes--rastreamento-do-diabetes-mellitus-tipo-1.svg`** diz "estágio 2, ≥ 8 anos" (regra da Anvisa); o FDA ampliou o teplizumabe no estágio 2 para ≥ 1 ano em 20/04/2026. Atualizar o esquema para citar as duas.
+- [x] **Esquema `diabetes--rastreamento-do-diabetes-mellitus-tipo-1.svg`: corrigido em 14/11** (professor: "pode"): a caixa do teplizumabe traz "Anvisa 2026 (Tzield): ≥ 8 anos" e "FDA (abr/2026): ≥ 1 ano"; a seta diz só "estágio 2".
+- [ ] **Texto dos capítulos** "Rastreamento do diabetes mellitus tipo 1" (diretrizes[2]) e "Diabetes Tipo 1 e LADA" (diretrizes[128]) ainda dizem "aprovado pelo FDA desde novembro de 2022 ... ≥ 8 anos". Oferecido ao professor em 14/11: acrescentar a ampliação do FDA para ≥ 1 ano (PETITE-T1D, abr/2026).
 
 ## 🧩 Comentários do banco: listas à espera do professor (12/11)
 - [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
@@ -73,7 +75,7 @@ de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
   5. Build 1.1 pelo GitHub, TestFlight, teste no iPhone do professor, envio à revisão.
 
 ## 🧠 IA: dois achados de 10/11 à espera do professor
-- **iSGLT2 antes de cirurgia.** Na revisão às cegas das ferramentas, três de quatro avaliações de prescrição mandaram suspender 24 h antes; o vigente (bula FDA e ADA) é 3 dias, ou 4 para ertugliflozina. O núcleo não tem a entrada e tem 1.242 caracteres de folga. Oferecido ao professor: incluir uma linha.
+- [x] **iSGLT2 antes de cirurgia: FEITO em 14/11** (professor: "esse é o correto"). Linha no núcleo, no item do tratamento farmacológico (ADA 2026): suspender 3 dias antes da cirurgia eletiva, 4 na ertugliflozina. Núcleo 80.898/82.000.
 - **Custo da Questão do Dia avulsa.** O gerador de questões manda o aprofundamento inteiro (até ~234 mil tokens, ~US$ 1,17 por chamada fria). Em lote o cache acerta; avulsa, paga o frio. Se pesar, aplicar o mesmo teto por pedido das ferramentas do aluno. Ver [[Decisões]], 10/11.
 
 ## 📝 Resumos da EMC (07/11, revisto em 08/11)
@@ -83,10 +85,9 @@ de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
 
 ## 🎬 Videoaulas e o plano Standard (07/11): decisão do professor
 
-- [ ] O professor disse "Gold: todas" e "degustação: uma por subespecialidade". O Standard
-  (1 assinante em 07/11) segue vendo todas, porque o servidor libera por `plano`. Perguntado
-  no relatório de 07/11; se for "só Gold", mudar o ramo das privadas em
-  `endodirect_member_resumos` (ver [[Videoaulas dos Resumos]]).
+- [x] **Decidido em 14/11: "só Gold".** O Standard passa a ver só a videoaula liberada de cada
+  subespecialidade (como a degustação); os capítulos seguem inteiros. Ver [[Videoaulas dos Resumos]]
+  e [[Decisões]] 2026-11-14.
 
 ## ⏸️ PAUSA (25/10, 16h51 UTC): limite semanal esgotado; retomada em 30/10, 20h05 UTC
 

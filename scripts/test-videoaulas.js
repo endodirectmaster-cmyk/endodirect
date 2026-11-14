@@ -76,7 +76,7 @@ ok('capítulo com vídeo: um bloco por vídeo válido', (ctx.dirVideosHTML(cap).
 
 // ---- 4. a aba do aluno ---------------------------------------------------------------------
 const view = extrai('diretrizesViewHTML');
-ok('aluno: aba só nos Resumos, fora dos artigos e só com vídeo', /var _temVideo=refPrivadoMode&&!_ehArtigo&&list\.some\(function\(x\)\{return _vidsDe\(x\.d\)\.length>0;\}\);/.test(view) && view.indexOf('var _vidsDe=function(d){var v=dirVideosDe(d);return _degFmt?v.filter(dirVideoLiberado):v;};') > 0);
+ok('aluno: aba só nos Resumos, fora dos artigos e só com vídeo', /var _temVideo=refPrivadoMode&&!_ehArtigo&&list\.some\(function\(x\)\{return _vidsDe\(x\.d\)\.length>0;\}\);/.test(view) && view.indexOf('var _vidsDe=function(d){var v=dirVideosDe(d);return _vidSo?v.filter(dirVideoLiberado):v;};') > 0);
 ok('aluno: sem vídeo, o formato volta para o resumo', view.indexOf("if(refFormat==='video'&&!_temVideo)refFormat='resumo';") > 0);
 ok('aluno: o botão entra depois de Mapas mentais', /\['mapa','🧠 Mapas mentais'\]\];\s*if\(_temVideo\|\|_vidTrancado\)fmts\.push\(\['video','🎬 Videoaulas'\]\);/.test(view));
 ok('aluno: a aba de vídeo fica ativa quando escolhida', view.indexOf("refFormat==='video')?refFormat:'resumo'") > 0);
