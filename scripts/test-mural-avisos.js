@@ -49,8 +49,10 @@ ok('lugar do mural no topo do Dashboard, escondido quando não há aviso', /<div
 
 // ── 3. O que entra no mural, rodando ────────────────────────────────────────────────────
 const AGORA = Date.UTC(2026, 10, 13, 15, 0, 0), D = 86400000;
+// ⚠️ dirIsVisibleAnyTipo de propósito "quebrada" (recusa tudo): o mural NÃO pode depender da aba
+// ativa (no Dashboard ela só aceitava capítulo público, e toda videoaula dos Resumos sumia).
 const ctx = { Date, Math, String, Array, Number, Object, EMC_SLUG: 'emc',
-  dirIsVisibleAnyTipo: (d) => !d.oculto, dirTemaOf: (d) => d.tema || d.titulo || 'Geral' };
+  dirIsVisibleAnyTipo: () => false, dirIsRascunho: (d) => !!(d && d.rascunho), dirTemaOf: (d) => d.tema || d.titulo || 'Geral' };
 vm.createContext(ctx);
 const decl = (html.match(/var AVISOS_AUTO_DIAS=\d+,AVISOS_VISIVEIS=\d+,dashAvisosTodos=false,dashAvisosItens=\[\];\nvar AVISO_TIPOS=\{[\s\S]*?\n\};/) || [''])[0];
 ok('constantes do mural declaradas (30 dias)', /AVISOS_AUTO_DIAS=30/.test(decl));
@@ -63,8 +65,11 @@ ctx.avisosAlunos = [
   { id: 'a5', tipo: 'aviso', titulo: '   ', at: AGORA },
 ];
 ctx.diretrizes = [
-  { sub: 'Tireoide', tema: 'Hipotireoidismo', videos: [{ titulo: 'Vídeo novo', src: 'v1', at: AGORA - 2 * D }, { titulo: 'Vídeo velho', src: 'v0', at: AGORA - 45 * D }] },
-  { sub: 'Adrenal', tema: 'Oculto', oculto: true, videos: [{ titulo: 'De capítulo oculto', src: 'v9', at: AGORA - 1 * D }] },
+  { sub: 'Tireoide', tema: 'Hipotireoidismo', privado: true, videos: [{ titulo: 'Vídeo novo', src: 'v1', at: AGORA - 2 * D }, { titulo: 'Vídeo velho', src: 'v0', at: AGORA - 45 * D }] },
+  { sub: 'Adrenal', tema: 'Em curadoria', rascunho: true, videos: [{ titulo: 'De capítulo em rascunho', src: 'v9', at: AGORA - 1 * D }] },
+  { sub: 'Lípides', tema: 'Metabolismo Lipídico', privado: true, videos: [{ titulo: 'Lípides A', src: 'la', at: AGORA - 3 * D }] },
+  { sub: 'Obesidade', tema: 'Lipodistrofias', privado: true, videos: [{ titulo: 'Obesidade B', src: 'ob', at: AGORA - 3 * D + 60000 }] },
+  { sub: 'Adrenal', tema: 'Amostra', privado: true, so_video: true, videos: [{ titulo: 'Só vídeo da degustação', src: 'sv', at: AGORA - 1 * D }] },
 ];
 ctx.admCursos = [
   { curso: 'emc', title: 'Aula EMC nova', modulo: 'Obesidade', at: AGORA - 1 * D },
@@ -72,17 +77,27 @@ ctx.admCursos = [
   { curso: 'emc', title: 'Aula agendada no futuro', at: AGORA + 3 * D },
   { curso: 'outro', title: 'Aula de outro curso', at: AGORA - 1 * D },
 ];
-const itens = JSON.parse(vm.runInContext('JSON.stringify(avisosDoMural(' + AGORA + ').map(function(a){return [a.tipo,a.titulo,a.manual?1:0,a.link||""]}))', ctx));
+const itens = JSON.parse(vm.runInContext('JSON.stringify(avisosDoMural(' + AGORA + ').map(function(a){return [a.tipo,a.titulo,a.manual?1:0,a.link||"",a.grupo?a.grupo.map(function(v){return v.titulo+"|"+v.src+"|"+(v.dir?v.dir.tema:"")}):null,a.texto||""]}))', ctx));
 const titulos = itens.map((x) => x[1]);
 ok('🧨 avisos do professor primeiro (mais novo em cima), depois aula e videoaula (mais novo em cima) — veio ' + JSON.stringify(titulos),
-  JSON.stringify(titulos) === JSON.stringify(['Simulado sábado', 'Link malicioso', 'Edital publicado', 'Aula EMC nova', 'Vídeo novo']));
+  JSON.stringify(titulos) === JSON.stringify(['Simulado sábado', 'Link malicioso', 'Edital publicado', 'Aula EMC nova', 'Vídeo novo', '2 videoaulas novas nos Resumos']));
 ok('🧨 aviso vencido ("mostrar até" no passado) sai do mural', !titulos.includes('Vencido'));
-ok('aviso sem título não entra', itens.length === 5);
+ok('aviso sem título não entra', itens.length === 6);
+ok('🧨 videoaula dos RESUMOS (capítulo privado) entra no mural — o filtro não depende da aba ativa', titulos.includes('Vídeo novo')
+  && !/dirIsVisibleAnyTipo|refPrivadoMode/.test(corpo('avisosDoMural').replace(/\/\/[^\n]*/g, '')));
+const grupo = itens.find((x) => x[4]);
+ok('🧨 videoaulas do mesmo dia viram um aviso só, com um botão por vídeo (mais nova primeiro) e as áreas no texto',
+  !!grupo && JSON.stringify(grupo[4]) === JSON.stringify(['Obesidade B|ob|Lipodistrofias', 'Lípides A|la|Metabolismo Lipídico']) && grupo[5] === 'Obesidade · Lípides');
+ok('item "só de vídeo" da degustação não entra (não é capítulo; a vitrine dela cuida)', !JSON.stringify(itens).includes('Só vídeo da degustação'));
 ok('🧨 videoaula e aula com mais de 30 dias não entram', !titulos.includes('Vídeo velho') && !titulos.includes('Aula EMC velha'));
 ok('🧨 aula de outro curso não vira "Educação Médica Continuada"; aula do futuro não entra', !titulos.includes('Aula de outro curso') && !titulos.includes('Aula agendada no futuro'));
-ok('videoaula de capítulo que o aluno não vê não entra', !titulos.includes('De capítulo oculto'));
+ok('videoaula de capítulo em rascunho (só o professor recebe) não entra', !JSON.stringify(itens).includes('De capítulo em rascunho'));
 ok('🧨 link `javascript:` do aviso é descartado; https fica', itens.find((x) => x[1] === 'Link malicioso')[3] === '' && itens.find((x) => x[1] === 'Edital publicado')[3] === 'https://sbem.org.br/x');
-ok('tipos certos (prova, edital, emc, video)', itens.map((x) => x[0]).join(',') === 'prova,aviso,edital,emc,video');
+ok('tipos certos (prova, edital, emc, video)', itens.map((x) => x[0]).join(',') === 'prova,aviso,edital,emc,video,video');
+const rda = corpo('renderDashAvisos');
+ok('🧨 o aviso agrupado mostra um botão ▶ por vídeo (data-aviso-abrir="k:j") e o clique abre aquele vídeo',
+  /data-aviso-abrir="'\+k\+':'\+j\+'"/.test(rda) && /avisoAbrir\(a&&a\.grupo&&p\.length>1\?a\.grupo\[\+p\[1\]\]:a\)/.test(rda)
+  && /var abre=!a\.grupo&&/.test(rda));
 
 // ── 4. Abrir o que o aviso anuncia ──────────────────────────────────────────────────────
 const abrir = corpo('avisoAbrir');

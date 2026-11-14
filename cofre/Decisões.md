@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-13
+atualizado: 2026-11-14
 ---
 
 # Decisões
@@ -8,6 +8,11 @@ atualizado: 2026-11-13
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 MURAL DE AVISOS: AGORA COM AS VIDEOAULAS DOS RESUMOS (2026-11-14; professor, com print do mural mostrando só as aulas da EMC: "Coloca também as videoaulas dos resumos").**
+  - **Bug:** o mural já previa videoaula nova, mas filtrava com `dirIsVisibleAnyTipo`, que é a visibilidade da ABA ativa: fora dos Resumos (no Dashboard, `refPrivadoMode` falso) ela só aceita capítulo público, e TODA videoaula dos Resumos (capítulo `privado:true`) sumia. As 21 videoaulas (02 a 12/11) nunca apareceram. O teste simulava essa função e não pegou.
+  - **Agora:** `avisosDoMural` tira só o rascunho (que só o professor recebe) e o item `so_video` da degustação (não é capítulo; a vitrine dela cuida). O servidor (`endodirect_member_resumos`) já entrega a cada aluno só o vídeo que ele pode ver (Gold e Standard todos; degustação um por área).
+  - **Agrupado por dia:** videoaulas do mesmo dia viram UM aviso ("3 videoaulas novas nos Resumos", áreas no texto) com um botão "▶ Título · capítulo" por vídeo (o capítulo some quando repete o título); o clique abre o vídeo no capítulo (`data-aviso-abrir="k:j"` → `avisoAbrir(a.grupo[j])`). Vídeo sozinho no dia segue como aviso próprio com "Ver →". Sem isso, 21 avisos empurrariam as aulas da EMC para fora da vista.
+  - Teste `scripts/test-mural-avisos.js`: `dirIsVisibleAnyTipo` falsa de propósito (recusa tudo) e capítulos `privado:true`, rascunho e `so_video` no cenário; 4/4 mutações pegas. Conferido no Chromium a 390 px. sw v386 → v387.
 - **🆕 92 QUESTÕES DO DIA DE NOVIDADES 2026, REVISADAS E INTERCALADAS NA FILA (2026-11-13; professor: "Manda bala nos agendamentos. Pode começar agora"; pedido de 12/11: "introduzi-las nas questões do dia, mas de forma intercalada", "alterne também entre questões diretas e questões de casos clínicos", "ter alguma imagem ilustrativa ... se possível").**
   - **Como foi feito (sem API, na sessão):** 8 lotes (FDA/Anvisa 12; diretrizes de diabetes 12; diretrizes diversas 13; ensaios de obesidade 11; de diabetes 11; lípides/pediatria/osso/neuro 13; metanálises 2026 10; documentos de jan–jul/2026 10), um agente gerador e um REVISOR INDEPENDENTE por lote. O revisor resolveu cada questão às cegas (acertou todas: nenhum gabarito trocado) e conferiu cada número na fonte (resumo/texto do PubMed e PMC, bulas e Drugs@FDA, Anvisa/DOU). Resultado: 43 ok, 49 corrigidos (precisão de números e datas, base de percentuais, alternativas que davam margem a recurso — p. ex. AMUNDSEN, REAL8, OUTSTAND-2, ACC/AHA 2026 —, escore de Burch-Wartofsky, números do THRIVE-2 trocados pelos da bula). Seleção das metanálises/1º semestre por um agente à parte (radar + PubMed). Estudos que o Banco já tinha (TRIUMPH-1, STAREE, AMUNDSEN, PROPEL 3, THRIVE, ACHIEVE-1...) entraram só por outro ângulo. Instruções e regras: scratchpad `qotd2026/INSTRUCOES.md` e `REVISOR.md`.
   - **Trocas:** ATA 2026 (tireoide na gestação) e o consenso ADA/EASD do DM1 no adulto e o FITTER Forward Youth não tinham texto acessível: entraram, no lugar, o consenso BTA/BAETS 2026 de nódulo (Clin Endocrinol, texto aberto), os subtipos do DM1 do adulto (German Diabetes Study) e a declaração de 2026 sobre insulina intraperitoneal/lipo-hipertrofia. O ADA Standards of Care 2026 entrou depois de lido no PMC (rec. 8.29, nova).

@@ -366,6 +366,12 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .dav-tit{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.4;overflow-wrap:anywhere}
 .dav-txt{font-size:.78rem;color:var(--t2);line-height:1.55;margin-top:.2rem;overflow-wrap:anywhere;text-align:justify;text-align-last:left}
 .dav-abrir{flex:0 0 auto;align-self:center;white-space:nowrap}
+.dav-videos{display:flex;flex-direction:column;gap:.3rem;margin-top:.45rem}
+.dav-video{display:flex;gap:.45rem;align-items:baseline;text-align:left;width:100%;background:var(--surface);border:1px solid var(--bd);border-radius:8px;padding:.4rem .6rem;font-family:var(--font);font-size:.78rem;color:var(--t2);line-height:1.4;cursor:pointer;overflow-wrap:anywhere}
+.dav-video b{color:var(--tx);font-weight:600}
+.dav-video:hover{border-color:var(--blue)}
+.dav-video:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.dav-video-play{color:var(--blue);font-size:.7rem;flex:0 0 auto}
 .dav-mais{margin-top:.6rem;background:none;border:0;color:var(--blue);font-family:var(--font);font-size:.76rem;font-weight:600;cursor:pointer;padding:.2rem 0}
 @media (max-width:520px){.dav-item{grid-template-columns:auto minmax(0,1fr)}.dav-abrir{grid-column:2;justify-self:start;margin-top:.45rem}}
 .filtro-linha{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;margin:.2rem 0 .9rem}
@@ -10948,13 +10954,29 @@ function avisosDoMural(agora){
     if(a.ate&&+a.ate<hoje0.getTime())return; // venceu
     manuais.push({tipo:AVISO_TIPOS[a.tipo]&&a.tipo!=='video'&&a.tipo!=='emc'?a.tipo:'aviso',titulo:String(a.titulo),texto:String(a.texto||''),link:avisoLinkSeguro(a.link),at:+a.at||0,manual:true});
   });
+  // Videoaulas (dos Resumos e das Diretrizes). ⚠️🐛 (14/11/2026) O filtro era dirIsVisibleAnyTipo,
+  // que é a visibilidade da ABA ativa: fora dos Resumos (no Dashboard) ela só aceita capítulo
+  // público, e TODA videoaula dos Resumos (capítulo privado) sumia do mural. O servidor já entrega
+  // a cada aluno só os vídeos que ele pode ver (Gold e Standard todos; degustação um por área):
+  // aqui só sai o rascunho (que só o professor recebe) e o item "só de vídeo" da degustação, que
+  // não é capítulo. As do MESMO DIA viram um aviso só, com um botão por vídeo (o professor sobe
+  // várias de uma vez, e uma por aviso empurraria o resto do mural para fora da vista).
+  var porDia={};
   (typeof diretrizes!=='undefined'&&Array.isArray(diretrizes)?diretrizes:[]).forEach(function(d){
-    if(!d||!Array.isArray(d.videos)||!d.videos.length)return;
-    try{if(typeof dirIsVisibleAnyTipo==='function'&&!dirIsVisibleAnyTipo(d))return;}catch(e){}
+    if(!d||!Array.isArray(d.videos)||!d.videos.length||d.so_video)return;
+    if(typeof dirIsRascunho==='function'?dirIsRascunho(d):!!d.rascunho)return;
     d.videos.forEach(function(v){
       var at=+((v&&v.at)||0);if(!v||!v.src||at<limite||at>agora+60000)return;
-      autos.push({tipo:'video',titulo:String(v.titulo||'Videoaula'),texto:dirTemaOf(d)+' · '+(String(d.sub||'Geral').trim()||'Geral'),at:at,dir:d,src:v.src});
+      var dt=new Date(at),dia=dt.getFullYear()+'-'+dt.getMonth()+'-'+dt.getDate();
+      (porDia[dia]=porDia[dia]||[]).push({tipo:'video',titulo:String(v.titulo||'Videoaula'),tema:dirTemaOf(d),sub:String(d.sub||'Geral').trim()||'Geral',privado:!!d.privado,at:at,dir:d,src:v.src});
     });
+  });
+  Object.keys(porDia).forEach(function(dia){
+    var vs=porDia[dia].sort(function(a,b){return b.at-a.at;});
+    if(vs.length===1){var v=vs[0];autos.push({tipo:'video',titulo:v.titulo,texto:v.tema+' · '+v.sub,at:v.at,dir:v.dir,src:v.src});return;}
+    var subs=[];vs.forEach(function(v){if(subs.indexOf(v.sub)<0)subs.push(v.sub);});
+    var todosResumos=vs.every(function(v){return v.privado;});
+    autos.push({tipo:'video',titulo:vs.length+' videoaulas novas'+(todosResumos?' nos Resumos':''),texto:subs.join(' · '),at:vs[0].at,grupo:vs});
   });
   (typeof admCursos!=='undefined'&&Array.isArray(admCursos)?admCursos:[]).forEach(function(c){
     if(!c||c.curso!==EMC_SLUG)return;
@@ -10974,20 +10996,24 @@ function renderDashAvisos(){
   el.innerHTML='<div class="card dash-avisos"><div class="card-head"><span class="card-title">📌 Mural de avisos</span></div>'
     +'<div class="dav-lista">'+mostra.map(function(a,k){
       var t=AVISO_TIPOS[a.tipo]||AVISO_TIPOS.aviso,novo=ref&&a.at>ref;
-      var abre=a.tipo==='video'||a.tipo==='emc'||!!a.link;
+      var abre=!a.grupo&&(a.tipo==='video'||a.tipo==='emc'||!!a.link);
       var data=a.at?new Date(a.at).toLocaleDateString('pt-BR'):'';
       return '<div class="dav-item'+(a.manual?' dav-manual':'')+'">'
         +'<span class="dav-ico" aria-hidden="true">'+t.ico+'</span>'
         +'<div class="dav-corpo"><div class="dav-meta"><span class="dav-tipo">'+esc(t.nome)+'</span>'+(data?'<span class="dav-data">'+esc(data)+'</span>':'')+(novo?'<span class="dav-novo">Novo</span>':'')+'</div>'
         +'<div class="dav-tit">'+esc(a.titulo)+'</div>'
         +(a.texto?'<div class="dav-txt">'+esc(a.texto).replace(/\n/g,'<br>')+'</div>':'')
+        +(a.grupo?'<div class="dav-videos">'+a.grupo.map(function(v,j){var ti=String(v.titulo).toLowerCase(),te=String(v.tema||'').toLowerCase(),comTema=te&&te.indexOf(ti)<0&&ti.indexOf(te)<0;return '<button type="button" class="dav-video" data-aviso-abrir="'+k+':'+j+'"><span class="dav-video-play" aria-hidden="true">▶</span><span><b>'+esc(v.titulo)+'</b>'+(comTema?' · '+esc(v.tema):'')+'</span></button>';}).join('')+'</div>':'')
         +'</div>'
         +(abre?'<button type="button" class="btn btn-outline btn-sm dav-abrir" data-aviso-abrir="'+k+'">'+(a.link?'Abrir ↗':'Ver →')+'</button>':'')
         +'</div>';
     }).join('')+'</div>'
     +(itens.length>AVISOS_VISIVEIS?'<button type="button" class="dav-mais" id="dav-mais">'+(dashAvisosTodos?'Mostrar menos':'Ver todos os avisos ('+itens.length+')')+'</button>':'')
     +'</div>';
-  el.querySelectorAll('[data-aviso-abrir]').forEach(function(b){b.addEventListener('click',function(){avisoAbrir(dashAvisosItens[+b.getAttribute('data-aviso-abrir')]);});});
+  el.querySelectorAll('[data-aviso-abrir]').forEach(function(b){b.addEventListener('click',function(){
+    var p=String(b.getAttribute('data-aviso-abrir')).split(':'),a=dashAvisosItens[+p[0]];
+    avisoAbrir(a&&a.grupo&&p.length>1?a.grupo[+p[1]]:a);
+  });});
   var mais=document.getElementById('dav-mais');if(mais)mais.addEventListener('click',function(){dashAvisosTodos=!dashAvisosTodos;renderDashAvisos();});
 }
 // Abre o que o aviso anuncia: o link do professor (aba nova), a videoaula no capítulo dela, ou o
