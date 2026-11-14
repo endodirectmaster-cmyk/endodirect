@@ -1881,6 +1881,14 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
   .dir-card .dfx-branch{min-width:0;flex-basis:44%}
   .dir-card .dfx-branch .dfx-node{font-size:.67rem;padding:.4rem .5rem}
 }
+.dir-mapa-abre{display:flex;align-items:center;gap:.8rem;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;border:1px solid var(--bd);background:var(--s2);border-radius:var(--r);padding:.8rem .9rem;margin-top:1.7rem} /* desce abaixo da ☆ de favorito do cartão */
+.dir-mapa-abre:hover{border-color:var(--blue)}
+.dir-mapa-abre:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.dir-mapa-abre .dma-ico{width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.dir-mapa-abre .dma-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:.25rem}
+.dir-mapa-abre .dma-tit{font-size:.88rem;font-weight:700;color:var(--tx);line-height:1.35}
+.dir-mapa-abre .dma-sub{font-size:.74rem;color:var(--t3)}
+.dir-mapa-abre .dma-seta{font-size:1.4rem;color:var(--t3);flex-shrink:0;line-height:1}
 .dir-empty-fmt{font-size:.82rem;color:var(--t3);font-style:italic;padding:.3rem 0}
 /* Videoaulas do capítulo (02/11/2026): vídeos curtos (até ~30 min desde 12/11/2026; antes 15) na aba ao lado de Mapas mentais. */
 .dir-videos{display:grid;gap:1rem}
@@ -9312,6 +9320,7 @@ var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (at�
 // Confirmação no logout iniciado pelo usuário (o auto-logout por inatividade chama doLogout direto, sem prompt).
 function confirmLogout(){ if(confirm('Deseja realmente encerrar a sessão?'))doLogout(); }
 function doLogout(){
+  try{fecharMapaDoCapitulo();}catch(e){}
   try{mmTelaCheia(false);}catch(e){}
   try{if(qzAberto())qzFechar();}catch(e){}
   hideSessionWarning();
@@ -10783,6 +10792,7 @@ function goPanel(id){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
   // Saiu do painel (menu, voltar do navegador, link de notificação): a tela cheia do mapa não
   // pode ficar cobrindo o painel novo.
+  try{fecharMapaDoCapitulo();}catch(e){} // mapa do capítulo aberto em tela cheia não segue para outro painel
   if(id!=='mmap')try{mmTelaCheia(false);}catch(e){}
   if(id!=='quest')try{if(qzAberto())qzFechar();}catch(e){}
   var el=document.getElementById('panel-'+id);
@@ -16300,7 +16310,7 @@ function dirCardHTML(d,i){
   }else if(refFormat==='video'){
     body=dirVideosHTML(d,refVideoSoLiberado);
   }else if(refFormat==='mapa'){
-    body=dirMapaHTML(d.mapa);
+    body=dirMapaCardHTML(d,i);
   }else{ // 'resumo': texto corrido + pontos-chave + fluxograma(s) (o que houver)
     var parts=[];
     // ⚠️ Array.isArray, não `.length`: STRING TAMBÉM TEM `.length`. Em 10/08/2026
@@ -16401,26 +16411,55 @@ function admRefWysHTML(d){
     +'<div class="wys-edit wys-pts-edit dir-texto" id="adm-ref-wys-pts" contenteditable="true" spellcheck="true">'+ptsListHTML+'</div>'
   +'</div>';
 }
-// Mapa mental em árvore horizontal (estilo do editor de Mapas Mentais):
-// central → ramos coloridos → subramos (tinta do ramo) → sub-subramos. Os
-// conectores curvos são desenhados em SVG por drawDmap() (ancorados no centro
-// real de cada caixa). Somente leitura; a edição segue no formulário.
-function dirMapaHTML(mapa){
-  if(!mapa||(!mapa.central&&!(mapa.nodes&&mapa.nodes.length)))return '<div class="dir-empty-fmt">Mapa mental ainda não disponível.</div>';
-  function node(item,col,isBranch){
-    var lab,kids;
-    if(isBranch){lab=item.label||'';kids=(item.children&&item.children.length)?item.children:[];}
-    else{lab=(typeof item==='string')?item:((item&&item.label)||'');kids=(item&&typeof item==='object'&&Array.isArray(item.children))?item.children:[];}
-    var st=isBranch?('background:'+col):mmLeafStyle(col);
-    var h='<div class="dmap-node"><div class="'+(isBranch?'dmap-b':'dmap-c')+'" data-dmap-node data-col="'+esc(col)+'"'+(st?' style="'+st+'"':'')+'>'+esc(lab)+'</div>';
-    if(kids.length)h+='<div class="dmap-col">'+kids.map(function(k){return node(k,col,false);}).join('')+'</div>';
-    return h+'</div>';
-  }
-  var h='<div class="dmap-wrap"><div class="dmap"><svg class="dmap-svg"></svg><div class="dmap-tree">';
-  if(mapa.central)h+='<div class="dmap-root" data-dmap-node data-col="#334155">'+esc(mapa.central)+'</div>';
-  var nodes=mapa.nodes||[];
-  if(nodes.length)h+='<div class="dmap-col">'+nodes.map(function(n,bi){return node(n,BCOLORS[bi%BCOLORS.length],true);}).join('')+'</div>';
-  return h+'</div></div></div>';
+// ── MAPA MENTAL DO CAPÍTULO = O MESMO VISUALIZADOR DA FERRAMENTA (14/11/2026) ─────────────
+// Print do professor (Resumos › "Diagnóstico e Classificação do Diabetes" › 🧠 Mapas mentais):
+// *"Os mapas mentais dos resumos dos capítulos está desconfigurado como era antigamente. Deixe
+// no mesmo formato da ferramenta dos mapas mentais que você já consertou e ficou muito bom."*
+// O capítulo tinha um desenhista próprio (árvore inteira aberta, dentro do cartão estreito: no
+// celular só cabiam a raiz e o começo dos ramos, cortados na borda). A ferramenta já resolve
+// isso: tela cheia, mapa encaixado na tela, abre só a raiz e os ramos, toque abre os subramos,
+// "← Voltar". A aba agora mostra um cartão; tocar nela (ou no cartão) abre o MESMO #mm-live da
+// ferramenta, levado para o <body> enquanto o mapa do capítulo está aberto (o painel de Mapas
+// Mentais está escondido) e devolvido ao lugar ao voltar — o mesmo esquema do editor do
+// professor (`restoreMMLive`). "Salvar" guarda uma cópia em Meus mapas, como nos publicados.
+var mmDoCapitulo=false;
+// {central, nodes:[{label, children:[texto | {label, children}]}]} → formato da ferramenta.
+function dirMapaParaMM(d){
+  var m=(d&&d.mapa&&typeof d.mapa==='object')?d.mapa:null;if(!m)return null;
+  var nodes=Array.isArray(m.nodes)?m.nodes:[],central=String(m.central||'').trim();
+  if(!central&&!nodes.length)return null;
+  return {root:central||dirTemaOf(d),branches:nodes.map(function(n){
+    return {label:(n&&(n.label||n.title))||'',leaves:(n&&Array.isArray(n.children))?n.children:[]};
+  })};
+}
+function dirMapaCardHTML(d,i){
+  var mm=dirMapaParaMM(d);
+  if(!mm)return '<div class="dir-empty-fmt">Mapa mental ainda não disponível.</div>';
+  var n=mm.branches.length;
+  return '<button type="button" class="dir-mapa-abre" data-dir-abremapa="'+i+'" aria-label="Abrir o mapa mental: '+esc(mm.root)+'">'
+    +'<span class="dma-ico" aria-hidden="true">🧠</span>'
+    +'<span class="dma-txt"><span class="dma-tit">'+esc(mm.root)+'</span>'
+    +'<span class="dma-sub">'+n+' ramo'+(n===1?'':'s')+' · toque para abrir</span></span>'
+    +'<span class="dma-seta" aria-hidden="true">›</span></button>';
+}
+function abrirMapaDoCapitulo(i){
+  var d=(Array.isArray(diretrizes)?diretrizes:[])[i],data=dirMapaParaMM(d);if(!data)return;
+  var live=document.getElementById('mm-live');if(!live)return;
+  if(!__mmLiveHome)__mmLiveHome=live.parentNode;
+  if(live.parentNode!==document.body)document.body.appendChild(live);
+  curMM={id:'cap-'+((d&&d.id)||i),topic:data.root,sub:(typeof canonSub==='function'?canonSub(d&&d.sub):(d&&d.sub))||'',data:normalizeMMData(data),at:Date.now()};
+  mmDoCapitulo=true;
+  live.style.display='block';
+  mmTelaCheia(true);
+  mmNovaAbertura();
+  setText('mm-live-title',curMM.data.root||curMM.topic);
+  renderMMEditor();
+}
+// Volta ao capítulo: devolve o #mm-live à ferramenta, escondido, e tira a tela cheia.
+function fecharMapaDoCapitulo(){
+  if(!mmDoCapitulo)return;
+  mmDoCapitulo=false;curMM=null;
+  restoreMMLive();
 }
 // Desenha os conectores curvos (bézier) de um .dmap medindo as caixas já no DOM.
 // Funciona na versão só-leitura (pill direto no .dmap-node) e na editável
@@ -16753,7 +16792,12 @@ function bindDiretrizesView(root){
   if(back)back.addEventListener('click',function(){refSubSel='';refTemaSel='';refTipoSel='capitulo';refVideoAberto='';renderDiretrizesInto(root);});
   var tback=root.querySelector('[data-dir-temaback]');
   if(tback)tback.addEventListener('click',function(){refTemaSel='';refVideoAberto='';renderDiretrizesInto(root);});
-  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){refFormat=b.dataset.dirFmt;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){
+    refFormat=b.dataset.dirFmt;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);
+    // Aba 🧠 Mapas mentais de UM capítulo: abre direto na tela cheia da ferramenta.
+    if(refFormat==='mapa'){var _ma=root.querySelectorAll('[data-dir-abremapa]');if(_ma.length===1)abrirMapaDoCapitulo(+_ma[0].getAttribute('data-dir-abremapa'));}
+  });});
+  root.querySelectorAll('[data-dir-abremapa]').forEach(function(b){b.addEventListener('click',function(){abrirMapaDoCapitulo(+b.getAttribute('data-dir-abremapa'));});});
   // Videoaulas: tocar na lista abre só aquela; a volta devolve a lista (ver dirVideosHTML).
   // Depois de redesenhar, rola até o topo do que abriu: quem escolheu o último da lista não
   // pode ficar olhando para o meio dos tópicos.
@@ -20422,7 +20466,8 @@ function parseMapaText(txt){
     }
   });
   // Folhas (sem filhos) viram string; nós com filhos ficam objeto — mesma convenção
-  // dos editores em caixa (admReadRefMapa) e do renderizador (dirMapaHTML).
+  // dos editores em caixa (admReadRefMapa) e do mapa do aluno (dirMapaParaMM, que abre no
+  // visualizador da ferramenta de Mapas Mentais).
   function flat(children){
     return (children||[]).map(function(c){var gk=flat(c.children);return gk.length?{label:c.label,children:gk}:c.label;});
   }
@@ -20862,8 +20907,9 @@ function admDelRefFlash(i,j){
   admReadRefFlashes(i);
   d.flashcards.splice(j,1);persistDiretrizes();notify('Flashcard excluído.','info');rerenderRef();
 }
-// Mapa da diretriz editável DIRETO NAS CAIXAS: o MESMO layout em caixas do aluno
-// (dirMapaHTML), só que cada caixa vira um campo editável. Sem alternar formato,
+// Mapa da diretriz editável DIRETO NAS CAIXAS (layout em caixas do antigo mapa do aluno;
+// desde 14/11/2026 o aluno vê o mapa no visualizador da ferramenta: dirMapaParaMM), cada
+// caixa vira um campo editável. Sem alternar formato,
 // sem botão de "modo edição" — já aparece editável. +/🗑 add/remove ramo e subramo.
 function admRefMapaHTML(d,i){
   var m=(d.mapa&&typeof d.mapa==='object')?d.mapa:{central:'',nodes:[]};
@@ -25027,6 +25073,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-mm-editar').addEventListener('click',function(){mmModoEdicao(!mmEditando);});
   document.getElementById('btn-mm-close').addEventListener('click',function(){
     mmTelaCheia(false);
+    if(mmDoCapitulo){fecharMapaDoCapitulo();return;} // mapa do capítulo: volta ao Resumo
     if(mmAdminEdit){admMMDraft=null;admMMEditId=null;restoreMMLive();try{renderAdmSec('mapas');}catch(e){}return;}
     document.getElementById('mm-live').style.display='none';
     document.getElementById('panel-mmap').classList.remove('mm-open');

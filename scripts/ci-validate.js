@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-ar. MAPA MENTAL DO CAPÍTULO = VISUALIZADOR DA FERRAMENTA (14/11/2026). Print do
+//      professor (Resumos › Diagnóstico e Classificação do Diabetes): "Deixe no mesmo formato da
+//      ferramenta dos mapas mentais que você já consertou e ficou muito bom."
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mapa-capitulo.js')], { stdio: 'pipe' });
+  ok('mapa mental do capítulo: abre no visualizador da ferramenta e o Voltar devolve ao capítulo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do mapa mental do capítulo falhou:\n' + out);
+}
+
 // 17c-undecies-aq. QUESTÃO DO DIA SÓ NO DASHBOARD (14/11/2026). Print do professor com a
 //      janela aberta sobre o Mural de artigos: "Deixa ela somente no dashboard [...] Não é
 //      para aparecer no mural de artigos." Roda a linha real de goPanel com DOM falso.
