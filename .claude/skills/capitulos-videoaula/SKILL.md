@@ -105,6 +105,9 @@ capítulos e quantos tópicos cada um. Atualize o cofre (`cofre/Videoaulas dos R
 só se algo novo foi aprendido. A checagem diária automática não precisa avisar quando não
 há vídeo novo.
 
+**Aula da EMC:** além dos capítulos, a aula ganha resumo fiel aos slides e 8 questões próprias:
+siga a skill `trilha-aula-emc` (pedido do professor de 14/11/2026).
+
 **A checagem diária** é a tarefa agendada "Capítulos das videoaulas novas" (todo dia às
 03:13, horário de Brasília). Ela roda as consultas da seção 1 e, se achar vídeo sem
 capítulos, segue esta skill. O vídeo que o professor sobe durante o dia amanhece com

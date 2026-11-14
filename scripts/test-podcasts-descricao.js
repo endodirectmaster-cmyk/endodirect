@@ -53,6 +53,9 @@ const m = pod.mergePodcasts(velhos, eps, '');
 ok('🧨 a descrição colada (e cortada) do episódio do feed ganha os parágrafos completos', m.updated === 1 && m.podcasts[0].desc === d107, JSON.stringify(m.podcasts[0].desc.slice(0, 120)));
 ok('🧨 descrição editada à mão NÃO é reescrita', m.podcasts[1].desc === 'Texto que o professor reescreveu à mão.');
 ok('episódio que não veio do feed não muda; nenhum episódio novo duplicado', m.podcasts[2].desc === 'Hipoglicemia artefatual.Acesse' && m.added === 0 && m.podcasts.length === 3);
+const ent = pod.mergePodcasts([{ title: 'FD 1', tipo: 'rss', audio: 'https://exemplo/fd1.mp3', desc: 'Siga.&nbsp;Minutagem:Caso (01:00)Revisão &amp; meta' }],
+  [{ title: 'FD 1', audio: 'https://exemplo/fd1.mp3', desc: 'Siga.\nMinutagem:\n• Caso (01:00)\n• Revisão & meta' }], '');
+ok('🧨 o texto antigo com &nbsp;, &amp; e sem os "•" das listas conta como o mesmo texto (62 descrições cortadas no print)', ent.updated === 1, JSON.stringify(ent.podcasts[0].desc));
 ok('a atualização diária grava quando só a descrição mudou', /merged\.added > 0 \|\| merged\.updated > 0/.test(fs.readFileSync(path.join(__dirname, '..', 'lib', 'podcasts.js'), 'utf8')));
 ok('o "Importar episódios" do painel usa a mesma regra (mesmo texto sem as quebras)', /_semEsp\(nova\)\.indexOf\(_semEsp\(velha\)\)!==0/.test(html) && /if\(added\|\|atualizados\)persistPodcasts\(\);/.test(html));
 

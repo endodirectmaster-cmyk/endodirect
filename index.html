@@ -22099,7 +22099,7 @@ function bindAdmSec(sec){
           var added=0;var novos=[];var atualizados=0;
           // Descrição dos já importados ganha os parágrafos do feed, se for o mesmo texto só sem as
           // quebras (ou cortado); descrição editada à mão não muda (a mesma regra de lib/podcasts.js).
-          var _semEsp=function(x){return String(x||'').replace(/\s+/g,'').replace(/…$/,'');};
+          var _semEsp=function(x){return String(x||'').replace(/&nbsp;/g,'').replace(/&amp;/g,'&').replace(/[\s•\u00a0]+/g,'').replace(/…$/,'');};
           (d.episodes||[]).forEach(function(ep){
             var nova=String(ep.desc||'');if(!nova)return;
             podcasts.forEach(function(p){
