@@ -1,4 +1,5 @@
--- Videoaulas dos Resumos: o Gold vê todas; a degustação, UMA por subespecialidade (07/11/2026).
+-- Videoaulas dos Resumos: o Gold vê todas; Standard e degustação, UMA por subespecialidade
+-- (degustação: 07/11/2026; Standard: 14/11/2026).
 --
 -- Pedido do professor: "Para o pessoal do plano Gold, obviamente, eles terão acesso a
 -- todas essas videoaulas. (...) Para o pessoal do modo degustação, a ideia é que eles
@@ -24,8 +25,14 @@
 -- Nenhum outro link de vídeo chega à degustação: o `src` é público no Storage, então
 -- o que não é entregue é o que não pode ser assistido.
 --
--- Quem tem plano (Standard ou Gold) continua recebendo tudo, como antes. As públicas
--- (aba Diretrizes) seguem a mesma regra de antes: com plano, todas; sem, amostra de 10.
+-- SÓ GOLD (14/11/2026). Perguntado se o Standard também via todas, o professor respondeu
+-- "só Gold". Agora:
+--   - Gold (e Premium, e o escopo antigo `plano` sem `plano:standard`, e o admin): tudo, como antes;
+--   - Standard: todos os capítulos (resumo, flashcards, mapas), mas em cada capítulo `videos` traz
+--     só o vídeo liberado na degustação (se estiver nele) e `videos_total` diz quantos há, como na
+--     amostra da degustação. Os links dos outros vídeos não chegam ao Standard;
+--   - sem plano: igual a antes (amostra + item só de vídeo).
+-- As públicas (aba Diretrizes) seguem a mesma regra de antes: com plano, todas; sem, amostra de 10.
 --
 -- O cache de `endodirect_member_resumos_pagina` se renova sozinho: a chave dele leva o
 -- md5 do corpo desta função.
@@ -35,7 +42,11 @@ create or replace function public.endodirect_member_resumos()
  stable security definer
  set search_path to 'public'
 as $function$
-  with a as (select public.endodirect_acessos_ativos() as scopes),
+  -- gold: Gold, Premium, o escopo antigo `plano` (sem `plano:standard`) e o admin.
+  with a as (select x.s as scopes,
+                    (x.s && array['plano:gold','plano:premium']::text[])
+                    or (x.s @> array['plano'] and not x.s @> array['plano:standard']) as gold
+               from (select public.endodirect_acessos_ativos() as s) x),
        g as (select payload from public.endodirect_global_state where id = 'main'),
        publicas as (
          select coalesce(jsonb_agg(v), '[]'::jsonb) as j
@@ -76,9 +87,21 @@ as $function$
        end)
       ||
       (case
-         -- PRIVADAS com plano: tudo, vídeos inclusive, na ordem do acervo.
-         when (select scopes from a) @> array['plano']
+         -- PRIVADAS no Gold: tudo, vídeos inclusive, na ordem do acervo.
+         when (select gold from a)
            then coalesce((select jsonb_agg(v order by o) from privadas), '[]'::jsonb)
+         -- PRIVADAS no Standard: todos os capítulos, com os vídeos reduzidos ao liberado.
+         when (select scopes from a) @> array['plano']
+           then coalesce((select jsonb_agg(
+                  case when jsonb_typeof(p.v->'videos') = 'array'
+                       then jsonb_set(p.v, '{videos}',
+                              coalesce((select jsonb_agg(d.video) from vid_deg d where d.o = p.o), '[]'::jsonb))
+                            || jsonb_build_object('videos_total',
+                              (select count(*) from jsonb_array_elements(p.v->'videos') e
+                                where jsonb_typeof(e) = 'object' and coalesce(e->>'src','') <> ''))
+                       else p.v end
+                  order by p.o)
+                from privadas p), '[]'::jsonb)
          -- Sem plano: a amostra, com os vídeos reduzidos ao liberado...
          else coalesce((select jsonb_agg(
                   case when jsonb_typeof(s.v->'videos') = 'array'

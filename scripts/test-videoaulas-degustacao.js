@@ -124,11 +124,34 @@ const V = (t, deg) => Object.assign({ titulo: t, src: MP4(t.replace(/\W+/g, '-')
   const view = extrai('diretrizesViewHTML');
   ok('grade: a área com vídeo liberado avisa', view.indexOf("var _vl=(_degFmt&&dirVideoAmostraDaSub(s.sub))?'<div class=\"dsb-vid\">🎬 1 videoaula liberada</div>':'';") > 0);
   ok('temas: o player da videoaula liberada, só nos Capítulos da degustação', view.indexOf('var _vidAm=(_degFmt&&!_isArt)?dirVideoAmostraDaSub(refSubSel):null;') > 0 && view.indexOf("+_blocoVid") > 0 && view.indexOf('dirVideoPlayerHTML(_vidAm.v)') > 0);
-  ok('capítulo: a degustação não é jogada de volta ao resumo quando escolhe Videoaulas', view.indexOf("if(_degFmt&&refFormat!=='video')refFormat='resumo';") > 0 && view.indexOf('refVideoSoLiberado=_degFmt;') > 0);
-  ok('capítulo: a aba de vídeo abre só com o liberado; sem ele, cadeado', view.indexOf("var lk=_degFmt&&f[0]!=='resumo'&&!(f[0]==='video'&&_temVideo);") > 0
-    && view.indexOf('var _vidTrancado=_degFmt&&!_ehArtigo&&!_temVideo&&list.some(') > 0);
+  ok('capítulo: a degustação não é jogada de volta ao resumo quando escolhe Videoaulas', view.indexOf("if(_degFmt&&refFormat!=='video')refFormat='resumo';") > 0 && view.indexOf('refVideoSoLiberado=_vidSo;') > 0);
+  ok('capítulo: a aba de vídeo abre só com o liberado; sem ele, cadeado (degustação e Standard)',
+    view.indexOf("var lk=(_degFmt&&f[0]!=='resumo'&&!(f[0]==='video'&&_temVideo))||(_stdVid&&f[0]==='video'&&!_temVideo);") > 0
+    && view.indexOf('var _vidTrancado=_vidSo&&!_ehArtigo&&!_temVideo&&list.some(') > 0
+    && view.indexOf('var _vidsDe=function(d){var v=dirVideosDe(d);return _vidSo?v.filter(dirVideoLiberado):v;};') > 0);
+  // SÓ GOLD (14/11/2026): o Standard vê os capítulos inteiros, mas das videoaulas só a liberada.
+  ok('🧨 Standard: só o vídeo liberado (todas só no Gold; admin e Gold nunca filtram)',
+    view.indexOf("var _stdVid=!_degU&&!isAdminUser()&&refPrivadoMode&&currentPlanKey()==='standard';") > 0
+    && view.indexOf('var _vidSo=_degFmt||_stdVid;') > 0);
+  ok('Standard: flashcards e mapas seguem abertos (o cadeado do Standard é só o do vídeo)', !/_stdVid&&f\[0\]!=='resumo'/.test(view));
+  ok('Standard: o convite do cadeado é o upgrade para o Gold',
+    /var _std=currentPlanKey\(\)==='standard';[^\n]*showAssineScreen\([^\n]*_std\?\{upgrade:true,highlight:'gold'\}/.test(view + SRC));
   ok('assinante: dirVideosHTML recebe o filtro só na degustação', /var refVideoSoLiberado=false;/.test(SRC) && extrai('dirCardHTML').indexOf('dirVideosHTML(d,refVideoSoLiberado)') > 0);
   ok('o _degU segue o mesmo (admin e plano nunca filtram)', view.indexOf("var _degU=!isAdminUser()&&!hasScope('plano')&&isDegustacao();") > 0 && view.indexOf('var _degFmt=_degU&&refPrivadoMode;') > 0);
+}
+
+// ---- 5b. Standard: o aviso diz "no plano Gold" ---------------------------------------------------
+{
+  const cap = { tema: 'T', videos: [V('Liberado', true), V('Outro A'), V('Outro B')] };
+  ctx.currentPlanKey = () => 'standard';
+  const h = ctx.dirVideosHTML(cap, true);
+  ok('🧨 Standard: avisa os outros 2 "no plano Gold"', /Mais 2 videoaulas neste capítulo, no plano Gold/.test(h) && h.indexOf('Outro A') < 0, h);
+  ctx.currentPlanKey = () => '';
+  ok('degustação: segue "para assinantes"', /para assinantes/.test(ctx.dirVideosHTML(cap, true)));
+  delete ctx.currentPlanKey;
+  ok('planos: o Gold lista "Videoaulas dos Resumos" (cartão da plataforma e página inicial)',
+    /key:'gold'[^\n]*\n\s*cursos:\[[^\]]*'Videoaulas dos Resumos'/.test(SRC) && /<li class="course">Videoaulas dos Resumos<\/li>/.test(SRC)
+    && !/key:'standard'[^\n]*\n\s*cursos:\[[^\]]*Videoaulas/.test(SRC));
 }
 
 // ---- 6. o .sql ---------------------------------------------------------------------------------
@@ -136,7 +159,13 @@ const V = (t, deg) => Object.assign({ titulo: t, src: MP4(t.replace(/\W+/g, '-')
   const s = SQL.replace(/--[^\n]*/g, '');
   ok('sql: redefine endodirect_member_resumos() como security definer com search_path fixo',
     /create or replace function public\.endodirect_member_resumos\(\)/.test(s) && /security definer/.test(s) && /set search_path to 'public'/.test(s));
-  ok('sql: com plano, todas as privadas na ordem do acervo (vídeos inclusive)', /then coalesce\(\(select jsonb_agg\(v order by o\) from privadas\), '\[\]'::jsonb\)/.test(s));
+  ok('sql: no Gold, todas as privadas na ordem do acervo (vídeos inclusive)', /when \(select gold from a\)\s+then coalesce\(\(select jsonb_agg\(v order by o\) from privadas\), '\[\]'::jsonb\)/.test(s));
+  ok('🧨 sql: gold = Gold, Premium ou o escopo antigo `plano` sem `plano:standard` (o admin recebe todos)',
+    /\(x\.s && array\['plano:gold','plano:premium'\]::text\[\]\)\s+or \(x\.s @> array\['plano'\] and not x\.s @> array\['plano:standard'\]\) as gold/.test(s));
+  const std = (s.match(/when \(select scopes from a\) @> array\['plano'\]\s+then coalesce\(\(select jsonb_agg\([\s\S]*?from privadas p\), '\[\]'::jsonb\)/) || [''])[0];
+  ok('🧨 sql: no Standard, TODOS os capítulos, com videos reduzido ao liberado e videos_total',
+    /jsonb_set\(p\.v, '\{videos\}',\s*coalesce\(\(select jsonb_agg\(d\.video\) from vid_deg d where d\.o = p\.o\), '\[\]'::jsonb\)\)/.test(std) && /'videos_total'/.test(std) && /order by p\.o\)/.test(std), std);
+  ok('sql: o Gold vem ANTES do Standard (senão o Gold cairia no ramo do Standard)', s.indexOf('when (select gold from a)') > 0 && s.indexOf('when (select gold from a)') < s.lastIndexOf("when (select scopes from a) @> array['plano']"));
   ok('sql: um vídeo liberado por subespecialidade, só em capítulo e com src',
     /select distinct on \(p\.v->>'sub'\) p\.o, e\.video/.test(s) && /e\.video->>'degustacao' = 'true'/.test(s) && /coalesce\(p\.v->>'tipo','capitulo'\) = 'capitulo'/.test(s) && /coalesce\(e\.video->>'src',''\) <> ''/.test(s));
   ok('sql: a amostra mantém a ordem de antes', /select distinct on \(v->>'sub', coalesce\(v->>'tipo','capitulo'\)\) v, o\s+from privadas\s+order by v->>'sub', coalesce\(v->>'tipo','capitulo'\), v->>'tema' nulls last, v->>'titulo' nulls last/.test(s));

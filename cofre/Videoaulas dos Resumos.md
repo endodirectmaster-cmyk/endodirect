@@ -1,6 +1,6 @@
 ---
 tags: [cofre, resumos, video]
-atualizado: 2026-11-09
+atualizado: 2026-11-14
 ---
 
 # Videoaulas dos Resumos
@@ -110,9 +110,19 @@ obesidade para deixar liberado para eles. E também assim das outras subespecial
     233 itens, e tema e título de cada vídeo.
   - Conferido: tirando as 4 marcas, o payload é idêntico ao backup; a degustação passou a
     receber 31 itens (28 + 3 só de vídeo, nenhum com `resumo`).
-- **Standard (aberto):** o professor falou do Gold e da degustação. O Standard (1 assinante em
-  07/11) continua vendo todas, porque o portão do servidor é `plano`. Se ele quiser só no Gold,
-  é trocar `@> array['plano']` por um teste de `plano:gold` no ramo das privadas.
+- **Standard: só a liberada (14/11/2026, professor: "só Gold").**
+  - **Servidor:** `endodirect_member_resumos` calcula `gold` = `plano:gold` ou `plano:premium`, ou o
+    escopo antigo `plano` sem `plano:standard` (o admin recebe todos os escopos, então é gold). No
+    Gold, tudo como antes. No Standard, TODOS os capítulos, mas `videos` reduzido ao liberado do
+    próprio capítulo, com `videos_total` (o mesmo formato da amostra da degustação). Medido antes de
+    gravar (corpo antigo × novo com escopos simulados): Gold, legado e admin idênticos ao antigo
+    (233 itens, 21 vídeos); Standard 233 itens, 4 vídeos, `videos_total` somando 21; degustação idêntica.
+  - **Cliente:** `_stdVid` (Standard, nos Resumos) faz a aba seguir a regra da degustação só para o
+    vídeo (`_vidSo`): só o liberado; sem ele, a aba 🎬 com cadeado e o aviso "As videoaulas deste
+    capítulo são do plano Gold"; flashcards e mapas seguem abertos. O aviso da aba diz "Mais N
+    videoaulas neste capítulo, no plano Gold", e o cadeado abre o upgrade com o Gold em destaque.
+  - **Planos:** o Gold passou a listar "Videoaulas dos Resumos" (cartão da plataforma e página inicial).
+  - O Mural de avisos usa o que o servidor entregou: o Standard só vê anunciada a liberada.
 - **Teste:** `scripts/test-videoaulas-degustacao.js`, no ci-validate.
 
 ## Capítulos "Nesta aula" em cada vídeo (09/11/2026)

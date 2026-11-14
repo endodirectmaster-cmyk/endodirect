@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-11-11
+atualizado: 2026-11-14
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -198,7 +198,7 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
       a do TestFlight, papel Admin) e o conteúdo apareceu num print.** Orientado a revogá-la, criar
       outra (Admin) e trocar `ASC_KEY_ID` e `ASC_KEY_P8` no GitHub; a cópia local do print foi apagada.
       Depois da troca, rodar um envio de teste ao TestFlight. Regra: print de arquivo .p8 nunca,
-      só o nome do arquivo.
+      só o nome do arquivo. **14/11: o professor confirmou ("tudo certo") que a chave foi tratada.**
     - **11/11, 00h12: APP ENVIADO À REVISÃO DA APPLE** (iOS App 1.0, build 5; "Aguardando revisão";
       a Apple fala em até 48 h). Antes do envio: declarado "não é dispositivo médico regulamentado"
       (exigência de 03/2026 para Medicina + "Frequente"), lançamento **manual**, e a Apple exigiu
