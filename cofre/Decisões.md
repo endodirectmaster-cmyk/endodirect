@@ -8,6 +8,11 @@ atualizado: 2026-11-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🧠 MAPA MENTAL: FECHAR UM NÓ NÃO DESCONFIGURA MAIS AS LINHAS (2026-11-14; professor, com print do mapa "Doença Renal do Diabetes": "Quando eu abro um nó e fecho, está acontecendo isso daí, essa desconfiguração").**
+  - **Bug:** na tela cheia, ao fechar um nó, a raiz sumia para a esquerda e as linhas da raiz saíam de um ponto no meio da tela. O SVG das ligações (`#mm-conn-layer`, absoluto dentro do editor) ainda tinha o tamanho do mapa ABERTO e segurava a área rolável. `drawMMConnections` lia o retângulo do editor e SÓ DEPOIS redimensionava o SVG: o navegador puxava a rolagem para trás no meio da medição, e todas as linhas ficavam deslocadas pelo tanto que a rolagem andou (medido no celular 390 px: linha da raiz saindo de x 365 em vez de 168).
+  - **Conserto:** `drawMMConnections` zera o SVG, mede o editor, dimensiona o SVG e só então lê os retângulos. `mmAlterna` redesenha as linhas ANTES de segurar a caixa tocada no lugar (antes, o redesenho depois puxava a rolagem de novo).
+  - **Conferido no navegador** (Playwright, 390×844, 300×420 com zoom 0,93 e 1280×800): abrir/fechar ramo, abrir/fechar subramo, dois ramos abertos, fechar com outro aberto. Toda linha começa e termina numa caixa visível; no código antigo, 4 de 9 passos falhavam.
+  - **Teste:** `scripts/test-mapa-mental-abertura.js` (4b) modela a rolagem puxada pela área rolável e falha no código antigo com o mesmo x 365. sw v388.
 - **🎬 MURAL DE AVISOS: AGORA COM AS VIDEOAULAS DOS RESUMOS (2026-11-14; professor, com print do mural mostrando só as aulas da EMC: "Coloca também as videoaulas dos resumos").**
   - **Bug:** o mural já previa videoaula nova, mas filtrava com `dirIsVisibleAnyTipo`, que é a visibilidade da ABA ativa: fora dos Resumos (no Dashboard, `refPrivadoMode` falso) ela só aceita capítulo público, e TODA videoaula dos Resumos (capítulo `privado:true`) sumia. As 21 videoaulas (02 a 12/11) nunca apareceram. O teste simulava essa função e não pegou.
   - **Agora:** `avisosDoMural` tira só o rascunho (que só o professor recebe) e o item `so_video` da degustação (não é capítulo; a vitrine dela cuida). O servidor (`endodirect_member_resumos`) já entrega a cada aluno só o vídeo que ele pode ver (Gold e Standard todos; degustação um por área).

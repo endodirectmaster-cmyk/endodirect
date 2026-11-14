@@ -13067,10 +13067,12 @@ function mmAlterna(box){
   mmAberto[k]=abrir;
   row.classList.toggle('mm-fechado',!abrir);
   mmAplicaEscala((w&&w.__scale)||1);
+  // As linhas primeiro: o SVG delas também conta na área rolável, e só com ele no tamanho novo a
+  // rolagem abaixo deixa a caixa tocada parada (redesenhar depois puxava a rolagem de novo).
+  drawMMConnections();
   var r1=box.getBoundingClientRect();
   if(w){w.scrollLeft+=r1.left-r0.left;w.scrollTop+=r1.top-r0.top;}
   if(abrir)mmMostra(filhos,box);
-  drawMMConnections();
 }
 function mmCaixaDe(nw){return nw&&nw.querySelector(':scope > [data-mm-root], :scope > [data-mm-branch], :scope > [data-mm-leaf]');}
 // Liga/desliga o modo de edição sem redesenhar o mapa (mantém zoom, rolagem e ramos abertos).
@@ -13272,10 +13274,16 @@ function syncMMFromDOM(){
 function drawMMConnections(){
   var editor=document.getElementById('mm-editor'),svg=document.getElementById('mm-conn-layer'),central=document.querySelector('[data-mm-root]');
   if(!editor||!svg||!central)return;
-  var er=editor.getBoundingClientRect();
+  // O desenho anterior sai do caminho antes de medir: com um ramo recém-fechado, o SVG velho (largo)
+  // segurava a área rolável; redimensioná-lo faz o navegador puxar a rolagem e o mapa andar na tela.
+  // Por isso o retângulo do editor só é lido DEPOIS de dimensionar o SVG: lido antes, as linhas da
+  // raiz saíam deslocadas pelo tanto que a rolagem andou (o professor: "abro um nó e fecho, está
+  // acontecendo essa desconfiguração", 14/11/2026).
+  svg.setAttribute('width',0);svg.setAttribute('height',0);svg.style.width='0px';svg.style.height='0px';
   var w=Math.max(editor.scrollWidth,editor.offsetWidth),h=Math.max(editor.scrollHeight,editor.offsetHeight);
   svg.setAttribute('width',w);svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
   svg.style.width=w+'px';svg.style.height=h+'px';
+  var er=editor.getBoundingClientRect();
   // As medidas da tela já vêm multiplicadas pelo zoom da pinça, e o SVG das ligações fica DENTRO
   // do editor ampliado: sem dividir pelo zoom, editar uma caixa com o mapa ampliado desenhava as
   // linhas fora do lugar (13/11/2026).
