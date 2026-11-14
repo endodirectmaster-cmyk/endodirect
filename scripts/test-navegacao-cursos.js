@@ -95,6 +95,9 @@ const render = corpo('renderCursosAluno');
     '⚠️ a descrição sumiu também do player — ela tem de aparecer quando o aluno clica na aula');
   // 14/11/2026, pedido do professor: "Deixar esse título da aula logo abaixo da videoaula e acima
   // dos tópicos". Ordem no player do aluno e no do professor: vídeo → descrição → "Nesta aula".
+  // 14/11/2026, print da aba Resumo da aula: "Deixar no formato justificado".
+  ok(/\.rsm li\{[^}]*text-align:justify[^}]*hyphens:auto/.test(html) && /\.rsm p\{[^}]*text-align:justify/.test(html),
+    '🧨 o resumo da aula deixou de ser justificado (tópicos e parágrafos)');
   ok((html.match(/playerEmbed\(c\)\+'<\/div>'\+\(c\.desc\?'<div class="aula-desc"[^']*'\+esc\(c\.desc\)\+'<\/div>':''\)\+aulaCapsHTML\(c\)/g) || []).length === 2,
     '🧨 a descrição da aula voltou para depois dos capítulos (o professor pediu logo abaixo do vídeo, acima dos tópicos)');
   // O que fica no cartão: amostra grátis e concluída.
