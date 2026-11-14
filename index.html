@@ -1537,6 +1537,15 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-fmt-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .dir-locked{opacity:.6;border-left-color:var(--bd2)!important}
 .dir-fmt-btn.dir-fmt-locked{opacity:.65;border-style:dashed}
+/* Cursos: o cartão da aula é o botão que abre a aula (14/11/2026; sem o "Assistir"). */
+.curso-aula-card{display:flex;align-items:center;gap:.8rem;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent}
+.curso-aula-card:active{transform:scale(.99)}
+.curso-aula-card:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.curso-aula-card .cac-ico{width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.curso-aula-card .cac-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:.35rem}
+.curso-aula-card .cac-tit{font-size:.85rem;font-weight:700;color:var(--tx);line-height:1.35}
+.curso-aula-card .cac-tags{display:flex;flex-wrap:wrap;gap:.3rem}
+.curso-aula-card .cac-seta{font-size:1.4rem;color:var(--t3);flex-shrink:0;line-height:1}
 /* Podcasts: descrição em parágrafos, justificada (14/11/2026). */
 .pod-desc{font-size:.7rem;color:var(--t3);line-height:1.5;margin:0 0 .5rem;text-align:justify;-webkit-hyphens:auto;hyphens:auto}
 .pod-desc p{margin:0 0 .4rem}
@@ -13660,11 +13669,14 @@ function renderCursosAluno(){
   var scope=cursoFilter?data.filter(function(c){return c.curso===cursoFilter&&aulaLiberada(c);}):data.filter(function(c){return aulaLiberada(c);});
   if(!scope.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma videoaula '+(cursoFilter?'neste curso':'disponível no seu plano ainda')+'.</div>';return;}
   // Cartão enxuto (07/11/2026, pedido do professor: "Retirar descrição da aula e tempo de
-  // duração. Aparecer descrição apenas quando clicar na aula"): só título, amostra grátis,
-  // concluída e o botão. A descrição fica no player (renderAulaPlayer), embaixo do vídeo.
+  // duração. Aparecer descrição apenas quando clicar na aula"): só título, amostra grátis e
+  // concluída. A descrição fica no player (renderAulaPlayer), embaixo do vídeo.
+  // SEM O BOTÃO "ASSISTIR" (14/11/2026). Print do professor com as aulas de Diabetes: "Retirar o
+  // botão assistir e deixar a opção de entrar ao clicar no título da aula". O cartão inteiro
+  // (título incluído) é o botão que abre a aula; a seta "›" à direita mostra que abre.
   function lessonCard(c){
-    var i=data.indexOf(c);
-    return '<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">🎬</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(c.title||'Videoaula')+'</div>'+((c.free&&!cursoAcessivel(c.curso))?'<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0 .45rem"><span class="tag tag-gold">🎁 Amostra grátis</span></div>':'<div style="height:.3rem"></div>')+(cursoAulaDone(c)?'<span class="tag tag-grn" style="margin-right:.4rem">✓ concluída</span>':'')+'<button class="btn btn-primary btn-sm" data-curso-play="'+i+'">'+(cursoAulaDone(c)?'▶ Rever':'▶ Assistir')+'</button></div></div></div>';
+    var i=data.indexOf(c),tags=((c.free&&!cursoAcessivel(c.curso))?'<span class="tag tag-gold">🎁 Amostra grátis</span>':'')+(cursoAulaDone(c)?'<span class="tag tag-grn">✓ concluída</span>':'');
+    return '<button type="button" class="card curso-aula-card" data-curso-play="'+i+'" aria-label="Abrir a aula: '+esc(c.title||'Videoaula')+'"><span class="cac-ico" aria-hidden="true">🎬</span><span class="cac-txt"><span class="cac-tit">'+esc(c.title||'Videoaula')+'</span>'+(tags?'<span class="cac-tags">'+tags+'</span>':'')+'</span><span class="cac-seta" aria-hidden="true">›</span></button>';
   }
   // Nível 1 — grade de subespecialidades (módulos) do escopo.
   if(!cursoMod){
