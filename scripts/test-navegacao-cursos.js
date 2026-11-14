@@ -97,6 +97,14 @@ const render = corpo('renderCursosAluno');
   ok(/Amostra grátis/.test(cartao),
     '🧨 o selo de amostra grátis saiu junto: o não-assinante deixaria de saber por que aquela aula abre');
   ok(/✓ concluída/.test(cartao), '⚠️ o selo de aula concluída saiu junto');
+  // 14/11/2026, pedido do professor: "Retirar o botão assistir e deixar a opção de entrar ao
+  // clicar no título da aula". O cartão inteiro é o botão que abre a aula.
+  ok(!/Assistir|Rever|btn-primary/.test(cartao), '🧨 o botão "▶ Assistir"/"▶ Rever" voltou ao cartão da aula — o professor pediu para tirar');
+  ok(/^\s*function lessonCard\(c\)\{[\s\S]*return '<button type="button" class="card curso-aula-card" data-curso-play="'\+i\+'"/.test(cartao) && /<span class="cac-tit">'\+esc\(c\.title\|\|'Videoaula'\)/.test(cartao),
+    '🧨 o cartão (com o título) deixou de ser o botão que abre a aula');
+  ok(/var cp=c\('\[data-curso-play\]'\);if\(cp\)\{playCursoAluno\(parseInt\(cp\.dataset\.cursoPlay\)\);return;\}/.test(html),
+    '🧨 o clique no cartão não abre mais a aula (o clique delegado de data-curso-play sumiu)');
+  ok(/\.curso-aula-card\{[^}]*cursor:pointer/.test(html) && /\.curso-aula-card:focus-visible\{/.test(html), 'o cartão parece clicável (cursor) e mostra o foco do teclado');
 
   // O painel do professor é outra tela e não foi tocado.
   const a2 = html.indexOf('function admLessonCard(c){');
