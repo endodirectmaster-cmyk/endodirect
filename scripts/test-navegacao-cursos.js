@@ -123,8 +123,13 @@ const render = corpo('renderCursosAluno');
   ok(/fr\.style\.display=mostrar\?'flex':'none'/.test(mostra) && /li\.style\.display=mostrar\?'':'none'/.test(mostra),
     '⚠️ cursoMostrarLista não esconde/mostra a grade e a lista de aulas');
   const pl = fatia('renderAulaPlayer');
-  ok(/box\.innerHTML='<button class="dir-back" id="curso-player-back"[^>]*>← '\+esc\(cursoNomeBySlug\(c\.curso\)\)\+'<\/button>'\s*\+'<div class="card">'/.test(pl),
-    '🧨 a volta "← <curso>" saiu de cima do player (o professor pediu no canto superior esquerdo)');
+  // 14/11/2026: "Retirar esse botão de fechar, esse do X, e trocar o nome Educação Médica
+  // Continuada, lá em cima do botão, por Voltar."
+  ok(/box\.innerHTML='<button class="dir-back" id="curso-player-back"[^>]*>← Voltar<\/button>'\s*\+'<div class="card">'/.test(pl),
+    '🧨 a volta "← Voltar" saiu de cima do player (ou voltou a dizer o nome do curso)');
+  ok(!/curso-player-close|✕ Fechar/.test(pl), '🧨 o "✕ Fechar" voltou à aula aberta — o professor pediu para tirar');
+  ok(/getElementById\('curso-player-back'\);if\(bk\)bk\.addEventListener\('click',function\(\)\{fecharAulaAluno\(false\);\}\);/.test(pl),
+    '🧨 o "← Voltar" deixou de levar à lista de aulas de onde o aluno veio');
   const fecha = fatia('fecharAulaAluno');
   ok(/if\(voltarAoCurso\)cursoMod='';/.test(fecha) && /cursoMostrarLista\(true\);/.test(fecha) && /renderCursosAluno\(\)/.test(fecha),
     '⚠️ fechar a aula não devolve a lista (ou a volta não leva às subespecialidades do curso)');

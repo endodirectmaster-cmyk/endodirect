@@ -92,13 +92,12 @@ const { playerEmbed, capsParse, capsFmt, capsTexto, aulaCapsHTML } = caixa;
 // ── 3. Fechar o player PARA o vídeo ───────────────────────────────────────
 // Antes, fechar só escondia a caixa: o áudio continuava tocando invisível.
 {
-  // Desde 07/11/2026 o "✕ Fechar" e a volta "← <curso>" (acima do player) passam por
+  // Desde 14/11/2026 só a volta "← Voltar" (acima do player) fecha a aula; ela passa por
   // fecharAulaAluno, que solta o HLS e esvazia a caixa.
-  const fechar = html.match(/getElementById\('curso-player-close'\)[^\n]*/);
   const voltar = html.match(/getElementById\('curso-player-back'\)[^\n]*/);
   const i = html.indexOf('function fecharAulaAluno(');
   const fn = html.slice(i, html.indexOf('\n}', i));
-  ok(fechar && /fecharAulaAluno\(false\)/.test(fechar[0]) && voltar && /fecharAulaAluno\(true\)/.test(voltar[0])
+  ok(voltar && /fecharAulaAluno\(false\)/.test(voltar[0])
     && /aulaSoltarHls\(\)/.test(fn) && /box\.innerHTML=''/.test(fn),
     '🧨 fechar a aula voltou a apenas esconder a caixa — o vídeo segue tocando e o áudio fica órfão na página');
 }
