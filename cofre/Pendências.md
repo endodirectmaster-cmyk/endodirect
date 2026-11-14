@@ -83,7 +83,11 @@ de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
 ## 📝 Resumos da EMC (07/11, revisto em 08/11)
 - [x] Resultado do SMARTEST: entrou no resumo da aula da metformina, a partir do slide da aula (Uppsala, 2026). Quando sair no PubMed, conferir os números.
 - [ ] O Bunny não tem legenda nas aulas (conferido em 08/11). Se o professor ligar a transcrição automática, o resumo automático passa a seguir a fala. Sem ela, a leitura dos slides é feita na sessão (ver Decisões, 08/11).
-- [ ] Toda aula nova da EMC: ler os slides e gravar capítulos e resumo fiel. O automático do painel é só o primeiro rascunho.
+- [ ] Toda aula nova da EMC: ler os slides e gravar capítulos, resumo fiel e 8 questões próprias (skill `trilha-aula-emc`). O automático do painel é só o primeiro rascunho.
+- [x] **Questões próprias das aulas 106 (GLP-1 no DM1) e 107 (Metformina): GRAVADAS em 14/11** (professor: "deixar as questões condizentes com os temas das aulas"). 8 + 8, escritas e revisadas por agentes independentes; backup `main-antes-trilha-emc-2026-11-14`. As três aulas da EMC (105, 106, 107) têm questões próprias. EndoTEEM fora, por ora (professor).
+- [ ] **Avisar o professor (aula 106): vômitos RR 5,10 no resumo.** A metanálise de 2026 que achamos no PubMed (Lee) traz RR 3,11 para vômitos, 0,67 para cetoacidose e 0,83 para hipoglicemia grave; o resumo traz 5,10, 0,60 e 0,74, talvez de outra metanálise (Chen 2026, não achada no PubMed). Nenhuma questão depende do 5,10. Decisão dele: manter ou corrigir o resumo.
+- [ ] **Aula 106: recomendação 8.29 da ADA 2026** não conferida no texto integral (fora do PubMed); está no resumo e numa questão.
+- [ ] **Aula 107: números do SMARTEST** (2.072; 425 × 421; descontinuação 9,5% × 4,9%; eventos graves 18,2% × 19,8%) vêm só do slide da aula. Conferir quando sair no PubMed.
 
 ## 🎬 Videoaulas e o plano Standard (07/11): decisão do professor
 
