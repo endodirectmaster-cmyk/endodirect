@@ -91,8 +91,12 @@ const render = corpo('renderCursosAluno');
   ok(!/c\.dur\b/.test(cartao), '🧨 a duração voltou ao cartão da aula — o professor pediu para tirar');
   ok(!/c\.desc\b/.test(cartao), '🧨 a descrição voltou ao cartão da aula — ela só aparece ao clicar na aula');
   const pl = html.indexOf('function renderAulaPlayer(){');
-  ok(pl > 0 && /\(c\.desc\?'<div style="font-size:\.78rem;color:var\(--t2\);line-height:1\.6;margin-top:\.6rem">'\+esc\(c\.desc\)/.test(html.slice(pl, pl + 2600)),
+  ok(pl > 0 && /\(c\.desc\?'<div class="aula-desc" style="font-size:\.78rem;color:var\(--t2\);line-height:1\.6;margin-top:\.6rem">'\+esc\(c\.desc\)/.test(html.slice(pl, pl + 2600)),
     '⚠️ a descrição sumiu também do player — ela tem de aparecer quando o aluno clica na aula');
+  // 14/11/2026, pedido do professor: "Deixar esse título da aula logo abaixo da videoaula e acima
+  // dos tópicos". Ordem no player do aluno e no do professor: vídeo → descrição → "Nesta aula".
+  ok((html.match(/playerEmbed\(c\)\+'<\/div>'\+\(c\.desc\?'<div class="aula-desc"[^']*'\+esc\(c\.desc\)\+'<\/div>':''\)\+aulaCapsHTML\(c\)/g) || []).length === 2,
+    '🧨 a descrição da aula voltou para depois dos capítulos (o professor pediu logo abaixo do vídeo, acima dos tópicos)');
   // O que fica no cartão: amostra grátis e concluída.
   ok(/Amostra grátis/.test(cartao),
     '🧨 o selo de amostra grátis saiu junto: o não-assinante deixaria de saber por que aquela aula abre');

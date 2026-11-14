@@ -13730,6 +13730,10 @@ function fecharAulaAluno(voltarAoCurso){
   var panel=document.getElementById('panel-cursos');if(panel)panel.scrollTop=0;
 }
 // Player da aula em ABAS: ▶ Aula (vídeo) · 📝 Resumo (ler + Baixar PDF) · 🧠 Questões (trilha por tema).
+// O TEXTO DA AULA LOGO ABAIXO DO VÍDEO (14/11/2026). Print do professor com a aula aberta: "Deixar
+// esse título da aula logo abaixo da videoaula e acima dos tópicos". A descrição ("Nesta aula
+// discutimos...") saiu do fim, depois dos capítulos, e vem entre o vídeo e o "Nesta aula"; o mesmo
+// no player do professor (painel).
 function renderAulaPlayer(){
   var data=Array.isArray(admCursos)?admCursos:[];var c=data[curAulaIdx];if(!c)return;
   var box=document.getElementById('curso-player');if(!box)return;
@@ -13739,7 +13743,7 @@ function renderAulaPlayer(){
   var body;
   if(curAulaTab==='resumo')body=aulaResumoHTML(c);
   else if(curAulaTab==='quest')body='<div id="aula-quest-box"></div>';
-  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+aulaCapsHTML(c)+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+'<div style="margin-top:.8rem"><button class="btn '+(done?'btn-outline':'btn-primary')+' btn-sm" id="aula-done">'+(done?'✓ Concluída (desfazer)':'Marcar como concluída')+'</button></div>';
+  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div class="aula-desc" style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+aulaCapsHTML(c)+'<div style="margin-top:.8rem"><button class="btn '+(done?'btn-outline':'btn-primary')+' btn-sm" id="aula-done">'+(done?'✓ Concluída (desfazer)':'Marcar como concluída')+'</button></div>';
   aulaSoltarHls();
   box.innerHTML='<button class="dir-back" id="curso-player-back" style="margin-bottom:.6rem">← Voltar</button>'
     +'<div class="card">'+head+tabs+'<div id="aula-tab-body">'+body+'</div></div>';
@@ -14028,7 +14032,7 @@ function admRenderAulaPlayer(c){
     }
   }
   else if(admAulaTab==='quest')body='<div id="aula-quest-box"></div>';
-  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+aulaCapsHTML(c)+(c.desc?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'');
+  else body='<div style="background:#000;border-radius:var(--r);overflow:hidden">'+playerEmbed(c)+'</div>'+(c.desc?'<div class="aula-desc" style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-top:.6rem">'+esc(c.desc)+'</div>':'')+aulaCapsHTML(c);
   aulaSoltarHls();
   box.innerHTML='<div class="card">'+head+tabs+'<div id="adm-aula-tab-body">'+body+'</div></div>';
   if(admAulaTab==='aula'){montarAulaHls(box);ligarAulaCaps(box);}
