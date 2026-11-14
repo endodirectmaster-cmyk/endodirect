@@ -20,6 +20,7 @@
 //  - o botão de editar voltar para dentro de cada caixa, ou sumir do topo;
 //  - remover uma caixa e o "aberto/fechado" das irmãs de baixo ficar trocado;
 //  - linhas desenhadas para caixas escondidas (ramo fechado) riscando o mapa;
+//  - fechar um nó e as linhas da raiz saírem do meio da tela (rolagem puxada no meio da medição);
 //  - o editor do professor (fora da tela cheia) passar a fechar ramos ou travar a edição.
 'use strict';
 const fs = require('fs');
@@ -177,6 +178,42 @@ function encaixa(tamanhos) {
   ok('as linhas são redesenhadas depois de abrir', linhas > 0);
   vm.runInContext('mmAlterna(__box)', ctx);
   ok('tocar de novo fecha', rowC.has('mm-fechado') && vm.runInContext("mmAberto['1-0']", ctx) === false);
+}
+
+// ── 4b. Fechar: as linhas acompanham a rolagem que o navegador puxa (14/11/2026) ─────────
+// Print do professor ("quando eu abro um nó e fecho, está acontecendo isso daí, essa
+// desconfiguração"): depois de fechar, as linhas da raiz saíam de um ponto no meio da tela e a
+// raiz sumia. O SVG velho das linhas (largo, do ramo aberto) segurava a área rolável; ao ser
+// redimensionado, o navegador puxava a rolagem para trás NO MEIO da medição, e o retângulo do
+// editor lido antes não valia mais. Modelo: toda leitura de medida recalcula a rolagem dentro da
+// área rolável de agora (o maior entre o editor e o SVG).
+{
+  const wrap = { clientWidth: 374, scrollLeft: 197, scrollTop: 0, __scale: 1 };
+  const edW = 352; // o ramo acabou de fechar: o editor já encolheu, o SVG ainda tem 568
+  const svg = { w: 568, style: {}, innerHTML: '', setAttribute(k, v) { if (k === 'width') this.w = +v; } };
+  const layout = () => { wrap.scrollLeft = Math.max(0, Math.min(wrap.scrollLeft, Math.max(edW, svg.w) + 16 - wrap.clientWidth)); };
+  const caixa = (dx, larg, top, alt) => ({ getBoundingClientRect() { layout(); const l = 16 - wrap.scrollLeft + dx; return { left: l, right: l + larg, top, bottom: top + alt, width: larg, height: alt }; } });
+  const editor = Object.assign(caixa(0, edW, 100, 400), { get scrollWidth() { layout(); return edW; }, offsetWidth: edW, scrollHeight: 400, offsetHeight: 400 });
+  const raiz = caixa(8, 160, 250, 80), ramo = caixa(194, 150, 120, 40);
+  const linha = { querySelector: (s) => (/mm-subs-block/.test(s) ? { getClientRects: () => [] } : ramo) };
+  const ctx = {
+    Math, BCOLORS: ['#8b5cf6'],
+    document: {
+      getElementById: (id) => ({ 'mm-editor': editor, 'mm-conn-layer': svg, 'mm-svg-wrap': wrap })[id] || null,
+      querySelector: (s) => (s === '[data-mm-root]' ? raiz : null),
+      querySelectorAll: (s) => (s === '[data-mm-branch-row]' ? [linha] : []),
+    },
+  };
+  vm.createContext(ctx);
+  vm.runInContext(corpo('drawMMConnections'), ctx);
+  vm.runInContext('drawMMConnections()', ctx);
+  const n = (svg.innerHTML.match(/d="M([\d.-]+) [\d.-]+ C[^"]* ([\d.-]+) [\d.-]+"/) || []).slice(1).map(Number);
+  ok('🧨 depois de fechar, a linha da raiz sai da borda da raiz (x 168) e chega ao ramo (x 194): saiu de ' + n.join(' a '),
+    n.length === 2 && Math.abs(n[0] - 168) < 0.01 && Math.abs(n[1] - 194) < 0.01);
+  ok('o SVG das linhas fica do tamanho do mapa fechado', svg.w === edW);
+  const alt = corpo('mmAlterna');
+  ok('🧨 ao tocar, as linhas são redesenhadas ANTES de segurar a caixa tocada no lugar (redesenhar depois puxava a rolagem de novo)',
+    alt.indexOf('drawMMConnections()') > 0 && alt.indexOf('drawMMConnections()') < alt.indexOf('w.scrollLeft+=r1.left-r0.left'));
 }
 
 // ── 5. Ligações no código ────────────────────────────────────────────────────────────────
