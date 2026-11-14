@@ -1560,6 +1560,9 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-deg-note{margin:.6rem 0 1.1rem;padding:.7rem .9rem;border:1px dashed var(--bd2);border-radius:12px;background:var(--s2);font-size:.82rem;color:var(--t2);line-height:1.55}
 .dir-card{border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:14px;background:var(--surface);padding:1.1rem 1.25rem;margin-bottom:1rem}
 .dir-card-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+/* A ☆ de favorito flutua no canto do cartão (ver dirCardHTML): o cabeçalho deixa o espaço dela,
+   senão o "Fonte ↗" das diretrizes fica por baixo da estrela (print do professor, 14/11/2026). */
+.dir-card .dir-card-top{padding-right:2.2rem}
 .dir-card h3{margin:.15rem 0 .6rem;font-size:1.08rem;color:var(--tx)}
 .dir-card ul{margin:.2rem 0;padding-left:1.2rem}
 .dir-card li{font-size:.86rem;color:var(--t2);margin:.25rem 0;line-height:1.5}
