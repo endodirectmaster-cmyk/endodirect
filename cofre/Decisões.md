@@ -8,6 +8,19 @@ atualizado: 2026-11-14
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 CURSOS: AS VOLTAS DO ALUNO DIZEM SÓ "← VOLTAR" (2026-11-14; professor, com print da tela do curso com "← Voltar aos cursos": "Apenas 'Voltar'").** As duas voltas da tela de Cursos do aluno (nível das subespecialidades, que dizia "Voltar aos cursos", e nível das aulas, que dizia o nome do curso) passaram a "← Voltar", como na aula aberta. O painel do professor ficou igual. `test-navegacao-cursos.js` prende (3 checagens novas, que falham no código antigo).
+- **🧭 SKILL NOVA: TRILHA DA AULA DA EMC — TÓPICOS, RESUMO E QUESTÕES (2026-11-14; professor: "Coloque isso como uma skill sua, conforme novas aulas vão subindo para o curso de Educação Médica Continuada, acrescentar também questões das respectivas aulas, assim como também os tópicos de cada aula" e "além das questões, os resumos").** `.claude/skills/trilha-aula-emc/SKILL.md`. Para cada aula da EMC ela grava:
+  - os tópicos, pela skill `capitulos-videoaula`;
+  - o resumo fiel aos slides, no formato `FUNDAMENTAÇÃO`/`DEFINIÇÕES`/… com itens "•"; refaz o rascunho `resumoAuto` do painel;
+  - 8 questões próprias (`aulaQ`), com redator e revisor independente e gabarito 2/2/2/2; o comentário nunca cita letra.
+
+  Grava com backup, guarda e md5. A tarefa diária das 03:13 ("Videoaulas novas: tópicos, e na EMC também resumo e questões") passou a rodar as duas skills. O EndoTEEM fica fora (professor: "Por enquanto, não precisa fazer questões para as aulas do Endoteem").
+- **🎧 PODCASTS: REFERÊNCIAS INTEIRAS JÁ AGORA (2026-11-14; professor, com print do FD 101/102: "As referências saíram cortadas na descrição do podcast").** Não esperei a atualização diária.
+  - **Origem do texto:** a API do site (`/api/podcast-feed`, já com o parser novo) devolveu os 210 episódios do feed com as descrições inteiras.
+  - **Gravação:** função temporária `endodirect_tmp_podcasts_desc` (token sha256, prazo de 2 h, só episódio rss, md5 da descrição lida). Ela só troca a descrição quando a gravada é o mesmo texto do feed, ignorando espaço, "•", `&nbsp;` e `&amp;`; 14 das cortadas só batiam com essa normalização, e ela foi levada para `lib/podcasts.js` e o painel.
+  - **Resultado:** 153 descrições gravadas, com o md5 conferido; as 62 cortadas em 500 caracteres ficaram inteiras e nenhuma ficou com 500.
+  - **Conferido:** fora a `desc`, nada mudou nos 209 episódios, e o resto do payload é idêntico ao backup `main-antes-podcasts-desc-2026-11-14`. Anon revogado e token apagado; o DROP fica pendente.
+  - Teste novo no `test-podcasts-descricao.js`, que falha na normalização antiga.
 - **📚 BANCO: 84 QUESTÕES COM DIRETRIZ ANTIGA ATUALIZADAS (2026-11-14; professor: "pode", respondendo item a item à lista de pendências).**
   - **Como:** 7 redatores (um por família de diretriz) e 7 revisores independentes, cada um conferindo na fonte primária. A Diretriz SBD 2026 foi lida pela API do site (`diretriz.diabetes.org.br/wp-json/wp/v2/posts?slug=…`, texto integral). ADA 2026, SBC 2025, HAS 2025 e ATA 2025 vieram do PMC. O revisor resolveu cada Endodirect com sentido mudado antes de ler o comentário do redator.
   - **Regras:** na prova oficial, só o comentário muda, com o parágrafo final "Atualização (nov/2026): ..." (na discursiva, a `expected`); frase errada é corrigida no lugar. Na Endodirect, a questão passa para a versão vigente com uma única correta.
