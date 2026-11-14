@@ -99,6 +99,11 @@ const mapa = { central: 'Diagnóstico e classificação', nodes: [
   ok(/fecharMapaDoCapitulo\(\)/.test(corpo('doLogout')), '⚠️ sair da conta com o mapa do capítulo aberto deixa o visualizador fora do lugar');
 }
 
+// ── 5. A ☆ de favorito não cobre o "Fonte ↗" do cabeçalho das diretrizes ────
+// (print do professor, Diretrizes › Hipertireoidismo e doença de Graves, 14/11/2026)
+ok(/\.dir-card \.dir-card-top\{padding-right:2\.2rem\}/.test(html),
+  '⚠️ o cabeçalho do cartão da diretriz não reserva mais o espaço da ☆ — o "Fonte ↗" fica por baixo da estrela');
+
 if (falhas.length) {
   console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - '));
   process.exit(1);
