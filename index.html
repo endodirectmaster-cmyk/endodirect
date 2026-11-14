@@ -6940,7 +6940,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
     if(Array.isArray(payload.acessos))definirAcessos(payload.acessos);
     if(Array.isArray(payload.cursos))catalogoCursos=payload.cursos;
-    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-mural'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}
+    if(Array.isArray(payload.ig_stories)){igStories=payload.ig_stories;try{lsSet('ig_stories',igStories);}catch(e){}try{var _mp=document.getElementById('panel-dash'),_qm=document.getElementById('qotd-modal');if(_mp&&_mp.classList.contains('on')&&(!_qm||_qm.style.display==='none'))renderQotd();}catch(e){}
       // ⚠️ O ARQUIVO TAMBÉM PRECISA SER REDESENHADO AQUI. `igStories` nasce da CÓPIA
       // LOCAL (linha do var: lsGet('ig_stories')), que pode estar velha ou vazia. Sem
       // este redesenho, quem abre a aba "Questão do Dia" antes de o payload chegar fica
@@ -10791,7 +10791,11 @@ function goPanel(id){
   var bc=document.getElementById('tb-bc');
   if(bc)bc.textContent=PANEL_LABELS[menuAlvo]||menuAlvo;
   if(id==='dash')refreshDash();
-  try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='mural')_qm.style.display='none';if(id==='mural')renderQotd();}catch(e){}
+  // ⚠️ JANELA DA QUESTÃO DO DIA SÓ NO DASHBOARD (14/11/2026; professor, com print da janela
+  // aberta por cima do Mural de artigos: "Deixa ela somente no dashboard [...] Não é para
+  // aparecer no mural de artigos"). Ela nasceu no Mural quando ele era a tela de entrada;
+  // a entrada virou o Dashboard em 30/08 (`homePanel`) e a janela ficou para trás.
+  try{var _qm=document.getElementById('qotd-modal');if(_qm&&id!=='dash')_qm.style.display='none';if(id==='dash')renderQotd();}catch(e){}
   // A enquete tem de ser desenhada ao ABRIR o Mural: ele e a tela de entrada do
   // aluno (homePanel), e refreshDash() so roda no Dashboard.
   if(id==='mural')try{kickDiscussaoCadeia();}catch(e){}
@@ -11064,7 +11068,8 @@ function refreshDash(){
 // Só 5 nunca nem entraram. A perda não é de memória, é de PRIMEIRA SESSÃO.
 //
 // ⚠️ E o mecanismo que deveria resolver isso JÁ EXISTIA: o modal da Questão do
-// Dia aparece no Mural (a tela de entrada) e responder ali já conta como estudo,
+// Dia aparece na tela de entrada (o Mural até 30/08; o Dashboard desde então, e
+// desde 14/11/2026 SÓ no Dashboard) e responder ali já conta como estudo,
 // porque `qotdSaveAns` chama `studyEvent`, que incrementa `DB.act`. O que falta
 // não é a questão — é que o modal:
 //   · some com um clique em "Agora não" (`qotdDismissed`), e
@@ -11481,17 +11486,18 @@ function qotdClose(){var m=document.getElementById('qotd-modal');if(m)m.style.di
 function qotdRenderModal(q,ans){
   qotdModalEl();var body=document.getElementById('qotd-modal-body');if(!body)return;
   var footer=ans
-    ?'<button type="button" class="btn btn-primary" id="qotd-see-mural" style="width:100%;margin-top:.7rem">Ver o mural →</button>'
+    ?'<button type="button" class="btn btn-primary" id="qotd-continuar" style="width:100%;margin-top:.7rem">Continuar →</button>'
     :'<div style="text-align:center;margin-top:.7rem"><button type="button" class="btn" id="qotd-skip" style="background:var(--gold);color:#0b1325;font-weight:700;padding:.5rem 1.5rem">Agora não</button></div>';
   body.innerHTML=qotdCardHTML(q,ans)+footer;
   try{ensureLightbox();}catch(e){}   // figura do caso e do comentário ampliam ao toque
   if(!ans)body.querySelectorAll('[data-qotd-opt]').forEach(function(b){b.addEventListener('click',function(){qotdPick(q,b.getAttribute('data-qotd-opt'));});});
-  var see=document.getElementById('qotd-see-mural');if(see)see.addEventListener('click',qotdClose);
+  var see=document.getElementById('qotd-continuar');if(see)see.addEventListener('click',qotdClose);
   var skip=document.getElementById('qotd-skip');if(skip)skip.addEventListener('click',qotdClose);
 }
-// Mostra a Questão do Dia como JANELA na frente do mural (o backdrop esmaece o
-// mural). Ao responder, mostra o gabarito comentado + "Ver o mural"; ao fechar, o
-// mural volta ao normal. Aparece só no Mural, 1x por sessão (ou até responder).
+// Mostra a Questão do Dia como JANELA na frente do Dashboard (o backdrop esmaece a
+// tela). Ao responder, mostra o gabarito comentado + "Continuar"; ao fechar, o
+// Dashboard volta ao normal. Aparece só no Dashboard (a tela de entrada), 1x por
+// sessão (ou até responder) — nunca no Mural de artigos (professor, 14/11/2026).
 function renderQotd(){
   var q=qotdTodays();var m=qotdModalEl();
   if(!q){m.style.display='none';return;}
