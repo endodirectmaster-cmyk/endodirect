@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-ap. PODCASTS: DESCRIÇÃO EM PARÁGRAFOS E JUSTIFICADA (14/11/2026). Print do
+//      professor: "Deixar em modo justificado. As frases ficaram todas juntas. Separar em
+//      parágrafos." A importação do feed guarda as quebras; a tela justifica e separa.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-podcasts-descricao.js')], { stdio: 'pipe' });
+  ok('podcasts: descrição do feed em parágrafos, justificada, e a já gravada consertada sem tocar na editada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da descrição dos podcasts falhou:\n' + out);
+}
+
 // 17c-undecies-an. MURAL DE AVISOS NO DASHBOARD (13/11/2026). Pedido do professor: avisos de
 //      videoaula nova, aula nova da EMC, edital e prova no Dashboard. A função do aluno
 //      (member_content_sem_provas) entrega `avisos_alunos`; o painel do professor escreve.

@@ -1537,6 +1537,11 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dir-fmt-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .dir-locked{opacity:.6;border-left-color:var(--bd2)!important}
 .dir-fmt-btn.dir-fmt-locked{opacity:.65;border-style:dashed}
+/* Podcasts: descrição em parágrafos, justificada (14/11/2026). */
+.pod-desc{font-size:.7rem;color:var(--t3);line-height:1.5;margin:0 0 .5rem;text-align:justify;-webkit-hyphens:auto;hyphens:auto}
+.pod-desc p{margin:0 0 .4rem}
+.pod-desc p:last-child{margin-bottom:0}
+.pod-desc .pod-desc-ref{font-weight:700;margin-top:.55rem;margin-bottom:.15rem;text-align:left}
 /* Alternador Capítulos × Artigos (aba Resumos) — segmented control. */
 .dir-tipo-tog{display:inline-flex;flex-wrap:wrap;gap:.25rem;padding:.25rem;margin:0 0 1.15rem;border:1px solid var(--bd2);border-radius:999px;background:var(--s2)}
 .dir-tipo-btn{border:0;background:transparent;color:var(--t2);border-radius:999px;padding:.42rem 1rem;font-size:.79rem;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -13361,7 +13366,29 @@ function renderPodcasts(){
   var el=document.getElementById('pod-list');if(!el)return;
   var list=podFilter?podcasts.filter(function(p){return podArea(p)===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
-  el.innerHTML=list.map(function(p){var a=podArea(p);var dt=podDataStr(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+esc(p.desc||'')+'</div>'+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
+  el.innerHTML=list.map(function(p){var a=podArea(p);var dt=podDataStr(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div>'+podDescHTML(p.desc)+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
+}
+// DESCRIÇÃO EM PARÁGRAFOS, JUSTIFICADA (14/11/2026). Print do professor na aba Podcasts:
+// "Deixar em modo justificado. As frases ficaram todas juntas. Separar em parágrafos". O feed
+// manda HTML (<p>, <br>) e a importação antiga tirava as tags sem pôr quebra
+// ("endodirect.com.brReferencias:Davies"). A importação nova (lib/podcasts.js, descTexto) guarda
+// as quebras; para o que já foi gravado colado, podDescParagrafos recoloca as quebras óbvias:
+// ponto colado em maiúscula ("artefatual.Acesse"), "Referências:" e o ano colado no autor
+// seguinte ("2009Sacks").
+function podDescParagrafos(t){
+  t=String(t||'').replace(/\r/g,'').trim();
+  if(!t)return [];
+  if(t.indexOf('\n')<0){
+    t=t.replace(/([a-zà-ú0-9)])\.(?=[A-ZÀ-Ú])/g,'$1.\n')
+      .replace(/(\S)(Refer[eê]ncias\s*:)/gi,'$1\n$2')
+      .replace(/(Refer[eê]ncias\s*:)\s*/gi,'$1\n')
+      .replace(/((?:19|20)\d\d)(?=[A-ZÀ-Ú][a-zà-ú])/g,'$1\n');
+  }
+  return t.split(/\n+/).map(function(x){return x.trim();}).filter(Boolean);
+}
+function podDescHTML(t){
+  var ps=podDescParagrafos(t);if(!ps.length)return '';
+  return '<div class="pod-desc">'+ps.map(function(x){return /^refer[eê]ncias\s*:?$/i.test(x)?'<p class="pod-desc-ref">'+esc(x)+'</p>':'<p>'+esc(x)+'</p>';}).join('')+'</div>';
 }
 
 // ── CURSOS (aluno) ──
@@ -22050,7 +22077,20 @@ function bindAdmSec(sec){
         fetch('/api/podcast-feed?url='+encodeURIComponent(url)).then(function(r){return r.json();}).then(function(d){
           if(!d||!d.ok)throw new Error((d&&d.error)||'Falha ao ler o feed.');
           var seen={};podcasts.forEach(function(p){seen[(p.audio||p.src||'').trim()]=1;seen[(p.title||'').trim().toLowerCase()]=1;});
-          var added=0;var novos=[];
+          var added=0;var novos=[];var atualizados=0;
+          // Descrição dos já importados ganha os parágrafos do feed, se for o mesmo texto só sem as
+          // quebras (ou cortado); descrição editada à mão não muda (a mesma regra de lib/podcasts.js).
+          var _semEsp=function(x){return String(x||'').replace(/\s+/g,'').replace(/…$/,'');};
+          (d.episodes||[]).forEach(function(ep){
+            var nova=String(ep.desc||'');if(!nova)return;
+            podcasts.forEach(function(p){
+              if(p.tipo!=='rss'||(p.audio||'').trim()!==(ep.audio||'').trim())return;
+              var velha=String(p.desc||'');
+              if(nova===velha||(nova.indexOf('\n')<0&&nova.length<=velha.length))return;
+              if(_semEsp(nova).indexOf(_semEsp(velha))!==0)return;
+              p.desc=nova;atualizados++;
+            });
+          });
           (d.episodes||[]).forEach(function(ep){
             var key=(ep.audio||'').trim(),tk=(ep.title||'').trim().toLowerCase();
             if(seen[key]||seen[tk])return;
@@ -22058,10 +22098,11 @@ function bindAdmSec(sec){
             novos.push({title:ep.title,area:sub,desc:ep.desc||'',audio:ep.audio,tipo:'rss',at:ep.at||Date.now()});
             seen[key]=1;seen[tk]=1;added++;
           });
-          if(added){podcasts=novos.concat(podcasts);persistPodcasts();} // novos episódios no topo
-          setUploadStatus('adm-pod-rss-status',added+' episódio(s) importado(s)'+(d.show?' de "'+d.show+'"':'')+'. '+Math.max(0,(d.count||0)-added)+' já existiam.','ok');
+          if(added)podcasts=novos.concat(podcasts); // novos episódios no topo
+          if(added||atualizados)persistPodcasts();
+          setUploadStatus('adm-pod-rss-status',added+' episódio(s) importado(s)'+(d.show?' de "'+d.show+'"':'')+'. '+Math.max(0,(d.count||0)-added)+' já existiam'+(atualizados?' ('+atualizados+' com a descrição refeita em parágrafos)':'')+'.','ok');
           notify(added+' episódio(s) importado(s)!',added?'ok':'info');
-          if(added){admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();}
+          if(added||atualizados){admPodSubtab='ouvir';renderAdmSec('conteudo');renderPodcasts();}
         }).catch(function(e){
           setUploadStatus('adm-pod-rss-status',(e&&e.message)||'Erro ao importar.','err');
           notify((e&&e.message)||'Erro ao importar.','err');
