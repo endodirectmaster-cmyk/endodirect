@@ -80,7 +80,9 @@ Escritas a partir do resumo (e dos slides), uma ou duas por bloco da aula. Um ag
   a correta não é a mais longa nem a única diferente.
 - **Gabarito 2×A, 2×B, 2×C, 2×D.**
 - **Comentário**: por que a correta está certa e por que cada outra está errada, **por conteúdo
-  — nunca "a alternativa C"**: o app embaralha as alternativas (`igShuffleMCQ`).
+  — nunca "a alternativa C"**: a tela do aluno embaralha as alternativas das questões próprias
+  a cada abertura (`renderAulaQuest` → `igShuffleMCQ` numa cópia); a revisão do professor e o
+  `aulaQ` gravado ficam na ordem original.
 - Mesmo registro do resumo; `checa-jargao.js` limpo; sem DOI/PMID no texto.
 - `area` = `modulo` da aula; `tema` = o `tema` da aula (se vazio, um rótulo curto do assunto).
 - O revisor **resolve cada questão antes de ler o gabarito** e só aprova se bater.

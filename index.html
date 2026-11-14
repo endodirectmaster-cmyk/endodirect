@@ -13940,7 +13940,18 @@ function aulaQuestions(c){
   pool=pool.slice();for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
   return pool.slice(0,8);
 }
-function renderAulaQuest(c){aulaQ=aulaQuestions(c);aulaQAns={};renderAulaQuestBody(c);}
+// ALTERNATIVAS EMBARALHADAS NAS QUESTÕES PRÓPRIAS DA AULA (14/11/2026). As 8 questões
+// de `aulaQ` são gravadas com gabarito 2×A/2×B/2×C/2×D na ordem A,B,C,D,A,B,C,D, e a tela
+// mostrava essa ordem: o padrão saltava aos olhos. O aluno passa a ver as alternativas
+// embaralhadas a cada abertura, como nas questões geradas pela IA. Embaralha uma CÓPIA
+// (`igShuffleMCQ` troca options/answer no objeto recebido): o `aulaQ` gravado e a revisão
+// do professor ficam na ordem original. Questão emprestada do banco NÃO é embaralhada:
+// comentário de prova oficial cita a letra. Os comentários de `aulaQ` não citam letra.
+function renderAulaQuest(c){
+  var qs=aulaQuestions(c);
+  if(aulaQProprias(c)&&typeof igShuffleMCQ==='function')qs=qs.map(function(q){return igShuffleMCQ(Object.assign({},q));});
+  aulaQ=qs;aulaQAns={};renderAulaQuestBody(c);
+}
 function renderAulaQuestBody(c){
   var box=document.getElementById('aula-quest-box');if(!box)return;
   if(!aulaQ.length){

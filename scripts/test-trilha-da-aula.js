@@ -59,6 +59,34 @@ const Q = (n) => Array.from({ length: n }, (_, i) => ({ stem: 'q' + i, options: 
     '🧨 a aula tem questões próprias e o banco entrou junto — a trilha deixaria de ser a da aula');
 }
 
+// ── 2b. O aluno vê as alternativas da questão própria embaralhadas ───────
+// (14/11/2026) `aulaQ` é gravado com gabarito A,B,C,D,A,B,C,D; mostrado nessa ordem,
+// o padrão aparecia. `renderAulaQuest` embaralha uma CÓPIA de cada questão própria.
+{
+  const c2 = { console, Math, Object, JSON };
+  vm.createContext(c2);
+  vm.runInContext([corpo('aulaQProprias'), corpo('aulaQuestions'), corpo('igShuffleMCQ'), corpo('renderAulaQuest'),
+    'var aulaQ=[],aulaQAns={};function renderAulaQuestBody(){}'].join('\n'), c2);
+  const orig = Array.from({ length: 8 }, (_, i) => ({ stem: 'q' + i, answer: 'ABCD'[i % 4],
+    options: { A: 'a' + i, B: 'b' + i, C: 'c' + i, D: 'd' + i }, explanation: 'e' }));
+  const aula = { aulaQ: JSON.parse(JSON.stringify(orig)), modulo: 'Diabetes' };
+  const sequencias = new Set();
+  let certoSempreCerto = true;
+  for (let r = 0; r < 40; r++) {
+    c2.renderAulaQuest(aula);
+    const vistas = vm.runInContext('aulaQ', c2);
+    sequencias.add(vistas.map((q) => q.answer).join(''));
+    vistas.forEach((q, i) => { if (q.options[q.answer] !== orig[i].options[orig[i].answer]) certoSempreCerto = false; });
+  }
+  ok(sequencias.size > 1, '🧨 as alternativas das questões próprias voltaram a aparecer sempre na mesma ordem (gabarito ABCDABCD à vista)');
+  ok(certoSempreCerto, '🧨 ao embaralhar, a alternativa correta deixou de ser a correta');
+  ok(JSON.stringify(aula.aulaQ) === JSON.stringify(orig), '🧨 embaralhar alterou o `aulaQ` gravado da aula (devia embaralhar uma cópia)');
+  c2.provasDB = [{ stem: 'do banco', options: { A: 'x', B: 'y', C: 'z', D: 'w' }, answer: 'C', area: 'Diabetes', explanation: 'a alternativa C' }];
+  let bancoIntacto = true;
+  for (let r = 0; r < 20; r++) { c2.renderAulaQuest({ modulo: 'Diabetes' }); const v = vm.runInContext('aulaQ', c2)[0]; if (!v || v.answer !== 'C' || v.options.C !== 'z') bancoIntacto = false; }
+  ok(bancoIntacto, '🧨 questão emprestada do banco passou a ser embaralhada — o comentário de prova oficial cita a letra');
+}
+
 // ── 3. As duas telas dizem de onde vieram ────────────────────────────────
 {
   const aluno = corpo('renderAulaQuestBody');
