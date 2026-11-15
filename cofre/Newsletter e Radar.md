@@ -1,9 +1,35 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-11-10
+atualizado: 2026-11-15
 ---
 
 # Newsletter e Radar
+
+## 🧨 RESUMO DA IA CORTADO VIRAVA CARD GENÉRICO NO MURAL (2026-11-15)
+
+Professor, com print do card do REDEFINE 9 (CagriSema) no Mural de artigos: *"Ficou muito generico esse
+post aqui do mural"*. O card dizia só "Artigo recente sobre diabetes, tecnologia e controle metabólico,
+publicado em ... e selecionado pelo radar Endodirect...".
+
+- **Causa:** a troca para o Sonnet 5.5 (09/11). O mesmo JSON do resumo (`summarizeWithAI`) passou a sair
+  com mais tokens e, em parte dos artigos, bateu nos **700 de `max_tokens`**: chegava cortado, sem a chave
+  final, o parse falhava, a função devolvia `null` **sem log** e `buildMuralItem` publicava o texto de
+  reserva. De 10/11 a 15/11 foram 25 artigos do PubMed, de 2 a 7 por dia; antes da troca, nenhum desde
+  agosto. Sinal do corte: entre os que passaram, o maior resumo caiu de 1.097 para 898 caracteres.
+- **Por que a bancada de 09/11 não pegou:** o radar foi medido uma vez só (4,2 s, JSON válido). O corte
+  acontece em cerca de 1 a cada 4 artigos, os de abstract mais longo. **Lição: o teto de saída se mede
+  pelo MAIOR caso real, não pela média de uma amostra.**
+- **Correção (PR #1039):** `AI_MAX_TOKENS_ARTIGO = 1600` e `AI_MAX_TOKENS_SOCIEDADE = 1400` no radar,
+  900 na Breaking News (só se paga o que é gerado). Toda saída sem resumo escreve
+  `[radar] resumo da IA falhou (pmid N): <motivo>` no log da Vercel (HTTP, recusa, cortado no
+  max_tokens, JSON inválido, tempo esgotado). Com a chave configurada, **artigo sem resumo não vai ao
+  mural**: fica de fora da rodada e, como não é gravado, a busca seguinte o acha de novo. O texto de
+  reserva só sobra para quem roda sem chave. Teste `test-radar-resumo-cortado.js` (ci 17c-undecies-at).
+- **Os 26 cards genéricos já gravados** (25 de 10–15/11 e 1 de 20/08) foram refeitos a partir dos
+  abstracts do PubMed, no formato do radar, com subespecialidade e tipo corrigidos (o texto de reserva
+  herdava o balde da busca: aldosteronismo primário estava em "Obesidade", ferroptose no DMG em
+  "Lípides"). Backup `main-antes-mural-resumos-refeitos-2026-11-15`; troca guardada por `sourceId` e
+  pela presença do texto genérico; só os 26 mudaram. Marca `resumoRefeito: '2026-11-15'`.
 
 ## 🧨 BREAKING NEWS DE 2024 COMO NOTÍCIA DO DIA: A DATA DO FEED NÃO É A DO EVENTO (2026-11-10)
 
