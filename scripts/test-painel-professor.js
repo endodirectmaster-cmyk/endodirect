@@ -50,7 +50,7 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
 
   // ---- filtro de área em CAIXA acima da lista (11/11/2026: era fileira de abas) ----
   ok('caixa de área com "Todas" e uma opção por área, com contagem',
-     /filtroCaixaHTML\('Área',\s*'calcarea',\s*\[\{v:'',t:'Todas as áreas \('\+CALCS\.length\+'\)'\}\]\.concat\(ix\.areas\.map\(function\(a\)\{return \{v:a,t:a\+' \('\+ix\.porArea\[a\]\.length\+'\)'\};\}\)\)/.test(semComentarios));
+     /filtroCaixaHTML\('Área',\s*'calcarea',\s*\[\{v:'',t:'Todas as áreas \('\+CALCS\.filter\(calcVisivel\)\.length\+'\)'\}\]\.concat\(ix\.areas\.map\(function\(a\)\{return \{v:a,t:a\+' \('\+ix\.porArea\[a\]\.length\+'\)'\};\}\)\)/.test(semComentarios));
   ok('escolher a área filtra e redesenha', /if\(k==='calcarea'\)\{calcAreaFiltro=v;renderCalcGrid\(\);\}/.test(semComentarios));
   ok('nenhuma aba de área sobrou', !/data-calcarea/.test(semComentarios));
   // ⚠️ Trocar de aba NÃO pode fechar a calculadora aberta: apagaria o resultado
@@ -143,7 +143,7 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
 
   const esperado = {
     riscocv: 'Lípides', prevent: 'Lípides', prevent30: 'Lípides', ldl: 'Lípides',
-    imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade', cliques: 'Obesidade',
+    imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade', cliques: 'Obesidade', reganhoglp1: 'Obesidade',
     bsa: 'Endocrinologia Pediátrica', alvo: 'Endocrinologia Pediátrica', zha: 'Endocrinologia Pediátrica',
     velcresc: 'Endocrinologia Pediátrica', idcorr: 'Endocrinologia Pediátrica',
     ckdepi: 'Diabetes', drc: 'Diabetes', homa: 'Diabetes',
@@ -156,7 +156,9 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   });
   // 24 desde 24/10/2026: entrou "Risco CV e metas — SBC 2025" (riscocv), em Lípides.
   // 25 desde 02/11/2026: entrou "Semaglutida: dose em cliques" (cliques), em Obesidade.
-  ok('as 25 calculadoras estão mapeadas', Object.keys(areaDe).length === 25, String(Object.keys(areaDe).length));
+  // 26 desde 15/11/2026: entrou o piloto "Reganho de peso após semaglutida ou tirzepatida
+  // (Mayo Clinic)" (reganhoglp1), em Obesidade, visível só para professores.
+  ok('as 26 calculadoras estão mapeadas', Object.keys(areaDe).length === 26, String(Object.keys(areaDe).length));
   ['Risco cardiovascular', 'Antropometria', 'Lipidologia', 'Função renal', 'Fígado (MASLD)', 'Crescimento'].forEach(function (velha) {
     ok('nenhuma calculadora ficou em "' + velha + '"',
        Object.keys(areaDe).every(function (id) { return areaDe[id] !== velha; }));

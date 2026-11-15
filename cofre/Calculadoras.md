@@ -1,9 +1,33 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-11-02
+atualizado: 2026-11-15
 ---
 
 # Calculadoras
+
+## 🧪 REGANHO DE PESO APÓS SEMAGLUTIDA OU TIRZEPATIDA (MAYO CLINIC): PILOTO SÓ PARA PROFESSORES (2026-11-15)
+
+Professor, com prints de glp1regainrisk.com: *"Da pra introduzir na plataforma?"* e, depois da resposta,
+*"Vamos fazer uma versão piloto dessa calculadora, apenas para os professores"*.
+
+- **O que é:** modelo da Mayo Clinic (Romanos M et al., apresentação oral no ObesityWeek em 15/11/2026,
+  artigo em revisão). Prevê o tempo até recuperar ≥ 50% do peso perdido depois de suspender (TR50), em
+  quartis de risco, com 6 variáveis (perda no tratamento, duração, idade, sexo, IMC inicial, diabetes) e o
+  peso aos 3 meses como refinamento opcional. Coorte de 21.882 (semaglutida) e 14.513 (tirzepatida);
+  índice C de 0,77 e 0,82.
+- **Por que é cartão externo, e não cálculo nosso:** o modelo não foi publicado, então não há equação para
+  reproduzir, e tirá-la do código do site seria usar trabalho inédito sem autorização. Fica como o FRAX:
+  explicação em português (o que prevê, guia dos campos em inglês, como ler, de onde vem, limites) e o
+  botão para o site dos autores. **Quando o artigo sair com o modelo**, a versão própria entra no lugar.
+- **Só professores:** `soProfessor:true` na entrada (`reganhoglp1`, Obesidade) e `calcVisivel(c)`, que
+  lê `isAdminUser()` na hora. Passa por ela o índice por área, a contagem "Todas as áreas" e o
+  `openCalc`, então o aluno não vê o cartão nem o abre por id. Marca "Piloto · só professores" no cartão
+  e no detalhe; o rodapé diz "Ferramenta dos autores" (`rotuloExt`), não "Ferramenta oficial".
+- **App do iPhone:** o revisor da Apple não é professor, então o piloto não aparece na revisão em curso.
+- Conferido no Chromium (390 × 844): aluno com 5 cartões em Obesidade e 25 no total, `openCalc` vazio;
+  professor com 6 e 26, link `https://glp1regainrisk.com/` em nova aba. Teste
+  `test-calc-reganho-glp1.js` (ci 17c-undecies-au); `test-calc-grade.js` e `test-painel-professor.js`
+  atualizados (26 calculadoras, contagem filtrada, rótulo externo configurável). sw v400.
 
 ## 💉 SEMAGLUTIDA: DOSE EM CLIQUES (2026-11-02)
 
