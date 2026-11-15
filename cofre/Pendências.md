@@ -1,23 +1,15 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-14
+atualizado: 2026-11-15
 ---
 
 # Pendências
 
-## 🃏 Flashcards: achados da revisão de 14/11 (os 400 novos já gravados; nada disto foi mexido)
-Ao comparar os novos com os antigos, os revisores acharam pontos a decidir. Card antigo: só se troca o verso (regra do professor).
-- [ ] **Cards antigos que divergem da diretriz vigente:**
-  - Masculina, "Contraindicações à reposição de testosterona?": Ht > 54%; o posicionamento SBEM-SBU-ABEMSS 2026 põe Ht basal > 48% como contraindicação relativa.
-  - Masculina, "Como monitorar a reposição": 6 a 12 meses × anual depois do 1º ano.
-  - Transgeneridade, "bloqueio puberal a partir de Tanner 2": a Resolução CFM 2.427/2025 veda o bloqueio puberal por disforia.
-  - Transgeneridade, cards com "≥ 40/> 40 anos" para preferir o estrogênio transdérmico; a ES 2017 fala em 45 anos.
-  - Osteometabolismo, Paget, meta de "normalizar a FA": a diretriz de 2019 não recomenda tratar com o objetivo de normalizar a FA.
-  - Osteometabolismo, vitamina D com metas ≥ 20/≥ 30 ng/mL × ES 2024 (não define meta nem dosagem de rotina).
-  - Pediátrica, meta de A1C < 7% no DM1 × ISPAD 2024 (≤ 6,5%).
-  - Pediátrica, bariátrica pela AAP a partir de 13 anos × Resolução CFM 2.429/2025 (16 anos).
-- [ ] **Temas mal marcados:** em Lípides, cards de sitosterolemia (SQF) e de disbetalipoproteinemia estão em "Alfalipoproteinemias"; os 49 cards antigos de Obesidade estão sem `tema` (entram só no filtro "todos").
-- [ ] **Divergências entre capítulos (texto dos Resumos, não dos flashcards):** dieta da SQF diz 10–15% (o certo é ≤ 10%, 15–20 g/dia); HAC não clássica com corte de 17-OHP de 1.500 num capítulo e 1.000 em outro; Rastreamento do DM1 ainda diz FDA ≥ 8 anos; herdabilidade da Lp(a) 80–90% × > 90%; reavaliação da acromegalia 6–12 × 12 semanas; momento da dosagem da testosterona na mulher; capítulo de Paget; gestação após bariátrica 18 × 12–24 meses.
+## 🃏 Flashcards: achados da revisão de 14/11 — CORRIGIDOS em 15/11
+Professor (15/11): *"Corrigir tudo, menos a da testosterona > 54%"*. Feito; ver [[Decisões]] 2026-11-15.
+- [x] Versos de 8 cards antigos, temas de 51 cards e 30 trechos de 10 capítulos.
+- **Fica como está, por decisão do professor:** Masculina, "Contraindicações à reposição de testosterona?" (hematócrito > 54%).
+- [ ] **Outras divergências menores que os revisores apontaram (não pedidas; oferecer quando couber):** orlistate a partir dos 12 anos (Anvisa) × off-label abaixo de 18 (ABESO/SBP 2026); hipoglicemia pós-bariátrica de 3 meses a 1 ano × 1 a 3 anos (SfE 2024); pancreatite por hipertrigliceridemia: insulina/plasmaférese como 1ª linha × não (ES 2020); microdeleção do Y com < 5 milhões/mL × ≤ 1 milhão (AUA/ASRM 2020); dose inicial de GH no adulto por sexo × por idade (ES 2016/AACE 2019); feocromocitoma, catecolaminas na urina 2× × 3× o limite (JES 2025, contradição interna); fonte mais comum de ACTH ectópico (pequenas células × carcinoide brônquico); alvo do T4 livre no hipotireoidismo central (terço × metade superior); bolus de salina 3% na hiponatremia grave (100 mL × 150 mL); Paget, frequências do capítulo-síntese (pelve 92%, FA normal em até 20%) a conferir; meta de HbA1c < 7% no capítulo "Diabetes na Criança e no Adolescente" (ADA) × ≤ 6,5% com tecnologia (ISPAD 2024).
 
 ## 📚 Banco: questões de diretrizes desatualizadas (pedido de 12/11; FASE 1 ENTREGUE em 13/11, aguarda o "pode")
 
@@ -40,7 +32,7 @@ Pedido do professor: *"no banco de questões, algumas questões estão desatuali
 - [x] **DROP da função temporária `endodirect_tmp_qotd_novidades`: feito em 14/11** (professor: "Pode mandar pra mim", no computador); conferido em `pg_proc`: nenhuma `endodirect_tmp_*`.
 - [ ] **Item 82 (alça fechada em menores de 7 anos, JCEM 2026):** conferir a errata (PMID 42090273) num navegador antes de a questão sair; o site da revista não abre daqui (Cloudflare). A resposta não depende dela (ICs sem sobreposição).
 - [x] **Esquema `diabetes--rastreamento-do-diabetes-mellitus-tipo-1.svg`: corrigido em 14/11** (professor: "pode"): a caixa do teplizumabe traz "Anvisa 2026 (Tzield): ≥ 8 anos" e "FDA (abr/2026): ≥ 1 ano"; a seta diz só "estágio 2".
-- [ ] **Texto dos capítulos** "Rastreamento do diabetes mellitus tipo 1" (diretrizes[2]) e "Diabetes Tipo 1 e LADA" (diretrizes[128]) ainda dizem "aprovado pelo FDA desde novembro de 2022 ... ≥ 8 anos". Oferecido ao professor em 14/11: acrescentar a ampliação do FDA para ≥ 1 ano (PETITE-T1D, abr/2026).
+- [x] **Texto dos capítulos** "Rastreamento do diabetes mellitus tipo 1" (diretrizes[2]) e "Diabetes Tipo 1 e LADA" (diretrizes[128]): **feito em 15/11** (professor: "Corrigir tudo"), com o FDA a partir de 1 ano desde abril de 2026 e a Anvisa a partir dos 8 anos.
 
 ## 🧩 Comentários do banco: listas à espera do professor (12/11)
 - [x] **Função temporária `endodirect_tmp_comentarios` removida** (12/11, professor: "Pode remover"); conferido em
