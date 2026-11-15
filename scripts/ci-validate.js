@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-at. MURAL: RESUMO DO RADAR CORTADO VIRAVA CARD GENÉRICO (15/11/2026). Print do
+//      professor (REDEFINE 9): "Ficou muito genérico esse post aqui do mural". Com o Sonnet 5.5 o
+//      JSON passava dos 700 tokens e chegava cortado; o radar publicava o texto de reserva.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-radar-resumo-cortado.js')], { stdio: 'pipe' });
+  ok('radar: resumo cortado/recusado não vira card genérico (tenta na rodada seguinte), folga de saída e motivo no log');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do resumo cortado do radar falhou:\n' + out);
+}
+
 // 17c-undecies-as. IPHONE: ZOOM PRESO DEPOIS DO LOGIN (14/11/2026). Print do professor no app de
 //      testes: tela ampliada e cortada logo após entrar; fechar e abrir normalizava. Login a 16 px
 //      e zoom desfeito ao sair do campo e ao entrar no app, sem travar a pinça das figuras.
