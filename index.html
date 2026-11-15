@@ -323,6 +323,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .calc-card-ft{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding-top:.45rem}
 .calc-unit{font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.12rem .5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72%}
 .calc-unit.calc-ext{color:var(--blue2)}
+.calc-piloto{align-self:flex-start;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold,#b7791f);border:1px solid currentColor;border-radius:999px;padding:.08rem .45rem;line-height:1.4}
 .calc-go{font-size:.68rem;font-weight:700;color:var(--blue2);opacity:.7;white-space:nowrap}
 .calc-card:hover .calc-go,.calc-card:focus-visible .calc-go{opacity:1}
 /* Busca por nome, ao lado das abas de área. */
@@ -5718,6 +5719,23 @@ var CALCS=[
    desc:'Converte a dose de semaglutida em cliques da caneta (Wegovy®, Ozempic®, Poviztra®, Extensior®) e vice-versa',
    render:function(root){cliqRender(root);},
    note:'Concentrações e volumes: bula brasileira do Wegovy® (2026: 0,68 mg/mL em 1,5 mL; 1,34 mg/mL em 1,5 e 3 mL; 2,27 e 3,2 mg/mL em 3 mL; 4 doses por caneta) e RCM do Ozempic® (1,34 mg/mL). A dose marcada fica em 37 cliques nas canetas de 1,5 mL e em 74 nas de 3 mL (o mesmo mecanismo nas de 1; 1,7 e 2,4 mg, com a dose em ~0,75 mL), como nas tabelas da prática clínica; o seletor para na dose da caneta. Estimativa sem validação do fabricante. A Ozempic® 2 mg (2,68 mg/mL) não entrou por não constar como apresentação brasileira.'},
+  // 🧪 PILOTO SÓ PARA PROFESSORES (15/11/2026). Professor, com prints de glp1regainrisk.com:
+  // "Da pra introduzir na plataforma?" e, depois, "Vamos fazer uma versão piloto dessa
+  // calculadora, apenas para os professores". O modelo da Mayo Clinic (Romanos M et al.,
+  // apresentado no ObesityWeek em 15/11/2026, artigo em revisão) NÃO foi publicado: sem as
+  // equações não há como reproduzir o cálculo, e tirá-las do site deles seria usar trabalho
+  // inédito sem autorização. Por isso é cartão externo, como o FRAX: explicação em português
+  // e o link. `soProfessor` esconde o cartão de quem não é admin (ver `calcVisivel`). Quando
+  // o artigo sair com o modelo, a versão própria entra no lugar.
+  {id:'reganhoglp1',name:'Reganho de peso após semaglutida ou tirzepatida (Mayo Clinic)',area:'Obesidade',soProfessor:true,
+   desc:'Tempo até recuperar metade do peso perdido depois de suspender semaglutida ou tirzepatida (TR50) e faixa de risco; ferramenta dos autores, piloto para professores',
+   external:true,rotuloExt:'Ferramenta dos autores',link:'https://glp1regainrisk.com',cta:'Abrir a calculadora da Mayo Clinic',
+   desc2:'<b>O que prevê:</b> o tempo, contado do dia em que a semaglutida ou a tirzepatida foi suspensa, até a pessoa recuperar metade ou mais do peso perdido no tratamento (TR<sub>50</sub>, a partir do menor peso atingido), e a faixa de risco: baixo, intermediário-baixo, intermediário-alto ou alto (quartis da coorte de desenvolvimento).<br><br>'
+     +'<b>Como preencher (o site é em inglês):</b> <i>Medication taken</i> = medicação usada; <i>Weight at start</i> e <i>Height at start</i> = peso e altura no início do tratamento (o site calcula o IMC); <i>Age</i> = idade; <i>Sex</i> = sexo; <i>Diabetes</i> = No (não) ou Yes (sim); <i>Treatment duration</i> = meses de uso; <i>Current weight</i> = peso atual; <i>Weight at 3 months</i> = peso aos 3 meses de tratamento, opcional, que refina a estimativa pelo ritmo inicial da perda.<br><br>'
+     +'<b>Como ler:</b> o tempo é o típico de pacientes com características parecidas, arredondado em meses. Quanto menor, mais cedo o reganho; quanto maior, mais tempo a perda tende a se manter. O site mostra também o peso e o IMC que corresponderiam a recuperar metade do que foi perdido.<br><br>'
+     +'<b>De onde vem:</b> coorte da Mayo Clinic com 21.882 adultos que suspenderam a semaglutida e 14.513 que suspenderam a tirzepatida. Seis variáveis: perda de peso no tratamento, duração, idade, sexo, IMC inicial e diabetes. Índice C de 0,77 (semaglutida) e 0,82 (tirzepatida); TR<sub>50</sub> mediano de 6 meses nas duas; o modelo da semaglutida manteve a ordem de risco numa coorte externa.<br><br>'
+     +'<b>Limites:</b> os autores restringem o uso a pesquisa, e não a decisão clínica; população americana, sem validação em brasileiros; só semaglutida e tirzepatida; artigo ainda em revisão (Romanos M et al., apresentação oral no ObesityWeek, 15/11/2026).',
+   note:'Piloto visível só para professores. Não reproduzimos o cálculo aqui: o modelo ainda não foi publicado. O botão abre a ferramenta dos autores (glp1regainrisk.com), em inglês.'},
   {id:'trp',name:'Reabsorção tubular de fósforo (TRP)',area:'Osteometabolismo',desc:'Fração de reabsorção tubular de fosfato',
    fields:[{id:'trp_sp',label:'Fósforo sérico (mg/dL)',type:'num'},{id:'trp_up',label:'Fósforo urinário (mg/dL)',type:'num'},{id:'trp_scr',label:'Creatinina sérica (mg/dL)',type:'num'},{id:'trp_ucr',label:'Creatinina urinária (mg/dL)',type:'num'}],
    calc:function(v){var sp=parseFloat(v.trp_sp)||0,up=parseFloat(v.trp_up)||0,scr=parseFloat(v.trp_scr)||0,ucr=parseFloat(v.trp_ucr)||0;if(sp<=0||ucr<=0)return 0;return (1-((up*scr)/(sp*ucr)))*100;},
@@ -14315,9 +14333,14 @@ function initCalc(root){
 // Índice por ÁREA. A ordem das áreas segue a PRIMEIRA aparição em CALCS, não
 // alfabética: a ordem do array já expressa prioridade (risco CV e antropometria
 // primeiro), e ordenar por nome jogaria "Adrenal" para o topo sem motivo.
+// Cartão de PILOTO (`soProfessor`, 15/11/2026): só o professor (role admin) vê. Toda tela
+// que lista ou abre calculadora passa por aqui — índice, contagem e `openCalc` —, então o
+// aluno não vê o cartão nem o abre por id. O `currentUser` é lido na hora, não na carga:
+// o índice é montado depois do login.
+function calcVisivel(c){return !!c&&(!c.soProfessor||(typeof isAdminUser==='function'&&isAdminUser()));}
 function calcAreasIndex(){
   var areas=[],porArea={};
-  CALCS.forEach(function(c){
+  CALCS.filter(calcVisivel).forEach(function(c){
     var a=c.area||'Outras';
     if(!porArea[a]){porArea[a]=[];areas.push(a);}
     porArea[a].push(c);
@@ -14355,10 +14378,11 @@ function calcAplicarBusca(el){
 // esses subtítulos de cada calculadora"): o cartão fica com nome, unidade e
 // "Abrir". A descrição continua no texto de busca ("fibrose" ainda acha o FIB-4).
 function calcCardHTML(c,meta){
-  var rodape=c.external?'<span class="calc-unit calc-ext">Ferramenta oficial ↗</span>'
+  var rodape=c.external?'<span class="calc-unit calc-ext">'+esc(c.rotuloExt||'Ferramenta oficial')+' ↗</span>'
     :(c.unit?'<span class="calc-unit" title="Resultado em '+esc(c.unit)+'">'+esc(c.unit)+'</span>':'<span></span>');
   return '<div class="card calc-card'+meta.card+'" data-calc="'+c.id+'" role="button" tabindex="0" data-busca="'+esc(calcNormaliza(c.name+' '+c.desc+' '+(c.area||'')))+'">'
     +'<div class="calc-card-nm">'+esc(c.name)+'</div>'
+    +(c.soProfessor?'<span class="calc-piloto">Piloto · só professores</span>':'')
     +'<div class="calc-card-ft">'+rodape+'<span class="calc-go">Abrir →</span></div></div>';
 }
 function renderCalcGrid(){
@@ -14369,7 +14393,7 @@ function renderCalcGrid(){
   // Filtro de área em caixa de seleção (pedido do professor, 11/11/2026).
   var pills=filtroCaixaHTML('Área',
     'calcarea',
-    [{v:'',t:'Todas as áreas ('+CALCS.length+')'}].concat(ix.areas.map(function(a){return {v:a,t:a+' ('+ix.porArea[a].length+')'};})),
+    [{v:'',t:'Todas as áreas ('+CALCS.filter(calcVisivel).length+')'}].concat(ix.areas.map(function(a){return {v:a,t:a+' ('+ix.porArea[a].length+')'};})),
     calcAreaFiltro);
   var grupos=visiveis.map(function(a){
     // ⚠️ A COR VEM DE `muralSubMeta`, a MESMA do Mural. Agora que as áreas são as
@@ -14416,7 +14440,7 @@ function closeCalc(){
 }
 function openCalc(id){
   activeCalc=id;
-  var c=CALCS.find(function(x){return x.id===id;});if(!c)return;
+  var c=CALCS.find(function(x){return x.id===id&&calcVisivel(x);});if(!c)return;
   var det=calcEl('#calc-detail');if(!det)return;
   var grid=calcEl('#calc-grid');if(grid)grid.style.display='none';
   // Fora do cartão e à esquerda: é navegação de tela, não ação do cartão. Dentro
@@ -14424,6 +14448,7 @@ function openCalc(id){
   var closeBtn='<button class="btn btn-outline btn-sm" id="calc-close" style="margin:.2rem 0 .7rem" title="Voltar para a lista">← Voltar</button>';
   if(c.external){
     det.innerHTML=closeBtn+'<div class="card"><div class="card-head"><span style="font-size:.92rem;font-weight:700">'+esc(c.name)+'</span><span class="tag tag-blue">'+esc(c.area)+'</span></div>'
+      +(c.soProfessor?'<div class="calc-piloto" style="margin-top:.45rem">Piloto · visível só para professores</div>':'')
       +(c.desc2?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin:.5rem 0 .8rem">'+c.desc2+'</div>':'')
       +'<a class="btn btn-primary" href="'+esc(c.link)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
       +(c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')

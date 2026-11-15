@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-au. CALCULADORA DE REGANHO PÓS-GLP-1 (MAYO CLINIC), PILOTO SÓ PARA PROFESSORES
+//      (15/11/2026). Professor: "Vamos fazer uma versão piloto dessa calculadora, apenas para os
+//      professores". Cartão externo (modelo ainda não publicado), escondido de quem não é admin.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-calc-reganho-glp1.js')], { stdio: 'pipe' });
+  ok('calculadora de reganho pós-GLP-1: piloto só para professores, externa, com texto em português e limites');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da calculadora de reganho pós-GLP-1 falhou:\n' + out);
+}
+
 // 17c-undecies-at. MURAL: RESUMO DO RADAR CORTADO VIRAVA CARD GENÉRICO (15/11/2026). Print do
 //      professor (REDEFINE 9): "Ficou muito genérico esse post aqui do mural". Com o Sonnet 5.5 o
 //      JSON passava dos 700 tokens e chegava cortado; o radar publicava o texto de reserva.

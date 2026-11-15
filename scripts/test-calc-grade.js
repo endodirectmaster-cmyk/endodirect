@@ -40,7 +40,9 @@ ok(/class="card calc-card'\+meta\.card\+'" data-calc="'\+c\.id\+'" role="button"
 ok(/class="calc-card-nm">'\+esc\(c\.name\)/.test(card), '(2) o nome não está no cartão');
 ok(!/calc-card-ds/.test(card) && !/esc\(c\.desc\)\+'<\/div>/.test(card), '(2) a descrição voltou ao cartão: o professor pediu para tirar os subtítulos (31/10/2026)');
 ok(!/\.calc-card-ds\{/.test(SRC), '(2) o CSS da descrição do cartão voltou sem uso');
-ok(/c\.external\?'<span class="calc-unit calc-ext">Ferramenta oficial ↗<\/span>'/.test(card), '(2) a ferramenta externa não é marcada');
+// 15/11/2026: o rótulo aceita `rotuloExt` (o piloto da Mayo Clinic é "Ferramenta dos autores"),
+// e "Ferramenta oficial" segue como padrão (FRAX).
+ok(/c\.external\?'<span class="calc-unit calc-ext">'\+esc\(c\.rotuloExt\|\|'Ferramenta oficial'\)\+' ↗<\/span>'/.test(card), '(2) a ferramenta externa não é marcada');
 ok(/c\.unit\?'<span class="calc-unit" title="Resultado em '\+esc\(c\.unit\)\+'">'\+esc\(c\.unit\)\+'<\/span>'/.test(card), '(2) a unidade do resultado não aparece no cartão');
 ok(/<span class="calc-go">Abrir →<\/span>/.test(card), '(2) o convite "Abrir" sumiu');
 ok(/data-busca="'\+esc\(calcNormaliza\(c\.name\+' '\+c\.desc\+' '\+\(c\.area\|\|''\)\)\)\+'"/.test(card), '(2) o texto de busca do cartão não cobre nome, descrição e área');
