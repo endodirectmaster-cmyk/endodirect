@@ -131,7 +131,11 @@ Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em par
 - PR #1059 juntado em 16/11 (main f6238f3); produção com sw v411 conferida antes de realinhar a branch; rotina
   App iOS 11 (testflight) disparada no main: **1.2 (11) assinada e enviada ao TestFlight às 11:41** (rodada
   43886916853, sucesso).
-- [ ] Teste do professor no TestFlight (Face ID, link de e-mail abrindo o app, Google) → enviar depois
+- Teste do professor no TestFlight (16/11, 12:05–12:09): convite do Face ID apareceu na 1ª abertura; "Sair" mostrou
+  "Entrar com Face ID" com o e-mail mascarado; **entrou com o rosto**. Achado: o cartão do Face ID só existia no
+  Perfil do aluno, não no **Perfil do professor** (admPerfilHTML) → cartão também ali (#adm-perfil-faceid, sw v412;
+  só site, sem build novo).
+- [ ] Falta no TestFlight: desligar no Perfil do professor, Google pela folha da Apple, link do WhatsApp/Notas abrindo o app. (Face ID, link de e-mail abrindo o app, Google) → enviar depois
   que a 1.1 for aprovada.
 
 ## 🔐 Entrar com Face ID no app do iPhone (professor, 16/11: "podemos implementar ... depois")

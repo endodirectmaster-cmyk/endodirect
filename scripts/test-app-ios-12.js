@@ -92,6 +92,12 @@ ok('🧨 conta excluída: Face ID desligado antes do Sair', exc.indexOf("localSt
 const sa = corpo('startApp');
 ok('startApp: convite do Face ID e pedido de avaliação agendados', /faceIdOferecer\(\)/.test(sa) && /appPedirAvaliacao\(\)/.test(sa));
 ok('botão do Face ID ligado na tela de entrada', /id="btn-faceid-login"/.test(html) && /bFace\.addEventListener\('click',faceIdEntrar\)/.test(html));
+// Professor, 16/11, no TestFlight da 1.2: "Não apareceu aqui a opção de desativar o Face ID" — o
+// cartão só existia no Perfil do aluno; o Perfil do professor é outra tela (admPerfilHTML).
+ok('🧨 Perfil do professor tem o lugar do cartão do Face ID', /id="adm-perfil-faceid"/.test(corpo('admPerfilHTML')));
+const bas = corpo('bindAdmSec'), basPerfil = bas.slice(bas.indexOf("if(sec==='perfil'){"));
+ok('🧨 Perfil do professor desenha o cartão ao abrir', basPerfil.startsWith("if(sec==='perfil'){") && /faceIdPerfilRender\(\)/.test(basPerfil.slice(0, basPerfil.indexOf("getElementById('btn-adm-perfil-edit')"))));
+ok('Perfil do aluno continua com o cartão', /id="perfil-faceid"/.test(html) && /faceIdPerfilRender\(\)/.test(corpo('renderPerfil')));
 
 // Comportamento, num ambiente mínimo.
 function ambiente(opts) {
@@ -130,6 +136,26 @@ const sess = (email, minAtras) => ({ user: { email, last_sign_in_at: new Date(Da
   a = ambiente({ ls: { endo_faceid_conta: 'aluno@x.com' }, nativo: false });
   ok('site: nada muda', a.cx.faceIdPrecisa(sess('aluno@x.com', 600)) === false);
 }
+async function cartoesPerfil() {
+  const caixas = {}, desligou = [];
+  const caixa = () => { const b = { style: { display: 'none' }, innerHTML: '', botao: null };
+    b.querySelector = () => (/data-faceid-perfil/.test(b.innerHTML) ? (b.botao = b.botao || { cliques: [], addEventListener: (ev, fn) => b.botao.cliques.push(fn) }) : null); return b; };
+  caixas['perfil-faceid'] = caixa(); caixas['adm-perfil-faceid'] = caixa();
+  const a = ambiente({ user: { email: 'prof@x.com', role: 'admin' }, ls: { endo_faceid_conta: 'prof@x.com' } });
+  a.cx.document = { getElementById: (id) => caixas[id] || null };
+  a.cx.esc = (x) => String(x); a.cx.faceIdNome = 'Face ID';
+  a.cx.faceIdDesligar = () => { desligou.push(1); delete a.ls.endo_faceid_conta; };
+  a.cx.faceIdLigar = () => Promise.resolve();
+  vm.runInContext(['FACEID_CARTOES'].map(() => (html.match(/\nvar FACEID_CARTOES=[^;]+;/) || [''])[0]).join('') + ['faceIdDisponivel', 'faceIdPerfilCaixas', 'faceIdPerfilRender'].map(corpo).join('\n'), a.cx);
+  a.cx.faceIdPerfilRender();
+  await new Promise((r) => setTimeout(r, 10));
+  const prof = caixas['adm-perfil-faceid'], aluno = caixas['perfil-faceid'];
+  ok('🧨 cartão aparece no Perfil do professor, ligado, com "Desligar"', prof.style.display === '' && /Ligado neste iPhone/.test(prof.innerHTML) && />Desligar</.test(prof.innerHTML), prof.innerHTML.slice(0, 80));
+  ok('e também no Perfil do aluno', aluno.style.display === '' && />Desligar</.test(aluno.innerHTML));
+  ok('🧨 "Desligar" no Perfil do professor desliga', !!(prof.botao && prof.botao.cliques[0]) && (prof.botao.cliques[0](), desligou.length === 1));
+  await new Promise((r) => setTimeout(r, 10));
+  ok('depois de desligar, o cartão mostra "Desligado"', /Desligado/.test(prof.innerHTML) && /Ligar Face ID/.test(prof.innerHTML));
+}
 {
   const dias = (n) => Object.fromEntries(Array.from({ length: n }, (_, i) => ['2026-11-' + String(i + 1).padStart(2, '0'), 3]));
   const aluno = { email: 'aluno@x.com', role: 'aluno' };
@@ -148,5 +174,7 @@ const sess = (email, minAtras) => ({ user: { email, last_sign_in_at: new Date(Da
   ok('site: nunca pede', a.cx.appPedirAvaliacao() === false);
 }
 
-if (bad) { console.log('✗ app do iPhone 1.2: ' + bad + ' falha(s)'); process.exit(1); }
-console.log('✓ app do iPhone 1.2: Face ID com porta e "Sair" que trava, links do site no app (sem preços), avaliação sob regras, Google na folha da Apple');
+cartoesPerfil().then(() => {
+  if (bad) { console.log('✗ app do iPhone 1.2: ' + bad + ' falha(s)'); process.exit(1); }
+  console.log('✓ app do iPhone 1.2: Face ID com porta e "Sair" que trava, cartão no Perfil do aluno e do professor, links do site no app (sem preços), avaliação sob regras, Google na folha da Apple');
+}, (e) => { console.log('✗ app do iPhone 1.2: ' + (e && e.stack || e)); process.exit(1); });
