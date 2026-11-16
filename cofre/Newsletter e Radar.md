@@ -5,6 +5,18 @@ atualizado: 2026-11-16
 
 # Newsletter e Radar
 
+## 📄 REDEFINE 9: DISCUSSÃO A PARTIR DO PDF DE ARTIGO FECHADO (2026-11-16)
+O professor mandou o PDF do REDEFINE 9 (Lancet Diabetes & Endocrinology, © Elsevier, todos os direitos reservados),
+o do comentário que o acompanha e dois comunicados da Novo Nordisk, e pediu: "Inserir no mural de artigos".
+- **Artigo fechado também ganha discussão à mão**, como os abertos fora do PMC: o texto entra com redação própria e os
+  números como fato. Nenhuma tabela nem figura reproduzida, só citadas em palavras (`meta.nota_licenca`).
+- **Conferência número a número contra o PDF** antes de gravar. A única figura calculada, e não impressa, era "36%" de
+  interrupção no placebo (37 de 102); trocada pela contagem. Na discussão as RPCs devolvem vazio para quem não tem
+  login (`auth.uid()`): para conferir daqui, simular o usuário com `set_config('request.jwt.claims', …, true)`.
+- **Comunicado de empresa no mural:** tipo Comunicado, `fonte: Novo Nordisk`, em `adm_avisos`, com a cautela de que é
+  comunicação da fabricante e com o que não é revisado por pares; números que só existem no apêndice ficam marcados
+  como não conferidos.
+
 ## 🧨 O MESMO ARTIGO DUAS VEZES NO MURAL: PUBMED DE MANHÃ, RSS DA REVISTA À NOITE (2026-11-16)
 
 O REDEFINE 9 (Lancet Diabetes & Endocrinology) estava duas vezes no mural: `pubmed:43033821` às 10h31 UTC de
