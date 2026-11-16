@@ -5,6 +5,15 @@ atualizado: 2026-11-16
 
 # Convenções de Trabalho
 
+## 🚀 DEPOIS DO MERGE: ESPERAR O DEPLOY DE PRODUÇÃO ANTES DE REALINHAR A BRANCH (2026-11-16)
+
+Em 16/11 (PR #1055) a branch de trabalho foi realinhada ao `main` segundos depois do merge, no mesmo
+commit. A Vercel criou um único deployment para aquele SHA, e ele saiu como **prévia da branch**: o site
+de produção ficou na versão anterior (sw v409 em vez de v410). Regra: depois do merge, esperar o `sw.js`
+de produção mostrar a versão nova (ou o deployment de produção aparecer) e só então dar o
+`checkout -B … origin/main` + `push --force-with-lease`. Se acontecer de novo, um commit novo no `main`
+(PR pequeno) dispara o deploy de produção.
+
 ## 🌐 REDE DO AMBIENTE: FONTES MÉDICAS LIBERADAS (2026-11-13)
 
 **16/11/2026:** liberados também glp1regainrisk.com e www.glp1regainrisk.com (calculadora de reganho da Mayo,
