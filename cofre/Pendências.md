@@ -129,8 +129,9 @@ Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em par
   seguem no Safari embutido.
 - Teste `scripts/test-app-ios-12.js` (ci 17c-undecies-az), 9 mutações pegas. MARKETING_VERSION 1.2. sw v411.
 - PR #1059 juntado em 16/11 (main f6238f3); produção com sw v411 conferida antes de realinhar a branch; rotina
-  App iOS 11 (testflight) disparada no main.
-- [ ] Build 1.2 → TestFlight → teste do professor (Face ID, link de e-mail abrindo o app, Google) → enviar depois
+  App iOS 11 (testflight) disparada no main: **1.2 (11) assinada e enviada ao TestFlight às 11:41** (rodada
+  43886916853, sucesso).
+- [ ] Teste do professor no TestFlight (Face ID, link de e-mail abrindo o app, Google) → enviar depois
   que a 1.1 for aprovada.
 
 ## 🔐 Entrar com Face ID no app do iPhone (professor, 16/11: "podemos implementar ... depois")
