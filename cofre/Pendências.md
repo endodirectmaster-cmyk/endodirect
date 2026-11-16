@@ -116,9 +116,8 @@ assinou; o código do caminho (a) fica parado sem `METRICOOL_USER_TOKEN`. No lug
 nova a cada dia, só age a partir de 18/11): lê a questão do dia no Supabase, confere a arte (hash), confere se já
 há story agendado e agenda pelo conector. Criada sem conectores (o canal não permite anexar); **o professor adicionou
 Metricool e Supabase** pela página claude.ai/code/routines (conferido: só esses dois). Arte: painel gera as **30** próximas (abrir o painel ao menos 1x a cada 30 dias). **Story de teste de 17/11
-às 18h agendado** à mão (post 430499584). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). **Pergunta aberta:**
-subir o rodapé "GABARITO NA PLATAFORMA" para fora da faixa da barra de resposta (mudar o desenho e subir `V` no
-`igArteHash` das duas cópias E no texto da tarefa).
+às 18h agendado** à mão (post 430499584). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). Rodapé e cabeçalho fora das faixas do
+Instagram: FEITO (V=2); **o professor precisa abrir a Fila de novo** para as 30 artes serem refeitas antes de 18/11 8h17.
 
 ## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
 

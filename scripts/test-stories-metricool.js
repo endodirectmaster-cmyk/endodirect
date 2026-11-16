@@ -248,6 +248,47 @@ console.error = () => {};
     ok('situação: incerto pede conferência no planejador', /não confirmou/.test(t3));
   }
 
+  // 6. Desenho fora das faixas que o Instagram cobre (professor: "Pode sim. Da forma que ficar melhor").
+  {
+    const cx = { Math, String, Object, esc: (x) => String(x), document: {} };
+    vm.createContext(cx);
+    const ini = html.indexOf('\nvar IG_W=');
+    vm.runInContext(html.slice(ini, html.indexOf('\n', ini + 1)), cx);
+    // funções de uma linha só (o igXml tem um /"/ que confunde a leitura por chaves)
+    const linha = (nome) => { const i = html.indexOf('\nfunction ' + nome + '('); return html.slice(i + 1, html.indexOf('\n', i + 1)); };
+    vm.runInContext([linha('igXml'), 'function igMeasure(t,f){var n=+(/(\\d+)px/.exec(f)||[0,40])[1];return String(t).length*n*0.46;}', corpo('igWrap'), linha('igTspans'), linha('igTspansJ'), linha('igDoc'),
+      html.slice(html.indexOf('\nvar IG_SEGURO_TOPO='), html.indexOf('\nfunction igAnswerSVG('))].join('\n'), cx);
+    const SEG_T = vm.runInContext('IG_SEGURO_TOPO', cx), SEG_B = vm.runInContext('IG_SEGURO_BASE', cx), MIN = vm.runInContext('IG_TOPO_MIN', cx), IGH = vm.runInContext('IG_H', cx);
+    ok('faixas: alto ≥ 200 px e baixo ≥ 250 px livres (de 1920)', SEG_T >= 200 && IGH - SEG_B >= 250, SEG_T + ' / ' + (IGH - SEG_B));
+    const pal = (n) => Array.from({ length: n }, (_, i) => 'palavra' + (i % 7)).join(' ');
+    const casos = {
+      curta: { stem: pal(12), options: { A: 'a', B: 'b', C: 'c', D: 'd' } },
+      media: { stem: pal(70), options: { A: pal(8), B: pal(8), C: pal(8), D: pal(8) } },
+      // as mais longas da fila têm ~800 caracteres de enunciado e ~70 por alternativa
+      longa: { stem: pal(85), options: { A: pal(7), B: pal(7), C: pal(7), D: pal(7) } },
+      longaImg: { stem: pal(85), img: 'data:image/png;base64,AAAA', options: { A: pal(7), B: pal(7), C: pal(7), D: pal(7) } },
+      enorme: { stem: pal(120), img: 'data:image/png;base64,AAAA', options: { A: pal(10), B: pal(10), C: pal(10), D: pal(10) } }, // 1,5× a mais longa
+    };
+    const fontes = {};
+    for (const [nome, it] of Object.entries(casos)) {
+      const svg = cx.igQuestionSVG(it);
+      const ys = [...svg.matchAll(/ y="(\d+)"/g)].map((m) => +m[1]);
+      const logoY = +(/data-logo-y="(\d+)"/.exec(svg) || [0, -1])[1];
+      const rod = +(/y="(\d+)"[^>]*>Acesse www\.endodirect\.com\.br/.exec(svg) || [0, 99999])[1];
+      fontes[nome] = +(/font-size="(\d+)" font-weight="500"/.exec(svg) || [0, 0])[1];
+      ok('🧨 ' + nome + ': o pé ("Acesse www.endodirect.com.br") fica acima da barra de mensagem', rod <= SEG_B, 'pé em ' + rod);
+      ok('🧨 ' + nome + ': nada desenhado abaixo da faixa livre', Math.max(...ys) <= SEG_B, 'máx ' + Math.max(...ys));
+      ok(nome + ': o logo vem com a posição para o canvas', logoY >= MIN && /data-logo-x="\d+"/.test(svg));
+      if (nome !== 'enorme') ok('🧨 ' + nome + ': logo e título abaixo da faixa do perfil', logoY >= SEG_T, 'logo em ' + logoY);
+    }
+    ok('questão curta mantém a letra grande (44) e fica centralizada', fontes.curta === 44);
+    // (medida simulada: no navegador, a questão real mais longa da fila saiu com 36–38 px; com imagem, 32 px)
+    ok('🧨 questão longa: a letra diminui para caber, sem ficar miúda', fontes.media < 44 && fontes.longa < fontes.media && fontes.longa >= 28 && fontes.longaImg <= fontes.longa && fontes.longaImg >= 28 && fontes.enorme >= 22, JSON.stringify(fontes));
+    const rc = corpo('igRenderCanvas');
+    ok('🧨 o canvas desenha o logo onde a arte manda (data-logo-x/y), não fixo no alto', /data-logo-y=/.test(rc) && /data-logo-x=/.test(rc) && /ctx\.drawImage\(lg,lx,ly,68,68\)/.test(rc));
+    ok('🧨 mudou o desenho: versão da arte subiu (V=2) para refazer as guardadas', /var V='2';/.test(corpo('igArteHash')));
+  }
+
   if (bad) { console.log('✗ stories no Metricool: ' + bad + ' falha(s)'); process.exit(1); }
   console.log('✓ stories no Metricool: arte das próximas 30 da fila no bucket (hash igual nos dois lados); o robô agenda às 18h o story da questão do dia, uma vez, só com arte certa e com a chave; painel preserva a marca e mostra a situação');
 })().catch((e) => { console.log('✗ erro no teste:', e && e.stack || e); process.exit(1); });
