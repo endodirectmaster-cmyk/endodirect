@@ -7,7 +7,7 @@
    - /api/*: NUNCA cacheado (sempre rede).
    - Cross-origin (Supabase, jsDelivr, Vimeo, etc.): passa direto, sem interceptar.
    - Estáticos do próprio domínio: stale-while-revalidate. */
-var CACHE = 'endodirect-v421';
+var CACHE = 'endodirect-v422';
 var ASSETS = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',

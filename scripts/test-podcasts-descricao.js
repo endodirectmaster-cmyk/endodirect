@@ -73,7 +73,7 @@ ok('descrição nova (com quebras) é respeitada como veio', ctx.podDescParagraf
 const h = ctx.podDescHTML(antigo107);
 ok('cada parágrafo num <p>, "Referências:" como título', /^<div class="pod-desc"><p>Neste FD/.test(h) && /<p class="pod-desc-ref">Referencias:<\/p>/.test(h), h.slice(0, 160));
 ok('texto escapado (sem HTML do feed na tela)', ctx.podDescHTML('<b>x</b>').indexOf('<b>') < 0);
-ok('🧨 a lista de podcasts usa podDescHTML, fora da linha da data', /'<\/div>'\+podDescHTML\(p\.desc\)\+podcastPlayerHTML\(p\)/.test(corpo('renderPodcasts')) && !/\+esc\(p\.desc\|\|''\)\+'<\/div>'/.test(corpo('renderPodcasts')));
+ok('🧨 a lista de podcasts do aluno usa a descrição formatada, fora da linha da data', /'<\/div>'\+podDescCompletoHTML\(p\.desc\)\+podcastPlayerHTML\(p\)/.test(corpo('renderPodcasts')) && !/\+esc\(p\.desc\|\|''\)\+'<\/div>'/.test(corpo('renderPodcasts')));
 ok('🧨 justificado (com hifenização), parágrafos separados', /\.pod-desc\{[^}]*text-align:justify[^}]*hyphens:auto/.test(html) && /\.pod-desc p\{margin:0 0 \.4rem\}/.test(html));
 
 // ── 4. Cartão do PAINEL DO PROFESSOR (16/11/2026; print do FD 109: "melhorar a formatação aqui no
@@ -97,8 +97,16 @@ ok('🧨 justificado (com hifenização), parágrafos separados', /\.pod-desc\{[
   r = cx.podDescPartes('Só um texto sobre referências cruzadas.');
   ok('sem cabeçalho de referências: tudo é texto', r.refs.length === 0 && r.texto.length === 1);
   const card = html.slice(html.indexOf("+'<div id=\"adm-pod-list\">'"), html.indexOf("'<div class=\"empty\">Nenhum podcast '"));
-  ok('🧨 cartão do painel usa as partes (e não a descrição crua)', /pt=podDescPartes\(p\.desc\)/.test(card) && !/esc\(p\.desc\)/.test(card));
-  ok('🧨 referências recolhidas, numeradas', /<details class="pod-refs"><summary>📚 Referências \('\+pt\.refs\.length\+'\)/.test(card) && /<ol>'\+pt\.refs\.map/.test(card));
+  ok('🧨 cartão do painel usa a mesma descrição formatada do aluno (e não a crua)', /\+podDescCompletoHTML\(p\.desc\)/.test(card) && !/esc\(p\.desc\)/.test(card));
+  const comp = corpo('podDescCompletoHTML');
+  ok('🧨 referências recolhidas, numeradas', /<details class="pod-refs"><summary>📚 Referências \('\+pt\.refs\.length\+'\)/.test(comp) && /<ol>'\+pt\.refs\.map/.test(comp));
+  // Comportamento do HTML montado (aluno e painel).
+  const cx2 = {};
+  vm.createContext(cx2);
+  vm.runInContext(cab + ['esc', 'podDescParagrafos', 'podDescPartes', 'podDescCompletoHTML'].map(corpo).join('\n'), cx2);
+  const h = cx2.podDescCompletoHTML(fd109);
+  ok('HTML: texto em <p>, links numa linha, 2 referências na lista', /^<div class="pod-desc"><p>Neste FD discutimos a meta pressórica\.<\/p><\/div><div class="pod-links">Acesse: endodirect\.com\.br · Siga: @endodirect<\/div><details class="pod-refs">/.test(h) && (h.match(/<li>/g) || []).length === 2, h.slice(0, 200));
+  ok('🧨 HTML escapa o texto, os links e as referências do feed', ['Texto <b>x</b>.', 'Texto.\nAcesse: <b>x</b>', 'Texto.\nReferências:\n• <b>x</b>'].every((t) => !/<b>x<\/b>/.test(cx2.podDescCompletoHTML(t))));
   ok('subespecialidade e Excluir no rodapé do cartão (o título fica com a largura toda)', /<div class="pod-adm-rodape">'\+sel\+'<button class="btn btn-outline btn-sm pod-adm-del" data-adm-delpod="'\+i\+'">/.test(card));
 }
 

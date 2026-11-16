@@ -1607,7 +1607,10 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .pod-adm-tit{font-size:.9rem;font-weight:700;color:var(--tx);line-height:1.35;text-wrap:balance}
 .pod-adm-data{font-size:.7rem;color:var(--t3);margin-top:.15rem;font-variant-numeric:tabular-nums}
 .pod-adm .pod-desc{margin:0;font-size:.78rem;color:var(--t2);line-height:1.55}
-.pod-adm-links{font-size:.72rem;color:var(--t3)}
+.pod-links{font-size:.7rem;color:var(--t3);margin:0 0 .45rem}
+.pod-refs{margin:0 0 .55rem}
+.pod-adm .pod-links{font-size:.72rem}
+.pod-adm .pod-links,.pod-adm .pod-refs{margin:0}
 .pod-refs>summary{cursor:pointer;list-style:none;user-select:none;display:inline-flex;align-items:center;gap:.35rem;font-size:.76rem;font-weight:700;color:var(--blue)}
 .pod-refs>summary::-webkit-details-marker{display:none}
 .pod-refs>summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
@@ -13946,7 +13949,7 @@ function renderPodcasts(){
   var el=document.getElementById('pod-list');if(!el)return;
   var list=podFilter?podcasts.filter(function(p){return podArea(p)===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
-  el.innerHTML=list.map(function(p){var a=podArea(p);var dt=podDataStr(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div>'+podDescHTML(p.desc)+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
+  el.innerHTML=list.map(function(p){var a=podArea(p);var dt=podDataStr(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div>'+podDescCompletoHTML(p.desc)+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
 }
 // DESCRIÇÃO EM PARÁGRAFOS, JUSTIFICADA (14/11/2026). Print do professor na aba Podcasts:
 // "Deixar em modo justificado. As frases ficaram todas juntas. Separar em parágrafos". O feed
@@ -13985,6 +13988,15 @@ function podDescPartes(t){
     });
   }
   return {texto:texto,links:links,refs:refs};
+}
+// Descrição inteira do episódio, a mesma no aluno e no painel do professor (professor, 16/11/2026:
+// "Pode" aplicar na tela do aluno): parágrafos, "Acesse/Siga" numa linha à parte e as referências
+// numa lista numerada recolhida.
+function podDescCompletoHTML(t){
+  var pt=podDescPartes(t);
+  return (pt.texto.length?'<div class="pod-desc">'+pt.texto.map(function(x){return '<p>'+esc(x)+'</p>';}).join('')+'</div>':'')
+    +(pt.links.length?'<div class="pod-links">'+pt.links.map(esc).join(' · ')+'</div>':'')
+    +(pt.refs.length?'<details class="pod-refs"><summary>📚 Referências ('+pt.refs.length+')<span class="pr-caret" aria-hidden="true">▾</span></summary><ol>'+pt.refs.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ol></details>':'');
 }
 function podDescHTML(t){
   var ps=podDescParagrafos(t);if(!ps.length)return '';
@@ -21845,14 +21857,12 @@ function admConteudoHTML(){
     +'<button class="btn btn-outline btn-sm" id="btn-adm-pod-recat" style="margin-left:auto">🏷️ Categorizar automaticamente</button>'
   +'</div>'
   +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){
-    var i=podcasts.indexOf(p),dt=podDataStr(p),pt=podDescPartes(p.desc);
+    var i=podcasts.indexOf(p),dt=podDataStr(p);
     var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';
     var sel='<select class="pod-cat-sel" data-adm-pod-cat="'+i+'" title="Editar subespecialidade" aria-label="Subespecialidade"><option value="">— sem categoria —</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(p.area===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+((p.area&&SUB.indexOf(p.area)<0)?'<option value="'+esc(p.area)+'" selected>'+esc(p.area)+'</option>':'')+'</select>';
     return '<div class="card pod-adm">'
       +'<div class="pod-adm-topo"><span class="pod-adm-ico" aria-hidden="true">🎧</span><div><div class="pod-adm-tit">'+esc(p.title)+'</div>'+(dt?'<div class="pod-adm-data">📅 '+esc(dt)+'</div>':'')+'</div></div>'
-      +(pt.texto.length?'<div class="pod-desc">'+pt.texto.map(function(x){return '<p>'+esc(x)+'</p>';}).join('')+'</div>':'')
-      +(pt.links.length?'<div class="pod-adm-links">'+pt.links.map(esc).join(' · ')+'</div>':'')
-      +(pt.refs.length?'<details class="pod-refs"><summary>📚 Referências ('+pt.refs.length+')<span class="pr-caret" aria-hidden="true">▾</span></summary><ol>'+pt.refs.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ol></details>':'')
+      +podDescCompletoHTML(p.desc)
       +meta+podcastPlayerHTML(p)
       +'<div class="pod-adm-rodape">'+sel+'<button class="btn btn-outline btn-sm pod-adm-del" data-adm-delpod="'+i+'">🗑 Excluir</button></div>'
     +'</div>';
