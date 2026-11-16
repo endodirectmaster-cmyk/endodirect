@@ -115,6 +115,27 @@ const pede = (run, hash) => run('history.replaceState(null,"",' + JSON.stringify
   run('igStories=' + JSON.stringify(st) + ';var __h=admQotdArchiveHTML();');
   const abertos = (run('__h').match(/class="qa-item open"><button type="button" class="qa-head" data-admqa-toggle="([^"]+)"/g) || []).map((x) => x.replace(/.*data-admqa-toggle="/, '').replace(/"$/, ''));
   ok(abertos.length === 1 && abertos[0] === 'ig-2', 'o arquivo do professor não abriu na questão do link (abertas: ' + JSON.stringify(abertos) + ')');
+  // 16/11/2026 (professor, no iPhone: "deixar ela melhor configurada, melhor formatada"): cada
+  // linha tem data em bloco, subespecialidade e o começo do enunciado, separadas por mês, com
+  // 10/30/50 por página. O link continua abrindo NA questão, mesmo quando ela cai noutra página.
+  const h = run('__h');
+  ok(/<div class="adm-qa-mes">Outubro de 2026<\/div>/.test(h), 'o arquivo do professor tem de separar as questões por mês');
+  ok(/<span class="aqa-sub">Transgeneridade<\/span>/.test(h) && /<span class="aqa-trecho">Enunciado 2<\/span>/.test(h), 'cada linha mostra a subespecialidade e o começo do enunciado');
+  const muitas = Array.from({ length: 25 }, (_, i) => ({ id: 'ig-' + (i + 1), status: 'posted', postedAt: Date.UTC(2026, 9, 1) + i * 864e5, sub: i % 2 ? 'Tireoide' : 'Adrenal', stem: 'Enunciado ' + (i + 1) + ' ' + 'x'.repeat(i === 24 ? 300 : 5), answer: 'A', options: { A: 'a', B: 'b' }, explanation: 'c' }));
+  run('igStories=' + JSON.stringify(muitas) + ';admQotdArchSub="";admQotdArchSort="recent";admQotdArchPor=10;admQotdArchPagina=0;admQotdArchOpen="ig-1";admQotdArchRolar=true;var __m=admQotdArchiveHTML();');
+  const m = run('__m');
+  ok(/class="qa-item open"><button type="button" class="qa-head" data-admqa-toggle="ig-1"/.test(m) && run('admQotdArchPagina') === 2,
+    'link para a questão mais antiga (3ª página de 10): o arquivo tem de ir à página dela e abri-la (página ' + run('admQotdArchPagina') + ')');
+  ok((m.match(/data-admqa-toggle=/g) || []).length === 5 && /id="adm-qa-pag-prev"/.test(m) && /página 3 de 3/.test(m), 'a 3ª página de 25 questões (10 por página) tem 5 linhas e a navegação');
+  run('admQotdArchRolar=false;admQotdArchOpen=null;admQotdArchPagina=0;var __p1=admQotdArchiveHTML();');
+  const p1 = run('__p1');
+  ok((p1.match(/data-admqa-toggle=/g) || []).length === 10 && /data-admqa-toggle="ig-25"/.test(p1), '1ª página: as 10 mais recentes');
+  ok(/<span class="aqa-trecho">[^<]{20,160}…<\/span>/.test(p1) && !/x{200}/.test(p1), 'enunciado longo vira um trecho curto com reticências');
+  run('admQotdArchPor=50;var __p50=admQotdArchiveHTML();');
+  ok((run('__p50').match(/data-admqa-toggle=/g) || []).length === 25 && !/id="adm-qa-pag-prev"/.test(run('__p50')), '50 por página: todas numa página só, sem navegação');
+  run('admQotdArchPor=10;admQotdArchSub="Tireoide";var __f=admQotdArchiveHTML();');
+  ok(/12 de 25 questões/.test(run('__f')) && !/<span class="aqa-sub">Adrenal<\/span>/.test(run('__f')), 'filtro de subespecialidade: conta "N de total" e só mostra a escolhida');
+  run('admQotdArchSub="";');
   run('__sec=[];');
   ok(run('abrirLinkNoPainelDoProfessor({p:"mural",arg:""})') === true && run('__sec.join()') === 'mural', '/#mural tem de abrir o mural do painel do professor');
   run('__sec=[];');
