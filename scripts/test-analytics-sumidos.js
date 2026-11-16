@@ -113,5 +113,23 @@ const aluno = (o) => Object.assign({ name: 'X', email: 'x@y.z', plano: 'Gold' },
   ok('e diz há quanto tempo cada um sumiu', /Sem acessar/.test(SRC));
 }
 
+// ---- LISTAS RECOLHIDAS (16/11/2026, professor no iPhone: "deixar ela oculta e quando clicar ela aparecer") ----
+// Os números do cartão ficam à vista; a tabela de alunos só abre no botão, nos dois cartões com lista.
+{
+  const ctxL = { admListasAbertas: {}, esc: (x) => String(x) };
+  vm.createContext(ctxL);
+  vm.runInContext(extrai('admListaRecolhida'), ctxL);
+  const fechada = ctxL.admListaRecolhida('sumidos', 6, '<div class="adm-table">T</div>');
+  ok('🧨 lista começa fechada (details sem open)', /^<details class="adm-lista" data-adm-lista="sumidos">/.test(fechada), fechada.slice(0, 80));
+  ok('botão diz quantos estudantes', /Ver os 6 estudantes/.test(fechada) && /Ocultar a lista/.test(fechada));
+  ok('a tabela fica dentro da lista recolhida', /<\/summary><div class="adm-table">T<\/div><\/details>$/.test(fechada));
+  ok('um estudante só: singular', /Ver o estudante</.test(ctxL.admListaRecolhida('x', 1, '')));
+  ctxL.admListasAbertas.sumidos = true;
+  ok('aberta pelo professor, continua aberta quando o Analytics se redesenha', /data-adm-lista="sumidos" open>/.test(ctxL.admListaRecolhida('sumidos', 6, '')));
+  ok('🧨 "sem acesso" usa a lista recolhida', /\+admListaRecolhida\('sumidos',sumidos\.length,\s*'<div class="adm-table">'/.test(extrai('admSumidosCardHTML')));
+  ok('🧨 "vencidas ou vencendo" usa a lista recolhida', /\+admListaRecolhida\('vencendo',lista\.length,\s*'<div class="adm-table">'/.test(extrai('admVencidasCardHTML')));
+  ok('o estado aberto/fechado é guardado no toggle', /addEventListener\('toggle',function\(ev\)\{var d=ev\.target;if\(d&&d\.getAttribute&&d\.getAttribute\('data-adm-lista'\)\)admListasAbertas\[/.test(SRC));
+}
+
 if (bad) { console.error('\n' + bad + ' verificação(ões) do card de sumidos falharam.'); process.exit(1); }
 console.log('Card "sem acesso há 14+ dias": OK');
