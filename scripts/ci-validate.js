@@ -1224,7 +1224,7 @@ try {
 //      professores". Cartão externo (modelo ainda não publicado), escondido de quem não é admin.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-calc-reganho-glp1.js')], { stdio: 'pipe' });
-  ok('calculadora de reganho pós-GLP-1: piloto só para professores, ferramenta dos autores dentro do cartão, texto em português e limites');
+  ok('calculadora de reganho pós-GLP-1: ferramenta dos autores dentro do cartão, tradução da tela, alunos no site e fora do app do iPhone até a aprovação');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão da calculadora de reganho pós-GLP-1 falhou:\n' + out);

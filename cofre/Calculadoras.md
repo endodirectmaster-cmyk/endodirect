@@ -5,6 +5,17 @@ atualizado: 2026-11-16
 
 # Calculadoras
 
+## 🧪 REGANHO PÓS-GLP-1: ALUNOS NO SITE E TELA TRADUZIDA (2026-11-16, mais tarde)
+
+Professor: *"Agora dá para deixar traduzido para o português e disponível no painel dos estudantes também?"*
+- `soProfessor` saiu; `foraDoAppIos:true` esconde do ALUNO só no app do iPhone (`APP_LOJA==='ios'`), até a
+  Apple aprovar o app. Quando aprovar: tirar `foraDoAppIos` do item (o mecanismo fica para outros casos).
+- **Tradução:** a janela é o site dos autores (outra origem): a plataforma não altera o que aparece lá dentro.
+  O item ganhou `traducao` (pares inglês → português), desenhada num `<details class="calc-trad" open>` acima da
+  janela. Só rótulos vistos de verdade (prints do professor e teste no Chromium); se o site mudar os rótulos,
+  ajustar a lista.
+- Para a janela inteira em português: versão própria quando o modelo sair (ou com os coeficientes dos autores).
+
 ## 🧪 REGANHO PÓS-GLP-1: A FERRAMENTA DA MAYO RODA DENTRO DO CARTÃO (2026-11-16)
 
 Professor: *"a ideia é deixar a calculadora dentro da plataforma apenas para os professores, de modo que a
