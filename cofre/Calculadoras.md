@@ -1,9 +1,30 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-11-15
+atualizado: 2026-11-16
 ---
 
 # Calculadoras
+
+## 🧪 REGANHO PÓS-GLP-1: A FERRAMENTA DA MAYO RODA DENTRO DO CARTÃO (2026-11-16)
+
+Professor: *"a ideia é deixar a calculadora dentro da plataforma apenas para os professores, de modo que a
+gente possa treinar dentro do nosso painel ... Nós não vamos comercializar por hora."*
+
+- **Continua sem cálculo próprio:** o modelo não foi publicado e o site não mostra as equações (só a
+  descrição, as curvas por quartil e a citação, nos prints da página "About"). Quando sair o artigo com o
+  modelo (ou se os autores mandarem os coeficientes: glp1predictor@gmail.com, contato público do site), aí
+  sim versão própria, em português.
+- **O que mudou:** `embutir:true` no item `reganhoglp1`. O detalhe desenha `<div class="calc-embed"><iframe
+  src=link sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">`,
+  com o guia em português embaixo e o link de outra aba (agora `btn-outline`) como reserva. O site (Netlify)
+  **não manda X-Frame-Options nem frame-ancestors** (cabeçalho conferido em 16/11); se um dia mandar, a janela
+  fica em branco e o cartão já diz para usar o botão.
+- **Conferido no Chromium:** o caso do print do professor (semaglutida, 85 kg, 165 cm, 54 anos, mulher, sem
+  diabetes, 6 meses, 69 kg) deu dentro do painel "Responder", 18,8% TBWL, intermediário-baixo, ≈13 meses.
+  Depois de *Calculate* o site abre uma janela pedindo e-mail para mandar um resumo: opcional, fecha no ×.
+- **Privacidade:** o que se digita vai para o site dos autores, como ao usá-lo direto; a nota pede para não
+  usar nome nem dado que identifique o paciente.
+- Rede do ambiente de trabalho: glp1regainrisk.com e www.glp1regainrisk.com liberados no Default em 16/11.
 
 ## 🧪 REGANHO DE PESO APÓS SEMAGLUTIDA OU TIRZEPATIDA (MAYO CLINIC): PILOTO SÓ PARA PROFESSORES (2026-11-15)
 

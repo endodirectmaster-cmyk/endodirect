@@ -1,9 +1,26 @@
 ---
 tags: [cofre, newsletter, radar]
-atualizado: 2026-11-15
+atualizado: 2026-11-16
 ---
 
 # Newsletter e Radar
+
+## 🧨 O MESMO ARTIGO DUAS VEZES NO MURAL: PUBMED DE MANHÃ, RSS DA REVISTA À NOITE (2026-11-16)
+
+O REDEFINE 9 (Lancet Diabetes & Endocrinology) estava duas vezes no mural: `pubmed:43033821` às 10h31 UTC de
+15/11, com resumo bom, e `journalrss:LancetDiabEndo:…` às 20h24, com o texto genérico ("o abstract disponível
+contém apenas data de publicação, fonte e lista de autores"), no topo. Era esse o card do print do professor.
+
+- **Por quê:** a dedup DENTRO da rodada já comparava título normalizado (PubMed × RSS novos juntos), mas a dedup
+  ENTRE rodadas (`existingMuralKeys`) guardava o título exato. Os dois títulos diferem num travessão
+  ("cagrilintide–semaglutide" × "cagrilintide-semaglutide") e no ponto final.
+- **Conserto:** `chaveTitulo(t)` = `titulo:` + minúsculas sem acento, só letras e números, e só a partir de 30
+  caracteres (título curto como "Editorial" casaria artigos diferentes). Entra em `existingMuralKeys` e é
+  conferida em `findRelevantArticles` (PubMed) e `fetchJournalRssItems` (RSS das revistas). As sociedades não
+  mudaram. Teste `scripts/test-radar-dedup-titulo.js`.
+- **Ainda aberto, de propósito:** `buildJournalRssItem` aceita o card quando a IA diz `semAbstract` mas o resumo do
+  RSS tem mais de 200 caracteres. No REDEFINE 9 esses 200+ eram só a lista de autores. Não mexi: é o mesmo
+  critério que salva os RSS de resumo longo e IA desconfiada; anotado em [[Pendências]].
 
 ## 🧨 RESUMO DA IA CORTADO VIRAVA CARD GENÉRICO NO MURAL (2026-11-15)
 

@@ -1,9 +1,22 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-15
+atualizado: 2026-11-16
 ---
 
 # Pendências
+
+## 🧹 Código sem uso depois dos mapas do painel (16/11)
+Desde 16/11 as abas "Mapas mentais" das Diretrizes e dos Resumos usam o visualizador da ferramenta
+(`admCapMapaHTML`). Ficaram sem uso, e podem sair numa limpeza: `admRefMapaHTML`, `admReadRefMapa`,
+`admSaveRefMapa`, `admRefMapaAdd*`/`admRefMapaDel*`, `admCleanRefChildren`, `dirMapaEditHTML`,
+`admResMapaSave`, `admResMapaMut` e as ligações `data-refmapa-*`/`data-rm*` em `bindAdmSec`.
+`admRefMapaGenAI` continua em uso (botão "Refazer/Gerar com IA").
+
+## 📡 Radar: RSS de revista com "resumo" que é só a lista de autores (16/11)
+`buildJournalRssItem` mantém o card quando a IA marca `semAbstract` mas o resumo do RSS passa de 200
+caracteres. No REDEFINE 9 (Lancet D&E, 15/11) esses caracteres eram só os autores, e saiu card genérico.
+A duplicata em si já não volta (dedup por título normalizado); falta decidir se o RSS sem abstract de verdade
+deve esperar o PubMed. Ver [[Newsletter e Radar]].
 
 ## 🃏 Flashcards: achados da revisão de 14/11 — CORRIGIDOS em 15/11
 Professor (15/11): *"Corrigir tudo, menos a da testosterona > 54%"*. Feito; ver [[Decisões]] 2026-11-15.
