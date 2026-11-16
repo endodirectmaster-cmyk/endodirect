@@ -100,8 +100,8 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
   `apns:` gravada com a conta. Botão novo no Suporte: **"🧪 Enviar aviso de teste"** (`kind:'push_teste'`, só
   admin, `sendToEmail` do próprio e-mail; diz quantos aparelhos, quantos no iPhone e o que falhou). sw v410.
 - ✅ **Teste de ponta a ponta (16/11, 10h32 BRT):** "🧪 Enviar aviso de teste" → "🔔 Teste do Endodirect" chegou na
-  tela bloqueada do iPhone do professor, pela Apple (APNs, chave Endodirect Push). (Toque abrindo o app: não confirmado
-  por escrito.)
+  tela bloqueada do iPhone do professor, pela Apple (APNs, chave Endodirect Push); o toque no aviso abriu o app
+  (professor: "Abriu").
 - ✅ **1.1 (build 9) ENVIADA À REVISÃO DA APPLE em 16/11, 10h53 BRT** ("1 item enviado"; até 48 h), com as 8 capturas
   novas de iPhone e de iPad, "O que há de novo" (notificações; teclado numérico da calculadora) e nas Notas, em inglês:
   "VERSION 1.1: push notifications can be enabled in "Mural de artigos" (article board) › "Ativar avisos"."
