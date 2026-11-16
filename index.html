@@ -1436,7 +1436,9 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .mobile-nav-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:.15rem .1rem .75rem;margin-bottom:.35rem;border-bottom:1px solid rgba(255,255,255,.12);color:#fff}
   .mobile-nav-head span{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55)}
   .mobile-nav-close{width:34px;height:34px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:1.2rem;line-height:1;cursor:pointer}
-  .sidebar{width:min(82vw,310px);height:100dvh;display:flex;flex-direction:column;white-space:normal;overflow-x:hidden;overflow-y:auto;padding:calc(.65rem + env(safe-area-inset-top)) .7rem calc(.85rem + env(safe-area-inset-bottom));position:fixed;top:0;left:0;z-index:90;transform:translateX(-105%);transition:transform .22s ease;box-shadow:18px 0 42px rgba(9,18,38,.3)}
+  .sidebar{width:min(82vw,310px);height:100dvh;display:flex;flex-direction:column;white-space:normal;overflow-x:hidden;overflow-y:auto;padding:calc(.65rem + env(safe-area-inset-top)) .7rem calc(.85rem + env(safe-area-inset-bottom));position:fixed;top:0;left:0;z-index:90;transform:translateX(calc(-100% - 64px));transition:transform .22s ease;box-shadow:18px 0 42px rgba(9,18,38,.3)}
+  /* Fechado, o menu fica 64 px além da borda: a sombra (18 px + 42 px de esfumado) não vaza mais
+     como uma faixa cinza na beira esquerda da tela (print do professor no iPhone, 16/11/2026). */
   body.mobile-nav-open .sidebar{transform:translateX(0)}
   .sb-role-head{display:none!important}
   .sb-sec{display:block!important;margin-top:.45rem;padding:.55rem .72rem .28rem}
@@ -9349,6 +9351,7 @@ function startApp(){
   var lp=document.getElementById('landing-screen');if(lp)lp.style.display='none';
   app.style.display=isAdmin?'block':'flex';
   app.classList.toggle('admin-mode',isAdmin);
+  telaRepintar(); // iPhone: redesenha a tela inteira depois da troca entrada → painel
   document.body.classList.remove('admin-menu-open');
   var topbar=document.querySelector('.topbar');
   var sidebar=document.querySelector('.workspace>.sidebar');
@@ -13441,6 +13444,23 @@ function viewMM(i){
 // app, o viewport ganha `maximum-scale=1` por um instante (o iOS volta a 1×) e depois volta ao
 // original — a pinça continua livre (o ampliador de figuras depende dela). Só iPhone/iPad.
 var IOS_TOQUE=(function(){try{var ua=navigator.userAgent||'';return /iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}catch(e){return false;}})();
+// TELA PELA METADE DEPOIS DE ENTRAR (professor, 16/11/2026, no app do iPhone, com print): "quando eu
+// desloguei da minha conta e abri na conta do aluno Pro ... quando entra pela primeira vez, fica desse
+// jeito. Aí eu fecho o aplicativo, reabro, ele volta para o normal." O topo do painel (barra, saudação
+// e os primeiros números) ficou em branco, sem nada por cima: o iPhone não redesenhou essa parte depois
+// de trocar a tela de entrada pelo painel na mesma página (com o teclado e o zoom recém-desfeitos).
+// Aqui: a página volta ao topo e, no iPhone, o corpo é desenhado de novo duas vezes: no quadro seguinte
+// e depois de iosDesfazZoom devolver a escala (400 ms).
+function telaRepintar(){
+  try{window.scrollTo(0,0);}catch(e){}
+  if(!IOS_TOQUE)return;
+  var redesenha=function(){
+    var b=document.body;if(!b)return;
+    b.style.display='none';void b.offsetHeight;b.style.display='';
+  };
+  try{requestAnimationFrame(function(){requestAnimationFrame(function(){try{window.scrollTo(0,0);}catch(e){}redesenha();});});}catch(e){}
+  setTimeout(redesenha,480);
+}
 function iosDesfazZoom(){
   if(!IOS_TOQUE)return;
   var vp=document.querySelector('meta[name="viewport"]');if(!vp)return;
