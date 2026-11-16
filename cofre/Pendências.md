@@ -119,8 +119,12 @@ entra na plataforma às 7h30 (cron do radar; reserva no healthcheck); fila com 1
 propostos: (a) automático pela plataforma: arte gerada quando a questão entra/muda na fila e o cron agenda no
 Metricool (precisa da chave de API do Metricool, que ele mesmo põe na Vercel; sem função nova, 12/12);
 (b) sem chave: eu agendo em lotes pelo conector. **Horário: 18h** (professor: "o horário que achar melhor"; Metricool, semana de 16–22/11: pico do
-público entre 18h e 20h em todos os dias; o post do feed fica às 19h, sem disputa). Faltam: automático ×
-notificação, (a) × (b) e um story de teste. **Nada agendado sem o "pode" dele.** Build 1.2 (12) no TestFlight com a permissão da galeria.
+público entre 18h e 20h em todos os dias; o post do feed fica às 19h, sem disputa). **Publicação automática, sem sticker**
+("Tudo bem, pode ser"). **Story de teste aprovado** ("pode"): arte da próxima da fila (Endócrino Pediátrica,
+teplizumabe) gerada com o código do painel, enviada ao Drive dele (privada); o Metricool recusou o link do Drive sem
+"qualquer pessoa com o link", e tornar o arquivo público foi barrado aqui: depende de ele compartilhar o arquivo ou
+autorizar. Falta: (a) × (b). Observação: o rodapé "GABARITO NA PLATAFORMA" fica na faixa de baixo que o Instagram
+cobre com a barra de resposta; propor subir o rodapé antes do automático. **Nada agendado sem o "pode" dele.** Build 1.2 (12) no TestFlight com a permissão da galeria.
 
 ## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
 
