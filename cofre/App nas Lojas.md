@@ -40,6 +40,9 @@ https://apps.apple.com/br/app/id6833147654.
      **iPad (lembrete do professor):** a ficha também tem as 4 capturas de iPad 13" (2064 × 2752, de 11/11, geradas
      em Chromium com a conta do revisor). Refazer na ordem nova pede login do revisor; a senha de 11/11 não entra mais
      (trocada depois) e não se pede senha ao professor. Saídas: prints num iPad, ou manter as 4 atuais.
+     **16/11, 08h45: versão 1.1 criada no App Store Connect** ("1.1 Preparar para envio"); às 08h55 as 8 capturas
+     de iPhone já estavam nela, na ordem (a vaga aceita 1179 × 2556). ⚠️ O projeto está com `MARKETING_VERSION = 1.0`:
+     o build da 1.1 precisa sair com 1.1 (e número de build maior que o da 1.0). Não enviar à revisão antes do build.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
