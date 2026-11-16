@@ -9,7 +9,7 @@ atualizado: 2026-11-16
 
 Decisões do professor: **18h**, **publicação automática sem sticker** (quiz e link não passam pela API do
 Instagram), **caminho (a)**: a plataforma faz tudo. Como funciona:
-1. **Arte:** o painel do professor (qualquer abertura, e a cada mudança da fila) gera a arte das **próximas 10**
+1. **Arte:** o painel do professor (qualquer abertura, e a cada mudança da fila) gera a arte das **próximas 30** (era 10; professor pediu 30 em 16/11)
    da fila com o desenho do botão "⬇ Imagem" e guarda em `endodirect-assets/stories/<id>-<hash>.jpg` (bucket
    público; só admin sobe). `storyArte {url, hash, em}` no item. O hash (`igArteHash`, FNV-1a de teem, enunciado,
    A–D e imagem, com versão `V`) muda quando a questão muda; trocar o desenho = subir `V` nas DUAS cópias

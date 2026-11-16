@@ -205,11 +205,12 @@ console.error = () => {};
   const q = (id, extra) => Object.assign(clone(base), { id, status: 'queued' }, extra || {});
   {
     const fila = [Object.assign(clone(base), { id: 'velha', status: 'posted' })];
-    for (let i = 0; i < 12; i++) fila.push(q('f' + i));
+    for (let i = 0; i < 32; i++) fila.push(q('f' + i));
     fila[2].storyArte = { url: 'https://x/y.jpg', hash: lib.igArteHash(fila[2]) }; // já pronta
     const r = await painel({ fila });
     const ids = r.subidas.map((s) => s.p.replace(/^stories\/|-[0-9a-f]{8}\.jpg$/g, ''));
-    ok('🧨 gera só as 10 próximas da fila, sem as postadas e sem as que já têm arte', r.n === 9 && ids.join(',') === 'f0,f2,f3,f4,f5,f6,f7,f8,f9' && !ids.includes('velha') && !ids.includes('f10') && !ids.includes('f1'), ids.join(','));
+    const esperado = Array.from({ length: 30 }, (_, i) => 'f' + i).filter((x) => x !== 'f1').join(',');
+    ok('🧨 gera só as 30 próximas da fila (um mês de stories), sem as postadas e sem as que já têm arte', r.n === 29 && ids.join(',') === esperado && !ids.includes('velha') && !ids.includes('f30') && !ids.includes('f1'), ids.join(','));
     const s0 = r.subidas[0];
     ok('🧨 sobe JPG no bucket público, pasta stories, com o hash no nome, sobrescrevendo', s0.b === 'endodirect-assets' && /^stories\/f0-[0-9a-f]{8}\.jpg$/.test(s0.p) && s0.op.upsert === true && s0.op.contentType === 'image/jpeg' && s0.blob.tipo === 'image/jpeg');
     const f0 = fila[1];
@@ -248,5 +249,5 @@ console.error = () => {};
   }
 
   if (bad) { console.log('✗ stories no Metricool: ' + bad + ' falha(s)'); process.exit(1); }
-  console.log('✓ stories no Metricool: arte das próximas 10 da fila no bucket (hash igual nos dois lados); o robô agenda às 18h o story da questão do dia, uma vez, só com arte certa e com a chave; painel preserva a marca e mostra a situação');
+  console.log('✓ stories no Metricool: arte das próximas 30 da fila no bucket (hash igual nos dois lados); o robô agenda às 18h o story da questão do dia, uma vez, só com arte certa e com a chave; painel preserva a marca e mostra a situação');
 })().catch((e) => { console.log('✗ erro no teste:', e && e.stack || e); process.exit(1); });

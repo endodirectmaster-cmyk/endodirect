@@ -1233,7 +1233,7 @@ try {
 
 // 17c-undecies-bc. STORY DA QUESTÃO DO DIA NO METRICOOL (16/11/2026). Professor: mandar a questão do dia
 //      "diretamente para o Metricool, para ele postar diariamente nos stories" (automático, 18h, sem
-//      sticker). O painel guarda a arte das próximas 10 da fila no bucket (hash igual ao do servidor); o
+//      sticker). O painel guarda a arte das próximas 30 da fila no bucket (hash igual ao do servidor); o
 //      robô agenda o story da questão do dia uma vez, só com arte certa, com a chave e a partir de 18/11.
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-stories-metricool.js')], { stdio: 'pipe' });

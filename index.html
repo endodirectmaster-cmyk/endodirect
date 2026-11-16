@@ -18862,7 +18862,7 @@ function igMostrarImagem(b,filename){
 // 📲 STORIES AUTOMÁTICOS NO METRICOOL (professor, 16/11/2026: "mandar a questão do dia ... diretamente para o
 // Metricool, para ele postar diariamente nos stories"; caminho escolhido: "(a) automático pela plataforma").
 // O servidor não desenha a arte (sem dependências na Vercel); quem desenha é o painel do professor. Para as
-// próximas IG_ARTES_ADIANTE questões da fila, o painel gera o JPG com o mesmo desenho do botão "⬇ Imagem"
+// próximas IG_ARTES_ADIANTE (30: professor, "a cada 30 dias?", 16/11) questões da fila, o painel gera o JPG com o mesmo desenho do botão "⬇ Imagem"
 // e guarda no bucket público (endodirect-assets/stories/<id>-<hash>.jpg), anotando {url,hash} no item
 // (`storyArte`). O hash cobre tudo o que entra no desenho: editou a questão, a arte velha deixa de valer e é
 // refeita. O cron das 7h30 (lib/instagram.js) agenda no Metricool, às 18h, o story da questão publicada no
@@ -18874,7 +18874,7 @@ function igArteHash(it){
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}
   return ('0000000'+h.toString(16)).slice(-8);
 }
-var IG_ARTES_ADIANTE=10,igArtesRodando=false,igArtesTimer=null;
+var IG_ARTES_ADIANTE=30,igArtesRodando=false,igArtesTimer=null;
 function igArtesAgenda(ms){
   if(!currentUser||currentUser.role!=='admin')return;
   clearTimeout(igArtesTimer);igArtesTimer=setTimeout(function(){igArtesSincroniza();},ms==null?4000:ms);
