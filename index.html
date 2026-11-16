@@ -323,9 +323,6 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .calc-card-ft{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding-top:.45rem}
 .calc-unit{font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.12rem .5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72%}
 .calc-unit.calc-ext{color:var(--blue2)}
-/* (16/11/2026) Painel do professor sem subtítulos ("Retira esses subtítulos de todas as ferramentas"):
-   Prescrição Comentada e Consultório são os painéis do aluno levados para lá; a frase some só ali. */
-#adm-rx-host .ph>p,#adm-presc-host .ph>p{display:none}
 .calc-embed{margin:.7rem 0 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff}
 .calc-embed iframe{display:block;width:100%;height:min(1150px,calc(100vh - 140px));min-height:620px;border:0}
 .calc-piloto{align-self:flex-start;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold,#b7791f);border:1px solid currentColor;border-radius:999px;padding:.08rem .45rem;line-height:1.4}
@@ -2923,7 +2920,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Favoritos</b></div>
       <div class="ph"><h1>Favoritos</h1></div>
       <div class="pc">
-        <p style="font-size:.86rem;color:var(--t2);margin:0 0 .9rem">Tudo o que você salvou — artigos do Mural, resumos, questões, mapas mentais e flashcards. Clique na estrela para tirar da lista.</p>
         <div id="favs-body"></div>
       </div>
     </div>
@@ -2960,7 +2956,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 
     <div class="panel" id="panel-podcast">
       <div class="breadcrumb">Dashboard <b>/ Podcasts</b></div>
-      <div class="ph"><h1>Podcasts</h1><p>Episódios em áudio de endocrinologia para escutar na plataforma.</p></div>
+      <div class="ph"><h1>Podcasts</h1></div>
       <div class="pc">
         <div id="pod-filter-row" class="filtro-linha" style="margin:0 0 .85rem"></div>
         <div id="pod-list" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -2969,7 +2965,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 
     <div class="panel" id="panel-cursos">
       <div class="breadcrumb">Dashboard <b>/ Cursos</b></div>
-      <div class="ph"><h1>Cursos</h1><p>Videoaulas publicadas pelo professor, organizadas por subespecialidade.</p></div>
+      <div class="ph"><h1>Cursos</h1></div>
       <div class="pc">
         <div id="curso-filter-row" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem"></div>
         <div id="curso-player" style="display:none;margin-bottom:.85rem"></div>
@@ -3034,7 +3030,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 
     <div class="panel" id="panel-sr">
       <div class="breadcrumb">Dashboard <b>/ Revisão</b></div>
-      <div class="ph"><h1>Revisão</h1><p>Algoritmo SM-2</p></div>
+      <div class="ph"><h1>Revisão</h1></div>
       <div class="pc">
         <div class="g3" style="margin-bottom:.85rem">
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
@@ -3072,7 +3068,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 
     <div class="panel" id="panel-erros">
       <div class="breadcrumb">Dashboard <b>/ Caderno de erros</b></div>
-      <div class="ph"><h1>📕 Caderno de erros</h1><p>As questões que você erra voltam aqui em revisão espaçada, até você dominar.</p></div>
+      <div class="ph"><h1>📕 Caderno de erros</h1></div>
       <div class="pc">
         <div class="g3" style="margin-bottom:.85rem">
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="err-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
@@ -3098,7 +3094,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     </div>
     <div class="panel" id="panel-sim">
       <div class="breadcrumb">Dashboard <b>/ OSCE</b></div>
-      <div class="ph"><h1>OSCE — Caso Clínico</h1><p>Conduza um caso clínico no estilo OSCE, passo a passo (anamnese, exame, conduta), e receba nota e feedback ao final.</p></div>
+      <div class="ph"><h1>OSCE — Caso Clínico</h1></div>
       <div class="pc">
         <div class="gen-box" id="sim-setup">
           <div class="g3" style="margin-bottom:.65rem">
@@ -3191,7 +3187,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 
     <div class="panel" id="panel-rx">
       <div class="breadcrumb">Dashboard <b>/ Prescrição Simulada</b></div>
-      <div class="ph"><h1>Prescrição Simulada</h1><p>Treine a conduta e a prescrição de um caso clínico simulado e receba uma correção comentada ao final.</p></div>
+      <div class="ph"><h1>Prescrição Simulada</h1></div>
       <div class="pc">
         <div class="gen-box">
           <div class="g3" style="margin-bottom:.65rem">
@@ -3338,7 +3334,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     </div>
 
     <div class="panel" id="panel-desemp"><div class="pc" id="desemp-body" style="max-width:none"></div></div>
-    <div class="panel" id="panel-plano"><div class="breadcrumb">Dashboard <b>/ Plano de estudo</b></div><div class="ph"><h1>🎯 Plano de estudo</h1><p>Defina sua prova-alvo e siga um plano diário até lá.</p></div><div class="pc" id="plano-body" style="max-width:none"></div></div>
+    <div class="panel" id="panel-plano"><div class="breadcrumb">Dashboard <b>/ Plano de estudo</b></div><div class="ph"><h1>🎯 Plano de estudo</h1></div><div class="pc" id="plano-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-perfil">
       <div class="breadcrumb">Dashboard <b>/ Perfil</b></div>
       <div id="perfil-plan-card" class="pc" style="display:none">
@@ -11900,7 +11896,7 @@ function renderDesempenhoEm(el,comoPagina){
     // isso é silêncio: o trilho já convida, e um bloco vazio embaixo do convite
     // só ocuparia espaço repetindo o mesmo recado.
     el.innerHTML=comoPagina
-      ?'<div class="ph"><h1>📈 Desempenho</h1><p>Acompanhe sua evolução por subespecialidade e tema.</p></div><div class="card"><div class="empty">Responda questões (no Banco, na Questão do Dia ou no Simulado) para ver seu desempenho aqui.</div></div>'
+      ?'<div class="ph"><h1>📈 Desempenho</h1></div><div class="card"><div class="empty">Responda questões (no Banco, na Questão do Dia ou no Simulado) para ver seu desempenho aqui.</div></div>'
       :'';
     return;
   }
@@ -11930,7 +11926,7 @@ function renderDesempenhoEm(el,comoPagina){
   var actHtml='<div class="card"><div style="font-weight:700;margin-bottom:.6rem">Atividade (14 dias)</div><div style="display:flex;align-items:flex-end;gap:4px;height:70px">'
     +days.map(function(d){var h=d.n?Math.max(8,Math.round(d.n/maxN*64)):3;var c=d.n?'var(--blue)':'var(--bd)';return '<div title="'+d.k+': '+d.n+' questões" style="flex:1;height:'+h+'px;background:'+c+';border-radius:3px 3px 0 0"></div>';}).join('')
     +'</div><div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--t3);margin-top:.3rem"><span>14 dias atrás</span><span>hoje</span></div></div>';
-  el.innerHTML=(comoPagina?'<div class="ph"><h1>📈 Desempenho</h1><p>Sua evolução por subespecialidade e tema — e onde focar.</p></div>':'')
+  el.innerHTML=(comoPagina?'<div class="ph"><h1>📈 Desempenho</h1></div>':'')
     +kpis+foco+bars+actHtml;
 }
 // ── OFENSIVA (streak) + META SEMANAL ──
@@ -16759,14 +16755,13 @@ function diretrizesViewHTML(){
     var subs=dirSubList(refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible)
       // Nas Diretrizes (refPrivadoMode falso) as de RESUMO_ONLY_SUBS não entram.
       .filter(function(s){return refPrivadoMode||RESUMOS_ONLY_SUBS.indexOf(s.sub)<0;});
-    var _sub1=refPrivadoMode?'Escolha uma subespecialidade para ver os resumos de estudo, com pontos-chave, flashcards e mapas mentais.':'Escolha uma subespecialidade para ver os resumos das principais diretrizes.';
     // ⚠️ TELA VAZIA NUNCA (05/08/2026). Os capítulos privados só existem no
     // servidor — a semente local não tem nenhum. Se a carga não veio, a grade
     // ficava vazia com o cabeçalho por cima e nada mais, sem dizer por quê: o
     // aluno lê isso como "não tem conteúdo". Agora ou está carregando, ou
     // explica a falha e oferece tentar de novo.
     if(refPrivadoMode&&!subs.length){
-      var _cab='<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>';
+      var _cab='<div class="ph"><h1>'+_T+'</h1></div>';
       if(resumosErro){
         return _cab+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">📡</div>'
           +'<h2>Não foi possível carregar os resumos</h2>'
@@ -16790,7 +16785,7 @@ function diretrizesViewHTML(){
         +'<p>A lista abaixo é a última cópia guardada neste aparelho. O acervo completo está no servidor; basta tentar de novo.</p>'
         +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
     }
-    return '<div class="ph"><h1>'+_T+'</h1><p>'+_sub1+'</p></div>'+_avisoDir
+    return '<div class="ph"><h1>'+_T+'</h1></div>'+_avisoDir
       +'<div class="dir-sub-grid">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
         var _nv=dirNovosNaSub(s.sub,refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible);
@@ -16810,9 +16805,8 @@ function diretrizesViewHTML(){
       +'<button class="dir-tipo-btn'+(refTipoSel==='artigo'?' on':'')+'" data-dir-tipo="artigo">🔬 Artigos</button>'
       +'</div>'):'';
     var _isArt=refPrivadoMode&&refTipoSel==='artigo';
-    var _hint=_isArt?'Escolha um estudo para ver o resumo estruturado.':'Escolha um tema.';
     var head2='<button class="dir-back" data-dir-back>← Todas as subespecialidades</button>'
-      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(refSubSel)+' '+esc(refSubSel)+'</h1>'+(temas.length?'<p>'+_hint+'</p>':'')+'</div>'
+      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(refSubSel)+' '+esc(refSubSel)+'</h1></div>'
       +_tog;
     if(!temas.length){
       return head2+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2><p>'+(_isArt?('Os resumos dos principais estudos de '+esc(refSubSel)+' estão'):('Os resumos de '+esc(refSubSel)+' estão'))+' em curadoria pela equipe Endodirect.</p></div>';
@@ -16932,7 +16926,7 @@ function renderRef(){
   refPrivadoMode=false; // aba Diretrizes = itens públicos
   refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto=''; // sempre abrir na grade de subespecialidades
   if(DIRETRIZES_PUBLICADO){renderDiretrizesInto(el);return;}
-  el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1><p>Resumos de diretrizes (ADA, ATA, Endocrine Society) para consulta rápida.</p></div>'
+  el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
     +'<p>Estamos preparando resumos das principais diretrizes de endocrinologia para você consultar rapidinho durante os estudos e a prática clínica.</p>'
     +'<p class="ref-soon-sub">Em curadoria pela equipe Endodirect — disponível em breve.</p></div>';
@@ -23523,7 +23517,7 @@ function renderPerfil(){
     +(_planK?'<button class="btn btn-outline" id="btn-pf-cancel-sub">Cancelar assinatura</button>':'')
     +'</div></div>';
   var excluirCard=podeExcluirConta()?excluirContaCardHTML():'';
-  body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1><p>Gerencie seus dados cadastrais.</p></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
+  body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
     +inner+(perfilEdit?'':themeCardHTML()+assinaturaCard+nlCard+excluirCard);
   wirePerfil();
