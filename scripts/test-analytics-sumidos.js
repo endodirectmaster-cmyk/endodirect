@@ -142,5 +142,18 @@ const aluno = (o) => Object.assign({ name: 'X', email: 'x@y.z', plano: 'Gold' },
   ok('a prévia some quando o cartão abre', /\.cid-details\[open\] \.cid-previa\{display:none\}/.test(SRC));
 }
 
+// ---- 16/11/2026, mais dois pedidos no iPhone: "Esses simulados recentes nem precisa estar aparecendo no
+// dashboard. E acho que também dá para minimizar esse do desempenho por subespecialidade." ----
+{
+  const an = extrai('admAnalyticsHTML');
+  ok('🧨 "Simulados recentes" saiu do Analytics', !/Simulados recentes<\/span>/.test(an) && !/simulados_recentes/.test(an));
+  ok('o número "Simulados realizados" continua no topo', /'Simulados realizados'/.test(an));
+  ok('🧨 "Desempenho por subespecialidade" recolhido atrás do botão', /\+admListaRecolhida\('subesp',perfOrd\.length,'<div class="adm-table"><div class="adm-table-head"><span style="flex:2\.5">Subespecialidade/.test(an) && /'📊 Ver as '\+perfOrd\.length\+' subespecialidades'\)/.test(an));
+  const ctxR = { admListasAbertas: {}, esc: (x) => String(x) };
+  vm.createContext(ctxR);
+  vm.runInContext(extrai('admListaRecolhida'), ctxR);
+  ok('o botão usa o rótulo dado (e escapa o texto)', /<span class="al-abrir">📊 Ver as 4 subespecialidades<\/span>/.test(ctxR.admListaRecolhida('subesp', 4, '', '📊 Ver as 4 subespecialidades')));
+}
+
 if (bad) { console.error('\n' + bad + ' verificação(ões) do card de sumidos falharam.'); process.exit(1); }
 console.log('Card "sem acesso há 14+ dias": OK');
