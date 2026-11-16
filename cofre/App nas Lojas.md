@@ -53,6 +53,8 @@ https://apps.apple.com/br/app/id6833147654.
      (Sandbox & Production, Team Scoped), **Key ID 3JT8BL5MU9** (não é segredo). O .p8 ficou com o professor;
      vai direto para a Vercel como `APNS_PRIVATE_KEY` (Production). Nome com acento ("Notificações") a Apple recusa.
   5. ✅ (código) Teclado numérico na calculadora da Mayo, no app (professor: "Pode fazer"; ver [[Calculadoras]]).
+  6. ✅ (código) Notificações nativas (APNs) no app 1.1: ver [[Pendências]] (seção das notificações). Falta o
+     build pelo GitHub, o teste no iPhone do professor pelo TestFlight e o envio à revisão.
      Vai no build da 1.1.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).

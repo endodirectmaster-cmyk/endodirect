@@ -64,10 +64,15 @@ ok('🧨 o servidor não manda identidade do aluno à Anthropic',
   /montarCorpo\(\{ max_tokens: maxTokens, system, messages: \[\{ role: 'user', content \}\] \}/.test(ai) && !/metadata\s*:/.test(ai));
 
 // ---- 2b. nada de "instale na tela inicial" nem web push dentro do app do iPhone -----------
-ok('🧨 faixa do Mural vazia no app do iPhone', /function muralPushCtaHTML\(\)\{\n(?:\s*\/\/[^\n]*\n)*\s*if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)return '';/.test(html));
+// 16/11/2026, app 1.1: as notificações do iPhone passaram a ser NATIVAS (APNs). O web push
+// continua fora do app; os botões só aparecem quando o app tem o plugin (1.1 em diante).
+const muralCta = (html.match(/function muralPushCtaHTML\(\)\{([\s\S]*?)\n\}/) || [])[1] || '';
+const muralIos = (muralCta.match(/if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)\{([\s\S]*?)\n  \}/) || [])[1] || '';
+ok('🧨 faixa do Mural no app do iPhone: vazia sem o plugin nativo (app 1.0)', /^\s*if\(!pushNativo\(\)\)return '';/.test(muralIos));
+ok('🧨 faixa do Mural no app do iPhone nunca manda "instalar na tela inicial"', !!muralIos && !/tela inicial|Tela de In[íi]cio|Compartilhar/i.test(muralIos));
 ok('cartão "Tenha o app no celular" só no site', /<div class="so-site"[^>]*>\s*<div[^>]*>📲<\/div>/.test(html));
-ok('🧨 web push desligado no app do iPhone (pushSupported falso)', /function pushSupported\(\)\{if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)return false;/.test(html));
-ok('cartão de notificações das novidades some no app do iPhone', /id="wn-push-card"/.test(html) && /if\(wpc&&typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)wpc\.style\.display='none';/.test(html));
+ok('🧨 web push nunca no app do iPhone: lá pushSupported depende só do plugin nativo', /function pushSupported\(\)\{if\(typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'\)return !!pushNativo\(\);/.test(html) && /function pushNativo\(\)\{\n  if\(typeof APP_LOJA==='undefined'\|\|APP_LOJA!=='ios'\)return null;/.test(html));
+ok('cartão de notificações das novidades some no app do iPhone sem o plugin', /id="wn-push-card"/.test(html) && /if\(wpc&&typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios'&&!pushSupported\(\)\)wpc\.style\.display='none';/.test(html));
 
 // ---- 3. consentimento da IA: comportamento ---------------------------------------------------
 const ini = html.indexOf("var IA_CONSENT_CHAVE='endo_ia_consent_v1'");

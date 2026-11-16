@@ -1197,6 +1197,18 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
+//      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
+//      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
+//      JWT ES256 da chave "Endodirect Push"). Tokens mortos saem; o toque só abre o próprio site.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-push-apns.js')], { stdio: 'pipe', timeout: 120000 });
+  ok('notificações nativas do app do iPhone: token "apns:" gravado pelo app, enviado pela Apple, mortos removidos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das notificações nativas do app do iPhone falhou:\n' + out);
+}
+
 // 17c-undecies-ax. TECLADO NUMÉRICO NA CALCULADORA DA MAYO, NO APP DO IPHONE (16/11/2026). Professor:
 //      "Deixar teclado numérico". O site dos autores (outro domínio, num quadro) usa type="number" sem
 //      inputmode; o app injeta um script em todos os quadros, só nesse site: inteiros com teclado de
