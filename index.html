@@ -22041,10 +22041,10 @@ function admVencidasCardHTML(){
 // clicar ela aparecer"). Os números do cartão continuam à vista; a tabela abre no botão. Aberta fica aberta
 // enquanto a página não recarrega (o Analytics se redesenha quando os dados chegam).
 var admListasAbertas={};
-function admListaRecolhida(chave,n,tabela){
+function admListaRecolhida(chave,n,tabela,rotulo){
   var abertas=(typeof admListasAbertas==='object'&&admListasAbertas)||{};
   return '<details class="adm-lista" data-adm-lista="'+esc(chave)+'"'+(abertas[chave]?' open':'')+'>'
-    +'<summary><span class="al-abrir">👥 Ver '+(n===1?'o estudante':'os '+n+' estudantes')+'</span><span class="al-fechar">Ocultar a lista</span><span class="al-caret" aria-hidden="true">▾</span></summary>'
+    +'<summary><span class="al-abrir">'+(rotulo?esc(rotulo):'👥 Ver '+(n===1?'o estudante':'os '+n+' estudantes'))+'</span><span class="al-fechar">Ocultar a lista</span><span class="al-caret" aria-hidden="true">▾</span></summary>'
     +tabela+'</details>';
 }
 try{document.addEventListener('toggle',function(ev){var d=ev.target;if(d&&d.getAttribute&&d.getAttribute('data-adm-lista'))admListasAbertas[d.getAttribute('data-adm-lista')]=!!d.open;},true);}catch(e){}
@@ -22099,7 +22099,6 @@ function admAnalyticsHTML(){
   var perfOrd=area.map(function(x){var t=n(x.total);return{area:x.area,total:t,pct:t?Math.round(n(x.correct)/t*100):0};}).sort(function(a,b){return b.pct-a.pct;});
   var ult=ov.ultima_atividade?new Date(ov.ultima_atividade):null;
   var ultTxt=ult&&!isNaN(ult.getTime())?ult.toLocaleDateString('pt-BR'):'—';
-  var recentes=Array.isArray(ov.simulados_recentes)?ov.simulados_recentes:[];
   // Origem geográfica: UF (de todos via CRM) + cidade (de quem fez checkout).
   var porUf=Array.isArray(ov.por_uf)?ov.por_uf:[];
   var porCidade=Array.isArray(ov.por_cidade)?ov.por_cidade:[];
@@ -22204,13 +22203,14 @@ function admAnalyticsHTML(){
       +'<div class="card"><div class="card-head"><span class="card-title">⚠️ Maior erro</span></div>'+(perfOrd.length?perfOrd.slice().sort(function(a,b){return a.pct-b.pct;}).slice(0,3).map(function(x){return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">'+esc(x.area)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+(100-x.pct)+'%;background:var(--red)"></div></div><div class="rep-area-pct">'+(100-x.pct)+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem">Sem dados.</div>')+'</div>'
     +'</div>'
     +'<div class="sec-title" style="margin-bottom:.5rem">Desempenho por subespecialidade</div>'
-    +'<div class="adm-table"><div class="adm-table-head"><span style="flex:2.5">Subespecialidade</span><span style="flex:1">Respostas</span><span style="flex:2">Taxa de acerto</span><span style="flex:1;text-align:right">%</span></div>'
+    +admListaRecolhida('subesp',perfOrd.length,'<div class="adm-table"><div class="adm-table-head"><span style="flex:2.5">Subespecialidade</span><span style="flex:1">Respostas</span><span style="flex:2">Taxa de acerto</span><span style="flex:1;text-align:right">%</span></div>'
       +perfOrd.map(function(x){var col=x.pct>=75?'var(--grn)':x.pct>=55?'var(--gold)':'var(--red)';return '<div class="adm-table-row"><span style="flex:2.5;font-size:.8rem;font-weight:600">'+esc(x.area)+'</span><span style="flex:1;font-size:.78rem;color:var(--t2)">'+x.total+'</span><span style="flex:2"><div class="rep-area-track"><div class="rep-area-fill" style="width:'+x.pct+'%;background:'+col+'"></div></div></span><span style="flex:1;text-align:right;font-weight:700;color:'+col+'">'+x.pct+'%</span></div>';}).join('')
-    +'</div>';
+    +'</div>','📊 Ver as '+perfOrd.length+' subespecialidades');
   }
-  html+='<div class="g2" style="align-items:start;margin:1.1rem 0">'
+  // "Simulados recentes" saiu do Analytics (professor, 16/11/2026: "nem precisa estar aparecendo no
+  // dashboard"); o conteúdo de estudo fica sozinho, em largura cheia.
+  html+='<div style="margin:1.1rem 0">'
     +'<div class="card"><div class="card-head"><span class="card-title">Conteúdo de estudo dos alunos</span></div><div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">Flashcards revisados</div><div class="rep-area-pct" style="margin-left:auto">'+n(ov.flashcards_revisados)+'<span style="color:var(--t3);font-weight:400;font-size:.72rem"> de '+n(ov.flashcards)+' no baralho</span></div></div><div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">Mapas criados pelos alunos</div><div class="rep-area-pct" style="margin-left:auto">'+n(ov.mapas)+'</div></div><div class="rep-area-row"><div class="rep-area-name" style="min-width:170px">Total de respostas</div><div class="rep-area-pct" style="margin-left:auto">'+n(ov.respostas)+'</div></div></div>'
-    +'<div class="card"><div class="card-head"><span class="card-title">Simulados recentes</span></div>'+(recentes.length?recentes.map(function(r){var t=n(r.total),c=n(r.correct);var pct=t?Math.round(c/t*100):0;var d=r.at?new Date(Number(r.at)):null;var ds=d&&!isNaN(d.getTime())?d.toLocaleDateString('pt-BR'):'';return '<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+c+'/'+t+' ('+pct+'%)</div><div class="adm-row-sub">'+esc(r.area||'Todas')+(ds?' • '+ds:'')+'</div></div><span class="tag '+(pct>=70?'tag-grn':'tag-gold')+'">'+pct+'%</span></div>';}).join(''):'<div class="empty" style="padding:.6rem">Nenhum simulado realizado ainda.</div>')+'</div>'
   +'</div>'
   +perfilHtml
   +geoHtml
