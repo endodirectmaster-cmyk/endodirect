@@ -55,7 +55,14 @@ Pedido do professor: *"no banco de questões, algumas questões estão desatuali
 - [x] **Função temporária do 3º lote removida** (12/11, confirmada pelo professor no computador; conferido em `pg_proc`).
 - Nenhuma questão (fora TEEM) explica só o gabarito agora; restam ~137 com 2 alternativas faltando e ~293 com 1, e as TEEM.
 
-## 📱 FAQ do site quando o app do iPhone estiver na App Store (pedido de 11/11)
+## ✅ FAQ do site com o app do iPhone na App Store — FEITO em 16/11 (pedido de 11/11)
+
+**Feito em 16/11/2026, sw v407:** o professor lançou a versão às 08h (BRT) e a página
+https://apps.apple.com/br/app/id6833147654 abriu (200, "App Endodirect Endocrinologia – App Store"). Landing:
+"Funciona no celular?" e "📱 Tem app para iPhone e Android?" com o botão "Baixar na App Store ↗" (texto, sem o selo
+da Apple); FAQ de dentro da plataforma e cartão "Tenha o app no celular" com o link (os dois `so-site`, somem dentro
+do app). O texto abaixo é o plano original.
+
 
 Professor: *"Assim que o aplicativo estiver no ar, uma coisa que vale a pena também modificar é
 no site, na landing page, lá embaixo no FAQ, sobre se o aplicativo está disponível na plataforma

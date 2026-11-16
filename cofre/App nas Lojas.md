@@ -15,12 +15,12 @@ entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
 E-mail da Apple às 04h14 (horário de Brasília) de 16/11: **"Endodirect Endocrinologia" 1.0 para iOS aprovado
 para distribuição** (enviado em 11/11 às 00h12 BRT; 5 dias na fila). Página:
 https://apps.apple.com/br/app/id6833147654.
-- **Lançamento é manual:** o professor precisa clicar em "Lançar esta versão" no App Store Connect (iOS App 1.0).
-  Depois do lançamento, a Apple avisa que pode levar até 24 h para o app aparecer na loja.
+- **Lançado:** o professor clicou em "Liberar esta versão" às ~08h de 16/11 (status "1.0 Pronto para distribuição")
+  e a página da App Store abriu logo depois (conferido daqui: apps.apple.com liberado na rede do ambiente em 16/11).
 - **Contrato:** app gratuito, então basta o acordo de apps gratuitos (o aviso de "Agreements, Tax, and Banking" do
   e-mail é padrão; só pesaria em app pago).
 - **Depois que a página abrir (pendências combinadas):**
-  1. FAQ da landing e de dentro da plataforma com o link "Baixar na App Store" (ver [[Pendências]], pedido de 11/11).
+  1. ✅ FAQ da landing e de dentro da plataforma com o link "Baixar na App Store" (feito em 16/11, sw v407).
   2. Calculadora de reganho da Mayo para os alunos também no app do iPhone (o `foraDoAppIos` era "até a Apple aprovar"
      o app; ver [[Calculadoras]]). Perguntado ao professor.
   3. Versão 1.1 com notificações nativas (APNs); o primeiro passo é do professor (Push Notifications no identificador
