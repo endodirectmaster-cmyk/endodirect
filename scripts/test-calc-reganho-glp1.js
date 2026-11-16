@@ -21,7 +21,9 @@
 //      como reserva e o aviso de não digitar dado que identifique o paciente;
 //   6) (16/11/2026, professor: "deixar traduzido para o português e disponível no painel dos
 //      estudantes também") o aluno vê no site; no app do iPhone (`foraDoAppIos`) só o professor,
-//      até a Apple aprovar o app; e a tela traz a tradução de cada campo e rótulo do resultado.
+//      até a Apple aprovar o app. O quadro de tradução acima da janela (v402) foi rejeitado pelo
+//      professor ("ficou bem estranho"): volta o guia de preenchimento abaixo, e o quadro não pode
+//      voltar sem novo pedido.
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -44,7 +46,7 @@ ok(/rotuloExt:'Ferramenta dos autores'/.test(entrada), 'o rótulo do cartão tem
 
 // ── 2. o texto ───────────────────────────────────────────────────────────────
 ok(/TR<sub>50<\/sub>/.test(entrada) && /metade ou mais do peso perdido/.test(entrada), 'o texto tem de explicar o desfecho (TR50: recuperar metade do peso perdido)');
-ok(/'Weight at 3 months — OPTIONAL'/.test(entrada) && /Treatment duration — months on the medication/.test(entrada), 'falta o guia de preenchimento dos campos em inglês (agora na tradução da tela)');
+ok(/<i>Weight at 3 months<\/i>/.test(entrada) && /<i>Treatment duration<\/i>/.test(entrada), 'falta o guia de preenchimento dos campos em inglês');
 ok(/21\.882/.test(entrada) && /14\.513/.test(entrada) && /0,77/.test(entrada) && /0,82/.test(entrada), 'o texto tem de trazer a coorte (21.882 / 14.513) e o índice C (0,77 / 0,82)');
 ok(/pesquisa/.test(entrada) && /sem validação em brasileiros/.test(entrada) && /em revisão/.test(entrada), 'o texto tem de trazer os limites: só pesquisa, sem validação em brasileiros, artigo em revisão');
 ok(!/'/.test(entrada.replace(/'[^'\n]*'/g, '')), 'aspas soltas na entrada');
@@ -91,11 +93,8 @@ ok(run('calcVisivel({id:"reganhoglp1",foraDoAppIos:true})') === false, '🧨 o a
 run('admin=true');
 ok(run('calcVisivel({id:"reganhoglp1",foraDoAppIos:true})') === true, 'o professor tem de ver a calculadora também no app do iPhone');
 ok(run('calcVisivel({id:"imc"})') === true, 'calcVisivel não pode esconder as calculadoras comuns no iPhone');
-ok(/traducao:\[\['Medication taken: Semaglutide \/ Tirzepatide','Medicação usada: semaglutida \/ tirzepatida'\]/.test(entrada), 'falta a tradução dos campos');
-ok(/Regain risk if considering discontinuation/.test(entrada) && /Intermediate-low/.test(entrada) && /Expected time to regain half of the weight lost/.test(entrada) && /Continue treatment · Stop treatment/.test(entrada), 'falta a tradução dos rótulos do resultado');
-ok(/<details class="calc-trad" open><summary>🇧🇷 Tradução da tela/.test(html), '🧨 a tradução não aparece aberta acima da janela');
-ok(html.indexOf('<details class="calc-trad"') < html.indexOf('<div class="calc-embed"><iframe'), 'a tradução tem de vir antes da janela');
+ok(!/calc-trad/.test(html) && !/traducao:\[/.test(entrada), '⚠️ o quadro de tradução acima da janela voltou (o professor rejeitou em 16/11)');
 ok(/indicam o uso só em pesquisa, por médicos e pesquisadores, e não para decidir conduta/.test(entrada), 'falta o aviso de uso só em pesquisa na nota');
 
 if (falhas.length) { console.error('✗ calculadora de reganho pós-GLP-1 (piloto)'); falhas.forEach((f) => console.error('  - ' + f)); process.exit(1); }
-console.log('✓ calculadora de reganho pós-GLP-1: ferramenta dos autores dentro do cartão, tradução da tela, alunos no site e fora do app do iPhone até a aprovação');
+console.log('✓ calculadora de reganho pós-GLP-1: ferramenta dos autores dentro do cartão, guia em português, alunos no site e fora do app do iPhone até a aprovação');

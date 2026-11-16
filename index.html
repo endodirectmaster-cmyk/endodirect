@@ -323,13 +323,9 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .calc-card-ft{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding-top:.45rem}
 .calc-unit{font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.12rem .5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72%}
 .calc-unit.calc-ext{color:var(--blue2)}
-.calc-trad{margin:.7rem 0 0;border:1px solid var(--bd);border-radius:12px;background:var(--s2);padding:.55rem .8rem}
-.calc-trad summary{cursor:pointer;font-size:.8rem;font-weight:700;color:var(--tx)}
-.calc-trad dl{margin:.55rem 0 .1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.45rem .9rem}
-.calc-trad dl>div{min-width:0}
-.calc-trad dt{font-size:.7rem;color:var(--t3);font-style:italic;line-height:1.35}
-.calc-trad dd{margin:0;font-size:.78rem;color:var(--tx);line-height:1.4}
-@media (max-width:480px){.calc-trad dl{grid-template-columns:1fr}}
+/* (16/11/2026) Painel do professor sem subtítulos ("Retira esses subtítulos de todas as ferramentas"):
+   Prescrição Comentada e Consultório são os painéis do aluno levados para lá; a frase some só ali. */
+#adm-rx-host .ph>p,#adm-presc-host .ph>p{display:none}
 .calc-embed{margin:.7rem 0 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff}
 .calc-embed iframe{display:block;width:100%;height:min(1150px,calc(100vh - 140px));min-height:620px;border:0}
 .calc-piloto{align-self:flex-start;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold,#b7791f);border:1px solid currentColor;border-radius:999px;padding:.08rem .45rem;line-height:1.4}
@@ -5756,32 +5752,19 @@ var CALCS=[
   // traduzido para o português e disponível no painel dos estudantes também?" Sai o `soProfessor`:
   // o aluno vê no site. No app do iPhone (`foraDoAppIos`) só o professor vê até a Apple aprovar o
   // app: o revisor usa conta de aluno, e calculadora médica nova no meio da revisão é risco à toa.
-  // A janela é o site DELES: não há como traduzir o que aparece lá dentro. O português entra na
-  // `traducao` (cada campo e cada rótulo do resultado, logo acima da janela) e no guia abaixo.
+  // A janela é o site DELES: não há como traduzir o que aparece lá dentro. Um quadro de tradução
+  // acima da janela (v402) foi rejeitado pelo professor ("ficou bem estranho ... era traduzir a
+  // calculadora, cada uma das variáveis"); ficou o guia de preenchimento abaixo, como antes. A
+  // calculadora em português de verdade depende de versão própria (modelo publicado ou
+  // coeficientes dos autores).
   {id:'reganhoglp1',name:'Reganho de peso após semaglutida ou tirzepatida (Mayo Clinic)',area:'Obesidade',foraDoAppIos:true,
-   desc:'Tempo até recuperar metade do peso perdido depois de suspender semaglutida ou tirzepatida (TR50) e faixa de risco; ferramenta dos autores, em inglês, com a tradução ao lado',
+   desc:'Tempo até recuperar metade do peso perdido depois de suspender semaglutida ou tirzepatida (TR50) e faixa de risco; ferramenta dos autores, em inglês, com guia em português',
    external:true,embutir:true,rotuloExt:'Ferramenta dos autores',link:'https://glp1regainrisk.com',cta:'Abrir a calculadora da Mayo Clinic',
    desc2:'<b>O que prevê:</b> o tempo, contado do dia em que a semaglutida ou a tirzepatida foi suspensa, até a pessoa recuperar metade ou mais do peso perdido no tratamento (TR<sub>50</sub>, a partir do menor peso atingido), e a faixa de risco: baixo, intermediário-baixo, intermediário-alto ou alto (quartis da coorte de desenvolvimento).<br><br>'
-     +'<b>Como ler:</b> o tempo é o típico de pacientes com características parecidas, arredondado em meses. Quanto menor, mais cedo o reganho; quanto maior, mais tempo a perda tende a se manter. O gráfico compara continuar e parar o tratamento até o mês 24, em % ou em kg, com o peso e o IMC de cada ponta.<br><br>'
+     +'<b>Como preencher (o site é em inglês):</b> <i>Medication taken</i> = medicação usada; <i>Weight at start</i> e <i>Height at start</i> = peso e altura no início do tratamento (o site calcula o IMC); <i>Age</i> = idade; <i>Sex</i> = sexo; <i>Diabetes</i> = No (não) ou Yes (sim); <i>Treatment duration</i> = meses de uso; <i>Current weight</i> = peso atual; <i>Weight at 3 months</i> = peso aos 3 meses de tratamento, opcional, que refina a estimativa pelo ritmo inicial da perda.<br><br>'
+     +'<b>Como ler:</b> o tempo é o típico de pacientes com características parecidas, arredondado em meses. Quanto menor, mais cedo o reganho; quanto maior, mais tempo a perda tende a se manter. O resultado traz também a resposta ao tratamento (<i>Responder</i>, pela perda de peso total até agora, em %) e o gráfico da trajetória prevista até 24 meses de tratamento, continuando (linha cheia) ou parando (tracejada), em % ou em kg, com o peso e o IMC de cada ponta. Depois de <i>Calculate</i>, o site oferece mandar um resumo por e-mail: é opcional, basta fechar no ×.<br><br>'
      +'<b>De onde vem:</b> coorte da Mayo Clinic com 21.882 adultos que suspenderam a semaglutida e 14.513 que suspenderam a tirzepatida. Seis variáveis: perda de peso no tratamento, duração, idade, sexo, IMC inicial e diabetes. Índice C de 0,77 (semaglutida) e 0,82 (tirzepatida); TR<sub>50</sub> mediano de 6 meses nas duas; o modelo da semaglutida manteve a ordem de risco numa coorte externa.<br><br>'
      +'<b>Limites:</b> os autores restringem o uso a pesquisa, e não a decisão clínica; população americana, sem validação em brasileiros; só semaglutida e tirzepatida; artigo ainda em revisão (Romanos M et al., apresentação oral no ObesityWeek, 15/11/2026).',
-   traducao:[['Medication taken: Semaglutide / Tirzepatide','Medicação usada: semaglutida / tirzepatida'],
-     ['Personal characteristics at the start of treatment','Dados da pessoa no início do tratamento'],
-     ['Weight at start (kg ou lb) · Height at start (cm ou ft/in)','Peso e altura no início do tratamento (o site calcula o IMC: <i>BMI at start</i>)'],
-     ['Age — years · Sex: Female / Male','Idade, em anos · Sexo: feminino / masculino'],
-     ['Diabetes: No / Yes','Diabetes: não / sim'],
-     ['Treatment outcomes · Treatment duration — months on the medication','Evolução no tratamento · Tempo de uso, em meses'],
-     ['Current weight · Weight lost so far (TBWL%)','Peso atual · Perda de peso até agora, em % do peso inicial (TBWL = perda de peso corporal total)'],
-     ['Weight at 3 months — OPTIONAL','Peso aos 3 meses de tratamento, opcional: refina a estimativa pelo ritmo inicial da perda'],
-     ['Calculate','Calcular. Depois, o site oferece mandar um resumo por e-mail (<i>Send me a summary</i>): é opcional, feche no ×'],
-     ['Predicted weight trajectory — continue vs stop','Trajetória prevista do peso: continuar × parar, até o mês 24 (<i>Months from start of treatment</i>); <i>decision now</i> marca o mês atual'],
-     ['Continue treatment · Stop treatment','Continuar o tratamento (linha cheia) · Parar o tratamento (tracejada)'],
-     ['Continuing is expected to preserve about …% TBWL (… kg) more weight loss than stopping by month 24','Continuar deve manter cerca de …% (… kg) a mais de perda de peso do que parar, no mês 24'],
-     ['Response to treatment: Responder','Resposta ao tratamento: respondedor (pela perda de peso total até agora)'],
-     ['Regain risk if considering discontinuation','Risco de reganho, se a suspensão for considerada'],
-     ['Low · Intermediate-low · Intermediate-high · High risk','Risco baixo · intermediário-baixo · intermediário-alto · alto'],
-     ['≈ … mo — Expected time to regain half of the weight lost, from the day treatment stops','≈ … meses: tempo esperado para recuperar metade do peso perdido, a contar do dia da suspensão'],
-     ['An approximate guide for this individual, not an exact prediction','Estimativa aproximada para esta pessoa, não uma previsão exata']],
    note:'A conta é feita pela ferramenta dos autores (glp1regainrisk.com), aberta aqui dentro, em inglês: o modelo ainda não foi publicado e não é reproduzido pela plataforma. Os autores indicam o uso só em pesquisa, por médicos e pesquisadores, e não para decidir conduta. O que se digita na janela vai para o site deles, como ao usá-lo direto; não use nome nem dado que identifique o paciente.'},
   {id:'trp',name:'Reabsorção tubular de fósforo (TRP)',area:'Osteometabolismo',desc:'Fração de reabsorção tubular de fosfato',
    fields:[{id:'trp_sp',label:'Fósforo sérico (mg/dL)',type:'num'},{id:'trp_up',label:'Fósforo urinário (mg/dL)',type:'num'},{id:'trp_scr',label:'Creatinina sérica (mg/dL)',type:'num'},{id:'trp_ucr',label:'Creatinina urinária (mg/dL)',type:'num'}],
@@ -14502,10 +14485,6 @@ function openCalc(id){
       +(c.soProfessor?'<div class="calc-piloto" style="margin-top:.45rem">Piloto · visível só para professores</div>':'')
       // `embutir` (reganhoglp1, 16/11/2026): a ferramenta dos autores roda AQUI DENTRO, num
       // iframe; o guia em português vem logo abaixo e o link de outra aba fica como reserva.
-      // Tradução de cada campo e rótulo do resultado, logo acima da janela (que é o site dos autores,
-      // em inglês, e não há como traduzir por dentro). Aberta por padrão; fecha no título.
-      +(Array.isArray(c.traducao)&&c.traducao.length?'<details class="calc-trad" open><summary>🇧🇷 Tradução da tela: o que aparece em inglês na janela</summary><dl>'
-        +c.traducao.map(function(t){return '<div><dt>'+esc(t[0])+'</dt><dd>'+t[1]+'</dd></div>';}).join('')+'</dl></details>':'')
       +(c.embutir?'<div class="calc-embed"><iframe src="'+esc(c.link)+'" title="'+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe></div>'
         +'<div style="font-size:.7rem;color:var(--t3);margin:.35rem 0 .2rem">Janela em branco? Use o botão “'+esc(c.cta||'Abrir')+'”, no fim do cartão.</div>':'')
       +(c.desc2?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin:.5rem 0 .8rem">'+c.desc2+'</div>':'')
@@ -17720,7 +17699,7 @@ function admMapasHTML(){
       return '<button class="dir-sub-btn" data-admmm-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' mapa'+(s.count===1?'':'s')+'</div></button>';
     }).join('')+'</div>';
     return '<div class="adm-ph"><h1>Mapas Mentais</h1></div>'
-      +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Escolha uma subespecialidade para ver e criar os mapas mentais.</p></div>'+grid+'</div>';
+      +'<div class="adm-pc">'+grid+'</div>';
   }
   // Nível 2 — mapas da subespecialidade + criação contextual.
   var rows=(sharedMM||[]).map(function(m,j){return{m:m,j:j};}).filter(function(o){return canonSub(o.m.sub)===admMMSub;});
@@ -17782,7 +17761,7 @@ function admFlashHTML(){
       return '<button class="dir-sub-btn" data-admfc-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+s.count+' card'+(s.count===1?'':'s')+'</div></button>';
     }).join('')+'</div>';
     return '<div class="adm-ph"><h1>Flashcards</h1></div>'
-      +'<div class="adm-pc"><div class="ph" style="margin-top:0"><p>Crie e publique flashcards por subespecialidade. Ao salvar, eles entram no baralho de todos os alunos.</p></div>'+grid+'</div>';
+      +'<div class="adm-pc">'+grid+'</div>';
   }
   var rows=(fcShared||[]).map(function(c,j){return{c:c,j:j};}).filter(function(o){return canonSub(o.c.sub||o.c.cat)===admFcSub;});
   var fcTemaTabs='<div class="filtro-linha">'+filtroCaixaHTML('Subtópico','admfctema',[{v:'',t:'Todos ('+rows.length+')'}].concat(temaListFor(rows.map(function(o){return o.c;}),admFcSub).map(function(t){return {v:t.tema,t:t.tema+' ('+t.count+')'};})),admFcTema)+'</div>';
@@ -19690,8 +19669,7 @@ function renderAdmSec(sec){
   try{restoreMMLive();}catch(e){}
   if(sec==='avisos'){m.innerHTML=admAvisosAlunosHTML();bindAdmAvisosAlunos();bindAdmSec(sec);return;}
   if(sec==='cme'){
-    m.innerHTML='<div class="adm-ph"><h1>🎓 Enquete — Educação Médica Continuada</h1>'
-      +'<p>O que os assinantes <b>Gold</b> pediram para o programa mensal. Cada aluno indica até 3 temas.</p></div>'
+    m.innerHTML='<div class="adm-ph"><h1>🎓 Enquete — Educação Médica Continuada</h1></div>'
       +'<div class="adm-pc" id="adm-cme-body"><div class="empty">Apurando…</div></div>';
     renderAdmCme();bindAdmSec(sec);return;
   }
@@ -20783,7 +20761,7 @@ function admRefSecHTML(){
     body=formHTML;
   }else if(!admRefSub){
     // Nos Resumos a grade conta capítulos + artigos (a escolha é um nível abaixo).
-    body=(admRefMode==='res'?'<div style="font-size:.78rem;color:var(--t2);margin-bottom:.9rem">Capítulos de estudo e resumos de estudos (trials) publicados na aba Resumos do aluno.</div>':'')
+    body=''
       +'<div class="dir-sub-grid">'+dirSubList(admRefMode==='res'?dirModeMatchAnyTipo:dirModeMatch).filter(function(s){return admRefMode==='res'||RESUMOS_ONLY_SUBS.indexOf(s.sub)<0;}).map(function(s){
       var _c;
       if(admRefMode==='res'){
@@ -20820,9 +20798,10 @@ function admRefSecHTML(){
       +'<button class="dir-tipo-btn'+(admRefTipo==='capitulo'?' on':'')+'" data-admref-tipo="capitulo">📚 Capítulos</button>'
       +'<button class="dir-tipo-btn'+(admRefTipo==='artigo'?' on':'')+'" data-admref-tipo="artigo">🔬 Artigos</button>'
       +'</div>'):'';
+    // (16/11/2026) Sem subtítulo de instrução quando já há temas — professor: "Retira esses subtítulos
+    // de todas as ferramentas". Fica só o aviso de lista vazia, que diz o que fazer.
     var _atxt=(temas.length||admRefTemaAdd)
-      ?(_aArt?('Cada artigo é um estudo (trial) dentro de '+esc(admRefSub)+'. Clique para editar, ou use ✏️ / 🗑 no card.')
-             :('Cada tema é uma aba dentro de '+esc(admRefSub)+'. Clique para editar, ou use ✏️ / 🗑 no card.'))
+      ?''
       :(_aArt?'Nenhum artigo ainda — clique em “➕ Adicionar artigo” para cadastrar o primeiro trial.'
              :'Nenhum tema ainda — clique em “➕ Adicionar tema” para criar o primeiro.');
     // LIBERAR EM LOTE. Antes era um clique POR item, e com 43 artigos em rascunho
@@ -20839,7 +20818,7 @@ function admRefSecHTML(){
       ? '<button class="btn btn-primary btn-sm" id="btn-ref-liberar-lote" style="margin-bottom:.8rem" title="Sai do rascunho e passa a aparecer na aba Resumos dos assinantes">👁 Liberar todos os rascunhos ('+_rasc.length+')</button>'
       : '';
     body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
-      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1><p>'+_atxt+'</p></div>'
+      +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1>'+(_atxt?'<p>'+_atxt+'</p>':'')+'</div>'
       +_atog
       +_btnLote
       +(cards?'<div class="dir-sub-grid">'+cards+'</div>':'');
@@ -21285,7 +21264,7 @@ function admAvisosAlunosHTML(){
   var autos=avisosDoMural().filter(function(x){return !x.manual;});
   var nota='<div style="font-size:.74rem;color:var(--t3);margin:.2rem 0 .9rem;line-height:1.5">Além destes avisos, o mural do Dashboard mostra <b>sozinho</b> as videoaulas e as aulas da Educação Médica Continuada dos últimos '+AVISOS_AUTO_DIAS+' dias'
     +(autos.length?' (hoje: '+autos.length+' — '+esc(autos.slice(0,3).map(function(x){return x.titulo;}).join('; '))+(autos.length>3?'…':'')+')':' (hoje: nenhuma)')+'.</div>';
-  return '<div class="adm-ph"><h1>📌 Avisos aos alunos</h1><p>O que aparece no mural de avisos do Dashboard de todos os alunos.</p></div>'
+  return '<div class="adm-ph"><h1>📌 Avisos aos alunos</h1></div>'
     +'<div class="adm-pc">'+form+nota+'<div class="sec-h"><span class="sec-title">Publicados ('+lista.length+')</span></div>'+rows+'</div>';
 }
 function persistAvisosAlunos(){try{lsSet('avisos_alunos',avisosAlunos);}catch(e){}try{renderDashAvisos();}catch(e){}return queueRemoteStateSave(true);}
@@ -21354,7 +21333,7 @@ function admConteudoHTML(){
   +'</div>'
   +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+'<select class="pod-cat-sel" data-adm-pod-cat="'+i+'" style="font-size:.72rem;padding:2px 6px;border:1px solid var(--bd2);border-radius:8px;background:var(--surface);color:var(--tx)" title="Editar subespecialidade"><option value="">— sem categoria —</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(p.area===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+((p.area&&SUB.indexOf(p.area)<0)?'<option value="'+esc(p.area)+'" selected>'+esc(p.area)+'</option>':'')+'</select>'+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div>'+meta+''+podcastPlayerHTML(p)+'</div><button class="btn btn-outline btn-sm" data-adm-delpod="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
 
-  return '<div class="adm-ph"><h1>Podcasts</h1><p>Podcasts e materiais de áudio disponíveis para os estudantes.</p></div>'
+  return '<div class="adm-ph"><h1>Podcasts</h1></div>'
   +'<div class="adm-pc">'
   +'<div class="pill-tab-row">'
     +'<button class="pill-tab'+(admPodSubtab==='ouvir'?' on':'')+'" data-podsub="ouvir">🎧 Ouvir podcasts</button>'
@@ -21370,7 +21349,7 @@ function admConteudoHTML(){
 // funciona nos cards do painel do professor sem nenhum registro novo.
 function admFavsHTML(){
   return '<div class="adm-ph"><div><h1>Favoritos</h1></div></div>'
-    +'<div class="adm-pc"><div style="font-size:.8rem;color:var(--t2);line-height:1.55;margin-bottom:1rem">Tudo o que você salvou — artigos do Mural, resumos, questões, mapas mentais e flashcards. Clique na estrela para tirar da lista.</div>'
+    +'<div class="adm-pc">'
     +'<div id="adm-favs-body"></div></div>';
 }
 function admCalcHTML(){
@@ -21381,7 +21360,7 @@ function admCalcHTML(){
     +'<div class="g3" id="calc-grid"></div><div id="calc-detail"></div></div>';
 }
 function admChatHTML(){
-  return '<div class="adm-ph"><h1>Chat</h1><p>Assistente de endocrinologia para tirar dúvidas.</p></div>'
+  return '<div class="adm-ph"><h1>Chat</h1></div>'
   +'<div class="adm-pc"><div class="card" style="padding:0;overflow:hidden;height:62vh;display:flex;flex-direction:column">'
     +'<div id="adm-chat-msgs" style="flex:1;overflow-y:auto;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:.6rem"><div class="chat-bubble ai"><div class="chat-name">Endodirect IA</div>Olá! Como posso ajudar?</div></div>'
     +'<div style="padding:.7rem 1rem;border-top:1px solid var(--bd);display:flex;gap:.5rem"><textarea id="adm-chat-input" placeholder="Digite sua pergunta…" style="flex:1;height:40px;max-height:90px;resize:none;font-size:.79rem"></textarea><button class="btn btn-primary" id="btn-adm-chat-send">Enviar →</button></div>'
@@ -21620,7 +21599,7 @@ function admSumidosCardHTML(){
   );
 }
 function admAnalyticsHTML(){
-  var head='<div class="adm-ph"><h1>Analytics</h1><p>Indicadores reais de uso e desempenho dos estudantes.</p></div><div class="adm-pc">';
+  var head='<div class="adm-ph"><h1>Analytics</h1></div><div class="adm-pc">';
   if(admOverviewErr){
     return head+'<div class="card" style="text-align:center;padding:1.6rem"><div style="font-size:1.6rem">⚠️</div><div style="font-weight:700;color:var(--tx);margin:.3rem 0">Não foi possível carregar os dados</div><p style="font-size:.82rem;color:var(--t2)">'+esc(admOverviewErr)+'</p><button class="btn btn-outline" id="adm-analytics-retry" style="margin-top:.6rem">Tentar de novo</button></div></div>';
   }
@@ -21953,7 +21932,7 @@ function admCursosHTML(){
       +'<div class="g2" style="align-items:start">'+(cles.length?cles.map(admLessonCard).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma aula nesta subespecialidade. Clique em “+ Adicionar aula”.</div>')+'</div>';
   }
 
-  return '<div class="adm-ph"><h1>Cursos</h1><p>Importe e organize videoaulas por curso.</p></div>'
+  return '<div class="adm-ph"><h1>Cursos</h1></div>'
     +'<div class="adm-pc" style="padding-bottom:0">'+admAoVivoHTML()+'</div>'
   +'<div class="adm-pc">'
   +'<div class="pill-tab-row">'

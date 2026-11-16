@@ -5,6 +5,12 @@ atualizado: 2026-11-16
 
 # Calculadoras
 
+## ↩️ REGANHO PÓS-GLP-1: O QUADRO DE TRADUÇÃO SAIU (2026-11-16, à noite)
+O professor achou o quadro "bem estranho": queria a calculadora em português, cada variável. O quadro saiu (v404) e
+voltou o guia abaixo da janela. **Não há como traduzir a janela** (é o site dos autores, outra origem). Caminhos:
+versão própria com o modelo (publicação ou coeficientes cedidos pelos autores) ou tradução automática de terceiros
+dentro da janela (não testada; tradução de máquina num site médico). Decisão do professor pendente.
+
 ## 🧪 REGANHO PÓS-GLP-1: ALUNOS NO SITE E TELA TRADUZIDA (2026-11-16, mais tarde)
 
 Professor: *"Agora dá para deixar traduzido para o português e disponível no painel dos estudantes também?"*
