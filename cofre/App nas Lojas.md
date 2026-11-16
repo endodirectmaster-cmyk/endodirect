@@ -37,6 +37,9 @@ https://apps.apple.com/br/app/id6833147654.
      (incidentaloma). Montados os dois jogos de 8 (01–03 novos, 04–08 os de 10/11, tema escuro) e entregues em zip.
      A 04 (resposta comentada) passou a ser a da questão nova (print de 08h39); a antiga, de vitamina D, saiu.
      **Jogo final pronto e entregue** (8 imagens, 1179 × 2556 e 1284 × 2778): sobe com a 1.1.
+     **iPad (lembrete do professor):** a ficha também tem as 4 capturas de iPad 13" (2064 × 2752, de 11/11, geradas
+     em Chromium com a conta do revisor). Refazer na ordem nova pede login do revisor; a senha de 11/11 não entra mais
+     (trocada depois) e não se pede senha ao professor. Saídas: prints num iPad, ou manter as 4 atuais.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
