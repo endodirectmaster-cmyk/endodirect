@@ -1601,6 +1601,22 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .pod-desc p{margin:0 0 .4rem}
 .pod-desc p:last-child{margin-bottom:0}
 .pod-desc .pod-desc-ref{font-weight:700;margin-top:.55rem;margin-bottom:.15rem;text-align:left}
+.pod-adm{margin-bottom:.6rem;display:flex;flex-direction:column;gap:.65rem}
+.pod-adm-topo{display:flex;gap:.75rem;align-items:flex-start}
+.pod-adm-ico{width:40px;height:40px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.pod-adm-tit{font-size:.9rem;font-weight:700;color:var(--tx);line-height:1.35;text-wrap:balance}
+.pod-adm-data{font-size:.7rem;color:var(--t3);margin-top:.15rem;font-variant-numeric:tabular-nums}
+.pod-adm .pod-desc{margin:0;font-size:.78rem;color:var(--t2);line-height:1.55}
+.pod-adm-links{font-size:.72rem;color:var(--t3)}
+.pod-refs>summary{cursor:pointer;list-style:none;user-select:none;display:inline-flex;align-items:center;gap:.35rem;font-size:.76rem;font-weight:700;color:var(--blue)}
+.pod-refs>summary::-webkit-details-marker{display:none}
+.pod-refs>summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+.pod-refs .pr-caret{display:inline-block;font-size:.7rem;transition:transform .15s}
+.pod-refs[open] .pr-caret{transform:rotate(180deg)}
+.pod-refs ol{margin:.5rem 0 0;padding-left:1.2rem;display:grid;gap:.35rem;font-size:.72rem;line-height:1.45;color:var(--t2)}
+.pod-adm-rodape{display:flex;align-items:center;justify-content:space-between;gap:.6rem;border-top:1px solid var(--bd);padding-top:.6rem}
+.pod-adm-rodape .pod-cat-sel{font-size:.76rem;padding:.35rem .5rem;border:1px solid var(--bd2);border-radius:8px;background:var(--surface);color:var(--tx);max-width:62%;width:auto}
+.pod-adm-del{color:var(--red);border-color:var(--red);flex-shrink:0}
 /* Alternador Capítulos × Artigos (aba Resumos) — segmented control. */
 .dir-tipo-tog{display:inline-flex;flex-wrap:wrap;gap:.25rem;padding:.25rem;margin:0 0 1.15rem;border:1px solid var(--bd2);border-radius:999px;background:var(--s2)}
 .dir-tipo-btn{border:0;background:transparent;color:var(--t2);border-radius:999px;padding:.42rem 1rem;font-size:.79rem;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -13950,6 +13966,26 @@ function podDescParagrafos(t){
   }
   return t.split(/\n+/).map(function(x){return x.trim();}).filter(Boolean);
 }
+// Partes da descrição (16/11/2026; professor, com print do podcast no painel: "melhorar a formatação").
+// texto = parágrafos do episódio; links = "Acesse: endodirect.com.br" / "Siga: @endodirect";
+// refs = a lista depois de "Referências:" ("Referencias usadas:", "Principais referencias:"), um item
+// por linha, sem o "•" do início (e "• a • b" colados numa linha viram itens separados).
+var POD_REF_CAB=/^(?:principais\s+)?refer[eê]ncias(?:\s+(?:usadas|utilizadas|bibliogr[aá]ficas))?\s*:?\s*(.*)$/i;
+function podDescPartes(t){
+  var ls=podDescParagrafos(t),texto=[],links=[],refs=[],k=-1;
+  for(var i=0;i<ls.length;i++){if(POD_REF_CAB.test(ls[i])){k=i;break;}}
+  (k<0?ls:ls.slice(0,k)).forEach(function(x){(/^(?:acesse|siga)\b/i.test(x)?links:texto).push(x);});
+  if(k>=0){
+    var resto=[(ls[k].match(POD_REF_CAB)||[])[1]||''].concat(ls.slice(k+1));
+    resto.forEach(function(x){
+      String(x).split(/\s+[•·▪]\s+/).forEach(function(r){
+        r=r.replace(/^\s*(?:[•·▪*-]|\d+[.)])\s*/,'').trim();
+        if(r)refs.push(r);
+      });
+    });
+  }
+  return {texto:texto,links:links,refs:refs};
+}
 function podDescHTML(t){
   var ps=podDescParagrafos(t);if(!ps.length)return '';
   return '<div class="pod-desc">'+ps.map(function(x){return /^refer[eê]ncias\s*:?$/i.test(x)?'<p class="pod-desc-ref">'+esc(x)+'</p>':'<p>'+esc(x)+'</p>';}).join('')+'</div>';
@@ -21808,7 +21844,19 @@ function admConteudoHTML(){
     +(admPodFiltro?'<button class="btn btn-ghost btn-sm" id="adm-pod-clearfilter">✕ Limpar</button>':'')
     +'<button class="btn btn-outline btn-sm" id="btn-adm-pod-recat" style="margin-left:auto">🏷️ Categorizar automaticamente</button>'
   +'</div>'
-  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){var i=podcasts.indexOf(p);var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';return '<div class="card" style="margin-bottom:.6rem"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem">'+'<select class="pod-cat-sel" data-adm-pod-cat="'+i+'" style="font-size:.72rem;padding:2px 6px;border:1px solid var(--bd2);border-radius:8px;background:var(--surface);color:var(--tx)" title="Editar subespecialidade"><option value="">— sem categoria —</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(p.area===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+((p.area&&SUB.indexOf(p.area)<0)?'<option value="'+esc(p.area)+'" selected>'+esc(p.area)+'</option>':'')+'</select>'+(p.desc?'<span style="font-size:.7rem;color:var(--t3);align-self:center">'+esc(p.desc)+'</span>':'')+'</div>'+meta+''+podcastPlayerHTML(p)+'</div><button class="btn btn-outline btn-sm" data-adm-delpod="'+i+'" style="padding:2px 8px;color:var(--red);border-color:var(--red)">🗑 Excluir</button></div></div>';}).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
+  +'<div id="adm-pod-list">'+(lista.length?lista.map(function(p){
+    var i=podcasts.indexOf(p),dt=podDataStr(p),pt=podDescPartes(p.desc);
+    var meta=p.asset?'<div class="asset-meta">Supabase Storage: '+esc(p.asset.name||'audio')+' · '+formatBytes(p.asset.size)+'</div>':'';
+    var sel='<select class="pod-cat-sel" data-adm-pod-cat="'+i+'" title="Editar subespecialidade" aria-label="Subespecialidade"><option value="">— sem categoria —</option>'+SUB.map(function(s){return '<option value="'+esc(s)+'"'+(p.area===s?' selected':'')+'>'+esc(s)+'</option>';}).join('')+((p.area&&SUB.indexOf(p.area)<0)?'<option value="'+esc(p.area)+'" selected>'+esc(p.area)+'</option>':'')+'</select>';
+    return '<div class="card pod-adm">'
+      +'<div class="pod-adm-topo"><span class="pod-adm-ico" aria-hidden="true">🎧</span><div><div class="pod-adm-tit">'+esc(p.title)+'</div>'+(dt?'<div class="pod-adm-data">📅 '+esc(dt)+'</div>':'')+'</div></div>'
+      +(pt.texto.length?'<div class="pod-desc">'+pt.texto.map(function(x){return '<p>'+esc(x)+'</p>';}).join('')+'</div>':'')
+      +(pt.links.length?'<div class="pod-adm-links">'+pt.links.map(esc).join(' · ')+'</div>':'')
+      +(pt.refs.length?'<details class="pod-refs"><summary>📚 Referências ('+pt.refs.length+')<span class="pr-caret" aria-hidden="true">▾</span></summary><ol>'+pt.refs.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ol></details>':'')
+      +meta+podcastPlayerHTML(p)
+      +'<div class="pod-adm-rodape">'+sel+'<button class="btn btn-outline btn-sm pod-adm-del" data-adm-delpod="'+i+'">🗑 Excluir</button></div>'
+    +'</div>';
+  }).join(''):'<div class="empty">Nenhum podcast '+(admPodFiltro?'nesta subespecialidade':'cadastrado ainda')+'.</div>')+'</div>';
 
   return '<div class="adm-ph"><h1>Podcasts</h1></div>'
   +'<div class="adm-pc">'
