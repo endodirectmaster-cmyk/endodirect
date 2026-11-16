@@ -138,23 +138,51 @@ const sess = (email, minAtras) => ({ user: { email, last_sign_in_at: new Date(Da
 }
 async function cartoesPerfil() {
   const caixas = {}, desligou = [];
+  let rostoOk = true;
   const caixa = () => { const b = { style: { display: 'none' }, innerHTML: '', botao: null };
-    b.querySelector = () => (/data-faceid-perfil/.test(b.innerHTML) ? (b.botao = b.botao || { cliques: [], addEventListener: (ev, fn) => b.botao.cliques.push(fn) }) : null); return b; };
+    b.querySelector = () => {
+      if (!/data-faceid-perfil/.test(b.innerHTML)) return null;
+      if (!b.botao) {
+        const cls = new Set(/class="faceid-switch on"/.test(b.innerHTML) ? ['faceid-switch', 'on'] : ['faceid-switch']);
+        b.botao = { cliques: [], disabled: false, attrs: {}, classList: { toggle: (c, v) => { if (v) cls.add(c); else cls.delete(c); }, has: (c) => cls.has(c) },
+          setAttribute(k, v) { this.attrs[k] = v; }, addEventListener(ev, fn) { this.cliques.push(fn); } };
+      }
+      return b.botao;
+    };
+    return b; };
   caixas['perfil-faceid'] = caixa(); caixas['adm-perfil-faceid'] = caixa();
   const a = ambiente({ user: { email: 'prof@x.com', role: 'admin' }, ls: { endo_faceid_conta: 'prof@x.com' } });
-  a.cx.document = { getElementById: (id) => caixas[id] || null };
-  a.cx.esc = (x) => String(x); a.cx.faceIdNome = 'Face ID';
-  a.cx.faceIdDesligar = () => { desligou.push(1); delete a.ls.endo_faceid_conta; };
-  a.cx.faceIdLigar = () => Promise.resolve();
-  vm.runInContext(['FACEID_CARTOES'].map(() => (html.match(/\nvar FACEID_CARTOES=[^;]+;/) || [''])[0]).join('') + ['faceIdDisponivel', 'faceIdPerfilCaixas', 'faceIdPerfilRender'].map(corpo).join('\n'), a.cx);
-  a.cx.faceIdPerfilRender();
-  await new Promise((r) => setTimeout(r, 10));
+  const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+  Object.assign(a.cx, { setTimeout, esc: (x) => String(x), faceIdNome: 'Face ID',
+    document: { getElementById: (id) => caixas[id] || null },
+    faceIdDesligar: () => { desligou.push(1); delete a.ls.endo_faceid_conta; },
+    faceIdLigar: () => Promise.resolve(rostoOk).then((ok) => { if (ok) a.ls.endo_faceid_conta = 'prof@x.com'; return ok; }) });
+  vm.runInContext((html.match(/\nvar FACEID_CARTOES=[^;]+;/) || [''])[0] + ['faceIdDisponivel', 'faceIdPerfilCaixas', 'faceIdPerfilRender', 'faceIdChaveVisual'].map(corpo).join('\n'), a.cx);
+  const redesenha = async () => { for (const k in caixas) caixas[k].botao = null; a.cx.faceIdPerfilRender(); await espera(10); };
+  await redesenha();
   const prof = caixas['adm-perfil-faceid'], aluno = caixas['perfil-faceid'];
-  ok('🧨 cartão aparece no Perfil do professor, ligado, com "Desligar"', prof.style.display === '' && /Ligado neste iPhone/.test(prof.innerHTML) && />Desligar</.test(prof.innerHTML), prof.innerHTML.slice(0, 80));
-  ok('e também no Perfil do aluno', aluno.style.display === '' && />Desligar</.test(aluno.innerHTML));
-  ok('🧨 "Desligar" no Perfil do professor desliga', !!(prof.botao && prof.botao.cliques[0]) && (prof.botao.cliques[0](), desligou.length === 1));
-  await new Promise((r) => setTimeout(r, 10));
-  ok('depois de desligar, o cartão mostra "Desligado"', /Desligado/.test(prof.innerHTML) && /Ligar Face ID/.test(prof.innerHTML));
+  const chave = (b) => (b.innerHTML.match(/<button class="faceid-switch[^"]*"[^>]*>/) || [''])[0];
+  ok('🧨 Perfil do professor: chave do Face ID ligada', prof.style.display === '' && /class="faceid-switch on"/.test(chave(prof)) && /role="switch"/.test(chave(prof)) && /aria-checked="true"/.test(chave(prof)), prof.innerHTML.slice(0, 120));
+  ok('e também no Perfil do aluno', aluno.style.display === '' && /aria-checked="true"/.test(chave(aluno)));
+  ok('sem os botões antigos "Ligar/Desligar"', !/>Desligar</.test(prof.innerHTML) && !/>Ligar /.test(prof.innerHTML));
+  const bt = prof.querySelector();
+  ok('🧨 tocar na chave ligada desliga (desliza na hora e grava)', !!bt.cliques[0] && (bt.cliques[0](), desligou.length === 1 && !bt.classList.has('on') && bt.attrs['aria-checked'] === 'false' && bt.disabled === true));
+  ok('toque repetido durante a animação não faz nada', (bt.cliques[0](), desligou.length === 1));
+  await espera(300); await redesenha();
+  ok('depois: chave desligada no redesenho', /aria-checked="false"/.test(chave(prof)) && !/faceid-switch on/.test(chave(prof)));
+  rostoOk = false;
+  let b2 = prof.querySelector(); b2.cliques[0]();
+  ok('ligar: a chave desliza para ligada enquanto o iPhone confere o rosto', b2.classList.has('on'));
+  await espera(5);
+  ok('🧨 rosto não confirmado: a chave volta para desligada', !b2.classList.has('on') && b2.attrs['aria-checked'] === 'false');
+  await espera(300); await redesenha();
+  ok('e o Face ID segue desligado', !a.ls.endo_faceid_conta && /aria-checked="false"/.test(chave(prof)));
+  rostoOk = true;
+  b2 = prof.querySelector(); b2.cliques[0]();
+  await espera(300); await redesenha();
+  ok('rosto confirmado: chave ligada', a.ls.endo_faceid_conta === 'prof@x.com' && /aria-checked="true"/.test(chave(prof)));
+  const css = (html.match(/\.faceid-switch\.on\{background:([^}]+)\}/) || [])[1];
+  ok('chave ligada fica verde (como no iPhone)', css === '#34c759', css);
 }
 {
   const dias = (n) => Object.fromEntries(Array.from({ length: n }, (_, i) => ['2026-11-' + String(i + 1).padStart(2, '0'), 3]));

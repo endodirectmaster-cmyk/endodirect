@@ -1998,6 +1998,17 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .faceid-txt{font-size:.9rem;line-height:1.55;color:var(--tx);margin-bottom:1rem}
 .faceid-acoes{display:flex;flex-direction:column;gap:.5rem}
 .faceid-acoes .btn{justify-content:center}
+.faceid-linha{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.faceid-linha-tit{font-size:.95rem;font-weight:700;color:var(--tx)}
+.faceid-linha-sub{font-size:.76rem;line-height:1.45;color:var(--t2);margin-top:.2rem;max-width:46ch}
+/* Chave no estilo do iPhone (professor, 16/11: "clica, arrasta para o lado e fica verde"). */
+.faceid-switch{width:51px;height:31px;border-radius:999px;border:none;padding:0;background:var(--bd2);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s ease}
+.faceid-switch.on{background:#34c759}
+.faceid-switch .fs-dot{position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#ffffff;box-shadow:0 2px 4px rgba(0,0,0,.25),0 0 1px rgba(0,0,0,.2);transition:left .2s ease}
+.faceid-switch.on .fs-dot{left:22px}
+.faceid-switch:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.faceid-switch:disabled{cursor:default}
+@media (prefers-reduced-motion:reduce){.faceid-switch,.faceid-switch .fs-dot{transition:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -10346,21 +10357,31 @@ function faceIdPerfilRender(){
   faceIdDisponivel().then(function(ok){
     if(!ok){esconde();return;}
     var ligado=faceIdConta()===String(currentUser.email||'').toLowerCase();
-    var cartao='<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">'
-      +'<div><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Entrar com '+esc(faceIdNome)+'</div>'
-      +'<div style="font-size:.95rem;font-weight:700;color:var(--tx)">'+(ligado?'Ligado neste iPhone':'Desligado')+'</div>'
-      +'<div style="font-size:.76rem;color:var(--t2);max-width:46ch">'+(ligado?'Ao abrir o app e depois de "Sair", o '+esc(faceIdNome)+' libera o acesso. Para sair de vez da conta, desligue aqui e depois toque em Sair.':'Ao abrir o app, o '+esc(faceIdNome)+' libera o acesso, sem digitar senha.')+'</div></div>'
-      +'<button class="btn '+(ligado?'btn-outline':'btn-primary')+'" type="button" data-faceid-perfil="1">'+(ligado?'Desligar':'Ligar '+esc(faceIdNome))+'</button></div>';
+    var cartao='<div class="card faceid-linha">'
+      +'<div><div class="faceid-linha-tit">Entrar com '+esc(faceIdNome)+'</div>'
+      +'<div class="faceid-linha-sub">'+(ligado?'Ao abrir o app e depois de "Sair", o '+esc(faceIdNome)+' libera o acesso. Para sair de vez da conta, desligue e toque em Sair.':'Ao abrir o app, o '+esc(faceIdNome)+' libera o acesso, sem digitar senha.')+'</div></div>'
+      +'<button class="faceid-switch'+(ligado?' on':'')+'" type="button" role="switch" aria-checked="'+(ligado?'true':'false')+'" aria-label="Entrar com '+esc(faceIdNome)+'" data-faceid-perfil="1"><span class="fs-dot"></span></button></div>';
     faceIdPerfilCaixas().forEach(function(box){
       box.style.display='';
       box.innerHTML=cartao;
       var bt=box.querySelector('[data-faceid-perfil]');
       if(bt)bt.addEventListener('click',function(){
-        if(ligado){faceIdDesligar();faceIdPerfilRender();return;}
-        faceIdLigar().then(function(){faceIdPerfilRender();});
+        if(bt.disabled)return;
+        bt.disabled=true;
+        // A chave desliza primeiro; o cartão é redesenhado quando a animação termina.
+        faceIdChaveVisual(bt,!ligado);
+        if(ligado){faceIdDesligar();setTimeout(faceIdPerfilRender,220);return;}
+        faceIdLigar().then(function(ok){
+          if(!ok)faceIdChaveVisual(bt,false);
+          setTimeout(faceIdPerfilRender,220);
+        });
       });
     });
   });
+}
+function faceIdChaveVisual(bt,ligar){
+  if(bt.classList)bt.classList.toggle('on',!!ligar);
+  bt.setAttribute('aria-checked',ligar?'true':'false');
 }
 // ── ⭐ PEDIDO DE AVALIAÇÃO NA APP STORE (versão 1.2, 16/11/2026) ──
 // A janela padrão da Apple (ela decide se mostra; no máximo 3 vezes por ano). Só no app, só
