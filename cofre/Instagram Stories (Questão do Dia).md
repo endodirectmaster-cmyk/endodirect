@@ -29,7 +29,7 @@ Instagram), **caminho (a)**: a plataforma faz tudo. Como funciona:
    (`ig_story_auto` no payload, preservada pelo painel); "incerto" (tempo esgotado) não repete; depois das 17h40
    não agenda; arte velha não agenda (marca `sem_arte`).
 4. **Situação:** aba Fila mostra "arte pronta de N de 10" e o último agendado (ou o motivo).
-Teste à mão de 17/11: story agendado pelo conector (post 430499584), arte via Drive dele (link aberto por ele).
+Teste à mão de 17/11: story agendado pelo conector (post 430499584; imagem trocada pela arte nova às 20h22 de 16/11, a pedido do professor: agora post 430801651, mídia lida direto do nosso bucket), arte via Drive dele (link aberto por ele).
 
 ## 📱 "⬇ IMAGEM" NO APP DO IPHONE (2026-11-16)
 
