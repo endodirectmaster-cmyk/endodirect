@@ -108,6 +108,19 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
 - [ ] Aprovada → o professor libera (como a 1.0). Conferir depois: aviso real (breaking news / Questão do Dia) chegando
   nos iPhones com o app 1.1.
 
+## 📲 Stories da Questão do Dia direto no Metricool (pergunta do professor, 16/11; aguardando decisões)
+
+"Será que você não consegue mandar a questão do dia em formato de JPG ou PNG ... diretamente para o Metricool,
+para ele postar diariamente nos stories?" Fatos: conector do Metricool autorizado (marca Endodirect, blogId
+7486030, @endodirect, America/Sao_Paulo); o Metricool só aceita a mídia por **link público** (bucket público
+`endodirect-assets` já existe no Supabase); story publicado pela API sai **sem sticker** (quiz e link), e o modo
+"notificação" (`autoPublish:false`) manda a imagem pronta ao celular para ele pôr o sticker e publicar. A questão
+entra na plataforma às 7h30 (cron do radar; reserva no healthcheck); fila com 103 na espera em 16/11. Caminhos
+propostos: (a) automático pela plataforma: arte gerada quando a questão entra/muda na fila e o cron agenda no
+Metricool (precisa da chave de API do Metricool, que ele mesmo põe na Vercel; sem função nova, 12/12);
+(b) sem chave: eu agendo em lotes pelo conector. Decisões pedidas: horário, automático × notificação, (a) × (b) e
+um story de teste. **Nada agendado sem o "pode" dele.** Build 1.2 (12) no TestFlight com a permissão da galeria.
+
 ## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
 
 Professor: "dá uma passada com calma, tanto no painel do professor como no painel do estudante, nas
