@@ -135,6 +135,9 @@ Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em par
   "Entrar com Face ID" com o e-mail mascarado; **entrou com o rosto**. Achado: o cartão do Face ID só existia no
   Perfil do aluno, não no **Perfil do professor** (admPerfilHTML) → cartão também ali (#adm-perfil-faceid, sw v412;
   só site, sem build novo).
+- Professor, 12:21, vendo o cartão no Perfil: trocar os botões Ligar/Desligar por uma chave como a do iPhone ("clica,
+  arrasta para o lado e fica verde"). Feito: `.faceid-switch` (51×31, verde #34c759, `role="switch"`), desliza na hora;
+  se o rosto não for confirmado ao ligar, volta sozinha; toque repetido durante a animação é ignorado. sw v413.
 - [ ] Falta no TestFlight: desligar no Perfil do professor, Google pela folha da Apple, link do WhatsApp/Notas abrindo o app. (Face ID, link de e-mail abrindo o app, Google) → enviar depois
   que a 1.1 for aprovada.
 
