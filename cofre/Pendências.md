@@ -120,14 +120,16 @@ Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em par
   um token velho for reusado; a porta evita esse risco.
 - **Links que abrem no app**: `.well-known/apple-app-site-association` (só "/" e "/index.html"; `/#planos*` fora;
   `webcredentials` para senhas salvas do site), header JSON na vercel.json; entitlement `associated-domains`
-  (applinks + webcredentials do www); `appUrlOpen` https → `pushNativoAbrir`. **Professor: marcar "Associated
-  Domains" no identificador br.com.endodirect.app** (pedido em 16/11).
+  (applinks + webcredentials do www); `appUrlOpen` https → `pushNativoAbrir`. "Associated Domains" marcado pelo
+  professor no identificador br.com.endodirect.app em 16/11 ("feito"). AASA no ar (200, application/json).
 - **Avaliação** (`@capacitor-community/in-app-review` 8.0.0): 1 min após entrar, aluno com ≥5 dias de estudo, no
   máximo a cada 120 dias; nunca admin nem revisor.
 - **Google sem "Abrir no Endodirect?"**: plugin próprio `WebAuth` (ASWebAuthenticationSession, sessão compartilhada)
   em AppViewController.swift; o iOS mostra no começo o aviso padrão "quer usar … para iniciar sessão". Apps 1.0/1.1
   seguem no Safari embutido.
 - Teste `scripts/test-app-ios-12.js` (ci 17c-undecies-az), 9 mutações pegas. MARKETING_VERSION 1.2. sw v411.
+- PR #1059 juntado em 16/11 (main f6238f3); produção com sw v411 conferida antes de realinhar a branch; rotina
+  App iOS 11 (testflight) disparada no main.
 - [ ] Build 1.2 → TestFlight → teste do professor (Face ID, link de e-mail abrindo o app, Google) → enviar depois
   que a 1.1 for aprovada.
 
