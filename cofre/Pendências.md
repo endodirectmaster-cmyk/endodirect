@@ -96,8 +96,10 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
 - Servidor: `lib/push.js` manda "apns:" pela Apple (HTTP/2, JWT ES256 reaproveitado 40 min; 410 e
   BadDeviceToken/Unregistered/DeviceTokenNotForTopic/ExpiredToken apagam a linha). Sem função nova.
 - Teste `scripts/test-push-apns.js` (ci 17c-undecies-ay), 10 mutações pegas, com "Apple" HTTP/2 local.
-- [ ] Build 1.1 pelo GitHub → TestFlight → professor testa no iPhone (ativar avisos, mandar um aviso de
-  teste, tocar e ver abrir) → enviar à revisão com as capturas novas.
+- ✅ **Build 1.1 (9) no TestFlight (16/11, 10h07).** Professor instalou e ativou no Suporte (10h13): linha
+  `apns:` gravada com a conta. Botão novo no Suporte: **"🧪 Enviar aviso de teste"** (`kind:'push_teste'`, só
+  admin, `sendToEmail` do próprio e-mail; diz quantos aparelhos, quantos no iPhone e o que falhou). sw v410.
+- [ ] Teste de ponta a ponta (aviso chega e o toque abre o app) → enviar a 1.1 à revisão com as capturas novas.
 
 Professor: *"assim que estiver no ar, o aplicativo, vê alguns botões que existem na plataforma
 de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
