@@ -187,7 +187,7 @@ const ACERVO_PRE = 'var DB={acervoVisto:0};function lsSet(){}function queueRemot
     // com `dirIsVisible`. É a reserva, e é ela que precisa bater com a aba —
     // o número do servidor tem a própria guarda no bloco 2b.
     + 'var acervoTotais=null;'
-    + 'var provasDB=new Array(2965);var podcasts=new Array(199);'
+    + 'var provasDB=new Array(2965);var podcasts=new Array(199);var fcShared=new Array(933);'
     + 'var refPrivadoMode=false, refTipoSel="capitulo";'
     + bloco('function dirTipoOf(') + bloco('function dirIsRascunho(')
     + bloco('function dirSoNosResumos(') + bloco('function dirIsVisible(')
@@ -199,6 +199,7 @@ const ACERVO_PRE = 'var DB={acervoVisto:0};function lsSet(){}function queueRemot
 
   ok(c.questoes.total === 2965, 'a faixa perdeu a contagem do banco de questões, veio ' + c.questoes.total);
   ok(c.podcasts.total === 199, 'a faixa perdeu a contagem de podcasts, veio ' + c.podcasts.total);
+  ok(c.flashcards && c.flashcards.total === 933, '⚠️ a faixa perdeu a contagem de flashcards publicados (fcShared), veio ' + (c.flashcards && c.flashcards.total));
   ok(c.diretrizes.total === visiveis(false, 'capitulo'),
     '⚠️ a faixa anuncia ' + c.diretrizes.total + ' diretriz(es) e a aba lista ' + visiveis(false, 'capitulo')
     + ' — número que não bate com a tela de destino é pior que número nenhum');
@@ -344,7 +345,7 @@ const ACERVO_PRE = 'var DB={acervoVisto:0};function lsSet(){}function queueRemot
       + 'function progressoDoAluno(){return ' + JSON.stringify(prog) + ';}'
       // A degustação, medida no servidor: tem parte, e a faixa mostra a fração.
       + 'function acervoContagem(){return {questoes:{tem:50,total:2965},diretrizes:{tem:71,total:71},'
-      + 'resumos:{tem:14,total:118},artigos:{tem:4,total:43},mapas:{tem:41,total:82},podcasts:{tem:0,total:199}};}'
+      + 'resumos:{tem:14,total:118},artigos:{tem:4,total:43},flashcards:{tem:933,total:933},mapas:{tem:41,total:82},podcasts:{tem:0,total:199}};}'
       + 'function goPanel(p){__ir.push(p);}'
       + 'var document={getElementById:function(id){return __hosts[id]||null;}};'
       + bloco('function esc(') + bloco('function nBR(')
@@ -386,9 +387,15 @@ const ACERVO_PRE = 'var DB={acervoVisto:0};function lsSet(){}function queueRemot
   ok(/2\.965/.test(A), '⚠️ "total de questões na plataforma" sumiu da faixa do Dashboard');
   ok(/>71</.test(A), '⚠️ "número de diretrizes publicadas" sumiu da faixa');
   ok(/118/.test(A), '⚠️ "número de resumos publicados" sumiu da faixa');
-  ['Questões no banco', 'Diretrizes', 'Resumos publicados', 'Mapas mentais'].forEach((t2) => {
+  ['Questões no banco', 'Diretrizes', 'Resumos publicados', 'Flashcards', 'Mapas mentais'].forEach((t2) => {
     ok(A.indexOf(t2) >= 0, 'a faixa perdeu o rótulo "' + t2 + '"');
   });
+  // 16/11/2026, professor: "Deixa ao lado dos mapas mentais, após resumos publicados, também um
+  // card do número de flashcards." A ordem é parte do pedido.
+  ok(A.indexOf('Resumos publicados') < A.indexOf('>Flashcards<') && A.indexOf('>Flashcards<') < A.indexOf('Mapas mentais'),
+    '⚠️ o card de Flashcards tem de ficar depois de "Resumos publicados" e antes de "Mapas mentais"');
+  ok(/data-acv-ir="flash"/.test(A), '⚠️ o card de Flashcards não leva à aba Flashcards');
+  ok(/>933</.test(A), '⚠️ o número de flashcards não aparece no card');
   // ⚠️ "Artigos comentados" saiu a pedido do professor (31/08/2026), trocado por
   // "Mapas mentais". O card antigo não pode voltar sozinho.
   ok(A.indexOf('Artigos comentados') < 0,

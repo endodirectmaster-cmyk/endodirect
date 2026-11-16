@@ -10945,6 +10945,9 @@ function renderDashAcervo(){
     {p:'quest',  n:'Questões no banco',  v:ac.questoes,   i:'📝', c:'var(--blue)'},
     {p:'ref',    n:'Diretrizes',         v:ac.diretrizes, i:'📋', c:'var(--grn)'},
     {p:'resu',   n:'Resumos publicados', v:ac.resumos,    i:'📚', c:'var(--pur)'},
+    // Flashcards entre Resumos e Mapas (16/11/2026, professor: "Deixa ao lado dos mapas mentais,
+    // após resumos publicados, também um card do número de flashcards").
+    {p:'flash',  n:'Flashcards',         v:ac.flashcards, i:'🃏', c:'var(--red)'},
     {p:'mmap',   n:'Mapas mentais',      v:ac.mapas,      i:'✦', c:'var(--gold)'},
     {p:'podcast',n:'Podcasts',           v:ac.podcasts,   i:'🎧', c:'var(--blue2)'}
   // ⚠️ O filtro olha o TOTAL, não o que o aluno alcança: na degustação os
@@ -11832,6 +11835,9 @@ function acervoContagem(){
     // ⚠️ `sharedMM` são os mapas PUBLICADOS pelo professor, não `DB.mm`, que é
     // a coleção pessoal do aluno. A faixa fala do acervo da plataforma.
     mapas:(typeof sharedMM!=='undefined'&&Array.isArray(sharedMM))?sharedMM.length:0,
+    // Flashcards (16/11/2026): os PUBLICADOS pelo professor (`fcShared`, os que vão ao baralho de
+    // todos os alunos), não `DB.fc`, que inclui os criados pelo próprio aluno.
+    flashcards:(typeof fcShared!=='undefined'&&Array.isArray(fcShared))?fcShared.length:0,
     podcasts:(typeof podcasts!=='undefined'&&Array.isArray(podcasts))?podcasts.length:0
   };
   // ⚠️ Campo a campo, e só quando o servidor manda um número de verdade: uma
@@ -11844,6 +11850,7 @@ function acervoContagem(){
     resumos:num(t.resumos,local.resumos),
     artigos:num(t.artigos,local.artigos),
     mapas:num(t.mapas,local.mapas),
+    flashcards:num(t.flashcards,local.flashcards),
     podcasts:num(t.podcasts,local.podcasts)
   };
   // Duas grandezas por categoria: o que ESTE aluno alcança e o que a plataforma
@@ -11851,7 +11858,7 @@ function acervoContagem(){
   // pedido do professor em 31/08/2026. Para quem tem tudo, as duas coincidem e
   // a fração não aparece.
   var out={};
-  ['questoes','diretrizes','resumos','artigos','mapas','podcasts'].forEach(function(k){
+  ['questoes','diretrizes','resumos','artigos','mapas','flashcards','podcasts'].forEach(function(k){
     // ⚠️ `tem` nunca pode passar `total`: com um total em cache mais VELHO que o
     // conteúdo em mãos, a conta daria "120 de 118" — número impossível na tela.
     out[k]={tem:Math.min(local[k],totais[k]),total:totais[k]};
