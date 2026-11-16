@@ -9538,7 +9538,36 @@ function keepSessionAlive(){hideSessionWarning();sessionLastActivity=Date.now();
 ['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,markSessionActivity,true);});
 var loggingOut=false; // trava: ignora SIGNED_IN automático após o "Sair" (até um login deliberado)
 // Confirmação no logout iniciado pelo usuário (o auto-logout por inatividade chama doLogout direto, sem prompt).
-function confirmLogout(){ if(confirm('Deseja realmente encerrar a sessão?'))doLogout(); }
+function confirmLogout(){
+  if(!confirm('Deseja realmente encerrar a sessão?'))return;
+  var travou=doLogout();
+  // App do iPhone: depois de "Sair" (de verdade, não a trava do Face ID), a página recarrega limpa.
+  if(isAppLoja()&&!travou)appRecomecarLimpo(ultimoSair);
+}
+// SAIR NO APP DO IPHONE = RECOMEÇAR LIMPO (16/11/2026). Professor, com prints: saiu da conta do aluno
+// Pro e entrou na dele (e vice-versa) sem fechar o app; o painel novo aparecia pela metade e só se
+// completava em ~3 s ("foi aparecendo gradativamente"), ou só depois de fechar e abrir o app. A página
+// guardava tudo o que a conta anterior tinha aberto (painéis, listas, imagens) e o iPhone demorava a
+// desenhar o painel da conta nova por cima disso. Como já se faz ao excluir a conta, a página
+// recarrega depois de o Supabase encerrar a sessão (ou em 2 s, o que vier antes) e volta na tela de
+// entrada (no app das lojas a página sem sessão abre no login). No site, "Sair" segue como sempre.
+var ultimoSair=null;
+function appRecomecarLimpo(espera){
+  var feito=false;
+  var vai=function(){
+    if(feito)return;feito=true;
+    // Se o servidor demorou (2 s), a sessão ainda estaria guardada e a página recarregada entraria
+    // sozinha de novo: tira a sessão do aparelho antes (o mesmo que contaExcluidaNoAparelho faz).
+    try{
+      var ks=[];
+      for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&/^sb-.*-auth-token/.test(k))ks.push(k);}
+      ks.forEach(function(k){localStorage.removeItem(k);});
+    }catch(e){}
+    try{window.location.replace(window.location.pathname+window.location.search);}catch(e){}
+  };
+  Promise.resolve(espera).then(vai,vai);
+  setTimeout(vai,2000);
+}
 function doLogout(){
   try{fecharMapaDoCapitulo();}catch(e){}
   try{mmTelaCheia(false);}catch(e){}
@@ -9554,7 +9583,7 @@ function doLogout(){
   // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
   // senão o watcher reencontra a sessão e re-loga sozinho ao voltar/recarregar.
   if(travarFaceId){faceIdMarcarLiberado(false);faceIdAutoFeito=true;}
-  else if(client&&client.auth){try{client.auth.signOut().catch(function(){});}catch(e){}}
+  else if(client&&client.auth){try{ultimoSair=client.auth.signOut().catch(function(){});}catch(e){}}
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   deviceSlot={uid:null,ok:false,emVoo:false};
   currentUser=null;
@@ -9568,6 +9597,7 @@ function doLogout(){
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('user-menu').style.display='none';
   if(travarFaceId)faceIdMostrarTrava(false);else faceIdEsconderTrava();
+  return travarFaceId; // true: só travou (Face ID), a sessão continua guardada
 }
 function showLoginError(msg){
   var err=document.getElementById('login-err');

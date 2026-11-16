@@ -75,5 +75,45 @@ const sombra = sb.match(/box-shadow:(\d+)px 0 (\d+)px/);
 ok('🧨 menu fechado fica além da sombra (deslocamento ≥ alcance da sombra)', !!desl && !!sombra && +desl >= (+sombra[1] + +sombra[2]), 'deslocamento ' + desl + ', sombra ' + (sombra && sombra[0]));
 ok('menu aberto continua na tela', /body\.mobile-nav-open \.sidebar\{transform:translateX\(0\)\}/.test(html));
 
-if (bad) { console.log('✗ tela depois de entrar no iPhone: ' + bad + ' falha(s)'); process.exit(1); }
-console.log('✓ tela depois de entrar no iPhone: volta ao topo e é redesenhada (no quadro seguinte e depois do zoom); sombra do menu fechado fora da tela');
+// 4. "Sair" no app recarrega a página limpa (2º print do professor: o painel aparecia aos poucos, ~3 s).
+//    🧨 Não pode: recarregar no site; recarregar na trava do Face ID (a sessão tem de ficar); recarregar
+//    com a sessão ainda guardada (a página entraria sozinha de novo); esperar para sempre pelo servidor.
+async function sair(opts) {
+  const ev = [], timers = [];
+  const ls = Object.assign({ 'sb-abc-auth-token': '{}', 'endodirect_v1_x': '1', outra: '1' }, opts.ls || {});
+  const cx = {
+    confirm: () => opts.confirma !== false, isAppLoja: () => !!opts.app,
+    doLogout: () => { ev.push('logout'); return !!opts.faceId; },
+    localStorage: { get length() { return Object.keys(ls).length; }, key: (i) => Object.keys(ls)[i], removeItem: (k) => { delete ls[k]; } },
+    window: { location: { pathname: '/', search: '?app=ios', replace: (u) => ev.push('recarrega ' + u) } },
+    setTimeout: (f, ms) => timers.push([ms, f]), Promise,
+  };
+  vm.createContext(cx);
+  vm.runInContext('var ultimoSair=null;\n' + ['confirmLogout', 'appRecomecarLimpo'].map(corpo).join('\n'), cx);
+  if (opts.servidor) vm.runInContext('ultimoSair=new Promise(function(r){__fim=r;});', cx);
+  cx.confirmLogout();
+  await new Promise((r) => setImmediate(r));
+  return { ev, timers, ls, cx };
+}
+(async () => {
+  let r = await sair({ app: true, servidor: true });
+  ok('app: sai e espera o servidor encerrar a sessão', r.ev.join('|') === 'logout');
+  vm.runInContext('__fim()', r.cx); await new Promise((x) => setImmediate(x));
+  ok('🧨 app: depois do servidor, recarrega a mesma página (com ?app=ios, sem #)', r.ev.join('|') === 'logout|recarrega /?app=ios', r.ev.join('|'));
+  ok('🧨 a sessão sai do aparelho antes de recarregar; o resto fica', !('sb-abc-auth-token' in r.ls) && r.ls.outra === '1' && r.ls.endodirect_v1_x === '1');
+  r.timers[0][1]();
+  ok('recarrega uma vez só (servidor + prazo)', r.ev.filter((x) => /recarrega/.test(x)).length === 1);
+  r = await sair({ app: true, servidor: true });
+  ok('🧨 servidor mudo: recarrega no prazo (≤ 2 s)', r.timers.length === 1 && r.timers[0][0] <= 2000 && (r.timers[0][1](), /recarrega/.test(r.ev.join('|'))));
+  r = await sair({ app: false });
+  ok('🧨 site: "Sair" como sempre, sem recarregar', r.ev.join('|') === 'logout' && !r.timers.length);
+  r = await sair({ app: true, faceId: true });
+  ok('🧨 trava do Face ID: não recarrega (a sessão fica guardada para o rosto)', r.ev.join('|') === 'logout' && !r.timers.length && 'sb-abc-auth-token' in r.ls);
+  r = await sair({ app: true, confirma: false });
+  ok('"Cancelar" na pergunta: nada acontece', !r.ev.length);
+  ok('🧨 doLogout guarda a promessa do signOut e diz se só travou', /ultimoSair=client\.auth\.signOut\(\)/.test(corpo('doLogout')) && /return travarFaceId;/.test(corpo('doLogout')));
+  ok('na volta sem sessão, o app abre no login (e não na landing)', /if\(\(isAppLoja\(\)\|\|__pedeExcl\)&&__lsx&&__lsx\.style\.display!=='flex'\)showLoginScreen\(\);/.test(html));
+
+  if (bad) { console.log('✗ tela depois de entrar no iPhone: ' + bad + ' falha(s)'); process.exit(1); }
+  console.log('✓ tela depois de entrar no iPhone: volta ao topo e é redesenhada; "Sair" no app recarrega limpo (sem sessão, no prazo, nunca na trava do Face ID nem no site); sombra do menu fechado fora da tela');
+})();

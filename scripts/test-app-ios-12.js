@@ -85,7 +85,7 @@ ok('🧨 links do site: retorno do login primeiro, depois abre o endereço no ap
 const lfs = corpo('loginFromSupabaseSession');
 ok('🧨 Face ID: a porta vem antes de qualquer entrada', lfs.indexOf('if(faceIdPrecisa(session)){faceIdMostrarTrava(true);return;}') > 0 && lfs.indexOf('faceIdPrecisa') < lfs.indexOf('isAdminEmail'));
 const sair = corpo('doLogout');
-ok('🧨 Sair com Face ID ligado não encerra a sessão no servidor', /if\(travarFaceId\)\{faceIdMarcarLiberado\(false\);faceIdAutoFeito=true;\}\s*else if\(client&&client\.auth\)\{try\{client\.auth\.signOut\(\)/.test(sair));
+ok('🧨 Sair com Face ID ligado não encerra a sessão no servidor', /if\(travarFaceId\)\{faceIdMarcarLiberado\(false\);faceIdAutoFeito=true;\}\s*else if\(client&&client\.auth\)\{try\{(?:ultimoSair=)?client\.auth\.signOut\(\)/.test(sair));
 ok('Sair com Face ID ligado mostra a tela do Face ID', /if\(travarFaceId\)faceIdMostrarTrava\(false\);else faceIdEsconderTrava\(\);/.test(sair));
 const exc = corpo('contaExcluidaNoAparelho');
 ok('🧨 conta excluída: Face ID desligado antes do Sair', exc.indexOf("localStorage.removeItem('endo_faceid_conta')") >= 0 && exc.indexOf("endo_faceid_conta") < exc.indexOf('doLogout()'));
