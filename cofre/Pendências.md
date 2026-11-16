@@ -108,6 +108,14 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
 - [ ] Aprovada → o professor libera (como a 1.0). Conferir depois: aviso real (breaking news / Questão do Dia) chegando
   nos iPhones com o app 1.1.
 
+## 🔐 Entrar com Face ID no app do iPhone (professor, 16/11: "podemos implementar ... depois")
+
+Para uma versão futura do app (1.2 ou depois), não agora. Desenho previsto: depois do 1º login (senha, Google ou
+Apple), o app oferece "Entrar com Face ID"; a sessão (refresh token do Supabase) fica no Keychain do iPhone, protegida
+pela biometria, e o Face ID a libera na abertura seguinte. Precisa de plugin de biometria do Capacitor (versão fixada),
+`NSFaceIDUsageDescription` no Info.plist, botão na tela de login só no app, saída limpa no "Sair" e na exclusão de conta,
+build novo e revisão da Apple. Nada de senha guardada: só a sessão.
+
 Professor: *"assim que estiver no ar, o aplicativo, vê alguns botões que existem na plataforma
 de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
 - **Já feito (11/11, sem build):** no app do iPhone o web push não existe (WKWebView). Para o
