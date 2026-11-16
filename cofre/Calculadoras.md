@@ -9,7 +9,11 @@ atualizado: 2026-11-16
 O professor achou o quadro "bem estranho": queria a calculadora em português, cada variável. O quadro saiu (v404) e
 voltou o guia abaixo da janela. **Não há como traduzir a janela** (é o site dos autores, outra origem). Caminhos:
 versão própria com o modelo (publicação ou coeficientes cedidos pelos autores) ou tradução automática de terceiros
-dentro da janela (não testada; tradução de máquina num site médico). Decisão do professor pendente.
+dentro da janela (não testada; tradução de máquina num site médico). **Decisão do professor (16/11): pedir aos
+autores.** Rascunho do e-mail (em inglês, para ele enviar do e-mail dele a glp1predictor@gmail.com) entregue na
+conversa: pede os coeficientes dos 6 preditores, a curva basal, os pontos de corte dos quartis e o ajuste do peso
+aos 3 meses, para uma versão em português com crédito e o aviso de uso em pesquisa, mandada a eles para revisão
+antes de ir ao ar. Com a resposta: versão própria, conferida caso a caso contra o site deles. Até a resposta, o professor: "deixa em inglês" (a janela dos autores, com o guia em português abaixo, como no v404).
 
 ## 🧪 REGANHO PÓS-GLP-1: ALUNOS NO SITE E TELA TRADUZIDA (2026-11-16, mais tarde)
 
