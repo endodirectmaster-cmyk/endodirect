@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-11-14
+atualizado: 2026-11-16
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -9,6 +9,23 @@ Pedido do professor (18/10/2026): *"Quero deixar transformar a plataforma do ED 
 aplicativo no google play e apple store. Me de o passo a passo"*. A pesquisa (fontes
 oficiais da Apple, do Google e do gov.br, lidas em 18/10) e o passo a passo foram
 entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
+
+## ✅ APROVADO NA APP STORE (16/11/2026)
+
+E-mail da Apple às 04h14 (horário de Brasília) de 16/11: **"Endodirect Endocrinologia" 1.0 para iOS aprovado
+para distribuição** (enviado em 11/11 às 00h12 BRT; 5 dias na fila). Página:
+https://apps.apple.com/br/app/id6833147654.
+- **Lançamento é manual:** o professor precisa clicar em "Lançar esta versão" no App Store Connect (iOS App 1.0).
+  Depois do lançamento, a Apple avisa que pode levar até 24 h para o app aparecer na loja.
+- **Contrato:** app gratuito, então basta o acordo de apps gratuitos (o aviso de "Agreements, Tax, and Banking" do
+  e-mail é padrão; só pesaria em app pago).
+- **Depois que a página abrir (pendências combinadas):**
+  1. FAQ da landing e de dentro da plataforma com o link "Baixar na App Store" (ver [[Pendências]], pedido de 11/11).
+  2. Calculadora de reganho da Mayo para os alunos também no app do iPhone (o `foraDoAppIos` era "até a Apple aprovar"
+     o app; ver [[Calculadoras]]). Perguntado ao professor.
+  3. Versão 1.1 com notificações nativas (APNs); o primeiro passo é do professor (Push Notifications no identificador
+     br.com.endodirect.app e APNs na chave).
+- **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
 ## Decisões do professor (18/10)
 
