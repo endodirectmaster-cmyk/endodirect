@@ -23,7 +23,15 @@ https://apps.apple.com/br/app/id6833147654.
   1. ✅ FAQ da landing e de dentro da plataforma com o link "Baixar na App Store" (feito em 16/11, sw v407).
   2. ✅ Calculadora de reganho da Mayo para os alunos também no app do iPhone (professor: "sim"; feito em 16/11, sw v408).
   3. Versão 1.1 com notificações nativas (APNs); o primeiro passo é do professor (Push Notifications no identificador
-     br.com.endodirect.app e APNs na chave).
+     br.com.endodirect.app e APNs na chave). O professor não achou no App Store Connect: fica no portal de
+     desenvolvedor (developer.apple.com/account › Certificates, IDs & Profiles). Recomendado criar chave **nova**,
+     só APNs ("Endodirect Notificações", Sandbox & Production), sem mexer na do "Continuar com a Apple"; o .p8 fica
+     com ele e vai direto para a Vercel. A montagem do app (app-ios.yml) assina com `-allowProvisioningUpdates`,
+     então os perfis invalidados ao ligar Push Notifications se refazem sozinhos.
+  4. **Capturas da App Store, nova ordem (pedido do professor, 16/11):** 1ª Dashboard do aluno, 2ª Mural de artigos,
+     3ª Questão do dia (a atual 1ª, `01-questao-do-dia`, serve); depois as outras cinco atuais. Captura de versão
+     publicada não se troca: vai junto com a 1.1. Dashboard e Mural: prints no iPhone com a conta do revisor (como
+     as de 10/11; status bar real), eu ajusto para 1284 × 2778 e 1179 × 2556.
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
 ## Decisões do professor (18/10)
