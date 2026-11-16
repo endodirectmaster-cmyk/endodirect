@@ -174,6 +174,7 @@ window.addEventListener('load',function(){initProfVideos();initVimeoClip();});
   --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#1d2d54;
   --grn:#34d399;--grn-l:#10311f;--red:#f87171;--red-l:#3c1d20;
   --gold:#f5b32c;--gold-l:#352a0e;--pur:#a78bfa;--pur-l:#261c42;
+  --gold-tx:#f5b32c;
   /* amarelo da landing (.lp-hero h1 span) — o destaque é o tom EXATO nos dois temas,
      com letra quase preta por cima; só a cor de LETRA escurece no claro, senão
      amarelo puro sobre fundo branco fica ilegível. */
@@ -187,6 +188,7 @@ html[data-theme="light"]{
   --blue:#3b6fd4;--blue2:#5585e8;--blue-l:#eef2ff;
   --grn:#22c55e;--grn-l:#f0fdf4;--red:#ef4444;--red-l:#fef2f2;
   --gold:#f59e0b;--gold-l:#fffbeb;--pur:#8b5cf6;--pur-l:#f5f3ff;
+  --gold-tx:#a15c07;
   --yel:#946200;--yel-h:#f5b32c;--yel-ht:#1a1408;
   --warn-bg:#fff7ed;--warn-bd:#fed7aa;--warn-tx:#9a3412;--code-bg:#f1f0ff;--code-tx:#6d5fd8;
 }
@@ -1246,6 +1248,23 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .adm-cme-outros{font-size:.7rem;color:var(--t2);margin-top:.3rem;line-height:1.5}
 .adm-cme-outros b{color:var(--gold);font-weight:700}
 .qa-body{padding:0 .85rem .85rem}
+.adm-qa-filtros{display:grid;grid-template-columns:1fr 1fr;gap:.65rem .75rem;margin-bottom:1rem}
+.adm-qa-filtros .f-sub{grid-column:1/-1}
+.adm-qa-filtros select{width:100%}
+.adm-qa-conta{grid-column:1/-1;font-size:.74rem;color:var(--t3);font-variant-numeric:tabular-nums}
+@media (min-width:760px){.adm-qa-filtros{grid-template-columns:2fr 1fr 1fr}.adm-qa-filtros .f-sub{grid-column:auto}}
+.adm-qa-mes{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin:1rem .15rem .45rem}
+.adm-qa-mes:first-child{margin-top:.2rem}
+.adm-qa-lista .qa-head{align-items:flex-start;gap:.8rem}
+.aqa-data{flex-shrink:0;width:2.7rem;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.3rem 0;border-radius:10px;background:var(--s2);border:1px solid var(--bd);line-height:1}
+.aqa-data b{font-size:1.05rem;font-weight:800;color:var(--tx);font-variant-numeric:tabular-nums}
+.aqa-data small{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-top:.18rem}
+.aqa-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:.3rem}
+.aqa-topo{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.aqa-sub{font-size:.68rem;font-weight:700;color:var(--gold-tx,var(--gold));background:var(--gold-l);padding:.16rem .5rem;border-radius:99px;white-space:nowrap}
+.aqa-trecho{font-size:.8rem;line-height:1.45;color:var(--t2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.adm-qa-lista .qa-item.open .aqa-trecho{display:none}
+.adm-qa-lista .qa-caret{margin-top:.2rem}
 .mural-admin-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .tag-muted{background:var(--s2);color:var(--tx)}
 .tag-sub-diabetes{background:#16264f;color:#7aa0ff}
@@ -11945,6 +11964,7 @@ var admQotdArchOpen=null;  // id aberto no arquivo do professor
 var admQotdArchRolar=false; // chegou pelo link (/#qotd/<id>): rola até a questão quando ela estiver na lista
 var admQotdArchSub='';     // filtro de subespecialidade no arquivo do professor ('' = todas)
 var admQotdArchSort='recent'; // ordenação por data ('recent' = mais recente; 'old' = mais antiga)
+var admQotdArchPor=(function(){var n=+lsGet('qotd_por_pagina_adm');return [10,30,50].indexOf(n)>=0?n:10;})(),admQotdArchPagina=0; // paginação do arquivo do professor (10/30/50 por página)
 function qotdPublished(){
   // SÓ as já postadas/publicadas (status 'posted') — as que ainda estão na fila não aparecem.
   var arr=(typeof igStories!=='undefined'&&Array.isArray(igStories))?igStories:[];
@@ -12047,34 +12067,61 @@ function qotdReviewCardHTML(q){
     +'<div style="display:flex;flex-direction:column;gap:.4rem">'+opts+'</div>'+cm;
 }
 function qotdArchDate(q){return (q&&(q.postedAt||q.createdAt||q.at))||0;}
+// Arquivo da Questão do Dia no painel do professor. Professor, 16/11/2026, olhando a tela no iPhone:
+// "vamos só deixar ela melhor configurada, melhor formatada". Cada linha: data em bloco (dia + mês),
+// subespecialidade e o começo do enunciado; separadas por mês; 10/30/50 por página.
+var MESES_PT=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function admQotdArchLista(all){
+  var list=all.filter(function(q){return !admQotdArchSub||q.sub===admQotdArchSub;});
+  list.sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return admQotdArchSort==='old'?(da-db):(db-da);});
+  return list;
+}
+function admQotdTrecho(q){
+  var t=String((q&&q.stem)||'').replace(/\s+/g,' ').trim();
+  if(t.length<=160)return t;
+  var c=t.slice(0,157),sp=c.lastIndexOf(' ');
+  return (sp>100?c.slice(0,sp):c)+'…'; // corta no espaço, se houver um perto do fim
+}
 function admQotdArchiveHTML(){
   var all=qotdPublished();
   // Subespecialidades presentes (para o filtro), em ordem alfabética.
   var subsPresent=[];all.forEach(function(q){if(q.sub&&subsPresent.indexOf(q.sub)<0)subsPresent.push(q.sub);});
   subsPresent.sort(function(a,b){return a.localeCompare(b,'pt-BR');});
   if(admQotdArchSub&&subsPresent.indexOf(admQotdArchSub)<0)admQotdArchSub=''; // filtro some se a sub não existe mais
-  // Filtra + ordena por data.
-  var list=all.filter(function(q){return !admQotdArchSub||q.sub===admQotdArchSub;});
-  list.sort(function(a,b){var da=qotdArchDate(a),db=qotdArchDate(b);return admQotdArchSort==='old'?(da-db):(db-da);});
+  var list=admQotdArchLista(all);
+  var por=QOTD_POR_OPCOES.indexOf(admQotdArchPor)>=0?admQotdArchPor:10,paginas=qotdArchPaginas(list.length,por);
+  // Chegou pelo link com o id: vai para a página dela.
+  if(admQotdArchRolar&&admQotdArchOpen){for(var i=0;i<list.length;i++){if(list[i].id===admQotdArchOpen){admQotdArchPagina=Math.floor(i/por);break;}}}
+  admQotdArchPagina=Math.min(Math.max(0,admQotdArchPagina|0),paginas-1);
+  var mostra=list.slice(admQotdArchPagina*por,admQotdArchPagina*por+por);
+  var hoje=null;try{hoje=qotdTodays();}catch(e){}
   var subOpts='<option value="">Todas as subespecialidades</option>'+subsPresent.map(function(s){return '<option value="'+esc(s)+'"'+(admQotdArchSub===s?' selected':'')+'>'+esc(s)+'</option>';}).join('');
-  var sortOpts='<option value="recent"'+(admQotdArchSort!=='old'?' selected':'')+'>Mais recentes primeiro</option><option value="old"'+(admQotdArchSort==='old'?' selected':'')+'>Mais antigas primeiro</option>';
-  var filters='<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem">'
-    +'<label style="flex:1;min-width:200px">'+igLbl('Subespecialidade')+'<select id="adm-qa-sub">'+subOpts+'</select></label>'
-    +'<label style="flex:1;min-width:170px">'+igLbl('Ordenar por data')+'<select id="adm-qa-sort">'+sortOpts+'</select></label>'
-    +'<span style="font-size:.72rem;color:var(--t3);padding-bottom:.55rem">'+list.length+' de '+all.length+'</span></div>';
-  var body=list.length?list.map(function(q){
+  var sortOpts='<option value="recent"'+(admQotdArchSort!=='old'?' selected':'')+'>Mais recentes</option><option value="old"'+(admQotdArchSort==='old'?' selected':'')+'>Mais antigas</option>';
+  var porOpts=QOTD_POR_OPCOES.map(function(n){return '<option value="'+n+'"'+(n===por?' selected':'')+'>'+n+' por página</option>';}).join('');
+  var filters='<div class="card adm-qa-filtros">'
+    +'<label class="f-sub">'+igLbl('Subespecialidade')+'<select id="adm-qa-sub">'+subOpts+'</select></label>'
+    +'<label>'+igLbl('Ordem')+'<select id="adm-qa-sort">'+sortOpts+'</select></label>'
+    +'<label>'+igLbl('Mostrar')+'<select id="adm-qa-por">'+porOpts+'</select></label>'
+    +'<div class="adm-qa-conta">'+(admQotdArchSub?list.length+' de '+all.length+' questões':all.length+' questões publicadas')+(paginas>1?' · página '+(admQotdArchPagina+1)+' de '+paginas:'')+'</div></div>';
+  var mesAtual='';
+  var body=mostra.length?mostra.map(function(q){
     var open=(admQotdArchOpen===q.id);
-    var sub=q.sub?'<span style="font-size:.64rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin-right:.5rem;flex-shrink:0">'+esc(q.sub)+'</span>':'';
-    var pd=qotdArchDate(q);
-    var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
-    var head='<button type="button" class="qa-head" data-admqa-toggle="'+esc(q.id)+'">'+sub+'<span class="qa-snip">'+esc(dstr)+'</span><span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+    var pd=qotdArchDate(q),d=pd?new Date(pd):null;
+    var mes=d?MESES_PT[d.getMonth()]+' de '+d.getFullYear():'Sem data';
+    var cab='';
+    if(mes!==mesAtual){mesAtual=mes;cab='<div class="adm-qa-mes">'+esc(mes.charAt(0).toUpperCase()+mes.slice(1))+'</div>';}
+    var data=d?'<span class="aqa-data" aria-label="'+esc(d.toLocaleDateString('pt-BR'))+'"><b>'+d.getDate()+'</b><small>'+esc(MESES_PT[d.getMonth()].slice(0,3))+'</small></span>':'<span class="aqa-data"><b>—</b></span>';
+    var hj=(hoje&&q.id===hoje.id)?'<span class="qa-badge hoje">De hoje</span>':'';
+    var head='<button type="button" class="qa-head" data-admqa-toggle="'+esc(q.id)+'">'+data
+      +'<span class="aqa-info"><span class="aqa-topo">'+(q.sub?'<span class="aqa-sub">'+esc(q.sub)+'</span>':'')+hj+'</span>'
+      +'<span class="aqa-trecho">'+esc(admQotdTrecho(q))+'</span></span>'
+      +'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
     var bd=open?'<div class="qa-body">'+qotdReviewCardHTML(q)+'</div>':'';
-    return '<div class="qa-item'+(open?' open':'')+'">'+head+bd+'</div>';
-  }).join(''):'<div class="empty">'+(all.length?'Nenhuma questão nesta subespecialidade.':'Nenhuma questão publicada ainda.')+'</div>';
-  return '<div class="adm-ph"><h1>Questão do Dia</h1></div><div class="adm-pc">'
-    +'<div class="card" style="margin-bottom:1.1rem"><div style="font-size:.79rem;color:var(--t2);line-height:1.55">Arquivo das questões do dia já publicadas — enunciado, alternativa correta (em destaque) e comentário. Para consulta e revisão.</div></div>'
+    return cab+'<div class="qa-item'+(open?' open':'')+'">'+head+bd+'</div>';
+  }).join('')+muralPagerHTML(admQotdArchPagina,paginas,'adm-qa-pag'):'<div class="empty">'+(all.length?'Nenhuma questão nesta subespecialidade.':'Nenhuma questão publicada ainda.')+'</div>';
+  return '<div class="adm-ph"><h1>Questão do Dia</h1><p>Arquivo das questões já publicadas. Toque numa delas para ver o enunciado, a alternativa correta em destaque e o comentário.</p></div><div class="adm-pc">'
     +(all.length?filters:'')
-    +'<div id="adm-qotd-arch">'+body+'</div></div>';
+    +'<div id="adm-qotd-arch" class="adm-qa-lista">'+body+'</div></div>';
 }
 function bindAdmQotdArchive(){
   // Chegou pelo link: rola até a questão quando ela já está na lista. A primeira
@@ -12084,8 +12131,12 @@ function bindAdmQotdArchive(){
     if(alvoQa){admQotdArchRolar=false;try{alvoQa.scrollIntoView({block:'start'});}catch(e){}}
   }
   try{ensureLightbox();}catch(e){}
-  var fs=document.getElementById('adm-qa-sub');if(fs)fs.addEventListener('change',function(){admQotdArchSub=fs.value;admQotdArchOpen=null;renderAdmSec('qotdarq');});
-  var so=document.getElementById('adm-qa-sort');if(so)so.addEventListener('change',function(){admQotdArchSort=so.value;renderAdmSec('qotdarq');});
+  var fs=document.getElementById('adm-qa-sub');if(fs)fs.addEventListener('change',function(){admQotdArchSub=fs.value;admQotdArchOpen=null;admQotdArchPagina=0;renderAdmSec('qotdarq');});
+  var so=document.getElementById('adm-qa-sort');if(so)so.addEventListener('change',function(){admQotdArchSort=so.value;admQotdArchPagina=0;renderAdmSec('qotdarq');});
+  var sp=document.getElementById('adm-qa-por');if(sp)sp.addEventListener('change',function(){admQotdArchPor=+sp.value||10;lsSet('qotd_por_pagina_adm',admQotdArchPor);admQotdArchPagina=0;renderAdmSec('qotdarq');});
+  var topo=function(){var h=document.querySelector('.adm-qa-filtros');try{if(h)h.scrollIntoView({block:'start'});}catch(e){}};
+  var pv=document.getElementById('adm-qa-pag-prev');if(pv)pv.addEventListener('click',function(){admQotdArchPagina--;admQotdArchOpen=null;renderAdmSec('qotdarq');topo();});
+  var nx=document.getElementById('adm-qa-pag-next');if(nx)nx.addEventListener('click',function(){admQotdArchPagina++;admQotdArchOpen=null;renderAdmSec('qotdarq');topo();});
   document.querySelectorAll('[data-admqa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-admqa-toggle');admQotdArchOpen=(admQotdArchOpen===id)?null:id;renderAdmSec('qotdarq');});});
 }
 // ── ABA "COMO O ALUNO VÊ" (painel do professor, ao lado de "Postados") ──
