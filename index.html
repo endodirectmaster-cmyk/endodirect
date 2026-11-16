@@ -302,6 +302,15 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .cid-caret{display:inline-block;transition:transform .15s ease;color:var(--t3);font-size:.72rem;margin-right:.15rem}
 .cid-details[open]>summary .cid-caret{transform:rotate(90deg)}
 .cid-details[open]>summary.cid-summary{margin-bottom:0}
+.adm-lista>summary{list-style:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.72rem .95rem;border:1px solid var(--bd);border-radius:var(--rs);background:var(--s2);font-size:.82rem;font-weight:700;color:var(--tx)}
+.adm-lista>summary::-webkit-details-marker{display:none}
+.adm-lista>summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.adm-lista .al-fechar{display:none}
+.adm-lista[open] .al-abrir{display:none}
+.adm-lista[open] .al-fechar{display:inline}
+.adm-lista .al-caret{color:var(--t3);transition:transform .15s}
+.adm-lista[open] .al-caret{transform:rotate(180deg)}
+.adm-lista[open]>summary{margin-bottom:.7rem}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 /* Calculadoras agrupadas por área. Título e sub-grade ocupam a LINHA INTEIRA da
@@ -22017,13 +22026,25 @@ function admVencidasCardHTML(){
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--red)">'+vencidas+'</div><div class="adm-bigstat-l">Já vencidas</div></div>'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--gold)">'+(lista.length-vencidas)+'</div><div class="adm-bigstat-l">Vencem em '+ADM_VENCE_EM_DIAS+' dias</div></div>'
     +'</div>'
-    +'<div class="adm-table">'
+    +admListaRecolhida('vencendo',lista.length,
+      '<div class="adm-table">'
       +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.2">Plano</span><span style="flex:1.3">Vencimento</span></div>'
       +linhas
-    +'</div>'
+    +'</div>')
     +'<div style="font-size:.7rem;color:var(--t3);margin-top:.6rem;line-height:1.55">ℹ️ <b>Uma mensal que venceu sem renovar</b> pode ser cancelamento, cobrança recusada <b>ou cobrança que passou e não foi processada</b> — neste último caso a pessoa <b>pagou e perdeu o acesso</b>. Só o painel do pagar.me distingue os três: confira lá antes de concluir. Cortesias não entram nesta lista.</div>'
   ,'<span class="tag tag-blue">Dados reais</span>');
 }
+// Listas de alunos do Analytics recolhidas (professor, 16/11/2026, no iPhone: "deixar ela oculta e quando
+// clicar ela aparecer"). Os números do cartão continuam à vista; a tabela abre no botão. Aberta fica aberta
+// enquanto a página não recarrega (o Analytics se redesenha quando os dados chegam).
+var admListasAbertas={};
+function admListaRecolhida(chave,n,tabela){
+  var abertas=(typeof admListasAbertas==='object'&&admListasAbertas)||{};
+  return '<details class="adm-lista" data-adm-lista="'+esc(chave)+'"'+(abertas[chave]?' open':'')+'>'
+    +'<summary><span class="al-abrir">👥 Ver '+(n===1?'o estudante':'os '+n+' estudantes')+'</span><span class="al-fechar">Ocultar a lista</span><span class="al-caret" aria-hidden="true">▾</span></summary>'
+    +tabela+'</details>';
+}
+try{document.addEventListener('toggle',function(ev){var d=ev.target;if(d&&d.getAttribute&&d.getAttribute('data-adm-lista'))admListasAbertas[d.getAttribute('data-adm-lista')]=!!d.open;},true);}catch(e){}
 function admSumidosCardHTML(){
   var wrap=function(inner,tag){return '<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><span class="card-title">🔔 Assinantes sem acesso há '+ADM_SUMIDO_DIAS+'+ dias'+'</span>'+(tag||'')+'</div>'+inner+'</div>';};
   if(admEstErr)return wrap('<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Não foi possível carregar a lista de alunos.</div>');
@@ -22052,10 +22073,11 @@ function admSumidosCardHTML(){
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--red)">'+sumidos.filter(function(x){return x.dias==null||x.dias>=30;}).length+'</div><div class="adm-bigstat-l">Há 30 dias ou mais</div></div>'
       +'<div class="adm-bigstat"><div class="adm-bigstat-n" style="color:var(--tx)">'+pct+'%</div><div class="adm-bigstat-l">dos '+pagantes+' assinantes</div></div>'
     +'</div>'
-    +'<div class="adm-table">'
+    +admListaRecolhida('sumidos',sumidos.length,
+      '<div class="adm-table">'
       +'<div class="adm-table-head"><span style="flex:2.2">Estudante</span><span style="flex:2.5">E-mail</span><span style="flex:1.2">Plano</span><span style="flex:1.3">Sem acessar</span></div>'
       +linhas
-    +'</div>'
+    +'</div>')
     +'<div style="font-size:.7rem;color:var(--t3);margin-top:.6rem">ℹ️ Só assinantes pagantes — cortesia e degustação ficam de fora de propósito. A contagem usa o último uso do app (não o último login, que não muda em sessão longa). Quase todo mundo pagou anual: sem este card, um aluno que parar de usar agora só apareceria como churn em junho/2027.</div>',
     '<span class="tag tag-blue">Dados reais</span>'
   );
