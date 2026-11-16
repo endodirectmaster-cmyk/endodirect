@@ -302,6 +302,9 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .cid-caret{display:inline-block;transition:transform .15s ease;color:var(--t3);font-size:.72rem;margin-right:.15rem}
 .cid-details[open]>summary .cid-caret{transform:rotate(90deg)}
 .cid-details[open]>summary.cid-summary{margin-bottom:0}
+.cid-summary{flex-wrap:wrap;gap:.35rem .6rem}
+.cid-previa{flex-basis:100%;font-size:.78rem;color:var(--t2);font-variant-numeric:tabular-nums;line-height:1.45}
+.cid-details[open] .cid-previa{display:none}
 .adm-lista>summary{list-style:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.72rem .95rem;border:1px solid var(--bd);border-radius:var(--rs);background:var(--s2);font-size:.82rem;font-weight:700;color:var(--tx)}
 .adm-lista>summary::-webkit-details-marker{display:none}
 .adm-lista>summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
@@ -22102,12 +22105,17 @@ function admAnalyticsHTML(){
   var porCidade=Array.isArray(ov.por_cidade)?ov.por_cidade:[];
   var comUf=n(ov.com_uf),comCidade=n(ov.com_cidade);
   var maxUf=porUf.reduce(function(m,x){return Math.max(m,n(x.n));},0)||1;
+  // Origem recolhida (professor, 16/11/2026, no iPhone: "assim como também aqui na origem dos alunos,
+  // porque senão fica muito extensa"). Fechado, cada cartão mostra os três primeiros numa linha.
+  var abertas=(typeof admListasAbertas==='object'&&admListasAbertas)||{};
+  var previaUf=porUf.length?'<span class="cid-previa">'+porUf.slice(0,3).map(function(x){return esc(x.uf)+' '+(comUf?Math.round(n(x.n)/comUf*100):0)+'%';}).join(' · ')+(porUf.length>3?' · +'+(porUf.length-3)+' estados':'')+'</span>':'';
+  var previaCidade=porCidade.length?'<span class="cid-previa">'+porCidade.slice(0,3).map(function(x){return esc(x.cidade||'—')+' '+n(x.n);}).join(' · ')+(porCidade.length>3?' · +'+(porCidade.length-3):'')+'</span>':'';
   var geoHtml='<div class="sec-title" style="margin:0 0 .5rem">📍 Origem dos alunos</div>'
     +'<div class="g2" style="align-items:start;margin-bottom:1.1rem">'
-      +'<div class="card"><div class="card-head"><span class="card-title">Por estado (UF)</span><span class="tag tag-blue">'+comUf+' com UF</span></div>'
-        +(porUf.length?porUf.map(function(x){var w=Math.round(n(x.n)/maxUf*100);var p2=comUf?Math.round(n(x.n)/comUf*100):0;return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:44px">'+esc(x.uf)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+w+'%;background:var(--blue)"></div></div><div class="rep-area-pct">'+n(x.n)+' · '+p2+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Ainda sem UF cadastrada. Aparece conforme os alunos completam o cadastro (CRM/UF no primeiro acesso).</div>')
-      +'</div>'
-      +'<div class="card"><details class="cid-details"><summary class="card-head cid-summary"><span class="card-title"><span class="cid-caret">▸</span> Por cidade</span><span class="tag tag-blue">'+comCidade+' com cidade</span></summary>'
+      +'<div class="card"><details class="cid-details" data-adm-lista="uf"'+(abertas.uf?' open':'')+'><summary class="card-head cid-summary"><span class="card-title"><span class="cid-caret">▸</span> Por estado (UF)</span><span class="tag tag-blue">'+comUf+' com UF</span>'+previaUf+'</summary>'
+        +'<div style="margin-top:.7rem">'+(porUf.length?porUf.map(function(x){var w=Math.round(n(x.n)/maxUf*100);var p2=comUf?Math.round(n(x.n)/comUf*100):0;return '<div class="rep-area-row"><div class="rep-area-name" style="min-width:44px">'+esc(x.uf)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+w+'%;background:var(--blue)"></div></div><div class="rep-area-pct">'+n(x.n)+' · '+p2+'%</div></div>';}).join(''):'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">Ainda sem UF cadastrada. Aparece conforme os alunos completam o cadastro (CRM/UF no primeiro acesso).</div>')+'</div>'
+      +'</details></div>'
+      +'<div class="card"><details class="cid-details" data-adm-lista="cidade"'+(abertas.cidade?' open':'')+'><summary class="card-head cid-summary"><span class="card-title"><span class="cid-caret">▸</span> Por cidade</span><span class="tag tag-blue">'+comCidade+' com cidade</span>'+previaCidade+'</summary>'
         +'<div style="margin-top:.7rem">'+(porCidade.length?'<div class="adm-table"><div class="adm-table-head"><span style="flex:3">Cidade</span><span style="flex:1;text-align:right">Alunos</span></div>'+porCidade.map(function(x){return '<div class="adm-table-row"><span style="flex:3;font-size:.8rem;font-weight:600">'+esc(x.cidade||'—')+(x.uf?' <span style="color:var(--t3);font-weight:400">/ '+esc(x.uf)+'</span>':'')+'</span><span style="flex:1;text-align:right;font-weight:700">'+n(x.n)+'</span></div>';}).join('')+'</div>':'<div class="empty" style="padding:.6rem;font-size:.78rem;color:var(--t3)">As cidades aparecem quando os alunos concluem uma compra (endereço de cobrança).</div>')+'</div>'
       +'</details></div>'
     +'</div>';

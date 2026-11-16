@@ -131,5 +131,16 @@ const aluno = (o) => Object.assign({ name: 'X', email: 'x@y.z', plano: 'Gold' },
   ok('o estado aberto/fechado é guardado no toggle', /addEventListener\('toggle',function\(ev\)\{var d=ev\.target;if\(d&&d\.getAttribute&&d\.getAttribute\('data-adm-lista'\)\)admListasAbertas\[/.test(SRC));
 }
 
+// ---- ORIGEM DOS ALUNOS RECOLHIDA (16/11/2026: "assim como também aqui na origem dos alunos, porque senão
+// fica muito extensa") ----  Estado e cidade fechados por padrão, com os três primeiros numa linha.
+{
+  const an = extrai('admAnalyticsHTML');
+  ok('🧨 "Por estado (UF)" recolhido (details, aberto só se o professor abriu)', /<details class="cid-details" data-adm-lista="uf"'\+\(abertas\.uf\?' open':''\)\+'><summary class="card-head cid-summary"><span class="card-title"><span class="cid-caret">▸<\/span> Por estado \(UF\)/.test(an));
+  ok('"Por cidade" continua recolhido e guarda o estado', /<details class="cid-details" data-adm-lista="cidade"'\+\(abertas\.cidade\?' open':''\)\+'>/.test(an));
+  ok('prévia dos três primeiros estados no cabeçalho', /var previaUf=porUf\.length\?'<span class="cid-previa">'\+porUf\.slice\(0,3\)/.test(an) && /'\+previaUf\+'<\/summary>/.test(an));
+  ok('prévia das três primeiras cidades no cabeçalho', /var previaCidade=porCidade\.length\?'<span class="cid-previa">'\+porCidade\.slice\(0,3\)/.test(an) && /'\+previaCidade\+'<\/summary>/.test(an));
+  ok('a prévia some quando o cartão abre', /\.cid-details\[open\] \.cid-previa\{display:none\}/.test(SRC));
+}
+
 if (bad) { console.error('\n' + bad + ' verificação(ões) do card de sumidos falharam.'); process.exit(1); }
 console.log('Card "sem acesso há 14+ dias": OK');
