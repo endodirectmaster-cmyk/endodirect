@@ -36,6 +36,7 @@ https://apps.apple.com/br/app/id6833147654.
      conta e foram trocados) (1170 × 2532, tema claro): Dashboard, Mural e Questão do dia nova
      (incidentaloma). Montados os dois jogos de 8 (01–03 novos, 04–08 os de 10/11, tema escuro) e entregues em zip.
      Atenção: a 04 (resposta comentada) é da questão antiga (vitamina D), não da nova 03.
+     Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
 ## Decisões do professor (18/10)
