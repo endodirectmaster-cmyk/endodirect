@@ -851,6 +851,12 @@ body.mm-tela-cheia.mm-adm-inline #mm-live{position:relative;inset:auto;z-index:1
 .mm-node-wrap{position:relative;display:inline-flex;align-items:center}
 .mm-sub-txt{background:var(--surface);border:1.5px solid var(--bd2);border-radius:9px;padding:.42rem .72rem;font-size:.76rem;color:var(--tx);min-width:120px;max-width:320px;outline:none;line-height:1.45}
 .mm-sub-txt:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.12)}
+/* Palavra longa não vaza da caixa do mapa (professor, 16/11/2026, print do mapa "Hipercolesterolemia
+   Familiar" em tela cheia: "Está ultrapassando o card"; nos mapas publicados há dezenas como
+   Hiperparatireoidismo, Hipertrigliceridemia, Hiperprolactinemia). Hifeniza em português (a página é
+   lang="pt-BR") e, onde não houver hifenização, quebra a palavra dentro da caixa. Vale para o
+   visualizador/editor (.mm-*) e para o mapa só de leitura (.dmap-*). */
+.mm-central,.mm-branch-txt,.mm-sub-txt,.dmap-root,.dmap-b,.dmap-c{overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto}
 .mm-del{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border:none;border-radius:50%;background:var(--red);color:#fff;font-size:.62rem;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;font-family:var(--font);padding:0;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:5}
 .mm-node-wrap:hover .mm-del{display:inline-flex}
 .mm-add-sub{align-self:flex-start;background:none;border:1px dashed var(--bd2);border-radius:7px;padding:.24rem .65rem;font-size:.68rem;color:var(--t3);cursor:pointer;font-family:var(--font)}
