@@ -1219,6 +1219,18 @@ try {
   fail('regressão da tela depois de entrar no iPhone falhou:\n' + out);
 }
 
+// 17c-undecies-bb. IMAGEM DOS STORIES NO APP DO IPHONE (16/11/2026). Professor: "Quando eu clico em imagem,
+//      não está aparecendo a imagem para conseguir anexar nos stories do Instagram." O WKWebView ignora
+//      <a download>; no app a arte abre numa tela com "📤 Compartilhar" (folha do iPhone, só no toque) e a
+//      dica de tocar e segurar; o site baixa como sempre. Info.plist ganha a permissão de salvar na galeria.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-ig-imagem-no-app.js')], { stdio: 'pipe' });
+  ok('imagem dos Stories no app: tela com Compartilhar; site baixa; permissão da galeria');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da imagem dos Stories no app falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

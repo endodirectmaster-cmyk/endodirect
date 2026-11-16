@@ -1,9 +1,17 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-11-13
+atualizado: 2026-11-16
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 📱 "⬇ IMAGEM" NO APP DO IPHONE (2026-11-16)
+
+No app (WKWebView) o download por `<a download>` não acontece. Desde a sw v424 a arte abre numa tela com
+"📤 Compartilhar" (folha do iPhone → Instagram/Stories, Salvar imagem) e a dica de tocar e segurar. No site,
+baixa como sempre. A permissão de salvar na galeria entrou no Info.plist (build novo da 1.2).
+Pergunta do professor no mesmo dia: mandar a arte direto ao **Metricool** para postar sozinho nos stories
+(conector do Metricool autorizado: marca Endodirect, Instagram @endodirect). Desenho em [[Pendências]].
 
 ## 🆕 NOVIDADES DE 2026 NA FILA (2026-11-13)
 

@@ -2056,6 +2056,13 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .faceid-txt{font-size:.9rem;line-height:1.55;color:var(--tx);margin-bottom:1rem}
 .faceid-acoes{display:flex;flex-direction:column;gap:.5rem}
 .faceid-acoes .btn{justify-content:center}
+.ig-ver{position:fixed;inset:0;z-index:2147482000;background:rgba(5,10,22,.94);display:flex;flex-direction:column;align-items:center;gap:.8rem;padding:calc(env(safe-area-inset-top,0px) + .8rem) 1rem calc(env(safe-area-inset-bottom,0px) + .9rem)}
+.ig-ver-acoes{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;width:100%}
+.ig-ver .btn{min-height:44px;padding:.6rem 1.15rem;font-size:.9rem;font-weight:600}
+.ig-ver .btn-outline,.ig-ver .btn-outline:hover:not(:disabled){color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.06)}
+.ig-ver img{flex:1 1 auto;min-height:0;max-width:100%;object-fit:contain;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.ig-ver-dica{font-size:.8rem;line-height:1.45;color:#cbd5e1;text-align:center;max-width:42ch}
+.ig-ver-dica b{color:#fff}
 .faceid-linha{display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .faceid-linha-tit{font-size:.95rem;font-weight:700;color:var(--tx)}
 .faceid-linha-sub{font-size:.76rem;line-height:1.45;color:var(--t2);margin-top:.2rem;max-width:46ch}
@@ -18810,8 +18817,46 @@ function igRenderCanvas(svg){
 function igSvgFor(kind,it){return kind==='q'?igQuestionSVG(it):kind==='a'?igAnswerSVG(it):igPromoSVG(it);}
 function igDownload(kind,it,filename){
   return igRenderCanvas(igSvgFor(kind,it)).then(function(c){
-    return new Promise(function(res,rej){c.toBlob(function(b){if(!b){rej(new Error('Falha ao gerar PNG.'));return;}var url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1500);res();},'image/png');});
+    return new Promise(function(res,rej){c.toBlob(function(b){if(!b){rej(new Error('Falha ao gerar PNG.'));return;}igEntregarPng(b,filename);res();},'image/png');});
   });
+}
+// ⬇ IMAGEM NO APP DO IPHONE (professor, 16/11/2026, no painel "Questão do Dia (Stories)": "Quando eu
+// clico em imagem, não está aparecendo a imagem para conseguir anexar nos stories do Instagram"). O
+// WKWebView ignora o <a download>: o clique não fazia nada. No app, a arte abre numa tela própria, com
+// "📤 Compartilhar" (a folha do iPhone: Instagram, Salvar imagem, WhatsApp...) e, onde a folha não
+// existir, a dica de tocar e segurar a imagem. No navegador, o download de sempre.
+function igEntregarPng(b,filename){
+  var noApp=false;try{noApp=isAppLoja()||appNativoIOS();}catch(e){}
+  if(!noApp){
+    var url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1500);
+    return;
+  }
+  igMostrarImagem(b,filename);
+}
+function igMostrarImagem(b,filename){
+  var url=URL.createObjectURL(b),arq=null;
+  try{arq=new File([b],filename,{type:'image/png'});}catch(e){}
+  var podeCompartilhar=false;
+  try{podeCompartilhar=!!(arq&&navigator.share&&navigator.canShare&&navigator.canShare({files:[arq]}));}catch(e){}
+  var o=document.createElement('div');o.className='ig-ver';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');o.setAttribute('aria-label','Arte do Story');
+  o.innerHTML='<div class="ig-ver-acoes">'
+      +(podeCompartilhar?'<button type="button" class="btn btn-primary" data-ig-ver="compartilhar">📤 Compartilhar</button>':'')
+      +'<button type="button" class="btn btn-outline" data-ig-ver="fechar">Fechar</button></div>'
+    +'<img alt="Arte do Story">'
+    +'<div class="ig-ver-dica">'+(podeCompartilhar?'Em <b>Compartilhar</b>, escolha <b>Instagram</b> (Stories) ou <b>Salvar imagem</b>.':'Toque e segure a imagem e escolha <b>Compartilhar</b> (Instagram) ou <b>Salvar na galeria</b>.')+'</div>';
+  o.querySelector('img').src=url;
+  var fecha=function(){try{o.remove();}catch(e){}setTimeout(function(){URL.revokeObjectURL(url);},500);};
+  o.addEventListener('click',function(ev){
+    var q=ev.target&&ev.target.getAttribute&&ev.target.getAttribute('data-ig-ver');
+    if(q==='fechar'||ev.target===o){fecha();return;}
+    if(q==='compartilhar'){
+      navigator.share({files:[arq]}).catch(function(e){
+        if(e&&e.name==='AbortError')return; // fechou a folha: nada a fazer
+        try{notify('Não deu para abrir o compartilhamento. Toque e segure a imagem.','info');}catch(_){}
+      });
+    }
+  });
+  document.body.appendChild(o);
 }
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
