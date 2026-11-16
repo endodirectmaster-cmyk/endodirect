@@ -75,5 +75,27 @@ if (fs.existsSync(esquemaArq)) {
 }
 ok('Info.plist lê versão e build do projeto', /<key>CFBundleVersion<\/key>\s*<string>\$\(CURRENT_PROJECT_VERSION\)<\/string>/.test(fs.readFileSync(path.join(RAIZ, 'app-ios', 'ios', 'App', 'App', 'Info.plist'), 'utf8')));
 
+// 16/11/2026: uma aspa perdida num passo só aparece quando o Mac do GitHub roda (e cada rodada
+// custa minutos). Todo bloco `run: |` passa pelo `bash -n` aqui.
+{
+  const { spawnSync } = require('child_process');
+  const linhasWf = fs.readFileSync(path.join(RAIZ, '.github', 'workflows', 'app-ios.yml'), 'utf8').split('\n');
+  for (let i = 0; i < linhasWf.length; i++) {
+    const m = linhasWf[i].match(/^(\s*)(?:- )?run: \|\s*$/);
+    if (!m) continue;
+    const base = m[1].length;
+    const bloco = [];
+    let j = i + 1;
+    for (; j < linhasWf.length; j++) {
+      const l = linhasWf[j];
+      if (l.trim() && (l.match(/^\s*/)[0].length <= base)) break;
+      bloco.push(l);
+    }
+    const r = spawnSync('bash', ['-n'], { input: bloco.join('\n'), encoding: 'utf8' });
+    ok('bash aceita o passo da linha ' + (i + 1), r.status === 0, (r.stderr || '').trim());
+    i = j - 1;
+  }
+}
+
 if (bad) { console.log('\n' + bad + ' falha(s): app iOS pelo GitHub Actions'); process.exit(1); }
 console.log('app iOS pelo GitHub Actions: só manual, actions fixadas, segredos só no envio, esquema compartilhado: ok');

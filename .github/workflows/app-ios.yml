@@ -94,7 +94,7 @@ jobs:
             echo "::error::O app saiu sem a permissão do Entrar com a Apple (App.entitlements)."
             exit 1
           fi
-          echo "Permissão do Entrar com a Apple embutida no app.
+          echo "Permissão do Entrar com a Apple embutida no app."
           if ! grep -q 'aps-environment' "$RUNNER_TEMP/permissoes.plist"; then
             echo "::error::O app saiu sem a permissão de notificações (aps-environment no App.entitlements)."
             exit 1
