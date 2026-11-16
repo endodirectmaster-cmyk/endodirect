@@ -118,8 +118,9 @@ para ele postar diariamente nos stories?" Fatos: conector do Metricool autorizad
 entra na plataforma às 7h30 (cron do radar; reserva no healthcheck); fila com 103 na espera em 16/11. Caminhos
 propostos: (a) automático pela plataforma: arte gerada quando a questão entra/muda na fila e o cron agenda no
 Metricool (precisa da chave de API do Metricool, que ele mesmo põe na Vercel; sem função nova, 12/12);
-(b) sem chave: eu agendo em lotes pelo conector. Decisões pedidas: horário, automático × notificação, (a) × (b) e
-um story de teste. **Nada agendado sem o "pode" dele.** Build 1.2 (12) no TestFlight com a permissão da galeria.
+(b) sem chave: eu agendo em lotes pelo conector. **Horário: 18h** (professor: "o horário que achar melhor"; Metricool, semana de 16–22/11: pico do
+público entre 18h e 20h em todos os dias; o post do feed fica às 19h, sem disputa). Faltam: automático ×
+notificação, (a) × (b) e um story de teste. **Nada agendado sem o "pode" dele.** Build 1.2 (12) no TestFlight com a permissão da galeria.
 
 ## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
 
