@@ -225,7 +225,7 @@ ok('🧨 "mãozinha" só nas caixas com ramos para abrir (e não no modo de edi�
   && /body\.mm-tela-cheia \.mm-editor:not\(\.mm-modo-edicao\) \.mm-tem-filhos>\.mm-node-wrap>\[data-mm-branch\],body\.mm-tela-cheia \.mm-editor:not\(\.mm-modo-edicao\) \.mm-tem-filhos>\.mm-node-wrap>\[data-mm-leaf\]\{cursor:pointer\}/.test(html));
 ok('🧨 abrir um mapa (do professor, salvo ou novo) pede o encaixe', ['viewMM', 'viewMMShared', 'newBlankMM'].every((f) => /mmNovaAbertura\(\)/.test(corpo(f))));
 ok('mapa novo, feito à mão, já abre no modo de edição', /mmNovaAbertura\(\);\s*mmEditando=true;mmBotaoEditar\(\);/.test(corpo('newBlankMM')));
-ok('o editor do professor também começa do zero ao abrir', /mmNovaAbertura\(\);\s*renderMMEditor\(\);/.test(html));
+ok('o editor do professor também começa do zero ao abrir', /mmNovaAbertura\(\);\s*renderMMEditor\(\);/.test(corpo('mmAbreNoPainel')));
 ok('🧨 botão "✏️ Editar" no topo, ao lado de "Salvar"', /<button[^>]*id="btn-mm-editar"[^>]*>✏️ Editar<\/button><button[^>]*id="btn-mm-save"/.test(html));
 ok('🧨 o botão liga e desliga o modo de edição', /getElementById\('btn-mm-editar'\)\.addEventListener\('click',function\(\)\{mmModoEdicao\(!mmEditando\);\}\)/.test(html));
 ok('o botão diz o que faz: "✏️ Editar" ↔ "✓ Concluir"', /mmEditando\?'✓ Concluir':'✏️ Editar'/.test(corpo('mmBotaoEditar')));

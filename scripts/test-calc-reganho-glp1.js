@@ -14,7 +14,11 @@
 //   3) `calcVisivel` esconde o cartão de quem não é professor e o mostra ao professor,
 //      e ele é usado no índice por área, na contagem "Todas as áreas" e no `openCalc`;
 //   4) o cartão mostra a marca "Piloto · só professores" e o rótulo "Ferramenta dos
-//      autores" no lugar de "Ferramenta oficial".
+//      autores" no lugar de "Ferramenta oficial";
+//   5) (16/11/2026, professor: "deixar a calculadora dentro da plataforma apenas para os
+//      professores, de modo que a gente possa treinar dentro do nosso painel") a ferramenta dos
+//      autores roda DENTRO do cartão (`embutir`, iframe com sandbox), com o link de outra aba
+//      como reserva e o aviso de não digitar dado que identifique o paciente.
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -68,5 +72,13 @@ ok(/\(c\.soProfessor\?'<span class="calc-piloto">Piloto · só professores<\/spa
 ok(/esc\(c\.rotuloExt\|\|'Ferramenta oficial'\)/.test(html), 'o rodapé do cartão externo tem de aceitar rotuloExt');
 ok(/\.calc-piloto\{/.test(html), 'falta o CSS da marca de piloto');
 
+// ── 5. dentro do painel ──────────────────────────────────────────────────────
+ok(/embutir:true/.test(entrada), 'a calculadora tem de abrir DENTRO do cartão (embutir:true)');
+ok(/\(c\.embutir\?'<div class="calc-embed"><iframe src="'\+esc\(c\.link\)\+'"/.test(html), '🧨 o detalhe não desenha a ferramenta embutida');
+ok(/sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"/.test(html), 'o iframe precisa de sandbox (sem navegar a página do painel)');
+ok(/btn '\+\(c\.embutir\?'btn-outline':'btn-primary'\)/.test(html), 'o link de outra aba tem de continuar, como reserva');
+ok(/não use nome nem dado que identifique o paciente/.test(entrada), 'falta o aviso de não digitar dado que identifique o paciente');
+ok(/\.calc-embed iframe\{[^}]*min-height:620px/.test(html), 'a janela embutida perdeu a altura mínima');
+
 if (falhas.length) { console.error('✗ calculadora de reganho pós-GLP-1 (piloto)'); falhas.forEach((f) => console.error('  - ' + f)); process.exit(1); }
-console.log('✓ calculadora de reganho pós-GLP-1: piloto só para professores, externa, texto em português e limites');
+console.log('✓ calculadora de reganho pós-GLP-1: piloto só para professores, ferramenta dos autores dentro do cartão, texto em português e limites');

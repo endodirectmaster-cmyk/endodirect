@@ -1,11 +1,14 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-11-13
+atualizado: 2026-11-16
 ---
 
 # Convenções de Trabalho
 
 ## 🌐 REDE DO AMBIENTE: FONTES MÉDICAS LIBERADAS (2026-11-13)
+
+**16/11/2026:** liberados também glp1regainrisk.com e www.glp1regainrisk.com (calculadora de reganho da Mayo,
+embutida no painel do professor), com aprovação do professor no pedido de rede.
 
 Com aprovação do professor (pedido de rede pelo `update_environment`), o ambiente Default passou a abrir
 www.fda.gov, www.accessdata.fda.gov (Drugs@FDA e bulas em PDF), pmc.ncbi.nlm.nih.gov, www.ncbi.nlm.nih.gov,
