@@ -88,5 +88,16 @@ const i = html.indexOf("getElementById('btn-mm-close').addEventListener('click',
 const fecha = html.slice(i, html.indexOf('});', i));
 ok(fecha.indexOf('mmDoCapitulo') < fecha.indexOf('mmCapAdmin') && fecha.indexOf('mmCapAdmin') < fecha.indexOf('mmAdminEdit'), '🧨 o "← Voltar" do capítulo no painel cai na lista da ferramenta');
 
+// ── 7. Palavra longa dentro da caixa (16/11/2026; print do mapa "Hipercolesterolemia Familiar" em tela
+//    cheia: "Está ultrapassando o card") ──────────────────────────────────────────────────────────
+{
+  const regra = (html.match(/\n\.mm-central,\.mm-branch-txt,\.mm-sub-txt,\.dmap-root,\.dmap-b,\.dmap-c\{([^}]*)\}/) || [, ''])[1];
+  ok(/overflow-wrap:anywhere/.test(regra) && /(^|;)hyphens:auto/.test(regra) && /-webkit-hyphens:auto/.test(regra), '🧨 caixa do mapa sem hifenização/quebra: palavra longa (Hipercolesterolemia) vaza da caixa');
+  ok(/<html lang="pt-BR">/.test(html), 'a hifenização precisa do idioma da página (lang="pt-BR")');
+  const classes = ['mm-central', 'mm-branch-txt', 'mm-sub-txt', 'dmap-root', 'dmap-b', 'dmap-c'];
+  const desfaz = [...html.matchAll(/([^{}]*)\{([^}]*)\}/g)].filter((m) => classes.some((c) => new RegExp('\\.' + c + '(?![\\w-])').test(m[1])) && /white-space:nowrap|hyphens:(none|manual)|overflow-wrap:normal|word-break:keep-all/.test(m[2]));
+  ok(!desfaz.length, '⚠️ regra que desfaz a quebra nas caixas do mapa: ' + desfaz.map((m) => m[1].trim()).join(' | '));
+}
+
 if (falhas.length) { console.error('✗ mapas do painel do professor'); falhas.forEach((f) => console.error('  - ' + f)); process.exit(1); }
 console.log('✓ mapas do painel do professor: modo do aluno, Editar em cima, Diretrizes e Resumos no mesmo visualizador');
