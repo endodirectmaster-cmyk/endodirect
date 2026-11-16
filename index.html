@@ -18011,12 +18011,15 @@ function restoreMMLive(){
 // Os editores antigos da aba (admRefMapaHTML nas Diretrizes, dirMapaEditHTML nos Resumos) não são
 // mais desenhados; ficaram no código, sem uso.
 var mmCapAdmin=-1,admCapMM=-1,admCapMMEditar=false;
-function mmAbreNoPainel(host,mm,editar){
+// telaCheia: o mapa ocupa a tela inteira, como na ferramenta do aluno (capítulo das Diretrizes e dos
+// Resumos no painel; professor, 16/11/2026, com print: "Deixa aparecendo também em modo de tela
+// cheia, assim como também é na ferramenta dos mapas mentais"). Sem ela, fica no cartão da página.
+function mmAbreNoPainel(host,mm,editar,telaCheia){
   var live=document.getElementById('mm-live');if(!host||!live||!mm)return false;
   if(!__mmLiveHome)__mmLiveHome=live.parentNode;
-  host.appendChild(live);
+  if(telaCheia){if(live.parentNode!==document.body)document.body.appendChild(live);document.body.classList.remove('mm-adm-inline');}
+  else{host.appendChild(live);document.body.classList.add('mm-adm-inline');}
   curMM=mm;
-  document.body.classList.add('mm-adm-inline');
   mmTelaCheia(true);
   live.style.display='block';
   setText('mm-live-title',curMM.data.root||curMM.topic);
@@ -18058,7 +18061,7 @@ function admCapMMBind(main){
   var i=+host.getAttribute('data-adm-capmm-host'),d=(Array.isArray(diretrizes)?diretrizes:[])[i];
   var data=dirMapaParaMM(d)||{root:dirTemaOf(d)||'Mapa mental',branches:[{label:'Ramo 1',leaves:['Detalhe']}]};
   var mm={id:'cap-'+((d&&d.id)||i),topic:data.root,sub:(typeof canonSub==='function'?canonSub(d&&d.sub):(d&&d.sub))||'',data:normalizeMMData(data),at:Date.now()};
-  if(mmAbreNoPainel(host,mm,admCapMMEditar))mmCapAdmin=i;
+  if(mmAbreNoPainel(host,mm,admCapMMEditar,true))mmCapAdmin=i; // tela cheia, como na ferramenta
   admCapMMEditar=false;
 }
 // "💾 Salvar" de um mapa de capítulo aberto no painel: grava em d.mapa e volta ao cartão.

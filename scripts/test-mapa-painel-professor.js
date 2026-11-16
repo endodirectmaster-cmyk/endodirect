@@ -42,6 +42,12 @@ ok(!/(^|[\s,}])body\.mm-adm-inline[ {.#:]/.test(html), '⚠️ regra com .mm-adm
 // ── 2. abrir e devolver ──────────────────────────────────────────────────────
 const abre = corpo('mmAbreNoPainel');
 ok(/classList\.add\('mm-adm-inline'\)/.test(abre) && /mmTelaCheia\(true\)/.test(abre), '🧨 o mapa do painel não abre no modo leitura do aluno');
+// 16/11/2026 (professor, print do capítulo "Tratamento do DM2" no iPhone): "Deixa aparecendo também em
+// modo de tela cheia, assim como também é na ferramenta dos mapas mentais". O capítulo abre por cima de
+// tudo (no body, sem .mm-adm-inline); a ferramenta segue no cartão.
+ok(/if\(telaCheia\)\{if\(live\.parentNode!==document\.body\)document\.body\.appendChild\(live\);document\.body\.classList\.remove\('mm-adm-inline'\);\}/.test(abre), '🧨 tela cheia: o mapa tem de sair do cartão (ir para o body) e sem a classe do cartão');
+ok(/else\{host\.appendChild\(live\);document\.body\.classList\.add\('mm-adm-inline'\);\}/.test(abre), 'sem tela cheia, o mapa fica no cartão da página');
+ok(/if\(mmAbreNoPainel\(host,mm,admCapMMEditar,true\)\)mmCapAdmin=i;/.test(corpo('admCapMMBind')), '🧨 o mapa do capítulo (Diretrizes/Resumos) no painel não abre em tela cheia');
 ok(abre.indexOf('mmNovaAbertura()') > 0 && abre.indexOf('mmNovaAbertura()') < abre.indexOf('renderMMEditor()'), '🧨 o mapa do painel não abre só com a raiz e os ramos (mmNovaAbertura antes do desenho)');
 ok(/if\(editar\)mmModoEdicao\(true\)/.test(abre), 'falta abrir já no modo Editar quando pedido');
 const devolve = corpo('restoreMMLive');
