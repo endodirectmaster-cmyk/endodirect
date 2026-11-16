@@ -10332,22 +10332,33 @@ function faceIdOferecer(){
   });
 }
 // Cartão do Perfil (só no app com o plugin e com biometria cadastrada no iPhone).
+// Cartão "Entrar com Face ID" no Perfil do aluno (#perfil-faceid) e no Perfil do professor
+// (#adm-perfil-faceid, desenhado por admPerfilHTML). Professor, 16/11/2026, no TestFlight da 1.2:
+// "Não apareceu aqui a opção de desativar o Face ID" (o cartão só existia no Perfil do aluno).
+var FACEID_CARTOES=['perfil-faceid','adm-perfil-faceid'];
+function faceIdPerfilCaixas(){
+  return FACEID_CARTOES.map(function(id){return document.getElementById(id);}).filter(Boolean);
+}
 function faceIdPerfilRender(){
-  var box=document.getElementById('perfil-faceid');if(!box)return;
-  if(!faceIdPlugin()||!currentUser){box.style.display='none';return;}
+  if(!faceIdPerfilCaixas().length)return;
+  function esconde(){faceIdPerfilCaixas().forEach(function(b){b.style.display='none';});}
+  if(!faceIdPlugin()||!currentUser){esconde();return;}
   faceIdDisponivel().then(function(ok){
-    if(!ok){box.style.display='none';return;}
+    if(!ok){esconde();return;}
     var ligado=faceIdConta()===String(currentUser.email||'').toLowerCase();
-    box.style.display='';
-    box.innerHTML='<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">'
+    var cartao='<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">'
       +'<div><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Entrar com '+esc(faceIdNome)+'</div>'
       +'<div style="font-size:.95rem;font-weight:700;color:var(--tx)">'+(ligado?'Ligado neste iPhone':'Desligado')+'</div>'
       +'<div style="font-size:.76rem;color:var(--t2);max-width:46ch">'+(ligado?'Ao abrir o app e depois de "Sair", o '+esc(faceIdNome)+' libera o acesso. Para sair de vez da conta, desligue aqui e depois toque em Sair.':'Ao abrir o app, o '+esc(faceIdNome)+' libera o acesso, sem digitar senha.')+'</div></div>'
-      +'<button class="btn '+(ligado?'btn-outline':'btn-primary')+'" type="button" id="perfil-faceid-btn">'+(ligado?'Desligar':'Ligar '+esc(faceIdNome))+'</button></div>';
-    var bt=document.getElementById('perfil-faceid-btn');
-    if(bt)bt.addEventListener('click',function(){
-      if(ligado){faceIdDesligar();faceIdPerfilRender();return;}
-      faceIdLigar().then(function(){faceIdPerfilRender();});
+      +'<button class="btn '+(ligado?'btn-outline':'btn-primary')+'" type="button" data-faceid-perfil="1">'+(ligado?'Desligar':'Ligar '+esc(faceIdNome))+'</button></div>';
+    faceIdPerfilCaixas().forEach(function(box){
+      box.style.display='';
+      box.innerHTML=cartao;
+      var bt=box.querySelector('[data-faceid-perfil]');
+      if(bt)bt.addEventListener('click',function(){
+        if(ligado){faceIdDesligar();faceIdPerfilRender();return;}
+        faceIdLigar().then(function(){faceIdPerfilRender();});
+      });
     });
   });
 }
@@ -20218,6 +20229,7 @@ function admPerfilHTML(){
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between"><h1>Perfil do professor</h1>'+(admPerfilEdit?'':'<button class="btn btn-primary" id="btn-adm-perfil-edit">✏️ Editar perfil</button>')+'</div>'
   +'<div class="adm-pc">'
   +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+(p.nome||'A').charAt(0)+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(p.nome)+'</div><div style="font-size:.8rem;color:var(--t2)">Professor</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(p.email)+'</span></div></div></div></div>'+themeCardHTML()
+  +'<div id="adm-perfil-faceid" style="display:none;margin:1rem 0"></div>'
   +inner
   +'</div>';
 }
@@ -23406,6 +23418,7 @@ function bindAdmSec(sec){
 
   if(sec==='perfil'){
     try{wireThemeToggle();}catch(e){}
+    try{faceIdPerfilRender();}catch(e){}
     var bedit=document.getElementById('btn-adm-perfil-edit');
     if(bedit)bedit.addEventListener('click',function(){admPerfilEdit=true;renderAdmSec('perfil');});
     var bpsave=document.getElementById('btn-adm-pf-save');
