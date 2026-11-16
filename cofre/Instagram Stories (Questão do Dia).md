@@ -5,6 +5,28 @@ atualizado: 2026-11-16
 
 # Instagram Stories — "Questão do Dia"
 
+## 🤖 STORY AUTOMÁTICO NO METRICOOL, ÀS 18H (2026-11-16)
+
+Decisões do professor: **18h**, **publicação automática sem sticker** (quiz e link não passam pela API do
+Instagram), **caminho (a)**: a plataforma faz tudo. Como funciona:
+1. **Arte:** o painel do professor (qualquer abertura, e a cada mudança da fila) gera a arte das **próximas 10**
+   da fila com o desenho do botão "⬇ Imagem" e guarda em `endodirect-assets/stories/<id>-<hash>.jpg` (bucket
+   público; só admin sobe). `storyArte {url, hash, em}` no item. O hash (`igArteHash`, FNV-1a de teem, enunciado,
+   A–D e imagem, com versão `V`) muda quando a questão muda; trocar o desenho = subir `V` nas DUAS cópias
+   (index.html e lib/instagram.js) para refazer todas. Imagem do caso de URL externa é baixada e embutida; se
+   não vier, a arte não sai.
+2. **Agendamento:** `agendarStoryDoDia` (lib/instagram.js), chamado por `autoPostDailyQotd` (radar 7h30 e
+   healthcheck 17h): story da questão que foi ao ar HOJE, às 18h de Brasília, `autoPublish:true`, sem texto.
+   API: `POST https://app.metricool.com/api/v2/scheduler/posts?blogId=7486030&userId=…`, cabeçalho `X-Mc-Auth`;
+   antes, `GET /api/actions/normalize/image/url` (se falhar, vai a URL do bucket). **Formato da normalização não
+   confirmado** (help.metricool.com fechado na rede daqui): conferir no 1º dia com o conector (getScheduledPosts)
+   se o story saiu com a imagem.
+3. **Travas:** sem `METRICOOL_USER_TOKEN` não faz nada; `IG_STORY_AUTO=off` desliga; só desde 18/11; 1 por dia
+   (`ig_story_auto` no payload, preservada pelo painel); "incerto" (tempo esgotado) não repete; depois das 17h40
+   não agenda; arte velha não agenda (marca `sem_arte`).
+4. **Situação:** aba Fila mostra "arte pronta de N de 10" e o último agendado (ou o motivo).
+Teste à mão de 17/11: story agendado pelo conector (post 430499584), arte via Drive dele (link aberto por ele).
+
 ## 📱 "⬇ IMAGEM" NO APP DO IPHONE (2026-11-16)
 
 No app (WKWebView) o download por `<a download>` não acontece. Desde a sw v424 a arte abre numa tela com

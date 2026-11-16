@@ -1231,6 +1231,18 @@ try {
   fail('regressão da imagem dos Stories no app falhou:\n' + out);
 }
 
+// 17c-undecies-bc. STORY DA QUESTÃO DO DIA NO METRICOOL (16/11/2026). Professor: mandar a questão do dia
+//      "diretamente para o Metricool, para ele postar diariamente nos stories" (automático, 18h, sem
+//      sticker). O painel guarda a arte das próximas 10 da fila no bucket (hash igual ao do servidor); o
+//      robô agenda o story da questão do dia uma vez, só com arte certa, com a chave e a partir de 18/11.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-stories-metricool.js')], { stdio: 'pipe' });
+  ok('stories no Metricool: arte no bucket, agendamento único às 18h, marca preservada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos stories no Metricool falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

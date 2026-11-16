@@ -7213,11 +7213,12 @@ function applyStatePayload(payload,personalOnly){
       // este redesenho, quem abre a aba "Questão do Dia" antes de o payload chegar fica
       // preso no que o navegador tinha guardado — inclusive em "Nenhuma questão
       // publicada ainda" — até sair da aba e voltar. Mesmo padrão da linha do `payload.qotd`.
-      try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}}
+      try{var _qp=document.getElementById('panel-qotd');if(_qp&&_qp.classList.contains('on'))renderQotdArchive();}catch(e){}
+      try{igArtesAgenda(8000);}catch(e){}}
     if(payload.aovivo!==undefined)aoVivoAgendada=(payload.aovivo&&typeof payload.aovivo==='object')?payload.aovivo:null;
   if(Array.isArray(payload.ig_pending)){igPending=payload.ig_pending;try{lsSet('ig_pending',igPending);}catch(e){}try{updateAdmPendBadge();}catch(e){}try{maybePendAlert();}catch(e){}}
     // Preserva chaves geridas pelo servidor (newsletter + lembrete IG) p/ o save do admin não apagá-las.
-    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date','trial_emails'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
+    ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date','trial_emails','ig_story_auto'].forEach(function(k){if(payload[k]!==undefined)globalServerKeys[k]=payload[k];});
   }
   if(payload.adm_perfil&&typeof payload.adm_perfil==='object'){
     // Segurança: só aceita o perfil salvo se o e-mail bater com o do admin
@@ -18671,7 +18672,7 @@ function igExpCampos(it){
   if(!it||!it.expImg||!safeImgSrc(it.expImg))return {};
   return {expImg:String(it.expImg),expImgRef:String(it.expImgRef||''),expImgTema:String(it.expImgTema||''),expImgOrigem:String(it.expImgOrigem||'')};
 }
-function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}return queueRemoteStateSave(immediate);}
+function persistIgStories(immediate){try{lsSet('ig_stories',igStories);}catch(e){}try{igArtesAgenda();}catch(e){}return queueRemoteStateSave(immediate);}
 // ── QUESTÃO DO DIA → BANCO DE QUESTÕES (13/11/2026) ─────────────────────────────────────
 // Professor: "à medida que elas forem subindo para a plataforma e forem lançadas, forem
 // postadas, serem incorporadas automaticamente no banco de questões. Isso já vale para as
@@ -18857,6 +18858,89 @@ function igMostrarImagem(b,filename){
     }
   });
   document.body.appendChild(o);
+}
+// 📲 STORIES AUTOMÁTICOS NO METRICOOL (professor, 16/11/2026: "mandar a questão do dia ... diretamente para o
+// Metricool, para ele postar diariamente nos stories"; caminho escolhido: "(a) automático pela plataforma").
+// O servidor não desenha a arte (sem dependências na Vercel); quem desenha é o painel do professor. Para as
+// próximas IG_ARTES_ADIANTE questões da fila, o painel gera o JPG com o mesmo desenho do botão "⬇ Imagem"
+// e guarda no bucket público (endodirect-assets/stories/<id>-<hash>.jpg), anotando {url,hash} no item
+// (`storyArte`). O hash cobre tudo o que entra no desenho: editou a questão, a arte velha deixa de valer e é
+// refeita. O cron das 7h30 (lib/instagram.js) agenda no Metricool, às 18h, o story da questão publicada no
+// dia, só se a arte bater com o hash. `igArteHash` tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
+function igArteHash(it){
+  var V='1';it=it||{};var op=it.options||{};
+  var s=['v'+V,it.teem||'',it.stem||'',op.A||'',op.B||'',op.C||'',op.D||'',it.img||''].join('\u0001');
+  var h=0x811c9dc5;
+  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}
+  return ('0000000'+h.toString(16)).slice(-8);
+}
+var IG_ARTES_ADIANTE=10,igArtesRodando=false,igArtesTimer=null;
+function igArtesAgenda(ms){
+  if(!currentUser||currentUser.role!=='admin')return;
+  clearTimeout(igArtesTimer);igArtesTimer=setTimeout(function(){igArtesSincroniza();},ms==null?4000:ms);
+}
+function igArteOk(it){var a=it&&it.storyArte;return !!(a&&a.url&&a.hash===igArteHash(it));}
+function igArtesPendentes(){
+  return (igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE)
+    .filter(function(s){return !igArteOk(s);});
+}
+// Imagem do caso: o desenho só embute data: (URL externa "suja" o canvas). Imagem guardada no nosso
+// bucket vem por fetch (CORS liberado) e vira data: antes de desenhar; se não vier, a arte não sai (o
+// cron então não agenda o story daquele dia, em vez de postar a questão sem a imagem).
+function igArteComImagem(it){
+  var u=String(it.img||'');
+  if(!u||/^data:/.test(u))return Promise.resolve(it);
+  return fetch(u,{mode:'cors'}).then(function(r){if(!r.ok)throw new Error('imagem '+r.status);return r.blob();})
+    .then(function(b){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(Object.assign({},it,{img:fr.result}));};fr.onerror=function(){rej(new Error('imagem ilegível'));};fr.readAsDataURL(b);});});
+}
+function igArteGerar(it){
+  var hash=igArteHash(it),client=getSupabaseClient();
+  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
+  return igArteComImagem(it).then(function(x){return igRenderCanvas(igQuestionSVG(x));}).then(function(c){
+    return new Promise(function(res,rej){c.toBlob(function(b){if(b)res(b);else rej(new Error('Falha ao gerar a arte.'));},'image/jpeg',0.92);});
+  }).then(function(b){
+    var path='stories/'+String(it.id).replace(/[^a-zA-Z0-9_-]/g,'')+'-'+hash+'.jpg';
+    return client.storage.from(SUPABASE_ASSET_BUCKET).upload(path,b,{cacheControl:'31536000',upsert:true,contentType:'image/jpeg'}).then(function(r){
+      if(r&&r.error)throw r.error;
+      var pub=client.storage.from(SUPABASE_ASSET_BUCKET).getPublicUrl(path),url=pub&&pub.data&&pub.data.publicUrl;
+      if(!url)throw new Error('Sem endereço público.');
+      return {url:url,hash:hash,em:Date.now()};
+    });
+  });
+}
+function igArtesSincroniza(){
+  if(igArtesRodando||!currentUser||currentUser.role!=='admin')return Promise.resolve(0);
+  var pend=igArtesPendentes();if(!pend.length)return Promise.resolve(0);
+  igArtesRodando=true;var feitas=0;
+  var passo=function(i){
+    if(i>=pend.length)return Promise.resolve();
+    var it=pend[i];
+    return igArteGerar(it).then(function(a){
+      // a questão pode ter mudado enquanto a arte subia: só anota se ainda for a mesma
+      var atual=(igStories||[]).filter(function(s){return s&&s.id===it.id;})[0];
+      if(atual&&atual.status!=='posted'&&igArteHash(atual)===a.hash){atual.storyArte=a;feitas++;}
+    }).catch(function(e){try{console.warn('[stories] arte de',it.id,'não saiu:',e&&e.message);}catch(_){}})
+      .then(function(){return passo(i+1);});
+  };
+  return passo(0).then(function(){
+    igArtesRodando=false;
+    if(feitas){try{lsSet('ig_stories',igStories);}catch(e){}queueRemoteStateSave();}
+    try{var st=document.getElementById('ig-auto-status');if(st)st.innerHTML=igAutoStatusHTML();}catch(e){}
+    return feitas;
+  });
+}
+// Linha de situação na aba "Fila": artes prontas e o último agendamento feito pelo servidor.
+function igAutoStatusHTML(){
+  var prox=(igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE);
+  var prontas=prox.filter(igArteOk).length;
+  var a=globalServerKeys&&globalServerKeys.ig_story_auto,ult='';
+  if(a&&a.iso){
+    var d=String(a.iso).split('-').reverse().slice(0,2).join('/');
+    ult=a.ok===true?' · último story agendado: <b>'+esc(d)+', 18h</b> ✓'
+      :a.ok==='incerto'?' · '+esc(d)+': o Metricool não confirmou o agendamento (confira no planejador)'
+      :' · '+esc(d)+': story não agendado ('+esc(a.motivo==='sem_arte'?'arte da questão ainda não gerada':a.motivo==='sem_midia'?'o Metricool não recebeu a imagem':'erro no Metricool')+')';
+  }
+  return '📲 <b>Story automático às 18h</b> (Metricool): '+(prox.length?'arte pronta de <b>'+prontas+' de '+prox.length+'</b> próximas questões':'fila vazia')+ult;
 }
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
@@ -19176,7 +19260,7 @@ function admStoriesHTML(){
    +'<div style="text-align:center">'+igLbl('Imagem do caso (story)')+'<img id="ig-prev-q" alt="" style="width:190px;border-radius:12px;border:1px solid var(--bd)"></div></div>'
    +'</div>'
    +'</div>'
-   +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+q.length+'</span></div>'+fila+'</div></div>'
+   +'<div id="stview-fila" style="'+vs('fila')+'"><div class="card"><div class="card-head"><span class="card-title">📋 Fila de questões</span><span class="tag">'+q.length+'</span></div><div id="ig-auto-status" style="font-size:.74rem;color:var(--t2);line-height:1.5;margin:-.2rem 0 .7rem">'+igAutoStatusHTML()+'</div>'+fila+'</div></div>'
    +'<div id="stview-postados" style="'+vs('postados')+'">'+admPostadosHTML()+'</div>'
    +'<div id="stview-aluno" style="'+vs('aluno')+'">'+admQotdAlunoHTML()+'</div>'
    +'<div id="stview-promo" style="'+vs('promo')+'"><div class="card"><div class="card-head"><span class="card-title">📣 Stories de divulgação (domingo)</span></div>'
