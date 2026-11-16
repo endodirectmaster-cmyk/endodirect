@@ -20,8 +20,8 @@
 //      autores roda DENTRO do cartão (`embutir`, iframe com sandbox), com o link de outra aba
 //      como reserva e o aviso de não digitar dado que identifique o paciente;
 //   6) (16/11/2026, professor: "deixar traduzido para o português e disponível no painel dos
-//      estudantes também") o aluno vê no site; no app do iPhone (`foraDoAppIos`) só o professor,
-//      até a Apple aprovar o app. O quadro de tradução acima da janela (v402) foi rejeitado pelo
+//      estudantes também") o aluno vê no site; no app do iPhone também, desde a aprovação do app
+//      (16/11/2026). O mecanismo `foraDoAppIos` continua testado com um item sintético. O quadro de tradução acima da janela (v402) foi rejeitado pelo
 //      professor ("ficou bem estranho"): volta o guia de preenchimento abaixo, e o quadro não pode
 //      voltar sem novo pedido.
 'use strict';
@@ -40,7 +40,7 @@ const i1 = html.indexOf("\n  {id:'", i0 + 10);
 ok(i0 > 0 && i1 > i0, "não achei a entrada {id:'reganhoglp1'} em CALCS");
 const entrada = html.slice(i0, i1);
 ok(/area:'Obesidade'/.test(entrada), 'a calculadora tem de ficar em Obesidade');
-ok(!/soProfessor:true/.test(entrada) && /foraDoAppIos:true/.test(entrada), 'a calculadora é dos alunos também (sem soProfessor), mas fora do app do iPhone até a aprovação (foraDoAppIos:true)');
+ok(!/soProfessor:true/.test(entrada) && !/foraDoAppIos:true/.test(entrada), 'a calculadora é dos alunos, no site e no app do iPhone (app aprovado em 16/11/2026: sem soProfessor e sem foraDoAppIos)');
 ok(/external:true/.test(entrada) && /link:'https:\/\/glp1regainrisk\.com'/.test(entrada), 'a calculadora tem de ser externa, com link https para glp1regainrisk.com');
 ok(/rotuloExt:'Ferramenta dos autores'/.test(entrada), 'o rótulo do cartão tem de ser "Ferramenta dos autores" (não é ferramenta oficial de sociedade)');
 
@@ -97,4 +97,4 @@ ok(!/calc-trad/.test(html) && !/traducao:\[/.test(entrada), '⚠️ o quadro de 
 ok(/indicam o uso só em pesquisa, por médicos e pesquisadores, e não para decidir conduta/.test(entrada), 'falta o aviso de uso só em pesquisa na nota');
 
 if (falhas.length) { console.error('✗ calculadora de reganho pós-GLP-1 (piloto)'); falhas.forEach((f) => console.error('  - ' + f)); process.exit(1); }
-console.log('✓ calculadora de reganho pós-GLP-1: ferramenta dos autores dentro do cartão, guia em português, alunos no site e fora do app do iPhone até a aprovação');
+console.log('✓ calculadora de reganho pós-GLP-1: ferramenta dos autores dentro do cartão, guia em português, alunos no site e no app do iPhone');
