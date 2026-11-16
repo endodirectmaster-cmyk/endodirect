@@ -108,6 +108,15 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
 - [ ] Aprovada → o professor libera (como a 1.0). Conferir depois: aviso real (breaking news / Questão do Dia) chegando
   nos iPhones com o app 1.1.
 
+## 📲 Stories da Questão do Dia no Metricool (16/11): CÓDIGO PRONTO, falta a chave
+
+Decidido: 18h, automático sem sticker, caminho (a). Feito: arte no bucket pelo painel + agendamento pelo robô
+(ver [[Instagram Stories (Questão do Dia)]]). **Falta o professor:** pôr `METRICOOL_USER_TOKEN` na Vercel
+(Metricool → configurações da conta → API; a API só existe a partir do plano Advanced) e um deploy depois disso.
+**Story de teste de 17/11 às 18h agendado** à mão (post 430499584). **A conferir:** 17/11 18h (saiu?), 18/11
+(1º automático: saiu com imagem?). **Pergunta aberta:** subir o rodapé "GABARITO NA PLATAFORMA" para fora da faixa
+que a barra de resposta do Instagram cobre (se sim: mudar o desenho e subir `V` no `igArteHash`).
+
 ## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
 
 Professor: "dá uma passada com calma, tanto no painel do professor como no painel do estudante, nas
