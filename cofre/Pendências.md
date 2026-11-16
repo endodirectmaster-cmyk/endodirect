@@ -114,12 +114,10 @@ Decidido: 18h, automático sem sticker. A API do Metricool exige o plano Advance
 assinou; o código do caminho (a) fica parado sem `METRICOOL_USER_TOKEN`. No lugar: **tarefa agendada diária**
 "Story diário da Questão do Dia no Metricool (18h)" (trig_0163g4DddpiXz8EPWyvmaZzN, 8h17 de Brasília, sessão
 nova a cada dia, só age a partir de 18/11): lê a questão do dia no Supabase, confere a arte (hash), confere se já
-há story agendado e agenda pelo conector. **Criada SEM os conectores** (o canal não permite anexar): o professor
-precisa adicionar Metricool e Supabase à tarefa na página de tarefas agendadas do claude.ai, ou ela só vai relatar
-a falta. Arte: painel gera as **30** próximas (abrir o painel ao menos 1x a cada 30 dias). **Story de teste de 17/11
-às 18h agendado** à mão (post 430499584). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). **Pergunta aberta:**
-subir o rodapé "GABARITO NA PLATAFORMA" para fora da faixa da barra de resposta (mudar o desenho e subir `V` no
-`igArteHash` das duas cópias E no texto da tarefa).
+há story agendado e agenda pelo conector. Criada sem conectores (o canal não permite anexar); **o professor adicionou
+Metricool e Supabase** pela página claude.ai/code/routines (conferido: só esses dois). Arte: painel gera as **30** próximas (abrir o painel ao menos 1x a cada 30 dias). **Story de teste de 17/11
+às 18h agendado** à mão (post 430499584). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). Rodapé e cabeçalho fora das faixas do
+Instagram: FEITO (V=2); **o professor precisa abrir a Fila de novo** para as 30 artes serem refeitas antes de 18/11 8h17.
 
 ## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
 

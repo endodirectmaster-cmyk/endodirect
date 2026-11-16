@@ -7,6 +7,10 @@ atualizado: 2026-11-16
 
 ## 🤖 STORY AUTOMÁTICO NO METRICOOL, ÀS 18H (2026-11-16)
 
+**Desenho (V=2, 16/11):** tudo entre 210 e 1660 px (faixas do perfil e da barra de mensagem livres), logo ao lado
+do título, letra que diminui para caber. Mudar o desenho = subir V em index.html, lib/instagram.js E no texto da
+tarefa diária (trig_0163g4DddpiXz8EPWyvmaZzN), senão a tarefa recusa as artes.
+
 Decisões do professor: **18h**, **publicação automática sem sticker** (quiz e link não passam pela API do
 Instagram), **caminho (a)**: a plataforma faz tudo. Como funciona:
 1. **Arte:** o painel do professor (qualquer abertura, e a cada mudança da fila) gera a arte das **próximas 30** (era 10; professor pediu 30 em 16/11)
