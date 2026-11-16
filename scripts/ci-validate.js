@@ -1208,6 +1208,17 @@ try {
   fail('regressão do app do iPhone 1.2 falhou:\n' + out);
 }
 
+// 17c-undecies-ba. TELA PELA METADE DEPOIS DE ENTRAR NO IPHONE (16/11/2026). Professor, com print: saiu de
+//      uma conta e entrou noutra; o topo do painel ficou em branco até fechar e abrir o app. startApp volta
+//      ao topo e redesenha a tela (no quadro seguinte e depois do zoom); a sombra do menu fechado não vaza.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-tela-apos-login.js')], { stdio: 'pipe' });
+  ok('tela depois de entrar no iPhone: topo e redesenho; sombra do menu fechado fora da tela');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da tela depois de entrar no iPhone falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

@@ -141,6 +141,12 @@ Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em par
 - **Teste completo no TestFlight (16/11, 12:34–12:37):** Google pela folha da Apple entrou direto, sem "Abrir no
   Endodirect?"; link https://www.endodirect.com.br/#qotd tocado no WhatsApp abriu o app na Questão do Dia ("◀ WhatsApp"
   no topo). Face ID ok (acima). Avaliação: não testável no TestFlight (regra: só aluno com ≥5 dias).
+- **Tela pela metade depois de entrar (professor, 16/11, 13:04, print do app):** ao sair de uma conta e entrar noutra
+  sem fechar o app, o topo do painel ficava em branco (barra, saudação e primeiros números) até fechar e abrir o app;
+  faixa cinza na beira esquerda. Não deu para reproduzir aqui (sem o motor do iPhone). Correção no site: `telaRepintar()`
+  em startApp (volta ao topo; no iPhone redesenha o corpo no quadro seguinte e depois do zoom, 480 ms); menu lateral
+  fechado a −100% − 64 px (a sombra de 60 px vazava). sw v415. Teste `test-app-ios-tela-apos-login.js` (ci ba).
+- [ ] Professor confirmar no iPhone: sair e entrar algumas vezes (aluno Pro e a própria conta) sem a tela pela metade.
 - [ ] Enviar a 1.2 à Apple depois que a 1.1 for aprovada (versão 1.2 no App Store Connect, build 11, notas, Notas). (Face ID, link de e-mail abrindo o app, Google) → enviar depois
   que a 1.1 for aprovada.
 
