@@ -5,6 +5,21 @@ atualizado: 2026-11-16
 
 # Calculadoras
 
+## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
+
+O site dos autores marca os campos como `type="number"` sem `inputmode`: no iPhone abre o teclado de números e
+símbolos. Do site não dá para mudar (outro domínio, no quadro); no app, sim: `AppViewController.swift` põe um
+`WKUserScript` em todos os quadros (`forMainFrameOnly: false`) que só age em glp1regainrisk.com:
+- inteiros (`step="1"`: idade, meses, pés, polegadas) → `inputmode="numeric"`, continuam `number`;
+- peso e altura (`step="0.5"`) → viram texto com `inputmode="decimal"`; o teclado decimal do iPhone em português
+  tem **vírgula**, que um campo `number` de página `lang="en"` recusaria (valor vazio) e que o `parseFloat` do site
+  leria como inteiro ("98,5" → 98). Um ouvinte de `input` em captura no `document` troca vírgula por ponto (e tira
+  o que não é algarismo e o 2º ponto) antes do ouvinte do campo, do site;
+- o CSS do site para `input[type="number"]` é copiado para `input[data-endodirect-decimal]` (aparência igual).
+Conferido no Chromium contra o site real: 2 casos (semaglutida e tirzepatida) digitados com vírgula dão resultado e
+IMC idênticos aos digitados com ponto sem o script. Só vale do app novo (1.1) em diante; no Safari, só os autores.
+Teste `scripts/test-app-ios-teclado-calculadora.js` (ci 17c-undecies-ax), 6 mutações pegas.
+
 ## ↩️ REGANHO PÓS-GLP-1: O QUADRO DE TRADUÇÃO SAIU (2026-11-16, à noite)
 O professor achou o quadro "bem estranho": queria a calculadora em português, cada variável. O quadro saiu (v404) e
 voltou o guia abaixo da janela. **Não há como traduzir a janela** (é o site dos autores, outra origem). Caminhos:

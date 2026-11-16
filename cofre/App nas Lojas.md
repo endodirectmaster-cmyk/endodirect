@@ -45,8 +45,11 @@ https://apps.apple.com/br/app/id6833147654.
      aberta, 04 a mesma respondida (alternativa A, registrada na conta do revisor), 05–08 as de 11/11 (Flashcards,
      Resumos, Tireoide, Calculadoras). Entregue em zip.
      **16/11, 08h45: versão 1.1 criada no App Store Connect** ("1.1 Preparar para envio"); às 08h55 as 8 capturas
-     de iPhone já estavam nela, na ordem (a vaga aceita 1179 × 2556). ⚠️ O projeto está com `MARKETING_VERSION = 1.0`:
-     o build da 1.1 precisa sair com 1.1 (e número de build maior que o da 1.0). Não enviar à revisão antes do build.
+     de iPhone já estavam nela, na ordem (a vaga aceita 1179 × 2556); às 09h10, as 8 do iPad também.
+     `MARKETING_VERSION` passou a 1.1 no projeto (16/11); o número do build é o `run_number` da rotina. Não enviar à
+     revisão antes do build.
+  5. ✅ (código) Teclado numérico na calculadora da Mayo, no app (professor: "Pode fazer"; ver [[Calculadoras]]).
+     Vai no build da 1.1.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
