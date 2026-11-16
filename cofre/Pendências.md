@@ -108,6 +108,29 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
 - [ ] Aprovada → o professor libera (como a 1.0). Conferir depois: aviso real (breaking news / Questão do Dia) chegando
   nos iPhones com o app 1.1.
 
+## 📱 App do iPhone 1.2 (professor, 16/11: "Pode fazer" para Face ID + os três itens)
+
+Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em paralelo):
+- **Face ID** (`@capgo/capacitor-native-biometric` 8.9.1): **porta**, não cofre de token. A sessão do Supabase segue
+  guardada como sempre; com o Face ID ligado para a conta (`localStorage endo_faceid_conta`), `loginFromSupabaseSession`
+  só entra depois do rosto (`faceIdPrecisa`; liberado por abertura em `sessionStorage endo_faceid_ok`; login feito há
+  menos de 3 min já vale). "Sair" trava em vez de encerrar no servidor; desligar no Perfil para sair de vez. Convite
+  uma vez por conta após o login; cartão no Perfil; excluir a conta desliga. `NSFaceIDUsageDescription` no Info.plist.
+  Por que não guardar o refresh token no Keychain: o Supabase gira o token a cada renovação e revoga a família se
+  um token velho for reusado; a porta evita esse risco.
+- **Links que abrem no app**: `.well-known/apple-app-site-association` (só "/" e "/index.html"; `/#planos*` fora;
+  `webcredentials` para senhas salvas do site), header JSON na vercel.json; entitlement `associated-domains`
+  (applinks + webcredentials do www); `appUrlOpen` https → `pushNativoAbrir`. **Professor: marcar "Associated
+  Domains" no identificador br.com.endodirect.app** (pedido em 16/11).
+- **Avaliação** (`@capacitor-community/in-app-review` 8.0.0): 1 min após entrar, aluno com ≥5 dias de estudo, no
+  máximo a cada 120 dias; nunca admin nem revisor.
+- **Google sem "Abrir no Endodirect?"**: plugin próprio `WebAuth` (ASWebAuthenticationSession, sessão compartilhada)
+  em AppViewController.swift; o iOS mostra no começo o aviso padrão "quer usar … para iniciar sessão". Apps 1.0/1.1
+  seguem no Safari embutido.
+- Teste `scripts/test-app-ios-12.js` (ci 17c-undecies-az), 9 mutações pegas. MARKETING_VERSION 1.2. sw v411.
+- [ ] Build 1.2 → TestFlight → teste do professor (Face ID, link de e-mail abrindo o app, Google) → enviar depois
+  que a 1.1 for aprovada.
+
 ## 🔐 Entrar com Face ID no app do iPhone (professor, 16/11: "podemos implementar ... depois")
 
 Para uma versão futura do app (1.2 ou depois), não agora. Desenho previsto: depois do 1º login (senha, Google ou
