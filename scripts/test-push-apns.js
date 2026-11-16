@@ -146,6 +146,14 @@ function corpo(nome) {
   return html.slice(ini + 1, i + 1);
 }
 ok('🧨 startApp liga as notificações nativas', /startSessionWatcher\(\);\n  try\{pushNativoIniciar\(\);\}catch\(e\)\{\}/.test(corpo('startApp')));
+// Aviso de teste do professor (Suporte): só admin, só os aparelhos do e-mail de quem pediu.
+{
+  const ai = fs.readFileSync(path.join(RAIZ, 'api', 'ai.js'), 'utf8');
+  const bloco = (ai.match(/if \(sbody && sbody\.kind === 'push_teste'\) \{([\s\S]*?)\n    \}/) || [])[1] || '';
+  ok('🧪 aviso de teste: só administrador', /const admin = await adminFromReq\(req\);\s*if \(!admin\) return json\(res, 401/.test(bloco));
+  ok('🧨 aviso de teste: só os aparelhos de quem pediu (nunca sendToAll)', /await sendToEmail\(admin\.email,/.test(bloco) && !/sendToAll/.test(bloco));
+  ok('botão do teste ligado no Suporte', /id="adm-support-pushteste"/.test(html) && /pt\.addEventListener\('click',admPushTeste\)/.test(html) && /kind:'push_teste'/.test(corpo('admPushTeste')));
+}
 ok('mesmo prefixo no app e no servidor', /var PUSH_APNS_PREFIXO='apns:';/.test(html) && /const APNS_PREFIXO = 'apns:';/.test(fs.readFileSync(path.join(RAIZ, 'lib', 'push.js'), 'utf8')));
 
 const FUNCS = ['pushSupported', 'pushNativo', 'pushPermDeNativo', 'pushPerm', 'pushNativoDesligado', 'pushNativoTokenSalvo', 'pushAtivoAgora', 'pushNativoPermAtualizar', 'pushNativoAbrir', 'pushNativoOuvintes', 'pushNativoRegistrar', 'pushNativoIniciar', 'pushGetSubscription', 'pushSaveSub', 'pushEnable', 'pushDisable', 'pushTimeout', 'pluginNativo'];

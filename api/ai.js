@@ -226,6 +226,16 @@ module.exports = async function handler(req, res) {
       res.setHeader('Cache-Control', 'no-store');
       return json(res, 200, r);
     }
+    // (d5) PROFESSOR manda um aviso de teste aos PRÓPRIOS aparelhos (navegador e app do
+    // iPhone): confere de ponta a ponta o web push e o APNs (lib/push.js). Só o e-mail
+    // de quem pediu recebe.
+    if (sbody && sbody.kind === 'push_teste') {
+      const admin = await adminFromReq(req);
+      if (!admin) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
+      const r = await sendToEmail(admin.email, { title: '🔔 Teste do Endodirect', body: 'Se este aviso chegou, as notificações estão funcionando neste aparelho.', url: '/', tag: 'endodirect-teste' });
+      res.setHeader('Cache-Control', 'no-store');
+      return json(res, 200, { ok: !!(r && r.ok), enviados: (r && r.sent) || 0, iphone: (r && r.iphone) || 0, falhas: (r && r.failed) || 0, total: (r && r.total) || 0, removidos: (r && r.removed) || 0, erros: ((r && r.errors) || []).slice(0, 3), error: r && r.error });
+    }
     // (e) Busca de imagem de exame no Open-i (PubMed Central) p/ ilustrar a Questão
     // do Dia. Não usa Anthropic → tratado aqui. Best-effort: falha vira lista vazia.
     if (sbody && sbody.kind === 'openi') {
