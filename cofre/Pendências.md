@@ -146,6 +146,10 @@ Código pronto em 16/11 (a 1.1 segue na revisão; a 1.2 vai ao TestFlight em par
   faixa cinza na beira esquerda. Não deu para reproduzir aqui (sem o motor do iPhone). Correção no site: `telaRepintar()`
   em startApp (volta ao topo; no iPhone redesenha o corpo no quadro seguinte e depois do zoom, 480 ms); menu lateral
   fechado a −100% − 64 px (a sombra de 60 px vazava). sw v415. Teste `test-app-ios-tela-apos-login.js` (ci ba).
+- 2º print (13:28, aluno Pro → conta dele, com a correção acima no ar): o painel aparecia aos poucos e se completava
+  em ~3 s. A página guardava tudo o que a conta anterior abriu. Correção: no app das lojas, "Sair" (de verdade, não
+  a trava do Face ID) recarrega a página limpa depois do signOut (ou em 2 s, tirando a sessão `sb-*-auth-token` do
+  aparelho antes), e a página sem sessão abre no login. No site, "Sair" segue igual. sw v416.
 - [ ] Professor confirmar no iPhone: sair e entrar algumas vezes (aluno Pro e a própria conta) sem a tela pela metade.
 - [ ] Enviar a 1.2 à Apple depois que a 1.1 for aprovada (versão 1.2 no App Store Connect, build 11, notas, Notas). (Face ID, link de e-mail abrindo o app, Google) → enviar depois
   que a 1.1 for aprovada.
