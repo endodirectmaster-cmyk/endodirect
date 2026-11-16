@@ -48,7 +48,13 @@ https://apps.apple.com/br/app/id6833147654.
      de iPhone já estavam nela, na ordem (a vaga aceita 1179 × 2556); às 09h10, as 8 do iPad também.
      `MARKETING_VERSION` passou a 1.1 no projeto (16/11); o número do build é o `run_number` da rotina. Não enviar à
      revisão antes do build.
+  3a. ✅ **16/11, 09h20–09h34: feito pelo professor no portal.** Push Notifications ligado no identificador
+     br.com.endodirect.app (sem Broadcast, sem certificado); chave nova **"Endodirect Push"** só com APNs
+     (Sandbox & Production, Team Scoped), **Key ID 3JT8BL5MU9** (não é segredo). O .p8 ficou com o professor;
+     vai direto para a Vercel como `APNS_PRIVATE_KEY` (Production). Nome com acento ("Notificações") a Apple recusa.
   5. ✅ (código) Teclado numérico na calculadora da Mayo, no app (professor: "Pode fazer"; ver [[Calculadoras]]).
+  6. ✅ (código) Notificações nativas (APNs) no app 1.1: ver [[Pendências]] (seção das notificações). Falta o
+     build pelo GitHub, o teste no iPhone do professor pelo TestFlight e o envio à revisão.
      Vai no build da 1.1.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).

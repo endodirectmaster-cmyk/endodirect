@@ -10,5 +10,14 @@
   "ios": {
     "appendUserAgent": "EndodirectApp/1.0 (ios)",
     "contentInset": "never"
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    }
   }
 }

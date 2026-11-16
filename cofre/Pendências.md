@@ -85,6 +85,20 @@ Texto proposto (o professor viu em 11/11; ajustar se ele pedir):
 
 ## 🔔 Notificações no app do iPhone (pedido de 11/11): push nativo na versão 1.1
 
+**16/11/2026: código pronto (PR da 1.1).** Professor ligou Push Notifications no identificador e criou a
+chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` na Vercel (Production).
+- App: plugin `@capacitor/push-notifications` 8.1.3, `aps-environment` = production, AppDelegate repassa o
+  token, `presentationOptions` (aparece com o app aberto). A rotina "compilar" confere a permissão.
+- Site: caminho nativo dentro de `pushSupported/pushEnable/pushDisable/pushGetSubscription`; `pushPerm()`
+  no lugar de `Notification.permission`; token gravado como `apns:<token>` (p256dh/auth = 'apns');
+  `pushNativoIniciar()` no `startApp` (toque abre o endereço do aviso, só do próprio site; renova o token).
+  Desativar marca `endo_apns_off` para o login não religar. App 1.0 (sem plugin): tudo como antes.
+- Servidor: `lib/push.js` manda "apns:" pela Apple (HTTP/2, JWT ES256 reaproveitado 40 min; 410 e
+  BadDeviceToken/Unregistered/DeviceTokenNotForTopic/ExpiredToken apagam a linha). Sem função nova.
+- Teste `scripts/test-push-apns.js` (ci 17c-undecies-ay), 10 mutações pegas, com "Apple" HTTP/2 local.
+- [ ] Build 1.1 pelo GitHub → TestFlight → professor testa no iPhone (ativar avisos, mandar um aviso de
+  teste, tocar e ver abrir) → enviar à revisão com as capturas novas.
+
 Professor: *"assim que estiver no ar, o aplicativo, vê alguns botões que existem na plataforma
 de, por exemplo, ativar as notificações (...) algo nesse sentido"*.
 - **Já feito (11/11, sem build):** no app do iPhone o web push não existe (WKWebView). Para o
