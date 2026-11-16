@@ -32,7 +32,8 @@ https://apps.apple.com/br/app/id6833147654.
      3ª Questão do dia (a atual 1ª, `01-questao-do-dia`, serve); depois as outras cinco atuais. Captura de versão
      publicada não se troca: vai junto com a 1.1. Dashboard e Mural: prints no iPhone com a conta do revisor (como
      as de 10/11; status bar real), eu ajusto para 1284 × 2778 e 1179 × 2556.
-     **16/11, 08h31–08h32: prints recebidos** (1170 × 2532, tema claro): Dashboard, Mural e Questão do dia nova
+     **16/11, 08h34–08h35: prints recebidos, conta do revisor** ("Revisão das lojas"; os de 08h31 eram de outra
+     conta e foram trocados) (1170 × 2532, tema claro): Dashboard, Mural e Questão do dia nova
      (incidentaloma). Montados os dois jogos de 8 (01–03 novos, 04–08 os de 10/11, tema escuro) e entregues em zip.
      Atenção: a 04 (resposta comentada) é da questão antiga (vitamina D), não da nova 03.
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
