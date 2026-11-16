@@ -5750,14 +5750,16 @@ var CALCS=[
   // logo abaixo. O link de outra aba continua, para quando a janela não carregar.
   // 16/11/2026, professor, depois de usar no painel: "está funcionando sim ... Agora dá para deixar
   // traduzido para o português e disponível no painel dos estudantes também?" Sai o `soProfessor`:
-  // o aluno vê no site. No app do iPhone (`foraDoAppIos`) só o professor vê até a Apple aprovar o
+  // o aluno vê no site. No app do iPhone (`foraDoAppIos`) só o professor via até a Apple aprovar o
   // app: o revisor usa conta de aluno, e calculadora médica nova no meio da revisão é risco à toa.
+  // App aprovado e lançado em 16/11/2026; professor: "sim" (liberar no app também). Saiu o
+  // `foraDoAppIos` daqui; o mecanismo em `calcVisivel` fica para outros casos.
   // A janela é o site DELES: não há como traduzir o que aparece lá dentro. Um quadro de tradução
   // acima da janela (v402) foi rejeitado pelo professor ("ficou bem estranho ... era traduzir a
   // calculadora, cada uma das variáveis"); ficou o guia de preenchimento abaixo, como antes. A
   // calculadora em português de verdade depende de versão própria (modelo publicado ou
   // coeficientes dos autores).
-  {id:'reganhoglp1',name:'Reganho de peso após semaglutida ou tirzepatida (Mayo Clinic)',area:'Obesidade',foraDoAppIos:true,
+  {id:'reganhoglp1',name:'Reganho de peso após semaglutida ou tirzepatida (Mayo Clinic)',area:'Obesidade',
    desc:'Tempo até recuperar metade do peso perdido depois de suspender semaglutida ou tirzepatida (TR50) e faixa de risco; ferramenta dos autores, em inglês, com guia em português',
    external:true,embutir:true,rotuloExt:'Ferramenta dos autores',link:'https://glp1regainrisk.com',cta:'Abrir a calculadora da Mayo Clinic',
    desc2:'<b>O que prevê:</b> o tempo, contado do dia em que a semaglutida ou a tirzepatida foi suspensa, até a pessoa recuperar metade ou mais do peso perdido no tratamento (TR<sub>50</sub>, a partir do menor peso atingido), e a faixa de risco: baixo, intermediário-baixo, intermediário-alto ou alto (quartis da coorte de desenvolvimento).<br><br>'

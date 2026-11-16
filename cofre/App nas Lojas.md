@@ -21,8 +21,7 @@ https://apps.apple.com/br/app/id6833147654.
   e-mail é padrão; só pesaria em app pago).
 - **Depois que a página abrir (pendências combinadas):**
   1. ✅ FAQ da landing e de dentro da plataforma com o link "Baixar na App Store" (feito em 16/11, sw v407).
-  2. Calculadora de reganho da Mayo para os alunos também no app do iPhone (o `foraDoAppIos` era "até a Apple aprovar"
-     o app; ver [[Calculadoras]]). Perguntado ao professor.
+  2. ✅ Calculadora de reganho da Mayo para os alunos também no app do iPhone (professor: "sim"; feito em 16/11, sw v408).
   3. Versão 1.1 com notificações nativas (APNs); o primeiro passo é do professor (Push Notifications no identificador
      br.com.endodirect.app e APNs na chave).
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
