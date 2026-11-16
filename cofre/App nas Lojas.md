@@ -23,7 +23,34 @@ https://apps.apple.com/br/app/id6833147654.
   1. ✅ FAQ da landing e de dentro da plataforma com o link "Baixar na App Store" (feito em 16/11, sw v407).
   2. ✅ Calculadora de reganho da Mayo para os alunos também no app do iPhone (professor: "sim"; feito em 16/11, sw v408).
   3. Versão 1.1 com notificações nativas (APNs); o primeiro passo é do professor (Push Notifications no identificador
-     br.com.endodirect.app e APNs na chave).
+     br.com.endodirect.app e APNs na chave). O professor não achou no App Store Connect: fica no portal de
+     desenvolvedor (developer.apple.com/account › Certificates, IDs & Profiles). Recomendado criar chave **nova**,
+     só APNs ("Endodirect Notificações", Sandbox & Production), sem mexer na do "Continuar com a Apple"; o .p8 fica
+     com ele e vai direto para a Vercel. A montagem do app (app-ios.yml) assina com `-allowProvisioningUpdates`,
+     então os perfis invalidados ao ligar Push Notifications se refazem sozinhos.
+  4. **Capturas da App Store, nova ordem (pedido do professor, 16/11):** 1ª Dashboard do aluno, 2ª Mural de artigos,
+     3ª Questão do dia (a atual 1ª, `01-questao-do-dia`, serve); depois as outras cinco atuais. Captura de versão
+     publicada não se troca: vai junto com a 1.1. Dashboard e Mural: prints no iPhone com a conta do revisor (como
+     as de 10/11; status bar real), eu ajusto para 1284 × 2778 e 1179 × 2556.
+     **16/11, 08h34–08h35: prints recebidos, conta do revisor** ("Revisão das lojas"; os de 08h31 eram de outra
+     conta e foram trocados) (1170 × 2532, tema claro): Dashboard, Mural e Questão do dia nova
+     (incidentaloma). Montados os dois jogos de 8 (01–03 novos, 04–08 os de 10/11, tema escuro) e entregues em zip.
+     A 04 (resposta comentada) passou a ser a da questão nova (print de 08h39); a antiga, de vitamina D, saiu.
+     **Jogo final pronto e entregue** (8 imagens, 1179 × 2556 e 1284 × 2778): sobe com a 1.1.
+     **iPad (lembrete do professor):** a ficha também tem as 4 capturas de iPad 13" (2064 × 2752, de 11/11, geradas
+     em Chromium com a conta do revisor). Refazer na ordem nova pede login do revisor; a senha de 11/11 não entra mais
+     (trocada depois) e não se pede senha ao professor. Saídas: prints num iPad, ou manter as 4 atuais.
+     **16/11, ~09h: o professor mandou a senha atual do revisor no chat** (sem pedido; não gravada em arquivo nenhum).
+     Jogo do iPad refeito (2064 × 2752, tema escuro): 01 Dashboard, 02 Mural, 03 Questão do dia de 15/11 (icodec)
+     aberta, 04 a mesma respondida (alternativa A, registrada na conta do revisor), 05–08 as de 11/11 (Flashcards,
+     Resumos, Tireoide, Calculadoras). Entregue em zip.
+     **16/11, 08h45: versão 1.1 criada no App Store Connect** ("1.1 Preparar para envio"); às 08h55 as 8 capturas
+     de iPhone já estavam nela, na ordem (a vaga aceita 1179 × 2556); às 09h10, as 8 do iPad também.
+     `MARKETING_VERSION` passou a 1.1 no projeto (16/11); o número do build é o `run_number` da rotina. Não enviar à
+     revisão antes do build.
+  5. ✅ (código) Teclado numérico na calculadora da Mayo, no app (professor: "Pode fazer"; ver [[Calculadoras]]).
+     Vai no build da 1.1.
+     Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
 ## Decisões do professor (18/10)

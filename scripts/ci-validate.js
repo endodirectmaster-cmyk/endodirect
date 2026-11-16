@@ -1197,6 +1197,18 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-ax. TECLADO NUMÉRICO NA CALCULADORA DA MAYO, NO APP DO IPHONE (16/11/2026). Professor:
+//      "Deixar teclado numérico". O site dos autores (outro domínio, num quadro) usa type="number" sem
+//      inputmode; o app injeta um script em todos os quadros, só nesse site: inteiros com teclado de
+//      algarismos, peso e altura com teclado decimal e a vírgula virando ponto antes de o site ler.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-teclado-calculadora.js')], { stdio: 'pipe' });
+  ok('teclado numérico da calculadora no app do iPhone: só no site da Mayo, vírgula vira ponto, estilo mantido');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do teclado numérico da calculadora no app do iPhone falhou:\n' + out);
+}
+
 // 17c-undecies-aw. RADAR: O MESMO ARTIGO PELO PUBMED E PELO RSS DA REVISTA (16/11/2026). O
 //      REDEFINE 9 entrou duas vezes no mural (PubMed às 10h31, RSS da Lancet D&E às 20h24): a
 //      dedup entre rodadas usava o título exato, e os títulos diferem num travessão e no ponto.
