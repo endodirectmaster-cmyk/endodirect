@@ -76,5 +76,31 @@ ok('texto escapado (sem HTML do feed na tela)', ctx.podDescHTML('<b>x</b>').inde
 ok('🧨 a lista de podcasts usa podDescHTML, fora da linha da data', /'<\/div>'\+podDescHTML\(p\.desc\)\+podcastPlayerHTML\(p\)/.test(corpo('renderPodcasts')) && !/\+esc\(p\.desc\|\|''\)\+'<\/div>'/.test(corpo('renderPodcasts')));
 ok('🧨 justificado (com hifenização), parágrafos separados', /\.pod-desc\{[^}]*text-align:justify[^}]*hyphens:auto/.test(html) && /\.pod-desc p\{margin:0 0 \.4rem\}/.test(html));
 
+// ── 4. Cartão do PAINEL DO PROFESSOR (16/11/2026; print do FD 109: "melhorar a formatação aqui no
+//    podcast"). Texto em parágrafos, "Acesse/Siga" numa linha à parte e as referências numa lista
+//    recolhida, um item por referência. ───────────────────────────────────────────────────────────
+{
+  const cx = {};
+  vm.createContext(cx);
+  const cab = (html.match(/\nvar POD_REF_CAB=[^\n]+\n/) || [''])[0];
+  ok('POD_REF_CAB existe', !!cab);
+  vm.runInContext(cab + ['podDescParagrafos', 'podDescPartes'].map(corpo).join('\n'), cx);
+  const fd109 = 'Neste FD discutimos a meta pressórica.\nAcesse: endodirect.com.br\nSiga: @endodirect\nReferencias usadas:\n\n• Santo K, et al. OPTIMAL-DIABETES. N Engl J Med. 2026.\n\n• Bi Y, et al. BPROAD. N Engl J Med. 2025;392:1155-67.';
+  let r = cx.podDescPartes(fd109);
+  ok('🧨 FD 109: texto, links e 2 referências sem o "•"', r.texto.length === 1 && r.links.length === 2 && r.refs.length === 2 && r.refs[0] === 'Santo K, et al. OPTIMAL-DIABETES. N Engl J Med. 2026.', JSON.stringify(r));
+  r = cx.podDescPartes(antigo106);
+  ok('FD 106 (colado, sem "•"): uma referência por linha', r.refs.length === 3 && /^Cryer/.test(r.refs[0]) && r.links.length === 1, JSON.stringify(r));
+  r = cx.podDescPartes('Texto.\nPrincipais referencias:\nADA. Standards 2026.\nSBD. Diretriz 2026.');
+  ok('"Principais referencias:" também abre a lista', r.refs.length === 2 && r.texto.length === 1, JSON.stringify(r));
+  r = cx.podDescPartes('Texto.\nReferências: • A, 2020. • B, 2021. • C, 2022.');
+  ok('"• a • b • c" numa linha só vira três itens', r.refs.length === 3 && r.refs[2] === 'C, 2022.', JSON.stringify(r));
+  r = cx.podDescPartes('Só um texto sobre referências cruzadas.');
+  ok('sem cabeçalho de referências: tudo é texto', r.refs.length === 0 && r.texto.length === 1);
+  const card = html.slice(html.indexOf("+'<div id=\"adm-pod-list\">'"), html.indexOf("'<div class=\"empty\">Nenhum podcast '"));
+  ok('🧨 cartão do painel usa as partes (e não a descrição crua)', /pt=podDescPartes\(p\.desc\)/.test(card) && !/esc\(p\.desc\)/.test(card));
+  ok('🧨 referências recolhidas, numeradas', /<details class="pod-refs"><summary>📚 Referências \('\+pt\.refs\.length\+'\)/.test(card) && /<ol>'\+pt\.refs\.map/.test(card));
+  ok('subespecialidade e Excluir no rodapé do cartão (o título fica com a largura toda)', /<div class="pod-adm-rodape">'\+sel\+'<button class="btn btn-outline btn-sm pod-adm-del" data-adm-delpod="'\+i\+'">/.test(card));
+}
+
 if (bad) { console.log('✗ podcasts (descrição): ' + bad + ' falha(s)'); process.exit(1); }
 console.log('✓ podcasts: descrição do feed em parágrafos, justificada, e a já gravada consertada sem tocar na editada');
