@@ -1990,6 +1990,14 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .rcm-copy{margin-top:.4rem}
 .ref-chat-form{display:flex;gap:.4rem;align-items:flex-end}
 .ref-chat-form textarea{flex:1;min-height:44px;resize:vertical}
+/* 🔐 FACE ID (app do iPhone 1.2, 16/11/2026): convite e linha da conta na tela de entrada. */
+.faceid-conta{font-size:.74rem;color:var(--t3);text-align:center;margin:.45rem 0 .2rem}
+.faceid-modal{position:fixed;inset:0;z-index:2147483000;background:rgba(5,10,22,.62);display:flex;align-items:center;justify-content:center;padding:1rem}
+.faceid-card{background:var(--surface);border:1px solid var(--bd);border-radius:16px;max-width:360px;width:100%;padding:1.3rem 1.2rem;text-align:center;box-shadow:0 18px 48px rgba(0,0,0,.4)}
+.faceid-ico{font-size:2rem;margin-bottom:.4rem}
+.faceid-txt{font-size:.9rem;line-height:1.55;color:var(--tx);margin-bottom:1rem}
+.faceid-acoes{display:flex;flex-direction:column;gap:.5rem}
+.faceid-acoes .btn{justify-content:center}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
@@ -2686,6 +2694,11 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     </div>
     <div class="login-body">
       <div id="login-title" style="font-size:1.15rem;font-weight:700;text-align:center;margin-bottom:1rem">Entrar</div>
+      <div id="faceid-box" style="display:none">
+        <button class="login-btn" id="btn-faceid-login" type="button">🔐 Entrar com Face ID</button>
+        <div id="faceid-conta" class="faceid-conta"></div>
+        <div class="login-divider"><span>OU</span></div>
+      </div>
       <button class="login-apple" id="btn-apple-login" type="button" aria-label="Continuar com a Apple"><span class="login-apple-logo" aria-hidden="true">&#xF8FF;</span>Continuar com a Apple</button>
       <button class="login-google" id="btn-google-login">
         <svg viewBox="0 0 48 48" width="19" height="19"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.2 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.2 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.9 18.9 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.2 29 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c4.9 0 9.4-1.9 12.7-4.9l-5.9-5c-1.8 1.3-4 2-6.8 2-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.6 40.5 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l5.9 5C40.3 36.1 44 31 44 25c0-1.3-.1-2.6-.4-3.9z"/></svg>
@@ -3341,6 +3354,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="panel" id="panel-plano"><div class="breadcrumb">Dashboard <b>/ Plano de estudo</b></div><div class="ph"><h1>🎯 Plano de estudo</h1></div><div class="pc" id="plano-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-perfil">
       <div class="breadcrumb">Dashboard <b>/ Perfil</b></div>
+      <div id="perfil-faceid" class="pc" style="display:none"></div>
       <div id="perfil-plan-card" class="pc" style="display:none">
         <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
           <div>
@@ -9294,6 +9308,8 @@ function startApp(){
   medicoHomeApplied=false; // re-avalia a tela inicial do médico a cada login/onboarding
   startSessionWatcher();
   try{pushNativoIniciar();}catch(e){} // app do iPhone 1.1: toque nas notificações e token renovado
+  setTimeout(function(){try{faceIdOferecer();}catch(e){}},4000); // app 1.2: convite do Face ID
+  setTimeout(function(){try{appPedirAvaliacao();}catch(e){}},60000); // app 1.2: avaliação na App Store
   // Aula ao vivo: consulta já no boot (o item do menu só existe se houver aula) e
   // religa o poll — a aula pode começar com a plataforma aberta.
   try{carregarAoVivo();aoVivoIniciarPoll();}catch(e){}
@@ -9495,12 +9511,17 @@ function doLogout(){
   try{mmTelaCheia(false);}catch(e){}
   try{if(qzAberto())qzFechar();}catch(e){}
   hideSessionWarning();
+  // 🔐 Face ID ligado para esta conta (app 1.2): "Sair" trava em vez de encerrar no servidor,
+  // e a sessão guardada fica esperando o rosto (ver faceIdPrecisa).
+  var travarFaceId=false;
+  try{travarFaceId=!!faceIdPlugin()&&!!currentUser&&faceIdConta()===String(currentUser.email||'').toLowerCase();}catch(e){}
   loggingOut=true;
   try{lsSet('demo_session',null);lsSet('last_panel',null);lsSet('adm_sec',null);}catch(e){}
   var client=getSupabaseClient();
   // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
   // senão o watcher reencontra a sessão e re-loga sozinho ao voltar/recarregar.
-  if(client&&client.auth){try{client.auth.signOut().catch(function(){});}catch(e){}}
+  if(travarFaceId){faceIdMarcarLiberado(false);faceIdAutoFeito=true;}
+  else if(client&&client.auth){try{client.auth.signOut().catch(function(){});}catch(e){}}
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   deviceSlot={uid:null,ok:false,emVoo:false};
   currentUser=null;
@@ -9513,6 +9534,7 @@ function doLogout(){
   document.getElementById('app-screen').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('user-menu').style.display='none';
+  if(travarFaceId)faceIdMostrarTrava(false);else faceIdEsconderTrava();
 }
 function showLoginError(msg){
   var err=document.getElementById('login-err');
@@ -9649,6 +9671,10 @@ function loginFromSupabaseSession(session){
   if(!session||!session.user||!session.user.email)return;
   lsSet('demo_session',null); // login real: invalida qualquer sessão demo persistida
   var email=(session.user.email||'').toLowerCase();
+  // 🔐 Face ID (app 1.2): a sessão guardada só entra depois do rosto.
+  if(faceIdPrecisa(session)){faceIdMostrarTrava(true);return;}
+  if(faceIdPlugin()&&faceIdConta()&&faceIdConta()!==email){try{localStorage.removeItem('endo_faceid_conta');}catch(e){}}
+  faceIdEsconderTrava();
   if(isAdminEmail(email)){
     var au=USERS.find(function(x){return x.role==='admin'&&x.email===email;})||{name:email.split('@')[0],role:'admin',sub:'Professor'};
     clearLoginError();
@@ -10197,6 +10223,151 @@ function pluginNativo(nome){
     return null;
   }catch(e){return null;}
 }
+// ── 🔐 FACE ID NO APP DO IPHONE (versão 1.2, 16/11/2026) ──
+// Professor: "implementar de fato, entrar com Face ID". O app guarda a sessão do Supabase como
+// sempre; o Face ID é a chave dela. Quem liga o Face ID (convite depois do login, ou no Perfil)
+// passa a ver, ao abrir o app e depois de "Sair", a tela com "Entrar com Face ID"; o rosto libera
+// a sessão guardada. Nada novo sai do aparelho e nenhuma senha é guardada. Com o Face ID ligado,
+// "Sair" não encerra a sessão no servidor (senão o Face ID não teria o que liberar); para
+// encerrar de vez, desliga-se o Face ID no Perfil. Entrar com outra conta desliga o da anterior;
+// um login feito agora (senha, Google, Apple) já vale como liberado. Site e app 1.0/1.1 (sem o
+// plugin NativeBiometric): nada muda.
+var faceIdNome='Face ID';
+var faceIdAutoFeito=false;
+function faceIdPlugin(){return appNativoIOS()?pluginNativo('NativeBiometric'):null;}
+function faceIdConta(){try{return String(localStorage.getItem('endo_faceid_conta')||'').toLowerCase();}catch(e){return '';}}
+function faceIdLiberado(){try{return sessionStorage.getItem('endo_faceid_ok')==='1';}catch(e){return false;}}
+function faceIdMarcarLiberado(sim){try{if(sim)sessionStorage.setItem('endo_faceid_ok','1');else sessionStorage.removeItem('endo_faceid_ok');}catch(e){}}
+function faceIdLoginRecente(session){
+  try{var t=Date.parse((session&&session.user&&session.user.last_sign_in_at)||'');return !!t&&Math.abs(Date.now()-t)<3*60*1000;}catch(e){return false;}
+}
+// Precisa do rosto antes de entrar com esta sessão?
+function faceIdPrecisa(session){
+  var email=String((session&&session.user&&session.user.email)||'').toLowerCase();
+  if(!faceIdPlugin()||!email||faceIdConta()!==email||faceIdLiberado())return false;
+  if(faceIdLoginRecente(session)){faceIdMarcarLiberado(true);return false;}
+  return true;
+}
+function faceIdDisponivel(){
+  var b=faceIdPlugin();if(!b||typeof b.isAvailable!=='function')return Promise.resolve(false);
+  return Promise.resolve(b.isAvailable({useFallback:false})).then(function(r){
+    if(r&&r.biometryType===1)faceIdNome='Touch ID';else if(r&&r.biometryType===2)faceIdNome='Face ID';
+    return !!(r&&r.isAvailable);
+  },function(){return false;});
+}
+function faceIdVerificar(){
+  var b=faceIdPlugin();if(!b||typeof b.verifyIdentity!=='function')return Promise.reject(new Error('indisponível'));
+  return Promise.resolve(b.verifyIdentity({reason:'Entrar no Endodirect',title:'Endodirect',subtitle:'',description:'',useFallback:true,fallbackTitle:'Usar código'}));
+}
+function faceIdMascara(email){var p=String(email||'').split('@');return p.length<2?'':p[0].slice(0,2)+'•••@'+p[1];}
+// Tela de entrada travada: o login de sempre, com "Entrar com Face ID" em cima.
+function faceIdMostrarTrava(auto){
+  var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';
+  var land=document.getElementById('landing-screen');if(land)land.style.display='none';
+  var ap=document.getElementById('app-screen');if(ap)ap.style.display='none';
+  var box=document.getElementById('faceid-box');
+  if(box){
+    box.style.display='block';
+    var c=document.getElementById('faceid-conta');if(c)c.textContent=faceIdMascara(faceIdConta());
+    var bt=document.getElementById('btn-faceid-login');if(bt)bt.textContent='🔐 Entrar com '+faceIdNome;
+  }
+  if(auto&&!faceIdAutoFeito){faceIdAutoFeito=true;setTimeout(faceIdEntrar,350);}
+}
+function faceIdEsconderTrava(){var box=document.getElementById('faceid-box');if(box)box.style.display='none';}
+function faceIdEntrar(){
+  var bt=document.getElementById('btn-faceid-login');if(bt)bt.disabled=true;
+  faceIdVerificar().then(function(){
+    faceIdMarcarLiberado(true);faceIdEsconderTrava();loggingOut=false;clearLoginError();
+    var client=getSupabaseClient();
+    if(!client)throw new Error('sem cliente');
+    return client.auth.getSession().then(function(r){
+      var s=r&&r.data&&r.data.session;
+      if(!s){
+        try{localStorage.removeItem('endo_faceid_conta');}catch(e){}
+        showLoginError('A sessão guardada expirou. Entre com e-mail e senha, Google ou Apple; depois é só religar o '+faceIdNome+' no Perfil.');
+        return;
+      }
+      loginFromSupabaseSession(s);
+    });
+  }).catch(function(){
+    showLoginError('Não deu para confirmar o '+faceIdNome+'. Toque em "Entrar com '+faceIdNome+'" para tentar de novo, ou entre com e-mail e senha.');
+  }).then(function(){if(bt)bt.disabled=false;});
+}
+function faceIdLigar(){
+  var email=String((currentUser&&currentUser.email)||'').toLowerCase();if(!email)return Promise.resolve(false);
+  return faceIdVerificar().then(function(){
+    try{localStorage.setItem('endo_faceid_conta',email);}catch(e){}
+    faceIdMarcarLiberado(true);
+    try{notify('✅ '+faceIdNome+' ligado. Da próxima vez que abrir o app, é só olhar para o iPhone.','ok');}catch(e){}
+    return true;
+  },function(){try{notify('O '+faceIdNome+' não foi confirmado; nada mudou.','info');}catch(e){}return false;});
+}
+function faceIdDesligar(){
+  try{localStorage.removeItem('endo_faceid_conta');}catch(e){}
+  try{notify(faceIdNome+' desligado neste iPhone.','info');}catch(e){}
+}
+function faceIdModal(texto,simTxt,naoTxt,cb){
+  var o=document.createElement('div');o.className='faceid-modal';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+  o.innerHTML='<div class="faceid-card"><div class="faceid-ico" aria-hidden="true">🔐</div><div class="faceid-txt"></div>'
+    +'<div class="faceid-acoes"><button type="button" class="btn btn-primary" data-r="1"></button><button type="button" class="btn btn-outline" data-r="0"></button></div></div>';
+  o.querySelector('.faceid-txt').textContent=texto;
+  o.querySelector('[data-r="1"]').textContent=simTxt;o.querySelector('[data-r="0"]').textContent=naoTxt;
+  o.addEventListener('click',function(ev){var r=ev.target&&ev.target.getAttribute&&ev.target.getAttribute('data-r');if(r===null||r===undefined)return;o.remove();cb(r==='1');});
+  document.body.appendChild(o);
+}
+// Convite, uma vez por conta, logo depois de entrar no app.
+function faceIdOferecer(){
+  if(!faceIdPlugin()||!currentUser)return;
+  var email=String(currentUser.email||'').toLowerCase();
+  if(!email||faceIdConta()===email||email==='revisao@endodirect.com.br')return;
+  var chave='endo_faceid_oferecido',ja=[];
+  try{ja=JSON.parse(localStorage.getItem(chave)||'[]');if(!Array.isArray(ja))ja=[];}catch(e){ja=[];}
+  if(ja.indexOf(email)>=0)return;
+  faceIdDisponivel().then(function(ok){
+    if(!ok||!currentUser||String(currentUser.email||'').toLowerCase()!==email)return;
+    try{ja.push(email);localStorage.setItem(chave,JSON.stringify(ja.slice(-5)));}catch(e){}
+    faceIdModal('Quer entrar no Endodirect com o '+faceIdNome+'? Ao abrir o app, o '+faceIdNome+' libera o acesso, sem digitar senha. Dá para mudar depois no Perfil.','Usar '+faceIdNome,'Agora não',function(sim){
+      if(sim)faceIdLigar().then(function(){try{faceIdPerfilRender();}catch(e){}});
+    });
+  });
+}
+// Cartão do Perfil (só no app com o plugin e com biometria cadastrada no iPhone).
+function faceIdPerfilRender(){
+  var box=document.getElementById('perfil-faceid');if(!box)return;
+  if(!faceIdPlugin()||!currentUser){box.style.display='none';return;}
+  faceIdDisponivel().then(function(ok){
+    if(!ok){box.style.display='none';return;}
+    var ligado=faceIdConta()===String(currentUser.email||'').toLowerCase();
+    box.style.display='';
+    box.innerHTML='<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">'
+      +'<div><div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Entrar com '+esc(faceIdNome)+'</div>'
+      +'<div style="font-size:.95rem;font-weight:700;color:var(--tx)">'+(ligado?'Ligado neste iPhone':'Desligado')+'</div>'
+      +'<div style="font-size:.76rem;color:var(--t2);max-width:46ch">'+(ligado?'Ao abrir o app e depois de "Sair", o '+esc(faceIdNome)+' libera o acesso. Para sair de vez da conta, desligue aqui e depois toque em Sair.':'Ao abrir o app, o '+esc(faceIdNome)+' libera o acesso, sem digitar senha.')+'</div></div>'
+      +'<button class="btn '+(ligado?'btn-outline':'btn-primary')+'" type="button" id="perfil-faceid-btn">'+(ligado?'Desligar':'Ligar '+esc(faceIdNome))+'</button></div>';
+    var bt=document.getElementById('perfil-faceid-btn');
+    if(bt)bt.addEventListener('click',function(){
+      if(ligado){faceIdDesligar();faceIdPerfilRender();return;}
+      faceIdLigar().then(function(){faceIdPerfilRender();});
+    });
+  });
+}
+// ── ⭐ PEDIDO DE AVALIAÇÃO NA APP STORE (versão 1.2, 16/11/2026) ──
+// A janela padrão da Apple (ela decide se mostra; no máximo 3 vezes por ano). Só no app, só
+// para aluno que já estudou em 5 dias ou mais, e no máximo a cada 120 dias; o pedido sai um
+// minuto depois de entrar, para não atrapalhar a abertura.
+function appPedirAvaliacao(){
+  var r=appNativoIOS()?pluginNativo('InAppReview'):null;
+  if(!r||typeof r.requestReview!=='function'||!currentUser||currentUser.role==='admin')return false;
+  if(String(currentUser.email||'').toLowerCase()==='revisao@endodirect.com.br')return false;
+  var ult=0;try{ult=+(localStorage.getItem('endo_avaliacao_pedida')||0)||0;}catch(e){return false;}
+  if(Date.now()-ult<120*24*3600*1000)return false;
+  var act=(typeof DB!=='undefined'&&DB&&DB.act&&typeof DB.act==='object')?DB.act:{};
+  var dias=Object.keys(act).filter(function(k){return act[k]>0;}).length;
+  if(dias<5)return false;
+  try{localStorage.setItem('endo_avaliacao_pedida',String(Date.now()));}catch(e){}
+  try{Promise.resolve(r.requestReview()).catch(function(){});}catch(e){}
+  return true;
+}
 // Parâmetros do retorno do login (no "?" e no "#"). null quando a URL não é o
 // retorno: outros links que abram o app passam direto.
 function lerRetornoLoginApp(url){
@@ -10243,7 +10414,10 @@ function iniciarRetornoLoginApp(){
   if(!appNativoIOS())return;
   var A=pluginNativo('App');
   if(!A||typeof A.addListener!=='function')return;
-  try{A.addListener('appUrlOpen',function(ev){tratarRetornoLoginApp(ev&&ev.url);});}catch(e){console.warn('appUrlOpen (app iOS)',e);}
+  // 🔗 Versão 1.2: links do site (e-mail, WhatsApp) abrem o app (Universal Links, ver
+  // .well-known/apple-app-site-association) e caem aqui com o endereço https: abre-se o mesmo
+  // endereço dentro do app (pushNativoAbrir só aceita o próprio site).
+  try{A.addListener('appUrlOpen',function(ev){var u=ev&&ev.url;if(tratarRetornoLoginApp(u))return;if(/^https:/i.test(String(u||'')))pushNativoAbrir(u);});}catch(e){console.warn('appUrlOpen (app iOS)',e);}
 }
 function startGoogleOAuth(){
   var client=getSupabaseClient();
@@ -10254,7 +10428,11 @@ function startGoogleOAuth(){
   // App do iPhone: o login abre no navegador do sistema e volta pelo
   // APP_IOS_RETORNO_LOGIN (ver acima). Sem o plugin, segue o caminho do site.
   var navegador=appNativoIOS()?pluginNativo('Browser'):null;
-  if(navegador&&typeof navegador.open==='function'){
+  // Versão 1.2: a folha de login da Apple (plugin WebAuth, do próprio app) recebe o retorno
+  // sem a pergunta "Abrir no Endodirect?". Sem ela (app 1.0/1.1), segue o Safari embutido.
+  var folha=appNativoIOS()?pluginNativo('WebAuth'):null;
+  if(folha&&typeof folha.abrir!=='function')folha=null;
+  if(folha||(navegador&&typeof navegador.open==='function')){
     clearLoginError();
     client.auth.signInWithOAuth({
       provider:'google',
@@ -10263,6 +10441,14 @@ function startGoogleOAuth(){
       if(res&&res.error)throw res.error;
       var url=res&&res.data&&res.data.url;
       if(!url)throw new Error('o Supabase não devolveu o endereço do login');
+      if(folha){
+        return Promise.resolve(folha.abrir({url:url,esquema:'br.com.endodirect.app'})).then(function(r){
+          if(!tratarRetornoLoginApp(r&&r.url))showLoginError('O login com o Google não voltou completo. Tente de novo ou entre com e-mail e senha.');
+        },function(e){
+          if(e&&(e.code==='CANCELADO'||/cancel/i.test(String(e.message||''))))return; // fechou a folha: nada a dizer
+          throw e;
+        });
+      }
       return navegador.open({url:url});
     }).catch(function(e){
       showLoginError('Não foi possível abrir o login com o Google: '+((e&&e.message)||'tente novamente')+'. Você também pode entrar com e-mail e senha.');
@@ -23582,6 +23768,7 @@ function userEmailDisplay(u){
   return u.email||'';
 }
 function renderPerfil(){
+  try{faceIdPerfilRender();}catch(e){}
   var body=document.getElementById('perfil-body');
   if(!body)return;
   var u=currentUser||{};
@@ -23768,6 +23955,7 @@ function codigoAppleParaExclusao(){
 // regravado (o save pendente morreria no banco, mas nem chega a sair). A página
 // recarrega limpa no login, com o aviso.
 function contaExcluidaNoAparelho(){
+  try{localStorage.removeItem('endo_faceid_conta');localStorage.removeItem('endo_faceid_oferecido');}catch(e){}
   try{clearTimeout(remoteStateSaveTimer);}catch(e){}
   var client=getSupabaseClient();
   try{if(client&&client.auth)client.auth.signOut({scope:'local'}).catch(function(){});}catch(e){}
@@ -25235,6 +25423,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')submitLogin();});
   document.getElementById('btn-google-login').addEventListener('click',doGoogleLogin);
   var bApple=document.getElementById('btn-apple-login');if(bApple)bApple.addEventListener('click',startAppleSignIn);
+  var bFace=document.getElementById('btn-faceid-login');if(bFace)bFace.addEventListener('click',faceIdEntrar);
   document.getElementById('btn-forgot-pass').addEventListener('click',forgotPassword);
   document.getElementById('btn-toggle-pass').addEventListener('click',function(){var p=document.getElementById('login-pass');p.type=p.type==='password'?'text':'password';});
 

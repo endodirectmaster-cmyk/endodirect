@@ -1,5 +1,6 @@
 import UIKit
 import WebKit
+import AuthenticationServices
 import Capacitor
 
 // Controlador principal do app: o mesmo do Capacitor, mais o registro dos plugins que
@@ -8,6 +9,7 @@ import Capacitor
 class AppViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(AppleSignInPlugin())
+        bridge?.registerPluginInstance(WebAuthPlugin())
         // Calculadora de reganho pós-GLP-1 (site dos autores, aberto num quadro dentro do
         // Endodirect): teclado numérico nos campos de número. Vale também para quadros de
         // outro domínio (forMainFrameOnly: false); o próprio script só age nesse site.
@@ -95,4 +97,68 @@ class AppViewController: CAPBridgeViewController {
   else ajusta();
 })();
 """#
+}
+
+// Login com Google na folha de login da Apple (ASWebAuthenticationSession), versão 1.2.
+//
+// Professor, 16/11/2026: login do Google sem a pergunta "Abrir no Endodirect?". Antes o login
+// abria no Safari embutido (plugin Browser) e voltava pelo endereço próprio do app; o iOS pedia
+// licença para sair do Safari. A folha de login da Apple recebe esse retorno ela mesma, sem
+// pergunta no fim (o iOS mostra, no começo, o aviso padrão de que o app vai usar o site para
+// entrar). Exposto à página como Capacitor.Plugins.WebAuth; registrado acima.
+@objc(WebAuthPlugin)
+public class WebAuthPlugin: CAPPlugin, CAPBridgedPlugin, ASWebAuthenticationPresentationContextProviding {
+    public let identifier = "WebAuthPlugin"
+    public let jsName = "WebAuth"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "abrir", returnType: CAPPluginReturnPromise)
+    ]
+
+    // Uma folha por vez; a referência segura a sessão viva até ela terminar.
+    private var sessao: ASWebAuthenticationSession?
+
+    @objc func abrir(_ call: CAPPluginCall) {
+        guard let texto = call.getString("url"), let url = URL(string: texto), url.scheme == "https" else {
+            call.reject("Endereço de login inválido.", "URL")
+            return
+        }
+        let esquema = call.getString("esquema") ?? "br.com.endodirect.app"
+        DispatchQueue.main.async {
+            if self.sessao != nil {
+                call.reject("Já há um login em andamento.", "EM_ANDAMENTO")
+                return
+            }
+            let s = ASWebAuthenticationSession(url: url, callbackURLScheme: esquema) { [weak self] retorno, erro in
+                self?.sessao = nil
+                if let retorno = retorno {
+                    call.resolve(["url": retorno.absoluteString])
+                    return
+                }
+                if let e = erro as? ASWebAuthenticationSessionError, e.code == .canceledLogin {
+                    call.reject("Login cancelado.", "CANCELADO")
+                    return
+                }
+                call.reject(erro?.localizedDescription ?? "Não foi possível concluir o login.", "FALHA")
+            }
+            s.presentationContextProvider = self
+            // Com a sessão compartilhada, quem já entrou no Google pelo Safari só escolhe a conta.
+            s.prefersEphemeralWebBrowserSession = false
+            self.sessao = s
+            if !s.start() {
+                self.sessao = nil
+                call.reject("Não foi possível abrir o login.", "FALHA")
+            }
+        }
+    }
+
+    public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        if let janela = bridge?.viewController?.view.window {
+            return janela
+        }
+        let cenas = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        if let janela = cenas.flatMap({ $0.windows }).first(where: { $0.isKeyWindow }) {
+            return janela
+        }
+        return ASPresentationAnchor()
+    }
 }

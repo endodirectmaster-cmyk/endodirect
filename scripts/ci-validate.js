@@ -1197,6 +1197,17 @@ try {
   fail('regressão da questão do dia no banco falhou:\n' + out);
 }
 
+// 17c-undecies-az. APP DO IPHONE 1.2 (16/11/2026). Professor: "Pode fazer". Face ID (porta antes da
+//      sessão guardada; "Sair" trava em vez de encerrar), links do site que abrem no app (AASA só na
+//      página principal, sem /#planos), pedido de avaliação com regras, Google na folha da Apple.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-12.js')], { stdio: 'pipe' });
+  ok('app do iPhone 1.2: Face ID, links que abrem no app, avaliação e Google na folha da Apple');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do app do iPhone 1.2 falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

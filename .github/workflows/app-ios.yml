@@ -100,6 +100,11 @@ jobs:
             exit 1
           fi
           echo "Permissão de notificações embutida no app."
+          if ! grep -q 'applinks:www.endodirect.com.br' "$RUNNER_TEMP/permissoes.plist"; then
+            echo "::error::O app saiu sem os domínios associados (associated-domains no App.entitlements)."
+            exit 1
+          fi
+          echo "Domínios associados (links do site e senhas) embutidos no app."
 
       - name: Conferir os segredos
         if: inputs.modo == 'testflight'

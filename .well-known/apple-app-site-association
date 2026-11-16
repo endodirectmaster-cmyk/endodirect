@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["9Q4Y44Z44C.br.com.endodirect.app"],
+        "components": [
+          { "/": "/", "#": "planos*", "exclude": true, "comment": "Preços: ficam no navegador (o app não vende)." },
+          { "/": "/", "comment": "Página principal e os atalhos /#qotd, /#mural, /#aovivo… abrem no app." },
+          { "/": "/index.html", "comment": "Mesma página." }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["9Q4Y44Z44C.br.com.endodirect.app"]
+  }
+}
