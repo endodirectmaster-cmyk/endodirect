@@ -136,7 +136,7 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
 4. Notas: no celular, lista e editor espremidos lado a lado → uma coluna (nota abre em tela própria).
 5. Revisão (933 cards numa página só) e Podcasts (210 episódios numa página só) → 10/30/50 por página.
 6. Questão do Dia do aluno no formato novo do professor (data em bloco, subespecialidade, começo do enunciado).
-7. Perfil do aluno: buraco entre "Seu plano" e "Meu perfil"; newsletter (12 caixas) em 2 colunas.
+7. ✅ FEITO em 16/11 (pedido do professor com prints): Perfil do aluno sem buraco, "Assinatura e conta" num cartão, newsletter em 2 colunas.
 8. Contadores empilhados (Caderno de erros, Revisão, Enquete EMC) → uma linha de 3 (ou 2×2).
 9. Painel do professor: Cursos (abas quebrando em 2 linhas; capas enormes em 1 coluna → 2 colunas como o
    aluno) e Provas & Questões (aba "Banco de questõ…" cortada).
