@@ -1243,6 +1243,17 @@ try {
   fail('regressão dos stories no Metricool falhou:\n' + out);
 }
 
+// 17c-undecies-bd. PERFIL DO ALUNO SEM BURACO E "ASSINATURA E CONTA" NUM CARTÃO SÓ (16/11/2026). Professor: "Ficou
+//      um buraco... Não dá para condensar os dois numa coisa só?". Sem blocos .pc soltos no alto, sem "Seu plano"
+//      duplicado; cancelar assinatura e "Excluir minha conta" (à vista, exigência das lojas) no mesmo cartão.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-perfil-aluno-conta.js')], { stdio: 'pipe' });
+  ok('perfil do aluno: sem buraco; assinatura e exclusão da conta num cartão, exclusão à vista');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do perfil do aluno falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

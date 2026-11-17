@@ -647,11 +647,11 @@ html:not(.app-loja) .so-app{display:none!important}
 .ia-consent-acoes{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.9rem}
 .ia-consent-acoes .btn{min-height:44px;padding:.55rem 1.1rem}
 /* Exclusão de conta (Meu perfil). */
-.pf-excluir{margin-top:1rem;border-color:#5a2326}
-.pf-excluir .card-title{color:var(--red)}
+.pf-excluir{margin-top:.95rem;border-top:1px solid var(--bd);padding-top:.85rem}
+.pf-excluir .pf-excluir-bt{color:var(--red);border-color:rgba(220,38,38,.45)}
 .pf-excluir p{font-size:.78rem;color:var(--t2);line-height:1.6;margin:.1rem 0 .7rem}
 .pf-excluir ul{font-size:.78rem;color:var(--t2);line-height:1.6;margin:0 0 .8rem;padding-left:1.1rem}
-.pf-excluir-box{border-top:1px solid var(--bd);padding-top:.8rem;margin-top:.2rem}
+.pf-excluir-box{padding-top:.1rem}
 .pf-excluir-box input{max-width:220px;text-transform:uppercase;letter-spacing:.08em}
 .fld2{margin-bottom:.65rem}
 .flbl,.fld2 label{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);display:block;margin-bottom:3px}
@@ -3429,16 +3429,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <div class="panel" id="panel-plano"><div class="breadcrumb">Dashboard <b>/ Plano de estudo</b></div><div class="ph"><h1>🎯 Plano de estudo</h1></div><div class="pc" id="plano-body" style="max-width:none"></div></div>
     <div class="panel" id="panel-perfil">
       <div class="breadcrumb">Dashboard <b>/ Perfil</b></div>
-      <div id="perfil-faceid" class="pc" style="display:none"></div>
-      <div id="perfil-plan-card" class="pc" style="display:none">
-        <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-          <div>
-            <div style="font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Seu plano</div>
-            <div id="perfil-plan-name" style="font-size:1.15rem;font-weight:800;color:var(--tx)">—</div>
-          </div>
-          <button class="btn btn-primary" id="perfil-upgrade" type="button" style="min-width:180px;justify-content:center">⭐ Fazer upgrade</button>
-        </div>
-      </div>
       <div id="perfil-body"></div>
     </div>
 
@@ -11034,19 +11024,7 @@ function updatePlanBadge(){
       }
     }
   }
-  // Card na aba Perfil
-  var pc=document.getElementById('perfil-plan-card'),pn=document.getElementById('perfil-plan-name'),pu=document.getElementById('perfil-upgrade');
-  if(pc){
-    if(!isAluno){pc.style.display='none';}
-    else{
-      pc.style.display='block';
-      if(pn)pn.textContent=label;
-      if(pu){
-        pu.style.display=(k==='gold')?'none':'inline-flex';
-        pu.textContent=isDegustacao()?'⭐ Ver pacotes':'⭐ Fazer upgrade do plano';
-      }
-    }
-  }
+
 }
 // 🧨 AQUI MORAVA `applyProfileMenuLayout()` (30/08/2026). Desde 12/06/2026 ela
 // ESCONDIA O DASHBOARD do menu de quem tem perfil de médico e subia o Mural para
@@ -24157,7 +24135,6 @@ function userEmailDisplay(u){
   return u.email||'';
 }
 function renderPerfil(){
-  try{faceIdPerfilRender();}catch(e){}
   var body=document.getElementById('perfil-body');
   if(!body)return;
   var u=currentUser||{};
@@ -24217,7 +24194,7 @@ function renderPerfil(){
   }).join('');
   var nlCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">📬 Newsletter — temas de interesse</span></div>'
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem">Escolha as subespecialidades que mais te interessam e a sua newsletter diária priorizará esses temas. Sem nenhuma marcada, você recebe os destaques gerais do dia.</p>'
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem;margin-bottom:.85rem">'+nlBoxes+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem;margin-bottom:.85rem">'+nlBoxes+'</div>'
     +'<div style="display:flex;align-items:center;gap:.7rem"><button class="btn btn-primary" id="btn-pf-nl-save">💾 Salvar preferências</button><span id="pf-nl-msg" style="font-size:.76rem;font-weight:600"></span></div></div>';
   // Card de assinatura — plano atual + upgrade/cancelamento.
   var _planK=currentPlanKey();
@@ -24227,17 +24204,21 @@ function renderPerfil(){
   if(_planK==='gold')_planDesc='Seu acesso atual é o pacote <b>Gold</b> — o mais completo. Você pode cancelar a renovação quando quiser; o acesso permanece até o fim do período já pago.';
   else if(_planK)_planDesc='Seu acesso atual é o pacote <b>'+esc(_planNice)+'</b>. '+textoCompra('Você pode fazer upgrade ou cancelar a renovação quando quiser','Você pode cancelar a renovação quando quiser')+' — o acesso permanece até o fim do período já pago.';
   else _planDesc='Você está no <b>modo degustação</b>.'+textoCompra(' Assine um pacote para liberar todo o conteúdo.',' Parte do conteúdo está liberada para você conhecer a plataforma.');
-  var assinaturaCard='<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💳 Assinatura</span><span class="tag '+(_planK?'tag-grn':'tag-blue')+'">'+esc(_planNice)+'</span></div>'
+  // ASSINATURA E CONTA NUM CARTÃO SÓ (professor, 16/11/2026: "Já que tem a opção de cancelar a assinatura... Não dá
+  // para condensar os dois numa coisa só?"). Excluir a conta continua (a App Store e o Google Play exigem, e não é o
+  // mesmo que cancelar: cancelar mantém a conta; excluir apaga os dados), mas como um botão dentro deste cartão; o
+  // que é apagado aparece no 2º passo, antes de confirmar.
+  var assinaturaCard='<div class="card" id="perfil-conta" style="margin-top:1rem"><div class="card-head"><span class="card-title">💳 Assinatura e conta</span><span class="tag '+(_planK?'tag-grn':'tag-blue')+'">'+esc(_planNice)+'</span></div>'
     +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .85rem;line-height:1.55">'+_planDesc+'</p>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
     +(_planK==='gold'?'':'<button class="btn btn-primary" id="btn-pf-upgrade">'+(_planK?'⬆️ Fazer upgrade':'✨ Assinar agora')+'</button>')
     +(_planK?'<button class="btn btn-outline" id="btn-pf-cancel-sub">Cancelar assinatura</button>':'')
-    +'</div></div>';
-  var excluirCard=podeExcluirConta()?excluirContaCardHTML():'';
+    +'</div>'+(podeExcluirConta()?excluirContaCardHTML():'')+'</div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':themeCardHTML()+assinaturaCard+nlCard+excluirCard);
+    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+assinaturaCard+nlCard);
   wirePerfil();
+  try{faceIdPerfilRender();}catch(e){}
   // Vindo da página pública /excluir-conta (link #excluir-conta): rola até o cartão.
   if(perfilRolarExclusao&&!perfilEdit){
     perfilRolarExclusao=false;
@@ -24259,15 +24240,15 @@ function podeExcluirConta(){
 }
 function excluirContaCardHTML(){
   var pago=!!currentPlanKey();
-  return '<div class="card pf-excluir" id="perfil-excluir"><div class="card-head"><span class="card-title">Excluir conta</span></div>'
+  return '<div class="pf-excluir" id="perfil-excluir">'
+    +'<div id="pf-excluir-passo1"><button class="btn btn-outline pf-excluir-bt" id="btn-pf-excluir" type="button">Excluir minha conta</button>'
+    +' <a href="/excluir-conta" target="_blank" rel="noopener" style="font-size:.74rem;color:var(--t3);margin-left:.4rem">Como funciona</a></div>'
+    +'<div id="pf-excluir-passo2" class="pf-excluir-box" style="display:none">'
     +'<p>Apaga a sua conta e os seus dados. <b>Não dá para desfazer.</b></p>'
     +'<ul><li>Saem o login, o progresso de estudo (questões feitas, flashcards, anotações, preferências), as mensagens ao suporte, as notificações no celular e a inscrição na newsletter.</li>'
     +'<li>Fica só o registro dos pagamentos, sem o seu nome e o seu e-mail, que a lei e o estorno exigem.</li>'
     +(pago?'<li>O seu plano termina agora, e a renovação mensal é cancelada. O período já pago não é devolvido automaticamente: para pedir reembolso, fale com o suporte antes de excluir.</li>':'')
     +'</ul>'
-    +'<div id="pf-excluir-passo1"><button class="btn btn-outline" id="btn-pf-excluir" type="button">Excluir minha conta</button>'
-    +' <a href="/excluir-conta" target="_blank" rel="noopener" style="font-size:.74rem;color:var(--t3);margin-left:.4rem">Como funciona</a></div>'
-    +'<div id="pf-excluir-passo2" class="pf-excluir-box" style="display:none">'
     +'<div class="fld2"><label for="pf-excluir-txt">Para confirmar, digite <b>EXCLUIR</b></label><input type="text" id="pf-excluir-txt" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>'
     +'<div id="pf-excluir-err" style="display:none;background:var(--red-l);border:1px solid #5a2326;border-radius:var(--rs);padding:.45rem .75rem;font-size:.73rem;color:var(--red);margin-bottom:.7rem"></div>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-danger" id="btn-pf-excluir-ok" type="button">Excluir definitivamente</button>'
