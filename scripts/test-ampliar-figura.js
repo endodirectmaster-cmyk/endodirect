@@ -79,11 +79,13 @@ if (ov) {
   ok(ov.style.display === 'none', 'clicar no overlay tem de fechar');
 }
 
-// 7) Esquema SVG largo (figuras dos Resumos, 16/10/2026): no celular abre no tamanho
-//    natural, com rolagem, porque encolhido à largura da tela o texto fica ilegível.
-//    Foto e SVG estreito continuam cabendo na tela; no notebook nada muda.
-function abreComo(src, naturalWidth, largTela) {
+// 7) Zoom com pinça (17/11/2026; antes, 16/10, o SVG largo abria no tamanho natural com
+//    rolagem, sem como afastar). Agora toda figura abre INTEIRA e centralizada ("Ajustar");
+//    pinça/roda/botões aproximam e afastam em torno do ponto; afastar além do ajuste volta
+//    ao ajuste, centralizado.
+function abreComo(src, naturalWidth, largTela, naturalHeight) {
   Object.defineProperty(dom.window, 'innerWidth', { value: largTela, configurable: true });
+  Object.defineProperty(dom.window, 'innerHeight', { value: 844, configurable: true });
   ov.style.display = 'none'; ov.firstChild.src = '';
   const box = doc.createElement('div');
   box.innerHTML = '<figure class="dir-fig"><img alt=""></figure>';
@@ -91,24 +93,60 @@ function abreComo(src, naturalWidth, largTela) {
   const img = box.querySelector('img');
   Object.defineProperty(img, 'src', { value: src, configurable: true });
   Object.defineProperty(img, 'naturalWidth', { value: naturalWidth, configurable: true });
+  Object.defineProperty(img, 'naturalHeight', { value: naturalHeight || Math.round(naturalWidth * 1.2), configurable: true });
   img.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   const im = ov.firstChild;
-  const r = { aberto: ov.style.display === 'flex', rola: ov.style.overflow === 'auto', largura: im.style.width, max: im.style.maxWidth };
+  const st = ov.__lb ? ov.__lb.estado() : {};
+  const r = { aberto: ov.style.display === 'flex', largura: im.style.width, s: st.s, ajuste: st.ajuste, maxS: st.maxS, tx: st.tx, ty: st.ty, transf: im.style.transform };
   box.remove();
   return r;
 }
 if (ov) {
+  ok(ov.__lb && typeof ov.__lb.zoomEm === 'function', 'o ampliador não expõe o estado do zoom');
   const SVG = 'https://www.endodirect.com.br/figuras/resumos/adrenal--feocromocitoma-e-paraganglioma.svg';
-  let r = abreComo(SVG, 873, 390);
-  ok(r.aberto && r.rola && r.largura === '873px' && r.max === 'none',
-     'no celular, o esquema SVG largo tem de abrir no tamanho natural e com rolagem: ' + JSON.stringify(r));
-  r = abreComo(PNG, 2000, 390);
-  ok(r.aberto && !r.rola && r.largura === '' && r.max === '96vw',
-     'foto continua cabendo na tela, sem rolagem (e o modo do SVG não vaza para ela): ' + JSON.stringify(r));
-  r = abreComo(SVG, 300, 390);
-  ok(r.aberto && !r.rola && r.max === '96vw', 'SVG estreito cabe na tela: ' + JSON.stringify(r));
-  r = abreComo(SVG, 873, 1280);
-  ok(r.aberto && !r.rola && r.max === '96vw', 'no notebook o esquema cabe na tela, sem mudança: ' + JSON.stringify(r));
+  // celular: área = 390−40 de largura; o esquema de 873 px abre inteiro (escala < 1) e centralizado
+  let r = abreComo(SVG, 873, 390, 1000);
+  const aW = 390 - 40, aH = 844 - 56 - 76;
+  const fit = Math.min(aW / 873, aH / 1000);
+  ok(r.aberto && r.largura === '873px' && Math.abs(r.s - fit) < 1e-6 && Math.abs(r.ajuste - fit) < 1e-6,
+     'no celular, o esquema SVG tem de abrir inteiro, ajustado à tela: ' + JSON.stringify(r));
+  ok(Math.abs(r.tx - (20 + (aW - 873 * fit) / 2)) < 0.5 && Math.abs(r.ty - (56 + (aH - 1000 * fit) / 2)) < 0.5,
+     'a figura ajustada tem de ficar centralizada: ' + JSON.stringify(r));
+  ok(/scale\(/.test(r.transf) && ov.style.overflow === 'hidden' && ov.style.touchAction === 'none', 'o zoom é por transform, com a página atrás sem rolar: ' + JSON.stringify(r));
+  // reabre e amplia: pinça para 3×, depois afasta além do ajuste → volta ao ajuste, centralizado
+  abreComo(SVG, 873, 390, 1000);
+  ov.style.display = 'flex';
+  const a0 = ov.__lb.estado();
+  ov.__lb.zoomEm(a0.s * 3, 195, 400);
+  const a1 = ov.__lb.estado();
+  ok(a1.s > a0.s * 2.9 && a1.tx <= 20 && a1.tx >= 20 + aW - 873 * a1.s, 'ampliar 3× em torno do dedo, sem sobrar borda: ' + JSON.stringify(a1));
+  ov.__lb.zoomEm(a1.s * 0.05, 195, 400);
+  const a2 = ov.__lb.estado();
+  ok(Math.abs(a2.s - a0.s) < 1e-6 && Math.abs(a2.tx - a0.tx) < 0.5 && Math.abs(a2.ty - a0.ty) < 0.5,
+     'afastar além do ajuste tem de voltar ao ajuste, centralizado (pedido do professor): ' + JSON.stringify(a2));
+  ov.__lb.alterna(195, 400);
+  const a3 = ov.__lb.estado();
+  ok(a3.s >= 1 - 1e-6, 'toque duplo no esquema ajustado amplia até o tamanho natural, legível: ' + JSON.stringify(a3));
+  ov.__lb.alterna(195, 400);
+  ok(Math.abs(ov.__lb.estado().s - a0.s) < 1e-6, 'toque duplo de novo volta ao ajuste');
+  ok(a1.maxS >= 3, 'o esquema vetorial amplia até pelo menos 3× o tamanho natural');
+  // foto grande: cabe na tela; foto pequena: não estica além do tamanho real
+  r = abreComo(PNG, 2000, 390, 1500);
+  ok(r.aberto && r.s <= Math.min(aW / 2000, aH / 1500) + 1e-6, 'foto continua cabendo na tela: ' + JSON.stringify(r));
+  r = abreComo(PNG, 120, 390, 90);
+  ok(r.aberto && Math.abs(r.s - 1) < 1e-6, 'foto pequena abre no tamanho real, sem esticar: ' + JSON.stringify(r));
+  r = abreComo(SVG, 873, 1280, 1000);
+  ok(r.aberto && r.s <= 1 + 1e-6 && Math.abs(r.s - Math.min((1280 - 40) / 873, aH / 1000)) < 1e-6, 'no notebook o esquema também abre ajustado: ' + JSON.stringify(r));
+  // tocar na figura não fecha (é onde se faz o zoom); o fundo e o ✕ fecham
+  abreComo(SVG, 873, 390, 1000); ov.style.display = 'flex';
+  ov.firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  ok(ov.style.display === 'flex', 'tocar na própria figura não pode fechar o ampliador');
+  const bAj = ov.querySelector('[data-lb="ajustar"]'), bMais = ov.querySelector('[data-lb="mais"]'), bMenos = ov.querySelector('[data-lb="menos"]');
+  ok(bAj && bMais && bMenos, 'faltam os botões −, Ajustar e + do ampliador');
+  if (bMais) { const s0 = ov.__lb.estado().s; bMais.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true })); ok(ov.__lb.estado().s > s0 && ov.style.display === 'flex', 'o botão + aproxima e não fecha'); }
+  if (bAj) { bAj.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true })); ok(Math.abs(ov.__lb.estado().s - ov.__lb.estado().ajuste) < 1e-6, 'o botão Ajustar volta à figura inteira'); }
+  ok(/addEventListener\('touchmove',function\(e\)\{[\s\S]{0,120}?e\.preventDefault\(\)/.test(html) && /\['gesturestart','gesturechange'\]\.forEach\(function\(n\)\{ov\.addEventListener/.test(html),
+     'a pinça tem de ser tratada pelo ampliador (touchmove sem rolar a página; gesture* do Safari bloqueado)');
   const botao = ov.querySelector('button');
   ok(botao && botao.style.position === 'fixed', 'o botão de fechar fica fixo na tela mesmo com a figura rolando');
   // iPhone: o ✕ ficava embaixo do relógio/bateria e não dava para tocar (11/11/2026).
