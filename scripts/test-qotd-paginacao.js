@@ -37,11 +37,13 @@ function bloco(inicio) {
 const opc = (html.match(/var QOTD_POR_OPCOES=\[[^\]]*\];/) || [''])[0];
 ok('🧨 tamanhos de página: 10, 30 e 50 (pedido do professor)', opc === 'var QOTD_POR_OPCOES=[10,30,50];', opc);
 const fontes = ['function qotdArchDate(q){', 'function qotdArchOrdenadas(all,ordem){', 'function qotdArchPaginaDe(all,ordem,id,por){',
-  'function qotdArchPaginas(n,por){', 'function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre,pag){', 'function muralPagerHTML(page,pages,pfx){'].map(bloco);
+  'function qotdArchPaginas(n,por){', 'function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre,pag){', 'function muralPagerHTML(page,pages,pfx){',
+  'function admQotdTrecho(q){'].map(bloco);
 fontes.forEach((f, i) => ok('função ' + (i + 1) + ' encontrada', !!f));
 const ctx = { Math, Date, esc: s => String(s), qotdCardHTML: q => '[cartão ' + q.id + ']' };
 vm.createContext(ctx);
-vm.runInContext(opc + fontes.join('\n'), ctx);
+const meses = (html.match(/var MESES_PT=\[[^\]]*\];/) || [''])[0];
+vm.runInContext(opc + meses + fontes.join('\n'), ctx);
 
 // 65 questões, uma por dia: q1 a mais antiga, q65 a mais recente
 const all = [];
