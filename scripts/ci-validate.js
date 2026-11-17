@@ -1357,6 +1357,16 @@ try {
   fail('regressão do painel do professor/acertos/feedback pontual falhou:\n' + out);
 }
 
+// 17c-undecies-bo. TEXTO SEMPRE JUSTIFICADO NOS RESUMOS, DIRETRIZES E MURAL (17/11/2026): parágrafos, itens de
+//      lista e faixas da ficha do artigo, em toda largura; títulos e tabelas à esquerda.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-texto-justificado.js')], { stdio: 'pipe' });
+  ok('texto justificado nos Resumos, Diretrizes e Mural');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do texto justificado falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

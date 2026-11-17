@@ -1066,7 +1066,7 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 .fav-li-sub{font-size:.7rem;color:var(--t3);white-space:nowrap;flex:none}
 @media (prefers-reduced-motion:reduce){.mural-disc>summary::after{transition:none}}
 .mural-text .mural-h:first-child{margin-top:0}
-.mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:left;text-align-last:left}
+.mural-text .mural-ul{margin:.35rem 0;padding-left:1.2rem;text-align:justify;text-align-last:left}
 .mural-text .mural-ul li{margin:.15rem 0;line-height:1.55;overflow-wrap:anywhere}
 /* Alinhamento explícito por bloco (botões L/C/D): a última linha acompanha o
    alinhamento (senão o text-align-last:left do container puxaria p/ esquerda). */
@@ -1943,6 +1943,14 @@ span.wh-azul,span.wh-verde,span.wh-vermelho,span.wh-dourado,span.wh-roxo,span.wh
 .wys-cor-lim{background:var(--s2);color:var(--t2);font-weight:600}
 .dir-card .dir-texto{font-size:.88rem;color:var(--t2);line-height:1.62}
 .dir-card .dir-texto p{margin:.4rem 0}
+/* TEXTO SEMPRE JUSTIFICADO (professor, 17/11/2026, prints dos Resumos: "Deixar todos os textos, tanto nos resumos
+   como nas diretrizes, mural de artigos, sempre no modo justificado"). Os parágrafos já eram (só no celular); os
+   itens de lista (•) e as faixas da ficha do artigo, não. Agora: parágrafos e itens de lista dos Resumos e das
+   Diretrizes em toda largura, itens de lista do Mural e as faixas "Segurança"/"O que muda na prática". Títulos e
+   tabelas seguem à esquerda. hyphens:auto (a página é pt-BR) evita os buracos numa coluna estreita. Alinhamento
+   escolhido no editor (L/C/D, estilo em linha) continua mandando. */
+.dir-card .dir-texto p,.dir-card .dir-texto li,.mural-text .mural-ul li,.dir-ficha .fx-band>span:last-child{text-align:justify;text-align-last:left;-webkit-hyphens:auto;hyphens:auto}
+.mural-text{-webkit-hyphens:auto;hyphens:auto}
 .dir-card .dir-texto table{border-collapse:collapse;width:fit-content;max-width:100%;margin:.7rem auto;font-size:.8rem;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .dir-card .dir-texto th,.dir-card .dir-texto td{border:1px solid var(--bd2);padding:.42rem .6rem;text-align:left;vertical-align:top;line-height:1.45}
 .dir-card .dir-texto th{background:var(--s2);color:var(--tx);font-weight:700;white-space:nowrap}
