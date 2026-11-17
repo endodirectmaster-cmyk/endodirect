@@ -133,7 +133,7 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
    esconder "Transgeneridade · 0 diretrizes". Dentro dos Resumos: tirar o "1 capítulo" repetido.
 3. ✅ FEITO em 17/11 (sw v433). Mural de artigos: título justificado com buracos no celular → título alinhado à esquerda; filtros
    (4 caixas + chave + 2 faixas + Limpar) atrás de um botão "Filtros"; texto longo do cartão recolhido.
-4. Notas: no celular, lista e editor espremidos lado a lado → uma coluna (nota abre em tela própria).
+4. ✅ FEITO em 17/11 (sw v434). Notas: no celular, lista e editor espremidos lado a lado → uma coluna (nota abre em tela própria).
 5. Revisão (933 cards numa página só) e Podcasts (210 episódios numa página só) → 10/30/50 por página.
 6. Questão do Dia do aluno no formato novo do professor (data em bloco, subespecialidade, começo do enunciado).
 7. ✅ FEITO em 16/11 (pedido do professor com prints): Perfil do aluno sem buraco, "Assinatura e conta" num cartão, newsletter em 2 colunas.

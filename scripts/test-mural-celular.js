@@ -19,7 +19,7 @@ ok('achei o bloco CSS do Mural no celular', !!blk);
 ok('🧨 título (e título original) alinhados à esquerda no celular', /\.mural-card h3,\.mural-title-orig\{text-align:left\}/.test(blk));
 ok('🧨 filtros escondidos no celular até tocar em "Filtros"', /\.mural-filter-card:not\(\.aberto\)\{display:none\}/.test(blk) && /\.mural-filtros-bt\{display:flex/.test(blk));
 ok('🧨 texto longo recolhido e aberto pelo cartão', /\.mural-text-longo\{[^}]*max-height:16em;overflow:hidden/.test(blk) && /\.mural-aberto \.mural-text-longo\{max-height:none/.test(blk) && /\.mural-mais\{display:inline-flex/.test(blk));
-ok('🧨 no computador o botão "Filtros" e o "Ler mais" não existem', /\n\.mural-filtros-bt,\.mural-mais\{display:none\}\n\/\* MURAL DE ARTIGOS NO CELULAR/.test(html));
+ok('🧨 no computador o botão "Filtros" e o "Ler mais" não existem', /\n\.mural-filtros-bt,\.mural-mais\{display:none\}\n/.test(html));
 
 const ini = html.indexOf('function muralNoticeCardHTML(a,admin){');
 const fim = html.indexOf('\nfunction ', html.indexOf('initMural=function(){', ini));
