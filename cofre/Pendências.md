@@ -126,7 +126,7 @@ ferramentas... antes de formatar, sugeri aqui para discutirmos." Capturas no tam
 painel do aluno pela conta do revisor (escritas bloqueadas); painel do professor desenhado localmente com
 o conteúdo que o revisor enxerga (Analytics, Estudantes, Suporte e fila da Questão do Dia ficaram de fora:
 precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como foram enviadas:
-1. Dashboard: os 6 números do topo (um por linha, meia tela) em grade 2×3; o bloco "933 Flashcards / 20 para
+1. ✅ FEITO em 16/11 (sw v431). Dashboard: os 6 números do topo (um por linha, meia tela) em grade 2×3; o bloco "933 Flashcards / 20 para
    revisar / 0 mapas" (repete o 933) numa linha só; Cronograma/Revisão/Notas num cartão com três linhas.
 2. Listas por subespecialidade (Flashcards, Mapas, Diretrizes, Resumos; aluno e professor): cartões altos
    (ícone numa linha, nome na outra) → grade de 2 colunas ou linhas compactas; mesma ordem em todas;
@@ -142,7 +142,7 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
    aluno) e Provas & Questões (aba "Banco de questõ…" cortada).
 10. Acertos finos: margens e títulos desalinhados (Diretrizes, Resumos, Simulado Cronometrado);
     "Endocrinologia Esportiva" × "Endocrinologia do Esporte".
-- [ ] Professor escolher quais fazer (e em que ordem).
+- [x] Professor escolheu (16/11, ~22h30): **1 a 5**, nessa ordem ("Pode ser"). 6, 8, 9 e 10 ficam para depois.
 
 ## 📱 App do iPhone 1.2 (professor, 16/11: "Pode fazer" para Face ID + os três itens)
 

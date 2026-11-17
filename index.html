@@ -527,6 +527,10 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .acv-num{font-size:1.95rem;font-weight:800;color:var(--tx);line-height:1.1;margin-top:.35rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .acv-de{font-size:.92rem;font-weight:600;color:var(--t3);letter-spacing:0}
 .acv-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex:none}
+.card.dash-atalhos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
+.dash-at{padding:1rem 1.1rem;min-width:0}
+.dash-at+.dash-at{border-left:1px solid var(--bd)}
+.dash-at-h{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.45rem}
 .dash-main{min-width:0}
 .dash-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:10px}
 .rail-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem .9rem}
@@ -1495,6 +1499,22 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .chat-input-row{padding:.65rem .8rem calc(.65rem + env(safe-area-inset-bottom))}
   .modal-bg{align-items:flex-end;padding:0}
   .modal-box{width:100vw;max-height:92dvh;border-radius:18px 18px 0 0;overflow:auto}
+}
+/* DASHBOARD COMPACTO NO CELULAR (proposta 1 da revisão de formatação, aprovada pelo professor em 16/11/2026: "Pode
+   ser"). Antes: os 6 números do acervo um por linha (meia tela), o trio Flashcards/Cards p/ revisar/Meus mapas
+   empilhado, e Cronograma/Revisão/Notas em três cartões com o título partido em duas linhas. */
+@media (max-width:820px){
+  .dash-acervo{grid-template-columns:1fr 1fr;gap:8px}
+  .acv{padding:.75rem .8rem;gap:.45rem;border-radius:12px;align-items:flex-start}
+  .acv-lbl{font-size:.72rem}
+  .acv-num{font-size:1.45rem;margin-top:.25rem}
+  .acv-de{font-size:.72rem}
+  .acv-ico{width:30px;height:30px;font-size:.9rem;border-radius:9px}
+  .g3.dash-mini{grid-template-columns:repeat(3,1fr);gap:8px}
+  .g3.dash-mini .card{padding:.7rem .35rem}
+  .card.dash-atalhos{grid-template-columns:1fr}
+  .dash-at{padding:.75rem .9rem}
+  .dash-at+.dash-at{border-left:0;border-top:1px solid var(--bd)}
 }
 @media (max-width:560px){
   .login-card{max-width:100%;box-shadow:0 10px 35px rgba(26,39,68,.14)}
@@ -2958,7 +2978,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div id="dash-avisos" style="display:none;margin-bottom:10px"></div>
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
-        <div class="g3" style="margin-bottom:10px">
+        <div class="g3 dash-mini" style="margin-bottom:10px">
           <div class="card" style="text-align:center;cursor:pointer" id="dc-flash"><div style="font-size:1.45rem;font-weight:700;color:var(--pur)" id="d-fcn">0</div><div style="font-size:.66rem;color:var(--t3)">Flashcards</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-sr"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="d-sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Cards p/ revisar</div></div>
           <div class="card" style="text-align:center;cursor:pointer" id="dc-mm"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)" id="d-mmn">0</div><div style="font-size:.66rem;color:var(--t3)">Meus mapas</div></div>
@@ -2967,10 +2987,10 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <div class="g2" style="margin-bottom:10px">
           <div class="rec-box"><div style="font-size:1.3rem;margin-bottom:.4rem">⚡</div><div style="font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:.3rem">Recomendações IA</div><div style="font-size:.69rem;color:rgba(255,255,255,.65);line-height:1.55" id="d-rec">Responda questões para receber recomendações.</div><button class="btn btn-sm" id="d-chat-btn" style="margin-top:.7rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);font-size:.67rem">💬 Perguntar à IA</button></div>
         </div>
-        <div class="g3">
-          <div class="card"><div class="card-head"><span class="card-title">📅 Cronograma</span><button class="btn btn-ghost btn-sm" id="d-crono-btn">Ver</button></div><div id="d-crono-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum plano.</div></div></div>
-          <div class="card"><div class="card-head"><span class="card-title">🔁 Revisão</span><button class="btn btn-ghost btn-sm" id="d-sr-btn">Revisar</button></div><div id="d-sr-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum card.</div></div></div>
-          <div class="card"><div class="card-head"><span class="card-title">📓 Notas</span><button class="btn btn-ghost btn-sm" id="d-notas-btn">Ver</button></div><div id="d-notas-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhuma nota.</div></div></div>
+        <div class="card dash-atalhos">
+          <div class="dash-at"><div class="dash-at-h"><span class="card-title">📅 Cronograma</span><button class="btn btn-ghost btn-sm" id="d-crono-btn">Ver</button></div><div id="d-crono-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum plano.</div></div></div>
+          <div class="dash-at"><div class="dash-at-h"><span class="card-title">🔁 Revisão</span><button class="btn btn-ghost btn-sm" id="d-sr-btn">Revisar</button></div><div id="d-sr-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhum card.</div></div></div>
+          <div class="dash-at"><div class="dash-at-h"><span class="card-title">📓 Notas</span><button class="btn btn-ghost btn-sm" id="d-notas-btn">Ver</button></div><div id="d-notas-prev"><div style="font-size:.74rem;color:var(--t3)">Nenhuma nota.</div></div></div>
         </div>
        </div>
        <aside class="dash-rail" id="dash-rail"></aside>
