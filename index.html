@@ -2065,7 +2065,6 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .ig-ver-dica b{color:#fff}
 .faceid-linha{display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .faceid-linha-tit{font-size:.95rem;font-weight:700;color:var(--tx)}
-.faceid-linha-sub{font-size:.76rem;line-height:1.45;color:var(--t2);margin-top:.2rem;max-width:46ch}
 /* Chave no estilo do iPhone (professor, 16/11: "clica, arrasta para o lado e fica verde"). */
 .faceid-switch{width:51px;height:31px;border-radius:999px;border:none;padding:0;background:var(--bd2);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s ease}
 .faceid-switch.on{background:#34c759}
@@ -10456,7 +10455,8 @@ function faceIdPerfilRender(){
     var ligado=faceIdConta()===String(currentUser.email||'').toLowerCase();
     var cartao='<div class="card faceid-linha">'
       +'<div><div class="faceid-linha-tit">Entrar com '+esc(faceIdNome)+'</div>'
-      +'<div class="faceid-linha-sub">'+(ligado?'Ao abrir o app e depois de "Sair", o '+esc(faceIdNome)+' libera o acesso. Para sair de vez da conta, desligue e toque em Sair.':'Ao abrir o app, o '+esc(faceIdNome)+' libera o acesso, sem digitar senha.')+'</div></div>'
+      // sem legenda (professor, 16/11: "Acho que não precisa mais dessa legenda"): a chave fala por si
+      +'</div>'
       +'<button class="faceid-switch'+(ligado?' on':'')+'" type="button" role="switch" aria-checked="'+(ligado?'true':'false')+'" aria-label="Entrar com '+esc(faceIdNome)+'" data-faceid-perfil="1"><span class="fs-dot"></span></button></div>';
     faceIdPerfilCaixas().forEach(function(box){
       box.style.display='';
