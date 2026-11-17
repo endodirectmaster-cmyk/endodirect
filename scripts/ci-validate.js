@@ -1346,6 +1346,17 @@ try {
   fail('regressão de contadores/Calculadoras/Questão do Dia falhou:\n' + out);
 }
 
+// 17c-undecies-bn. PROPOSTAS 9 E 10 DA REVISÃO DE FORMATAÇÃO + PEDIDO PONTUAL DE FEEDBACK (17/11/2026): abas e
+//      capas do painel do professor no celular, títulos alinhados, "Endocrinologia do Esporte" na tela (valor
+//      guardado igual), "Este simulado ajudou? 👍 👎" no fim do simulado (1×/7 dias, pelo Suporte).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-prof-acertos-feedback.js')], { stdio: 'pipe' });
+  ok('painel do professor no celular, acertos finos e feedback pontual no fim do simulado');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do painel do professor/acertos/feedback pontual falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

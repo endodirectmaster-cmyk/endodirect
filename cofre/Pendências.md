@@ -119,7 +119,7 @@ Metricool e Supabase** pela página claude.ai/code/routines (conferido: só esse
 às 18h agendado** à mão (post 430499584; imagem trocada pela arte nova às 20h22 de 16/11, a pedido do professor: agora post 430801651, mídia lida direto do nosso bucket). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). Rodapé e cabeçalho fora das faixas do
 Instagram: FEITO (V=2); o professor abriu a Fila às 16h56 de 16/11 e as 30 artes foram refeitas no desenho novo (conferido: hash V=2 bate, JPG público abre).
 
-## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026; 1 a 5 feitas em 16–17/11; 6, 8, 9 e 10 aguardam o professor)
+## 🎨 Revisão de formatação dos dois painéis (propostas de 16 e 17/11/2026; TODAS feitas em 16–17/11, sw v431–v440)
 
 Professor: "dá uma passada com calma, tanto no painel do professor como no painel do estudante, nas
 ferramentas... antes de formatar, sugeri aqui para discutirmos." Capturas no tamanho do iPhone (390 px):
@@ -138,14 +138,14 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
 6. ✅ FEITO 17/11 (sw v439). Questão do Dia do aluno no formato novo do professor (data em bloco, subespecialidade, começo do enunciado).
 7. ✅ FEITO em 16/11 (pedido do professor com prints): Perfil do aluno sem buraco, "Assinatura e conta" num cartão, newsletter em 2 colunas.
 8. ✅ FEITO 17/11 (sw v439). Contadores empilhados (Caderno de erros, Revisão, Enquete EMC) → uma linha de 3 (ou 2×2).
-9. Painel do professor: Cursos (abas quebrando em 2 linhas; capas enormes em 1 coluna → 2 colunas como o
+9. ✅ FEITO 17/11 (sw v440). Painel do professor: Cursos (abas quebrando em 2 linhas; capas enormes em 1 coluna → 2 colunas como o
    aluno) e Provas & Questões (aba "Banco de questõ…" cortada).
-10. Acertos finos: margens e títulos desalinhados (Diretrizes, Resumos, Simulado Cronometrado);
+10. ✅ FEITO 17/11 (sw v440). Acertos finos: margens e títulos desalinhados (Diretrizes, Resumos, Simulado Cronometrado);
     "Endocrinologia Esportiva" × "Endocrinologia do Esporte".
 - [x] Professor escolheu (16/11, ~22h30): **1 a 5**, nessa ordem ("Pode ser"). 6, 8, 9 e 10 ficam para depois.
 - 17/11 (professor: "ficaram muito boas. Parabéns. Tem mais alguma formatação?"): nova passada no celular (390 px,
   conta do revisor), propostas novas. Professor (17/11): "Eu acato as sugestões" e "Concordo com tudo. Pode fazer"
-  (todas: 6, 8, 9, 10 e 11 a 17, mais o Feedback fora do topo e o pedido pontual de feedback):
+  (todas: 6, 8, 9, 10 e 11 a 17, mais o Feedback fora do topo e o pedido pontual de feedback, este também ✅ sw v440):
   11. ✅ FEITO 17/11 (sw v437). Podcasts: cada episódio ocupa ~1 tela; descrição recolhida em 3 linhas com "Ler mais", referências e player compactos.
   12. ✅ FEITO 17/11 (sw v437). Caderno de erros e Revisão: tirar o jargão "intervalo 0d · EF 2.5"; "Devido" → "Revisar hoje" / "Próxima revisão
       em N dias", na linha da subespecialidade (cada item perde uma linha).
