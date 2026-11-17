@@ -9,7 +9,13 @@ atualizado: 2026-11-17
 
 Código pronto (plugin Filesystem 8.1.5, `erro.html` que lê as áreas baixadas, `PrivacyInfo.xcprivacy`,
 MARKETING_VERSION 1.3). O site (sw v443) já grava o pacote quando o app tem o plugin; no app 1.2 nada muda.
-- [ ] Rodar "App iOS" em `compilar` e depois em `testflight` (build da 1.3).
+- [x] "App iOS" em `compilar` (rodada 44153472985, sucesso: o projeto com o plugin compila).
+- [ ] `testflight` falhou 2× (builds 14 e 15, 17/11 19:12 e 19:30 UTC) no mesmo ponto: `exportArchive Error
+  Downloading App Information` (a Apple não devolveu os dados do app na exportação; a 2ª tentativa do roteiro,
+  assinatura automática, falha por desenho: "no devices"). A 1.2 (12) subiu do mesmo jeito em 16/11. Suspeita
+  principal: contrato novo pendente no App Store Connect (só o titular aceita) ou instabilidade da Apple.
+  Professor: abrir o App Store Connect e ver se há faixa pedindo para aceitar um contrato; depois, rodar de novo.
+- Notado no e-mail (16/11 23:05 UTC): a **1.1 foi aprovada** ("eligible for distribution").
 - [ ] Professor: no TestFlight, baixar uma área com internet, pôr em modo avião, fechar o app e abrir de novo
   (deve aparecer a tela "Sem internet" com as áreas baixadas).
 - [ ] Enviar a 1.3 à Apple na fila depois da 1.1 e da 1.2.
