@@ -10,6 +10,18 @@ aplicativo no google play e apple store. Me de o passo a passo"*. A pesquisa (fo
 oficiais da Apple, do Google e do gov.br, lidas em 18/10) e o passo a passo foram
 entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
 
+## 📴 Versão 1.3: Resumos sem internet (17/11/2026)
+
+Pedido do professor ("Resumos sem internet no app. Baixar uma subespecialidade para ler offline").
+O app carrega o site; sem rede, o iPhone mostra `app-ios/www/erro.html`, que é do próprio app e não
+enxerga o IndexedDB do site. Por isso a 1.3 traz o plugin `@capacitor/filesystem` (8.1.5): ao baixar
+uma área, o site grava também `Library/Caches/offline/leitor.json` + `fig/`, e o `erro.html` mostra as
+áreas, os capítulos e o texto com figuras (mesmo visual do app). Sem pacote, ou com mais de 30 dias
+sem conexão, fica a mensagem de sempre. `ios/App/App/PrivacyInfo.xcprivacy` declara as datas de arquivo
+(C617.1), exigência da Apple para o plugin. Por que não service worker no app: no WKWebView ele só
+existe com "App-Bound Domains", que bloqueia navegação para fora dos domínios listados (iframes de
+vídeo, pagamento): risco alto para uma versão em revisão. Situação: ver Pendências.
+
 ## ✅ APROVADO NA APP STORE (16/11/2026)
 
 E-mail da Apple às 04h14 (horário de Brasília) de 16/11: **"Endodirect Endocrinologia" 1.0 para iOS aprovado

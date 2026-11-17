@@ -5,6 +5,15 @@ atualizado: 2026-11-17
 
 # Pendências
 
+## 📱 App do iPhone 1.3: Resumos sem internet (17/11)
+
+Código pronto (plugin Filesystem 8.1.5, `erro.html` que lê as áreas baixadas, `PrivacyInfo.xcprivacy`,
+MARKETING_VERSION 1.3). O site (sw v443) já grava o pacote quando o app tem o plugin; no app 1.2 nada muda.
+- [ ] Rodar "App iOS" em `compilar` e depois em `testflight` (build da 1.3).
+- [ ] Professor: no TestFlight, baixar uma área com internet, pôr em modo avião, fechar o app e abrir de novo
+  (deve aparecer a tela "Sem internet" com as áreas baixadas).
+- [ ] Enviar a 1.3 à Apple na fila depois da 1.1 e da 1.2.
+
 ## 📚 Artigos canônicos dos Resumos: 110 em rascunho, à espera da liberação (17/11)
 Professor (17/11): "não vou ter como ver todos os artigos"; quer em cada subespecialidade os artigos
 pivotais/canônicos de cada tema, conferidos por subagentes, em texto 100% técnico ("evitar jargão de IA").

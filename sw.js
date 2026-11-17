@@ -5,9 +5,10 @@
    - Navegações (HTML): NETWORK-FIRST (online sempre pega o app fresco; offline
      cai no último index.html cacheado).
    - /api/*: NUNCA cacheado (sempre rede).
-   - Cross-origin (Supabase, jsDelivr, Vimeo, etc.): passa direto, sem interceptar.
+   - Cross-origin (Supabase, jsDelivr, Vimeo, etc.): passa direto, sem interceptar — menos a
+     biblioteca supabase-js (rede primeiro, cópia sem rede), para os Resumos baixados abrirem offline.
    - Estáticos do próprio domínio: stale-while-revalidate. */
-var CACHE = 'endodirect-v442';
+var CACHE = 'endodirect-v443';
 var ASSETS = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
@@ -35,7 +36,25 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url;
   try { url = new URL(req.url); } catch (err) { return; }
-  if (url.origin !== self.location.origin) return;      // cross-origin: não intercepta
+  if (url.origin !== self.location.origin) {
+    // Exceção única (17/11/2026, Resumos sem internet): a biblioteca de login do Supabase, para o app
+    // abrir sem rede e mostrar as áreas baixadas. Rede primeiro (online vem sempre a atual); sem rede,
+    // a última cópia. A resposta é opaca (script sem CORS): o cache aceita e o <script> a executa.
+    if (url.hostname === 'cdn.jsdelivr.net' && url.pathname.indexOf('/npm/@supabase/supabase-js') === 0) {
+      e.respondWith(
+        fetch(req).then(function (r) {
+          if (r && (r.ok || r.type === 'opaque')) {
+            var copy = r.clone();
+            caches.open(CACHE).then(function (c) { c.put(req, copy); });
+          }
+          return r;
+        }).catch(function () {
+          return caches.match(req).then(function (c) { return c || Response.error(); });
+        })
+      );
+    }
+    return;                                               // demais cross-origin: não intercepta
+  }
   if (url.pathname.indexOf('/api/') === 0) return;       // API: sempre rede
 
   // Paginas publicas (SEO), servidas pelo servidor: sempre rede, nunca cache.
