@@ -169,6 +169,7 @@ async function cartoesPerfil() {
   ok('🧨 tocar na chave ligada desliga (desliza na hora e grava)', !!bt.cliques[0] && (bt.cliques[0](), desligou.length === 1 && !bt.classList.has('on') && bt.attrs['aria-checked'] === 'false' && bt.disabled === true));
   ok('toque repetido durante a animação não faz nada', (bt.cliques[0](), desligou.length === 1));
   await espera(300); await redesenha();
+  ok('cartão sem legenda debaixo do título (professor, 16/11: "não precisa mais dessa legenda")', !/faceid-linha-sub|libera o acesso/.test(prof.innerHTML) && /Entrar com /.test(prof.innerHTML));
   ok('depois: chave desligada no redesenho', /aria-checked="false"/.test(chave(prof)) && !/faceid-switch on/.test(chave(prof)));
   rostoOk = false;
   let b2 = prof.querySelector(); b2.cliques[0]();
