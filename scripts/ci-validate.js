@@ -1254,6 +1254,16 @@ try {
   fail('regressão do perfil do aluno falhou:\n' + out);
 }
 
+// 17c-undecies-be. DASHBOARD COMPACTO NO CELULAR (proposta 1 da revisão de formatação, "Pode ser", 16/11/2026):
+//      acervo em 2×3, trio Flashcards/Revisar/Mapas numa linha, Cronograma/Revisão/Notas num cartão.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-dash-compacto.js')], { stdio: 'pipe' });
+  ok('dashboard compacto: acervo 2×3, trio numa linha, atalhos num cartão');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do dashboard compacto falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
