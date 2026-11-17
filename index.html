@@ -18815,7 +18815,7 @@ function igAnswerSVG(it){
 function igPromoSVG(t){
   var pad=90,cw=IG_W-2*pad,p=[];
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
-  p.push('<text x="'+(IG_W/2)+'" y="430" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_GOLD+'" letter-spacing="4">ENDODIRETO</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="430" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_GOLD+'" letter-spacing="4">ENDODIRECT</text>');
   var tl=igWrap(t.nome,'66px Arial',cw);
   p.push('<text text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="66" font-weight="800" fill="'+IG_TX+'">'+tl.map(function(l,i){return '<tspan x="'+(IG_W/2)+'" y="'+(560+i*80)+'">'+igXml(l)+'</tspan>';}).join('')+'</text>');
   var cy=560+tl.length*80+34,cl=igWrap(t.cta,'40px Arial',cw-40);
@@ -19969,9 +19969,9 @@ function bindAdmStories(){
     }).catch(function(e){notify((e&&e.message)||'Falha ao renderizar.','err');}).then(function(){prev.disabled=false;prev.innerHTML='👁 Pré-visualizar';});
   });
   var dlq=document.getElementById('ig-dlq');
-  if(dlq)dlq.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igDownload('q',d,'endodireto-'+igFnameSub(d)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
+  if(dlq)dlq.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igDownload('q',d,'endodirect-'+igFnameSub(d)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
   var dla=document.getElementById('ig-dla');
-  if(dla)dla.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igDownload('a',d,'endodireto-'+igFnameSub(d)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
+  if(dla)dla.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;igDownload('a',d,'endodirect-'+igFnameSub(d)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
   var cpq=document.getElementById('ig-copyq');
   if(cpq)cpq.addEventListener('click',function(){var d=igReadDraft();if(!igValidDraft(d))return;try{navigator.clipboard.writeText(igCaptionQ(d));notify('Legenda da pergunta copiada!','ok');}catch(e){notify('Não foi possível copiar.','err');}});
   var cpa=document.getElementById('ig-copya');
@@ -20021,8 +20021,8 @@ function bindAdmStories(){
   igRenderExpImgPrev();
   var main=document.getElementById('adm-main');
   main.querySelectorAll('[data-ig-load]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igLoad,10)];if(!it)return;igEditId=it.id;stShowView('manual');igFillForm(it);try{document.getElementById('ig-stem').scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}notify('Editando — altere e clique em "Aprovar" para salvar.','ok');});});
-  main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodireto-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
-  main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodireto-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
+  main.querySelectorAll('[data-ig-dlq]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDlq,10)];if(it)igDownload('q',it,'endodirect-'+igFnameSub(it)+'-pergunta.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
+  main.querySelectorAll('[data-ig-dla]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igDla,10)];if(it)igDownload('a',it,'endodirect-'+igFnameSub(it)+'-gabarito.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});});
   main.querySelectorAll('[data-ig-toggle]').forEach(function(b){b.addEventListener('click',function(){var it=igStories[parseInt(b.dataset.igToggle,10)];if(!it)return;var post=(it.status!=='posted');it.status=post?'posted':'queued';if(post)it.postedAt=Date.now();
     // A postada entra no Banco; a reaberta sai (ver qotdNoBanco). Antes do save, para ir no mesmo.
     var noBanco=null;try{if(post){delete it.foraDoBanco;noBanco=qotdNoBanco(it,provasDB,Date.now());}else if(qotdForaDoBanco(it,provasDB))noBanco='saiu';if(noBanco)lsSet('provas',provasDB);}catch(e){noBanco=null;}
@@ -20033,7 +20033,7 @@ function bindAdmStories(){
   bindIgFilaDrag(main);
   main.querySelectorAll('[data-ig-del]').forEach(function(b){b.addEventListener('click',function(){var i=parseInt(b.dataset.igDel,10);if(!confirm('Excluir esta questão da fila?'))return;igStories.splice(i,1);persistIgStories();renderAdmSec('stories');notify('Questão removida.','ok');});});
   var pdl=document.getElementById('ig-promo-dl');
-  if(pdl)pdl.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t)igDownload('promo',t,'endodireto-promo-'+igFnameSub({sub:t.nome})+'.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
+  if(pdl)pdl.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t)igDownload('promo',t,'endodirect-promo-'+igFnameSub({sub:t.nome})+'.png').catch(function(e){notify((e&&e.message)||'Falha.','err');});});
   var pcp=document.getElementById('ig-promo-copy');
   if(pcp)pcp.addEventListener('click',function(){var t=IG_TOOLS[parseInt((document.getElementById('ig-promo-sel')||{}).value,10)||0];if(t){try{navigator.clipboard.writeText(igCaptionPromo(t));notify('Legenda do promo copiada!','ok');}catch(e){notify('Não foi possível copiar.','err');}}});
   try{renderIgLote();}catch(e){}

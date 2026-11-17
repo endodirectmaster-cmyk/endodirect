@@ -55,7 +55,10 @@ https://apps.apple.com/br/app/id6833147654.
   5. ✅ (código) Teclado numérico na calculadora da Mayo, no app (professor: "Pode fazer"; ver [[Calculadoras]]).
   6. ✅ Notificações nativas (APNs) no app 1.1: ver [[Pendências]] (seção das notificações). Build 9 no TestFlight
      (16/11, 10h07), aviso de teste recebido no iPhone do professor (10h32).
-  7. ✅ **1.1 (9) enviada à revisão da Apple em 16/11, 10h53 BRT.** Aprovada → o professor libera.
+  7. ✅ **1.1 (9) enviada à revisão da Apple em 16/11, 10h53 BRT.** **Aprovada às 20h05 de 16/11** (e-mail "Review of
+     your submission has been completed"; ~9 h na fila). Lançamento manual: **o professor clicou em "Liberar esta versão" às ~20h25 de 16/11.**
+     Já aparecendo na App Store na mesma noite. **Aviso aos alunos: o professor disse que não precisa.** Falta: envio
+     da 1.2 (build 12 no TestFlight), depois do teste do "Salvar imagem".
      Vai no build da 1.1.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
