@@ -1,6 +1,6 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-11-13
+atualizado: 2026-11-17
 ---
 
 # Dados e Supabase
@@ -109,6 +109,14 @@ atualizado: 2026-11-13
   backup e o motivo dizem "capítulo", pelo `ferramentas/grava_cap.py`), e a v17 voltou ao 410.
   Lote 6 (03/11): v24 gravou 10, 40, 42 e 60 às 20h43 UTC. A sessão reiniciou entre gerar o token e o deploy (36 min) e de novo antes de desligar; o prazo de 60 min desligou a função sozinho às 21h06, e a v25 (410) entrou à 00h05 de 04/11, com o token apagado. O `grava_lote.py` agora usa a data do lote no id do backup (`DATA_LOTE`, padrão 2026-11-03).
   Em 04/11, v26 gravou o capítulo 84 (alinhado ao LATS 2026) pelo `grava_cap.py`, que agora usa `DATA_CAP` no id do backup e cita a regra de 31/10 no motivo; v27 voltou ao 410, token apagado.
+  Em 17/11 a função ganhou um modo **só de acréscimo** (v28–v29): recebe até 60 itens `tipo:'artigo'` com `rascunho:true`
+  e `privado:true` de uma lista fechada de subespecialidades, faz o ensaio (só leitura: md5 de cada item como o Postgres
+  leu, `md5(resumo)` e md5 dos `pts` unidos por quebra de linha, e se já existe por sub+tema+tipo) e, com `ensaio:false`,
+  backup → `jsonb_set` com `||` e guarda de idempotência → confere que `payload - 'diretrizes'` e os itens antigos têm o
+  mesmo md5 de antes (senão, `throw` e a transação volta). Gravou os 50 artigos dos Resumos (233 → 283) às 15h41 UTC; v30
+  voltou ao 410, token apagado. Script do cliente: `scratchpad/artigos/post.js` (lê o token de um arquivo 0600, nunca o
+  imprime). **Lição:** no `postgres` do npm, `${texto}::jsonb` manda o parâmetro como JSON e o texto vira um escalar
+  string ("cannot extract elements from a scalar"); usar `(${texto}::text)::jsonb`.
   Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
