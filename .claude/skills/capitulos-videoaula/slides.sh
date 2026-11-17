@@ -47,9 +47,14 @@ fi
 
 # Trocas de slide: 2 quadros por segundo e corte de cena bem baixo (slide narrado muda
 # pouco de pixel; com 0.10 só o 1º quadro passava).
+# CORTE_ESQ=0.6 (aulas com o professor filmado à direita, como as do Endocrinologia Essencial): a
+# troca de slide é medida só na parte esquerda do quadro; sem isso, cada gesto dele contava como
+# slide novo (1.931 quadros em 19 min). Sem a variável, o quadro inteiro, como sempre.
+CORTE=""
+if [[ -n "${CORTE_ESQ:-}" ]]; then CORTE="crop=iw*${CORTE_ESQ}:ih:0:0,"; fi
 rm -f "$DIR"/s_*.jpg "$DIR"/s_*.jpg.txt
 ffmpeg -nostdin -loglevel info -i "$VID" \
-  -vf "fps=2,select='eq(n\,0)+gt(scene\,0.004)',showinfo" -vsync vfr -q:v 3 "$DIR/s_%03d.jpg" 2> "$DIR/ffmpeg.log"
+  -vf "fps=2,${CORTE}select='eq(n\,0)+gt(scene\,0.004)',showinfo" -vsync vfr -q:v 3 "$DIR/s_%03d.jpg" 2> "$DIR/ffmpeg.log"
 grep -o 'pts_time:[0-9.]*' "$DIR/ffmpeg.log" | cut -d: -f2 > "$DIR/tempos.txt"
 
 ls "$DIR"/s_*.jpg | OMP_THREAD_LIMIT=1 xargs -P "$(nproc)" -I{} sh -c 'tesseract "{}" "{}" -l por >/dev/null 2>&1'

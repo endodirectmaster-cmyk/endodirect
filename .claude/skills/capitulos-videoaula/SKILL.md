@@ -26,11 +26,19 @@ from endodirect_global_state g,
      jsonb_array_elements(coalesce(d.item->'videos','[]'::jsonb)) with ordinality v(vid,vord)
 where g.id='main' and jsonb_array_length(coalesce(v.vid->'caps','[]'::jsonb))=0;
 
--- EMC: aulas sem capítulos
-select x.i-1 as k, a->>'title' titulo, a->>'src' src
+-- EMC e Endocrinologia Essencial: aulas sem capítulos (só vídeo do Bunny: .m3u8)
+select x.i-1 as k, a->>'curso' curso, a->>'title' titulo, a->>'src' src
 from endodirect_global_state g, jsonb_array_elements(g.payload->'adm_cursos') with ordinality x(a,i)
-where g.id='main' and a->>'curso'='emc' and jsonb_array_length(coalesce(a->'caps','[]'::jsonb))=0;
+where g.id='main' and a->>'curso' in ('emc','endo_essencial')
+  and a->>'src' like '%.m3u8%'
+  and jsonb_array_length(coalesce(a->'caps','[]'::jsonb))=0;
 ```
+
+Endocrinologia Essencial (pedido do professor de 17/11/2026: "os tópicos da minutagem, assim como já
+existe no programa de educação médica e também nos resumos"): mesma tela (`aulaCapsHTML` no player do
+curso), mesmo dado (`adm_cursos[k].caps`). Os vídeos ficam em outra biblioteca do Bunny
+(`vz-1196f9a8-6ea.b-cdn.net`, liberada na rede do ambiente em 17/11). Aula no Vimeo ou no player
+embutido (`player.mediadelivery.net`) fica sem capítulos: o player deles não deixa saltar o tempo daqui.
 
 Nada faltando: termine aí, sem gravar nada e sem avisar ninguém.
 
@@ -47,7 +55,13 @@ tesseract e escreve:
 - `tabela.txt`: `m:ss  NNNs  sobretítulo | título` a cada troca de slide (o mapa para os capítulos; `NNN` é o segundo que vai em `t`);
 - `slides.txt`: o texto inteiro de cada slide, para conferir um título ilegível.
 
-Leva cerca de 30 s por vídeo de 15 min. Aceita o `.mp4` do Storage (Resumos) e o
+Leva cerca de 30 s por vídeo de 15 min (slide em tela cheia).
+
+**Professor filmado ao lado do slide** (aulas do Endocrinologia Essencial): rode com `CORTE_ESQ=0.6`.
+A troca de slide passa a ser medida só nos 60% da esquerda; sem isso cada gesto conta como slide
+(1.931 quadros numa aula de 19 min; com o corte, 40 trocas legíveis). Os quadros guardados saem
+cortados, o que basta para ler o slide. Leva ~4 min por aula de 20 min. Para ver os subtópicos dentro
+de um mesmo cabeçalho, imprima as linhas 1–4 de cada quadro que muda (segundo e número do quadro). Aceita o `.mp4` do Storage (Resumos) e o
 `playlist.m3u8` do Bunny (EMC).
 
 Armadilhas já pagas:
