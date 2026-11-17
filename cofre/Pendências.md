@@ -119,7 +119,7 @@ Metricool e Supabase** pela página claude.ai/code/routines (conferido: só esse
 às 18h agendado** à mão (post 430499584; imagem trocada pela arte nova às 20h22 de 16/11, a pedido do professor: agora post 430801651, mídia lida direto do nosso bucket). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). Rodapé e cabeçalho fora das faixas do
 Instagram: FEITO (V=2); o professor abriu a Fila às 16h56 de 16/11 e as 30 artes foram refeitas no desenho novo (conferido: hash V=2 bate, JPG público abre).
 
-## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026; 1 a 5 aprovadas, em execução)
+## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026; 1 a 5 feitas em 16–17/11; 6, 8, 9 e 10 aguardam o professor)
 
 Professor: "dá uma passada com calma, tanto no painel do professor como no painel do estudante, nas
 ferramentas... antes de formatar, sugeri aqui para discutirmos." Capturas no tamanho do iPhone (390 px):
@@ -134,7 +134,7 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
 3. ✅ FEITO em 17/11 (sw v433). Mural de artigos: título justificado com buracos no celular → título alinhado à esquerda; filtros
    (4 caixas + chave + 2 faixas + Limpar) atrás de um botão "Filtros"; texto longo do cartão recolhido.
 4. ✅ FEITO em 17/11 (sw v434). Notas: no celular, lista e editor espremidos lado a lado → uma coluna (nota abre em tela própria).
-5. Revisão (933 cards numa página só) e Podcasts (210 episódios numa página só) → 10/30/50 por página.
+5. ✅ FEITO em 17/11 (sw v435). Revisão (933 cards numa página só) e Podcasts (210 episódios numa página só) → 10/30/50 por página.
 6. Questão do Dia do aluno no formato novo do professor (data em bloco, subespecialidade, começo do enunciado).
 7. ✅ FEITO em 16/11 (pedido do professor com prints): Perfil do aluno sem buraco, "Assinatura e conta" num cartão, newsletter em 2 colunas.
 8. Contadores empilhados (Caderno de erros, Revisão, Enquete EMC) → uma linha de 3 (ou 2×2).
