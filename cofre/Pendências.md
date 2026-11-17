@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-16
+atualizado: 2026-11-17
 ---
 
 # Pendências
@@ -119,7 +119,7 @@ Metricool e Supabase** pela página claude.ai/code/routines (conferido: só esse
 às 18h agendado** à mão (post 430499584; imagem trocada pela arte nova às 20h22 de 16/11, a pedido do professor: agora post 430801651, mídia lida direto do nosso bucket). **A conferir:** 17/11 18h e 18/11 (1º da tarefa). Rodapé e cabeçalho fora das faixas do
 Instagram: FEITO (V=2); o professor abriu a Fila às 16h56 de 16/11 e as 30 artes foram refeitas no desenho novo (conferido: hash V=2 bate, JPG público abre).
 
-## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026, aguardando o professor)
+## 🎨 Revisão de formatação dos dois painéis (proposta de 16/11/2026; 1 a 5 aprovadas, em execução)
 
 Professor: "dá uma passada com calma, tanto no painel do professor como no painel do estudante, nas
 ferramentas... antes de formatar, sugeri aqui para discutirmos." Capturas no tamanho do iPhone (390 px):
@@ -131,7 +131,7 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
 2. ✅ FEITO em 16/11 (sw v432). Listas por subespecialidade (Flashcards, Mapas, Diretrizes, Resumos; aluno e professor): cartões altos
    (ícone numa linha, nome na outra) → grade de 2 colunas ou linhas compactas; mesma ordem em todas;
    esconder "Transgeneridade · 0 diretrizes". Dentro dos Resumos: tirar o "1 capítulo" repetido.
-3. Mural de artigos: título justificado com buracos no celular → título alinhado à esquerda; filtros
+3. ✅ FEITO em 17/11 (sw v433). Mural de artigos: título justificado com buracos no celular → título alinhado à esquerda; filtros
    (4 caixas + chave + 2 faixas + Limpar) atrás de um botão "Filtros"; texto longo do cartão recolhido.
 4. Notas: no celular, lista e editor espremidos lado a lado → uma coluna (nota abre em tela própria).
 5. Revisão (933 cards numa página só) e Podcasts (210 episódios numa página só) → 10/30/50 por página.

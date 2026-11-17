@@ -1274,6 +1274,16 @@ try {
   fail('regressão das listas por subespecialidade falhou:\n' + out);
 }
 
+// 17c-undecies-bg. MURAL DE ARTIGOS NO CELULAR (proposta 3 da revisão de formatação, 17/11/2026): título à
+//      esquerda, filtros atrás de "Filtros" e texto longo com "Ler mais". No computador, como antes.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-mural-celular.js')], { stdio: 'pipe' });
+  ok('Mural no celular: título à esquerda, filtros recolhidos, "Ler mais" no texto longo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Mural no celular falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

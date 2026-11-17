@@ -1500,6 +1500,21 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
   .modal-bg{align-items:flex-end;padding:0}
   .modal-box{width:100vw;max-height:92dvh;border-radius:18px 18px 0 0;overflow:auto}
 }
+.mural-filtros-bt,.mural-mais{display:none}
+/* MURAL DE ARTIGOS NO CELULAR (proposta 3 da revisão de formatação, 17/11/2026): título alinhado à esquerda (o
+   justificado abria buracos entre as palavras numa coluna estreita); filtros atrás de "⚙️ Filtros"; texto longo
+   recolhido com "Ler mais". */
+@media (max-width:820px){
+  .mural-card h3,.mural-title-orig{text-align:left}
+  .mural-filtros-bt{display:flex;align-items:center;justify-content:space-between;gap:.6rem;width:100%;margin-bottom:-.35rem;padding:.7rem .95rem;border:1px solid var(--bd);border-radius:var(--r);background:var(--surface);color:var(--tx);font:600 .85rem var(--font);cursor:pointer}
+  .mural-filtros-bt b{color:var(--blue);font-weight:700}
+  .mural-filtros-bt .mf-cnt{font-size:.74rem;font-weight:600;color:var(--t3)}
+  .mural-filtros-bt[aria-expanded="true"]{border-color:var(--blue)}
+  .mural-filter-card:not(.aberto){display:none}
+  .mural-text-longo{margin-bottom:0;max-height:16em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 65%,transparent);mask-image:linear-gradient(#000 65%,transparent)}
+  .mural-aberto .mural-text-longo{max-height:none;-webkit-mask-image:none;mask-image:none}
+  .mural-mais{display:inline-flex;margin:.35rem 0 .6rem;padding:.4rem .8rem;border:1px solid var(--bd2);border-radius:999px;background:transparent;color:var(--blue);font:600 .78rem var(--font);cursor:pointer}
+}
 /* LISTAS POR SUBESPECIALIDADE EM LINHA NO CELULAR (proposta 2 da revisão de formatação, 16/11/2026). Flashcards,
    Mapas, Diretrizes, Resumos e os temas de cada área, no aluno e no professor: o ícone ia numa linha e o nome em
    outra, um cartão de ~100 px por área. Agora ícone à esquerda, nome e contagem à direita (~60 px). Só os cartões
@@ -16193,6 +16208,7 @@ function execNoteCmd(cmd){
 // ── MURAL ──
 var muralFilter='';
 var muralTipoFilter='';
+var muralFiltrosAbertos=false,muralMaisLigado=false; // filtros do Mural abertos no celular; "Ler mais" ligado uma vez
 var muralPeriodicoFilter='';
 var muralSort='relevantes'; // padrão: hierarquia por tipo (Breaking>Comunicado>…>Ensaio>…), data desempata
 var muralShowBreaking=(lsGet('mural_show_breaking')!==false); // mostra Breaking News por padrão
@@ -25052,7 +25068,10 @@ function muralNoticeCardHTML(a,admin){
     +'<div class="mural-date">'+dateBR(a.at)+'</div>'
     +muralLinkArtigoHTML(a)
     +imgHTML
-    +'<div class="mural-text">'+muralTextHTML(muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.')+'</div>'
+    // Texto longo recolhido no celular, com "Ler mais" (proposta 3 da revisão de formatação, 17/11/2026).
+    +(function(){var _b=muralBodyText(a)||'Comunicado publicado pela equipe Endodirect.',_longo=_b.length>700;
+      return '<div class="mural-text'+(_longo?' mural-text-longo':'')+'">'+muralTextHTML(_b)+'</div>'
+        +(_longo?'<button type="button" class="mural-mais" data-mural-mais aria-expanded="false">Ler mais</button>':'');})()
       +muralDiscussaoHTML(a)
     +'<div class="mural-source">Fonte: '+source+'</div>'
     // O botão da discussão só aparece onde ela é POSSÍVEL: link do PMC (texto
@@ -25093,13 +25112,25 @@ initMural=function(){
   var updated=document.getElementById('mural-updated');if(updated)updated.textContent='Atualizado em '+dateBR(latest||Date.now());
   var count=avisos.length+' '+(avisos.length===1?'artigo':'artigos');
   var tema=muralFilter||muralTipoFilter||perOpt.currentLabel||'Todas as subespecialidades';
+  // Filtros atrás de um botão no celular (proposta 3 da revisão de formatação, 17/11/2026): eram 4 caixas, a chave
+  // do Breaking News, 2 faixas e "Limpar" antes do primeiro artigo. No computador, como sempre.
+  var _mfAtivos=[muralFilter,muralTipoFilter,muralPeriodicoFilter].filter(function(v){return !!v;}).length;
   el.innerHTML='<div class="mural-shell">'
     +muralPushCtaHTML()
-    +'<section class="mural-filter-card"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><div class="mural-filter-field"><span class="mural-filter-label">Periódico</span>'+muralPerDropdownHTML('mural-filter-per',perOpt)+'</div><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
+    +'<button type="button" class="mural-filtros-bt" id="mural-filtros-bt" aria-expanded="'+(muralFiltrosAbertos?'true':'false')+'"><span>⚙️ Filtros'+(_mfAtivos?' <b>· '+_mfAtivos+' '+(_mfAtivos===1?'ativo':'ativos')+'</b>':'')+'</span><span class="mf-cnt">'+esc(count)+'</span></button>'
+    +'<section class="mural-filter-card'+(muralFiltrosAbertos?' aberto':'')+'"><div class="mural-filter-main"><label class="mural-filter-field"><span class="mural-filter-label">Subespecialidade</span><select class="mural-filter-select" id="mural-filter">'+opt.html+'</select></label><label class="mural-filter-field"><span class="mural-filter-label">Tipo de artigo</span><select class="mural-filter-select" id="mural-filter-tipo">'+tipoOpts+'</select></label><div class="mural-filter-field"><span class="mural-filter-label">Periódico</span>'+muralPerDropdownHTML('mural-filter-per',perOpt)+'</div><label class="mural-filter-field"><span class="mural-filter-label">Ordenar</span><select class="mural-filter-select" id="mural-filter-sort">'+muralSortOptions(muralSort)+'</select></label><div class="mural-switch-wrap"><button type="button" id="mural-bn-toggle" class="mural-switch'+(muralShowBreaking?' on':'')+'" role="switch" aria-checked="'+(muralShowBreaking?'true':'false')+'" title="Mostrar Breaking News"><span class="ms-dot"></span></button><span>📣 Breaking News</span></div><span class="mural-count-pill">'+esc(count)+'</span><span class="mural-theme-pill">'+esc(tema)+'</span></div><button class="btn btn-outline" id="mural-clear" type="button">Limpar filtro</button></section>'
     +'<section class="mural-grid">'+(pageAvisos.length?pageAvisos.map(function(a){return muralNoticeCardHTML(a,false);}).join(''):'<div class="empty mural-empty">Nenhum aviso encontrado para este filtro.</div>')+'</section>'
     +muralPagerHTML(muralPage,mPages,'mural')
     +((muralHasMore&&admAvisos.filter(function(a){return isRadarAuto(a);}).length>=MURAL_RADAR_WINDOW)?'<section style="text-align:center;margin-top:.8rem"><button type="button" class="btn btn-outline" id="mural-loadmore"'+(muralLoadingMore?' disabled':'')+'>'+(muralLoadingMore?ldHTML('Carregando…'):'⤓ Carregar artigos mais antigos')+'</button><div style="font-size:.72rem;color:var(--t3);margin-top:.4rem">Mostrando os mais recentes — carregue o histórico dos últimos ~90 dias.</div></section>':'')
     +'</div>';
+  if(!muralMaisLigado){muralMaisLigado=true;document.addEventListener('click',function(ev){
+    var b=ev.target&&ev.target.closest&&ev.target.closest('[data-mural-mais]');if(!b)return;
+    var card=b.closest('[data-mural-card]');if(!card)return;
+    var abre=!card.classList.contains('mural-aberto');card.classList.toggle('mural-aberto',abre);
+    b.textContent=abre?'Mostrar menos':'Ler mais';b.setAttribute('aria-expanded',abre?'true':'false');
+    if(!abre)try{card.scrollIntoView({block:'nearest'});}catch(e){}
+  });}
+  var mfb=document.getElementById('mural-filtros-bt');if(mfb)mfb.addEventListener('click',function(){muralFiltrosAbertos=!muralFiltrosAbertos;mfb.setAttribute('aria-expanded',muralFiltrosAbertos?'true':'false');var fc=el.querySelector('.mural-filter-card');if(fc)fc.classList.toggle('aberto',muralFiltrosAbertos);});
   var sel=document.getElementById('mural-filter');if(sel){sel.value=muralFilter;sel.addEventListener('change',function(){muralFilter=this.value;muralPage=0;initMural();});}
   var selt=document.getElementById('mural-filter-tipo');if(selt){selt.value=muralTipoFilter;selt.addEventListener('change',function(){muralTipoFilter=this.value;muralPage=0;initMural();});}
   bindMuralPerDropdown('mural-filter-per',function(v){muralPeriodicoFilter=v;muralPage=0;initMural();});
