@@ -117,6 +117,12 @@ atualizado: 2026-11-17
   voltou ao 410, token apagado. Script do cliente: `scratchpad/artigos/post.js` (lê o token de um arquivo 0600, nunca o
   imprime). **Lição:** no `postgres` do npm, `${texto}::jsonb` manda o parâmetro como JSON e o texto vira um escalar
   string ("cannot extract elements from a scalar"); usar `(${texto}::text)::jsonb`.
+  Às 17h43 de 17/11 a v31 ganhou o modo **substituir/remover/acrescentar** numa transação: substitui
+  só item `tipo:'artigo'` com `rascunho:true` casado por sub+tema (cada alvo tem de casar com
+  exatamente 1, senão nada é gravado), remove do mesmo jeito e acrescenta com guarda de idempotência;
+  backup; confere que `payload - 'diretrizes'` e o array dos itens não tocados têm o mesmo md5 de antes.
+  Gravou 49 substituídos, 1 removido e 61 novos (283 → 343); v32 voltou ao 410, token apagado. Cliente:
+  `scratchpad/artigos/post2.js`. Publicado nunca é alvo: a função recusa item sem `rascunho:true`.
   Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e
