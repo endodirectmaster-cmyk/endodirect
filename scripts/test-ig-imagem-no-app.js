@@ -134,6 +134,14 @@ function fim() {
   const usos = (html.match(/igDownload\(/g) || []).length;
   ok('os botões de imagem (rascunho, pergunta, resposta, divulgação) usam igDownload', usos >= 5, 'usos ' + usos);
 
+  // 7. Grafia da marca (professor, 17/11/2026: "trocar endodireto por endodirect"): nem no nome dos arquivos
+  //    baixados nem na arte de divulgação. Vale para o site e para o código do servidor.
+  const libDir = path.join(raiz, 'lib');
+  const fontes = [['index.html', html]].concat(fs.readdirSync(libDir).filter((f) => f.endsWith('.js')).map((f) => ['lib/' + f, fs.readFileSync(path.join(libDir, f), 'utf8')]));
+  const comNomeAntigo = fontes.filter(([, src]) => /endodireto/i.test(src)).map(([n]) => n);
+  ok('🧨 a marca é Endodirect: "Endodireto" não aparece em arte, arquivo ou texto', !comNomeAntigo.length, comNomeAntigo.join(', '));
+  ok('arquivos baixados com o nome da marca', (html.match(/'endodirect-'\+igFnameSub/g) || []).length >= 4 && /'endodirect-promo-'/.test(html));
+
   if (bad) { console.log('✗ imagem dos Stories no app: ' + bad + ' falha(s)'); process.exit(1); }
   console.log('✓ imagem dos Stories no app: abre em tela própria com Compartilhar (só no toque) e dica de tocar e segurar; site baixa como sempre; permissão da galeria no Info.plist');
 }
