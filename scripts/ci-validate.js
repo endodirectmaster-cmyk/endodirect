@@ -1326,6 +1326,16 @@ try {
   fail('regressão de Podcasts/Revisão/textos falhou:\n' + out);
 }
 
+// 17c-undecies-bl. PROPOSTAS 13, 14 E 16 DA REVISÃO DE FORMATAÇÃO (17/11/2026): Chat com a caixa embaixo no
+//      celular, escolhas em botões grandes (44 px), Feedback fora do topo (menu lateral e Perfil).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-chat-escolhas-feedback.js')], { stdio: 'pipe' });
+  ok('Chat com a caixa embaixo, escolhas em botões grandes, Feedback no menu e no Perfil');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de Chat/escolhas/Feedback falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
