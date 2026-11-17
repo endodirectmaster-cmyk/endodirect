@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-16
+atualizado: 2026-11-17
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-16
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📰 MURAL DE ARTIGOS NO CELULAR (2026-11-17; proposta 3 da revisão de formatação).** No celular: título (e título original) alinhado à esquerda, porque o justificado abria buracos numa coluna estreita; os filtros (4 caixas, chave do Breaking News, 2 faixas e "Limpar") ficam atrás de um botão "⚙️ Filtros", que mostra quantos estão ativos e o total de artigos e lembra se ficou aberto entre as páginas; texto do cartão com mais de 700 caracteres recolhido (16 linhas, com esmaecido) e botão "Ler mais" / "Mostrar menos". O "Ler mais" é ligado uma vez só (guarda `muralMaisLigado`), fora do espaço entre funções que os testes recortam. No computador, nada muda. Teste `test-mural-celular.js`. sw v433.
 - **🗂️ LISTAS POR SUBESPECIALIDADE COMPACTAS (2026-11-16; proposta 2 da revisão de formatação).** No celular, os cartões de área (Flashcards, Mapas, Diretrizes, Resumos e os temas de cada área; aluno e professor) ficam em linha: ícone à esquerda, nome e contagem à direita (~60 px em vez de ~100). Regra só para cartões que começam pelo ícone (`:has(> .dsb-ico)`); os de curso, com capa, não mudam. Flashcards passam à ordem das outras abas (DIR_SUBS). Diretrizes do aluno sem área vazia (saiu "Transgeneridade · 0 diretrizes"). Nos temas, a contagem só aparece quando passa de 1 (saiu o "1 capítulo" repetido). Teste `test-listas-subesp.js`. sw v432.
 - **📊 DASHBOARD COMPACTO NO CELULAR (2026-11-16; proposta 1 da revisão de formatação; professor: "Pode ser" para 1 a 5).** Os 6 números do acervo em grade 2×3 (eram um por linha); Flashcards / Cards p/ revisar / Meus mapas numa linha de 3; Cronograma, Revisão e Notas num cartão (três colunas no computador, três faixas no celular, título e botão na mesma linha). No iPhone a página caiu de ~3.180 para ~2.515 px. Teste `test-dash-compacto.js`. sw v431.
 - **👤 PERFIL DO ALUNO: SEM BURACO E "ASSINATURA E CONTA" NUM CARTÃO SÓ (2026-11-16, 22h; prints do professor no app: "Ficou um buraco aí... Não dá para condensar os dois numa coisa só?").** O buraco era o padding de baixo de dois blocos `.pc` soltos acima do corpo (Face ID e "Seu plano"). Saiu o cartão "Seu plano" (repetia o plano do cartão de assinatura); o Face ID foi para dentro do corpo, depois do Tema. "Assinatura" e "Excluir conta" viraram um cartão "💳 Assinatura e conta": plano, Cancelar assinatura e, numa faixa no pé, "Excluir minha conta" (vermelho, à vista: App Store e Google Play exigem) + "Como funciona"; o que é apagado aparece no 2º passo, junto da confirmação por EXCLUIR. Excluir não foi fundido com cancelar: cancelar mantém a conta, excluir apaga os dados. Newsletter em 2 colunas no celular (proposta 7 da revisão de formatação). Teste `test-perfil-aluno-conta.js` (3 mutações pegas). sw v430.
