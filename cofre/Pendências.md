@@ -143,6 +143,18 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
 10. Acertos finos: margens e títulos desalinhados (Diretrizes, Resumos, Simulado Cronometrado);
     "Endocrinologia Esportiva" × "Endocrinologia do Esporte".
 - [x] Professor escolheu (16/11, ~22h30): **1 a 5**, nessa ordem ("Pode ser"). 6, 8, 9 e 10 ficam para depois.
+- 17/11 (professor: "ficaram muito boas. Parabéns. Tem mais alguma formatação?"): nova passada no celular (390 px,
+  conta do revisor), propostas novas, aguardando escolha:
+  11. Podcasts: cada episódio ocupa ~1 tela; descrição recolhida em 3 linhas com "Ler mais", referências e player compactos.
+  12. Caderno de erros e Revisão: tirar o jargão "intervalo 0d · EF 2.5"; "Devido" → "Revisar hoje" / "Próxima revisão
+      em N dias", na linha da subespecialidade (cada item perde uma linha).
+  13. Chat IA no celular: caixa de pergunta presa embaixo (como no WhatsApp), sugestões logo acima; hoje fica no topo.
+  14. Escolhas pequenas (Fonte IA/Provas/Misto no Simulado; Múltipla escolha/Resposta aberta no OSCE; Manhã/Tarde/Noite
+      no Cronograma) → botões grandes lado a lado, como "Provas anteriores | Banco Salvo".
+  15. Calculadoras: 23 cartões de 3 linhas → linhas compactas (nome + unidade), 2 colunas no computador.
+  16. Barra do topo no celular: Feedback, Chat IA, Gold e a inicial disputam espaço; Feedback e Chat IA como ícones.
+  17. Textos: "Mostrando 3141 de 3141 questão(ões)" → "3.141 questões" (também no botão Estudar); Flashcards
+      "79 NOVOS" repetindo "79 cards" quando todos são novos.
 
 ## 📱 App do iPhone 1.2 (professor, 16/11: "Pode fazer" para Face ID + os três itens)
 
