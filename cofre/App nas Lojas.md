@@ -57,8 +57,11 @@ https://apps.apple.com/br/app/id6833147654.
      (16/11, 10h07), aviso de teste recebido no iPhone do professor (10h32).
   7. ✅ **1.1 (9) enviada à revisão da Apple em 16/11, 10h53 BRT.** **Aprovada às 20h05 de 16/11** (e-mail "Review of
      your submission has been completed"; ~9 h na fila). Lançamento manual: **o professor clicou em "Liberar esta versão" às ~20h25 de 16/11.**
-     Já aparecendo na App Store na mesma noite. **Aviso aos alunos: o professor disse que não precisa.** Falta: envio
-     da 1.2 (build 12 no TestFlight), depois do teste do "Salvar imagem".
+     Já aparecendo na App Store na mesma noite. **Aviso aos alunos: o professor disse que não precisa.**
+  8. ✅ **1.2 (12) enviada à revisão da Apple em 16/11, 21h36 BRT** (Face ID, links que abrem no app, Google na folha
+     da Apple, permissão de salvar na galeria; teste do "Salvar Imagem" ok no iPhone do professor). "O que há de
+     novo" com a linha das notificações (quem pula da 1.0 para a 1.2); nota ao revisor "VERSION 1.2" (Face ID
+     opcional). Lançamento manual, todos de uma vez, classificação mantida. Aprovada → o professor libera.
      Vai no build da 1.1.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
