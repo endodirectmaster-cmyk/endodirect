@@ -149,11 +149,11 @@ precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como for
   11. ✅ FEITO 17/11 (sw v437). Podcasts: cada episódio ocupa ~1 tela; descrição recolhida em 3 linhas com "Ler mais", referências e player compactos.
   12. ✅ FEITO 17/11 (sw v437). Caderno de erros e Revisão: tirar o jargão "intervalo 0d · EF 2.5"; "Devido" → "Revisar hoje" / "Próxima revisão
       em N dias", na linha da subespecialidade (cada item perde uma linha).
-  13. Chat IA no celular: caixa de pergunta presa embaixo (como no WhatsApp), sugestões logo acima; hoje fica no topo.
-  14. Escolhas pequenas (Fonte IA/Provas/Misto no Simulado; Múltipla escolha/Resposta aberta no OSCE; Manhã/Tarde/Noite
+  13. ✅ FEITO 17/11 (sw v438). Chat IA no celular: caixa de pergunta presa embaixo (como no WhatsApp), sugestões logo acima; hoje fica no topo.
+  14. ✅ FEITO 17/11 (sw v438). Escolhas pequenas (Fonte IA/Provas/Misto no Simulado; Múltipla escolha/Resposta aberta no OSCE; Manhã/Tarde/Noite
       no Cronograma) → botões grandes lado a lado, como "Provas anteriores | Banco Salvo".
   15. Calculadoras: 23 cartões de 3 linhas → linhas compactas (nome + unidade), 2 colunas no computador.
-  16. Barra do topo no celular: Feedback, Chat IA, Gold e a inicial disputam espaço; Feedback e Chat IA como ícones.
+  16. ✅ FEITO 17/11 (sw v438; Feedback saiu do topo, Chat IA segue com texto). Barra do topo no celular: Feedback, Chat IA, Gold e a inicial disputam espaço; Feedback e Chat IA como ícones.
   17. ✅ FEITO 17/11 (sw v437). Textos: "Mostrando 3141 de 3141 questão(ões)" → "3.141 questões" (também no botão Estudar); Flashcards
       "79 NOVOS" repetindo "79 cards" quando todos são novos.
 
