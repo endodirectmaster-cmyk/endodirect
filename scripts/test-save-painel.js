@@ -83,6 +83,7 @@ function cenario(servidor) {
         },
         select() {
           return { eq() { return { maybeSingle() {
+            sb.leituras = (sb.leituras || 0) + 1;
             if (servidor.falhaLeitura) return Promise.resolve({ data: null, error: { message: '525' } });
             return Promise.resolve({ data: { payload: clone(servidor.payload), updated_at: servidor.updated_at }, error: null });
           } }; } };
@@ -91,8 +92,8 @@ function cenario(servidor) {
     },
   });
   vm.createContext(sb);
-  vm.runInContext([objeto('GLOBAL_MERGE_KEYS'), DECL || 'var globalReadRetries=0,globalReadRetryTimer=null;', corpo('stableStr'),
-    corpo('itemSig'), corpo('mergeConcurrent'), corpo('captureGlobalBaseline'), corpo('globalStatePayload'),
+  vm.runInContext([objeto('GLOBAL_MERGE_KEYS'), DECL || 'var globalReadRetries=0,globalReadRetryTimer=null;', 'var globalDigitalSync=null;', corpo('stableStr'),
+    corpo('itemSig'), corpo('mergeConcurrent'), corpo('globalDigital'), corpo('captureGlobalBaseline'), corpo('globalStatePayload'),
     corpo('applyStatePayload'), corpo('saveRemoteState')].join('\n'), sb);
   // o painel carregou o estado do servidor (como no hydrate)
   vm.runInContext('applyStatePayload(' + JSON.stringify(servidor.payload) + ');lastGlobalUpdatedAt=' + JSON.stringify(servidor.updated_at) +
@@ -179,10 +180,40 @@ const vivos = (sb) => sb.timers.filter((t) => t.vivo);
     ok(vm.runInContext('globalReadRetries', sb) === 0 && !vivos(sb).length, 'leitura bem-sucedida zera as tentativas e cancela a agendada');
     ok(sb.avisos.some((a) => a.tipo === 'info' && /^Salvo: o servidor voltou/.test(a.msg)), 'depois do aviso de falha, avisa que salvou');
   }
+  // 4) IMPRESSÃO DIGITAL (17/11/2026; travadas no app do iPhone): sem mudança no conteúdo global desde a última
+  //    sincronia, o save NÃO relê nem regrava os ~18 MB; qualquer mudança segue o caminho de sempre.
+  {
+    const servidor = { payload: { diretrizes: [cap(VELHO)], ig_stories: [], provas: [{ id: 'q1', stem: 'x' }] }, updated_at: 't0' };
+    const sb = cenario(servidor);
+    vm.runInContext('globalDigitalSync=globalDigital();', sb); // como o hydrate faz ao terminar a carga
+    sb.leituras = 0;
+    await vm.runInContext('saveRemoteState()', sb);
+    ok(sb.upserts === 0 && sb.leituras === 0, 'save sem mudança global (o do fim do hydrate): nem relê nem regrava o estado global (leu ' + sb.leituras + ', gravou ' + sb.upserts + ')');
+    vm.runInContext("igStories.push({id:'s1',stem:'x'});", sb);
+    await vm.runInContext('saveRemoteState()', sb);
+    ok(sb.upserts === 1 && servidor.payload.ig_stories.length === 1, 'com uma edição do professor, o save global acontece como antes');
+    await vm.runInContext('saveRemoteState()', sb);
+    ok(sb.upserts === 1, 'depois de salvar, um save sem nova mudança não regrava');
+    // o servidor muda sozinho (outro editor/cron) e o painel não mexeu: nada a gravar
+    servidor.payload.diretrizes[0] = cap(NOVO); servidor.updated_at = 't1';
+    await vm.runInContext('saveRemoteState()', sb);
+    ok(sb.upserts === 1 && servidor.payload.diretrizes[0].resumo === NOVO, 'mudança só do servidor: o painel não regrava por cima');
+    // a próxima edição do professor junta a do servidor, como sempre
+    vm.runInContext("igStories.push({id:'s2',stem:'y'});", sb);
+    await vm.runInContext('saveRemoteState()', sb);
+    ok(sb.upserts === 2 && servidor.payload.diretrizes[0].resumo === NOVO && servidor.payload.ig_stories.length === 2,
+      'a edição seguinte grava a do professor sem desfazer a do servidor');
+    // edição DENTRO de um item (mesmo tamanho de lista) também conta
+    vm.runInContext("igStories[0].stem='z';", sb);
+    await vm.runInContext('saveRemoteState()', sb);
+    ok(sb.upserts === 3 && servidor.payload.ig_stories[0].stem === 'z', 'editar um campo de um item existente também salva');
+  }
+  ok(/remoteStateLoaded=true;\n\s*\/\/[^\n]*\n\s*\/\/[^\n]*\n\s*if\(currentUser\.role==='admin'\)\{try\{globalDigitalSync=globalDigital\(\);\}catch\(e\)\{globalDigitalSync=null;\}\}[\s\S]{0,200}refreshAfterRemoteState\(\);/.test(html),
+    'o hydrate tira a impressão digital ANTES do refreshAfterRemoteState (migrações do refresh contam como mudança)');
   if (falhas.length) {
     console.error('✗ save do painel:');
     falhas.forEach((f) => console.error('  - ' + f));
     process.exit(1);
   }
-  console.log('✓ save do painel: o 2º save não desfaz o que o 1º adotou do servidor, e leitura que falha não grava às cegas');
+  console.log('✓ save do painel: o 2º save não desfaz o que o 1º adotou do servidor, leitura que falha não grava às cegas, e save sem mudança global não relê nem regrava os 18 MB');
 })().catch((e) => { console.error(e); process.exit(1); });
