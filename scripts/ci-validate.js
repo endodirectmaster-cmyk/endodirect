@@ -1316,6 +1316,16 @@ try {
   fail('regressão do desempenho do app falhou:\n' + out);
 }
 
+// 17c-undecies-bk. PROPOSTAS 11, 12 E 17 DA REVISÃO DE FORMATAÇÃO (17/11/2026): Podcasts compactos no celular,
+//      "quando revisar" em palavras na Revisão e no Caderno de erros, textos do Banco e dos novos.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-podcasts-revisao-textos.js')], { stdio: 'pipe' });
+  ok('Podcasts compactos, Revisão sem jargão e textos do Banco/novos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de Podcasts/Revisão/textos falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

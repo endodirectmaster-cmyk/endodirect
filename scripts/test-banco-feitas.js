@@ -158,7 +158,7 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(!/btn-sortear-5|function sortearNaoFeitas|Sortear 5 não respondidas/.test(html), '🧨 tela: sem o botão "Sortear 5 não respondidas" (a caixa já mostra só as não respondidas)');
     const upi = corpo('updateProvaInfo');
     ok(/var feitasN=lista\.filter\(function\(q\)\{return !!feitaDe\(q\);\}\)\.length;/.test(upi) && /var n=soNao\?\(lista\.length-feitasN\):lista\.length;/.test(upi), 'updateProvaInfo: conta as respondidas e desconta quando a caixa está marcada');
-    ok(/' · '\+feitasN\+' já respondida'\+\(feitasN===1\?'':'s'\)\+\(soNao\?' \(ocultas\)':''\)/.test(upi), 'updateProvaInfo: "N já respondidas (ocultas)"');
+    ok(/' · '\+nBR\(feitasN\)\+' já respondida'\+\(feitasN===1\?'':'s'\)\+\(soNao\?' \(ocultas\)':''\)/.test(upi), 'updateProvaInfo: "N já respondidas (ocultas)"');
     ok(/Todas as '\+lista\.length\+' questões desses filtros já foram respondidas\. Desmarque a opção para revê-las\./.test(upi), 'updateProvaInfo: quando tudo já foi respondido, diz isso em vez de "Nenhuma questão"');
     const iBind = html.indexOf("document.getElementById('btn-filter-provas').addEventListener('click',function(){");
     const bind = html.slice(iBind, iBind + 2600);
