@@ -1795,6 +1795,97 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
    uma lista do próprio resumo (o resumo às vezes termina numa lista). */
 .dir-pts{margin-top:.9rem;padding:.75rem .9rem;border:1px solid var(--bd2);border-radius:12px;background:var(--s2)}
 .dir-pts-h{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin-bottom:.35rem}
+/* ESTUDOS-CHAVE NO FIM DO CAPÍTULO e REVISÃO RÁPIDA DOS ESTUDOS (17/11/2026) */
+.dir-estudos{margin:1.1rem 0 .4rem;padding:.85rem .9rem;border:1px solid var(--bd2);border-radius:14px;background:var(--s2)}
+.dir-estudos-h{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin-bottom:.55rem}
+.dir-estudos-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.5rem}
+.dir-estudo{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;text-align:left;font:inherit;color:inherit;background:var(--s1,var(--bg));border:1px solid var(--bd2);border-radius:11px;padding:.6rem .7rem;cursor:pointer;-webkit-appearance:none;appearance:none}
+.dir-estudo:hover,.dir-estudo:focus-visible{border-color:var(--blue)}
+.dir-estudo-t{font-size:.86rem;font-weight:700;color:var(--tx)}
+.dir-estudo-f{font-size:.7rem;color:var(--t3)}
+.dir-estudo-d{font-size:.76rem;color:var(--t2);line-height:1.35}
+.dir-voltacap{display:flex;width:100%;align-items:flex-start;gap:.35rem;margin:0 0 .6rem;font-size:.8rem;font-weight:600;color:var(--blue);background:none;border:0;padding:0;cursor:pointer;text-align:left;line-height:1.35;scroll-margin-top:90px}
+.dir-estudos,#panel-resu .dir-back,#panel-resu .ph{scroll-margin-top:90px}
+.dir-rev-btn{margin:0 0 1rem}
+.dir-rev-prog{font-size:.78rem;color:var(--t2);margin:-.3rem 0 .6rem;font-variant-numeric:tabular-nums}
+.dir-rev-card{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:1rem 1.05rem 1.1rem;touch-action:pan-y}
+.dir-rev-tema{font-size:1.08rem;font-weight:800;color:var(--tx);line-height:1.25}
+.dir-rev-fonte{font-size:.74rem;color:var(--t3);margin:.15rem 0 .6rem}
+.dir-rev-card ul{margin:0;padding-left:1.1rem}
+.dir-rev-card li{margin:.32rem 0;font-size:.86rem;line-height:1.45;text-align:justify;text-align-last:left;-webkit-hyphens:auto;hyphens:auto}
+.dir-rev-abre{margin-top:.75rem}
+.dash-cont{display:flex;align-items:center;gap:.8rem;cursor:pointer;padding:.85rem 1rem}
+.dash-cont:hover,.dash-cont:focus-visible{border-color:var(--blue)}
+.dash-cont-ico{font-size:1.5rem;flex-shrink:0}
+.dash-cont-txt{flex:1;min-width:0}
+.dash-cont-k{font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.dash-cont-t{font-size:.9rem;font-weight:700;color:var(--tx);line-height:1.3;margin:.1rem 0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dash-cont-s{font-size:.72rem;color:var(--t2)}
+.dash-cont-bar{height:4px;border-radius:99px;background:var(--bd2);margin-top:.45rem;overflow:hidden}
+.dash-cont-bar span{display:block;height:100%;background:var(--blue);border-radius:99px}
+.dash-cont-go{font-size:.78rem;font-weight:700;color:var(--blue);white-space:nowrap}
+mark.grifo{background:rgba(250,204,21,.38);color:inherit;border-radius:3px;padding:0 1px;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+:root[data-theme="dark"] mark.grifo{background:rgba(250,204,21,.3)}
+mark.grifo.grifo-pisca{outline:2px solid var(--gold);outline-offset:2px}
+.grifo-barra{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:9000;display:none;gap:6px;width:max-content;max-width:calc(100vw - 24px);padding:6px;border-radius:999px;background:#14203a;border:1px solid rgba(255,255,255,.25);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.grifo-barra.on{display:flex}
+.grifo-barra button{white-space:nowrap;border:0;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:.82rem;font-weight:600;padding:.55rem .9rem;cursor:pointer;-webkit-user-select:none;user-select:none}
+.grifo-barra button[data-grifar="x"]{background:transparent;padding:.55rem .7rem}
+.grifo-modal{position:fixed;inset:0;z-index:99990;background:rgba(8,12,24,.6);display:none;align-items:flex-end;justify-content:center;padding:16px}
+.grifo-caixa{width:100%;max-width:560px;background:var(--surface,var(--s1,#fff));color:var(--tx);border:1px solid var(--bd2);border-radius:16px;padding:1rem 1.05rem calc(env(safe-area-inset-bottom,0px) + 1rem);max-height:85vh;overflow-y:auto}
+@media(min-width:700px){.grifo-modal{align-items:center}}
+.grifo-cab{font-size:.85rem;font-weight:700;display:flex;flex-direction:column;gap:.1rem;margin-bottom:.6rem}
+.grifo-cab span{font-size:.7rem;font-weight:500;color:var(--t3)}
+.grifo-trecho,.grifos-item blockquote{margin:0 0 .7rem;padding:.55rem .75rem;border-left:3px solid #facc15;background:var(--s2);border-radius:0 8px 8px 0;font-size:.84rem;line-height:1.5;color:var(--tx)}
+.grifo-lab{display:block;font-size:.72rem;font-weight:700;color:var(--t2);margin-bottom:.3rem}
+.grifo-caixa textarea{width:100%;font:inherit;font-size:16px;line-height:1.45;padding:.55rem .65rem;border:1px solid var(--bd2);border-radius:10px;background:var(--bg);color:var(--tx);resize:vertical}
+.grifo-acoes{display:flex;gap:.45rem;align-items:center;margin-top:.75rem;flex-wrap:wrap}
+.note-item.note-grifos{background:rgba(250,204,21,.12)}
+.grifos-view{display:none;flex:1;overflow-y:auto;padding:1rem 1.2rem}
+.grifos-cab{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
+.grifos-cab h2{font-size:1.05rem;margin:0}
+.grifos-cab .note-voltar{display:none}
+@media(max-width:700px){.grifos-cab .note-voltar{display:inline-flex}}
+.grifos-grupo{margin-bottom:1.1rem}
+.grifos-grupo-h{font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.45rem;display:flex;flex-direction:column}
+.grifos-grupo-h span{font-size:.7rem;font-weight:500;color:var(--t3)}
+.grifos-item{margin-bottom:.7rem}
+.grifos-nota{font-size:.8rem;color:var(--t2);margin:-.3rem 0 .45rem;white-space:pre-wrap}
+.grifos-acoes{display:flex;gap:.35rem;flex-wrap:wrap}
+.tb-busca{width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd2);background:var(--s2);color:var(--tx);font-size:.95rem;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.busca-ov{position:fixed;inset:0;z-index:99980;background:var(--bg);display:none;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+body.busca-aberta{overflow:hidden}
+.busca-topo{display:flex;gap:.5rem;align-items:center;padding:.7rem max(14px,env(safe-area-inset-right,0px)) .7rem max(14px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--bd);background:var(--surface,var(--bg))}
+.busca-topo input{flex:1;min-width:0;font:inherit;font-size:16px;padding:.6rem .8rem;border:1px solid var(--bd2);border-radius:12px;background:var(--s2);color:var(--tx)}
+.busca-res{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:.8rem max(14px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 2rem) max(14px,env(safe-area-inset-left,0px));max-width:860px;width:100%;margin:0 auto;box-sizing:border-box}
+.busca-dica,.busca-total{font-size:.8rem;color:var(--t2);margin:.2rem 0 .8rem}
+.busca-grupo{margin-bottom:1.1rem}
+.busca-grupo h3{font-size:.8rem;font-weight:700;letter-spacing:.03em;color:var(--t2);margin:0 0 .45rem;display:flex;gap:.4rem;align-items:center}
+.busca-grupo h3 span{font-size:.7rem;font-weight:600;color:var(--t3);background:var(--s2);border-radius:99px;padding:.05rem .45rem}
+.busca-item{border:1px solid var(--bd2);border-radius:12px;background:var(--s2);margin-bottom:.45rem;overflow:hidden}
+.busca-abre{display:flex;flex-direction:column;gap:.15rem;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:0;padding:.6rem .75rem;cursor:pointer}
+.busca-ti{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.35}
+.busca-sub{font-size:.7rem;color:var(--t3)}
+.busca-trecho{font-size:.78rem;color:var(--t2);line-height:1.45}
+.busca-item mark,.busca-ov mark{background:rgba(250,204,21,.4);color:inherit;border-radius:2px;padding:0 1px}
+.busca-verso,.busca-coment{font-size:.82rem;line-height:1.5;color:var(--tx);padding:0 .75rem .6rem;white-space:pre-wrap}
+.busca-item .btn{margin:0 .75rem .7rem}
+.off-barra{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:space-between;margin:.2rem 0 .9rem;padding:.6rem .8rem;border:1px solid var(--bd);border-radius:12px;background:var(--s2);font-size:.8rem;line-height:1.4;color:var(--t2)}
+.off-txt{flex:1 1 14rem;min-width:0}
+.off-txt b{color:var(--tx)}
+.off-btn{flex-shrink:0;font:inherit;font-weight:700;font-size:.8rem;padding:.45rem .85rem;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+.off-btn:disabled{opacity:.5;cursor:default}
+.off-btn-sec{background:transparent;color:var(--t2);border-color:var(--bd2)}
+.off-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.off-aviso{margin:.2rem 0 .9rem;padding:.6rem .8rem;border-radius:12px;border:1px solid var(--bd);background:var(--s2);font-size:.82rem;line-height:1.45;color:var(--t2)}
+.off-aviso b{color:var(--tx)}
+.dsb-off{font-size:.68rem;color:var(--grn,#16a34a);margin-top:.15rem;font-weight:600}
+.busca-alts{margin:0 .75rem .5rem .75rem;padding:0;list-style:none;font-size:.82rem;line-height:1.45}
+.busca-alts li{margin:.25rem 0;display:flex;gap:.45rem;align-items:flex-start}
+.busca-l{font-weight:800;color:var(--blue);flex-shrink:0}
+.busca-alts li.certa{color:var(--grn,#16a34a)}
+.busca-mais{margin-top:.2rem}
+mark.busca-achado{background:rgba(250,204,21,.55);color:inherit;border-radius:3px;outline:2px solid var(--gold);outline-offset:1px}
 .dir-card .dir-pts ul{margin:0;padding-left:1.15rem}
 .dir-card .dir-pts li{font-size:.88rem;line-height:1.55;margin:.22rem 0}
 /* Linha divisória dentro dos pontos-chave ("— Evidência e notas de aplicação —"):
@@ -3043,6 +3134,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="tb-bc" id="tb-bc">Dashboard</div>
     </div>
     <div class="tb-right">
+      <button class="tb-busca" id="btn-busca" type="button" aria-label="Buscar em todo o conteúdo" title="Buscar em todo o conteúdo">🔍</button>
       <button class="btn-cta" id="btn-chat-cta">🤖 Chat IA</button>
       <span id="tb-plan" title="Seu plano" style="display:none;font-size:.66rem;font-weight:800;padding:.3rem .7rem;border-radius:999px;white-space:nowrap;letter-spacing:.02em"></span>
       <div class="tb-user" id="tb-user-btn">
@@ -3114,6 +3206,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
              Os dois continuam onde alcançam quem precisa: na JANELA DE ENTRADA
              (que abre sozinha) e no card do MURAL DE ARTIGOS. O Dashboard é
              painel — o que ele mostra é estado, não pedido. -->
+        <div id="dash-continuar" style="display:none;margin-bottom:10px"></div>
         <div id="dash-avisos" style="display:none;margin-bottom:10px"></div>
         <div id="qotd-card" style="display:none;margin-bottom:10px"></div>
         <div id="streak-card" style="margin-bottom:10px"></div>
@@ -6524,10 +6617,14 @@ var DB={
   // Pessoal, sincroniza entre aparelhos; é o que faz o Banco lembrar o que o
   // aluno já fez quando ele filtra de novo (pedido de um assinante, 04/10/2026).
   feitas:lsGet('feitas')||{},
+  // Resumos (17/11/2026): último capítulo lido e posição; trechos grifados com nota. Pessoais.
+  leitura:lsGet('leitura')||null,
+  grifos:lsGet('grifos')||[],
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
   ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','feitas','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
+  lsSet('leitura',DB.leitura);lsSet('grifos',DB.grifos); // Resumos: último capítulo lido e grifos (17/11/2026)
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -7289,7 +7386,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,leitura:DB.leitura,grifos:DB.grifos,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -7337,7 +7434,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','leitura','grifos','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -7349,6 +7446,9 @@ function applyStatePayload(payload,personalOnly){
   if(Array.isArray(payload.fc))DB.fc=payload.fc;
   if(Array.isArray(payload.mm))DB.mm=payload.mm;
   if(Array.isArray(payload.notes))DB.notes=payload.notes;
+  if(Array.isArray(payload.grifos))DB.grifos=payload.grifos;
+  // Último capítulo lido: vale o mais recente (o aparelho que leu agora não volta atrás).
+  if(payload.leitura&&typeof payload.leitura==='object'&&(!DB.leitura||(payload.leitura.at||0)>=(DB.leitura.at||0)))DB.leitura=payload.leitura;
   if(payload.crono!==undefined)DB.crono=payload.crono;
   if(Array.isArray(payload.sf_results))DB.sf_results=payload.sf_results;
   if(payload.perf&&typeof payload.perf==='object')DB.perf=payload.perf;
@@ -7393,7 +7493,7 @@ function applyStatePayload(payload,personalOnly){
     if(Array.isArray(payload.podcasts))podcasts=payload.podcasts;
     if(Array.isArray(payload.adm_cursos)){admCursos=payload.adm_cursos;try{renderDashAvisos();}catch(e){}} // aulas novas da EMC entram no mural
     if(Array.isArray(payload.adm_estudantes))admEstudantes=normalizeAdmEstudantes(payload.adm_estudantes);
-    if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
+    if(Array.isArray(payload.diretrizes)){diretrizes=payload.diretrizes;offlineUsando=false;diretrizes.forEach(function(d){if(d&&d.sub)d.sub=dirMigrateSub(d.sub);});}
     if(Array.isArray(payload.diretrizes_temas))dirTemasExtra=payload.diretrizes_temas;
     if(Array.isArray(payload.curso_mods_extra))admCursoModsExtra=payload.curso_mods_extra;
     if(Array.isArray(payload.acessos))definirAcessos(payload.acessos);
@@ -7516,6 +7616,7 @@ function refreshAfterRemoteState(){
   try{maybeResumePlanIntent();}catch(e){}
   try{refreshDash();}catch(e){}
   try{renderSavedQ();}catch(e){}
+  try{offlineAgendarSinc();}catch(e){} // Resumos baixados: atualiza a cópia com o que veio do servidor
   try{renderFC();}catch(e){}
   try{renderMMList();}catch(e){}
   // Mural e Podcasts só se estiverem na tela (17/11/2026): goPanel os desenha ao abrir, e redesenhar os dois
@@ -7564,6 +7665,7 @@ function carregarResumos(client,rpc,tentativa){
     if(funcaoAusente(e))return tentarResumos(client,rpc,tentativa||1,uid);
     resumosErro=true;
     console.warn('Resumos indisponíveis',e);
+    try{offlineAplicar(uid);}catch(_e){} // sem internet: a cópia baixada no aparelho, se houver
   });
 }
 function funcaoAusente(e){
@@ -7627,7 +7729,10 @@ function aplicarResumos(lista){
   diretrizes=caps;
   try{lsSet('diretrizes',diretrizes);}catch(e){}
   resumosErro=false;
+  offlineUsando=false; // chegou do servidor: a cópia do aparelho sai da tela
+  try{offlineAgendarSinc();}catch(e){} // e as áreas baixadas se atualizam
   try{renderDashAvisos();}catch(e){} // videoaulas novas entram no mural de avisos
+  try{renderDashContinuar();}catch(e){} // "Continuar de onde parou" precisa do capítulo carregado
 }
 // `uid` é quem PEDIU (null = demo/visitante). Os capítulos privados de um
 // assinante em voo não podem ser aplicados — nem guardados no aparelho — na
@@ -7648,6 +7753,7 @@ function tentarResumos(client,rpc,tentativa,uid){
     }
     resumosErro=true;
     console.warn('Resumos indisponíveis após '+tentativa+' tentativas',e);
+    try{offlineAplicar(uid);}catch(_e){}
   });
 }
 // Recarrega sob demanda (botão "Tentar de novo" da tela de Resumos).
@@ -7917,6 +8023,7 @@ function hydrateRemoteState(){
   var client=getSupabaseClient();
   if(!client)return;
   if(!(currentUser&&currentUser.id)){hydratePublicContent();return;}
+  try{offlineAoEntrar(currentUser.id);}catch(e){} // Resumos sem internet: índice da conta; sem rede, a cópia na hora
   // ⚠️ UMA CARGA POR VEZ (24/09/2026). Nos logs de borda, uma assinante Gold
   // fez 15 chamadas ao member_content em 5 minutos, com pares a 20 ms de
   // distância: mais de um caminho do boot chamava esta função antes de a
@@ -9651,7 +9758,7 @@ var pendingOnboardCheck=false; // decidir o onboarding após o hydrate (com base
 // hydrate em seguida traz o estado REMOTO do usuário correto.
 function clearLocalUserData(){
   ['user_profile','q','fc','mm','notes','crono','sf_results','perf','feitas','ck_billing','deg_trials','fc_seeded','mm_seeded','fc_shared_seeded','fc_member_seeded'].forEach(function(k){lsSet(k,null);});
-  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};}catch(e){}
+  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};DB.leitura=null;DB.grifos=[];}catch(e){}
   try{degTrials={};}catch(e){}
 }
 // Após o hydrate: se o aluno (membro real) continuar sem perfil, é a 1ª vez —
@@ -9828,6 +9935,7 @@ function doLogout(){
   var travarFaceId=false;
   try{travarFaceId=!!faceIdPlugin()&&!!currentUser&&faceIdConta()===String(currentUser.email||'').toLowerCase();}catch(e){}
   loggingOut=true;
+  if(!travarFaceId){try{offlineLimparTudo();}catch(e){}} // Resumos baixados saem do aparelho (o Face ID só trava: ficam)
   try{lsSet('demo_session',null);lsSet('last_panel',null);lsSet('adm_sec',null);}catch(e){}
   var client=getSupabaseClient();
   // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
@@ -10476,6 +10584,7 @@ function goCheckout(key){
 function startSupabaseAuthWatcher(){
   var client=getSupabaseClient();
   if(!client)return;
+  try{offlineEntrarSemRede();}catch(e){} // sem internet e com área baixada: entra sem esperar o Supabase
   client.auth.getSession().then(function(res){
     if(isPasswordRecoveryUrl())return;
     var s=res.data&&res.data.session;
@@ -11747,6 +11856,7 @@ function refreshDash(){
   setText('d-fcn',DB.fc.length);setText('d-sr-due',due);setText('d-mmn',DB.mm.length);
   try{renderDashAcervo();}catch(e){}
   try{renderDashAvisos();}catch(e){}
+  try{renderDashContinuar();}catch(e){}
   try{renderDashRail();}catch(e){}
   try{renderStreakCard();}catch(e){}
   try{renderAtivacao();}catch(e){}
@@ -16378,12 +16488,14 @@ function wireArtResult(out){
 // ── CADERNO ──
 var noteId=null;
 function newNote(){
+  try{grifosNotasEsconde();}catch(e){}
   var n={id:Date.now(),title:'',body:'',at:Date.now()};
   DB.notes.push(n);noteId=n.id;persist();
   renderNoteList();openNote(n.id);
 }
 function openNote(id){
   noteId=id;
+  try{grifosNotasEsconde();}catch(e){}
   var n=DB.notes.find(function(x){return x.id===id;});if(!n)return;
   document.getElementById('note-empty').style.display='none';
   document.getElementById('note-editor').style.display='flex';
@@ -16427,13 +16539,794 @@ function renderNoteList(){
   var el=document.getElementById('note-list');if(!el)return;
   var q=((document.getElementById('note-search')||{}).value||'').toLowerCase();
   var list=DB.notes.filter(function(n){return!q||(n.title||'').toLowerCase().indexOf(q)>=0||(n.body||'').toLowerCase().indexOf(q)>=0;});
-  if(!list.length){el.innerHTML='<div class="empty" style="font-size:.7rem">Nenhuma nota.</div>';return;}
-  el.innerHTML=list.slice().reverse().map(function(n){return'<div class="note-item'+(n.id===noteId?' on':'')+'" data-note="'+n.id+'"><div class="note-title">'+esc(n.title||'Sem título')+'</div><div class="note-sub">'+new Date(n.at).toLocaleDateString('pt-BR')+'</div></div>';}).join('');
+  var _gItem=(typeof grifosNotasItemHTML==='function')?grifosNotasItemHTML():''; // grifos dos Resumos (17/11/2026)
+  if(!list.length){el.innerHTML=_gItem+'<div class="empty" style="font-size:.7rem">Nenhuma nota.</div>';return;}
+  el.innerHTML=_gItem+list.slice().reverse().map(function(n){return'<div class="note-item'+(n.id===noteId?' on':'')+'" data-note="'+n.id+'"><div class="note-title">'+esc(n.title||'Sem título')+'</div><div class="note-sub">'+new Date(n.at).toLocaleDateString('pt-BR')+'</div></div>';}).join('');
 }
 function execNoteCmd(cmd){
   var map={bold:'bold',italic:'italic',underline:'underline',ul:'insertUnorderedList',ol:'insertOrderedList'};
   document.execCommand(map[cmd]||cmd,false,null);
   document.getElementById('note-body').focus();
+}
+// ── CONTINUAR DE ONDE PAROU e GRIFOS NOS RESUMOS (17/11/2026) ──────────────────────────
+// Professor: "Continuar de onde parei. Um cartão no Dashboard que reabre o último capítulo
+// lido, no ponto em que o aluno parou." e "Grifar e anotar nos Resumos. O aluno marca
+// trechos e escreve notas, que ficam reunidas na aba Notas e servem para revisar."
+// Os dois são PESSOAIS (PERSONAL_STATE_KEYS: `leitura`, `grifos`): sincronizam entre
+// aparelhos como as notas. `leitura` = {sub, tipo, tema, pos (0–1, quanto da tela do
+// capítulo já passou), at}. `grifos` = [{id, sub, tipo, tema, txt, nota, at}]; o trecho é
+// guardado como TEXTO e reencontrado no capítulo a cada abertura (sem posição fixa, para
+// sobreviver a correções do texto; se o trecho mudar, o grifo continua na aba Notas).
+var leituraRestaurando=false,leituraUltSalva=0,leituraUltRemota=0,grifoSel=null,grifosLigado=false;
+function leituraItem(l){
+  if(!l||!l.sub||!l.tema)return null;
+  var tipo=l.tipo==='artigo'?'artigo':'capitulo',r=null;
+  (diretrizes||[]).some(function(d){if(d&&!dirIsRascunho(d)&&d.privado===true&&dirTipoOf(d)===tipo&&estSubDe(d)===l.sub&&dirTemaOf(d)===l.tema){r=d;return true;}return false;});
+  return r;
+}
+function leituraSalva(remota){
+  try{lsSet('leitura',DB.leitura);}catch(e){}
+  var agora=Date.now();
+  if(remota||agora-leituraUltRemota>20000){leituraUltRemota=agora;try{queueRemoteStateSave();}catch(e){}}
+}
+function leituraPosDe(root){
+  var r=root.getBoundingClientRect(),h=r.height-(window.innerHeight||800);
+  if(h<=0)return 1;
+  return Math.max(0,Math.min(1,(-r.top)/h));
+}
+function leituraNoScroll(){
+  if(leituraRestaurando)return;
+  var root=document.getElementById('resu-body'),p=document.getElementById('panel-resu');
+  if(!root||!p||!p.classList.contains('on')||!refPrivadoMode||!refTemaSel||refRevArt)return;
+  var l=DB.leitura;if(!l||l.sub!==refSubSel||l.tema!==refTemaSel)return;
+  l.pos=leituraPosDe(root);l.at=Date.now();
+  var agora=Date.now();if(agora-leituraUltSalva>800){leituraUltSalva=agora;leituraSalva(false);}
+}
+// Chamado ao fim de cada desenho dos Resumos (renderDiretrizesInto).
+function resuPosRender(root){
+  if(!root||root.id!=='resu-body'||!refPrivadoMode)return;
+  grifosInit();
+  offlineLigarBotoes(root);offlineTrocaFiguras(root);
+  if(!refSubSel||!refTemaSel||refRevArt)return;
+  var l=DB.leitura,mesmo=l&&l.sub===refSubSel&&l.tema===refTemaSel&&(l.tipo||'capitulo')===refTipoSel;
+  DB.leitura={sub:refSubSel,tipo:refTipoSel,tema:refTemaSel,pos:mesmo?(+l.pos||0):0,at:Date.now()};
+  leituraSalva(!mesmo);
+  if(refFormat==='resumo')grifosAplicar(root);
+}
+function abrirLeitura(){
+  var l=DB.leitura;if(!leituraItem(l))return;
+  var pos=+l.pos||0;
+  leituraRestaurando=true;
+  goPanel('resu');
+  refSubSel=l.sub;refTipoSel=l.tipo==='artigo'?'artigo':'capitulo';refTemaSel=l.tema;refFormat='resumo';refVoltaCap=null;refRevArt=null;
+  var root=document.getElementById('resu-body');if(!root){leituraRestaurando=false;return;}
+  renderDiretrizesInto(root);
+  if(DB.leitura)DB.leitura.pos=pos;
+  var rola=function(){var r=root.getBoundingClientRect(),h=r.height-(window.innerHeight||800),topo=r.top+(window.scrollY||0);try{window.scrollTo(0,Math.max(0,topo+Math.max(0,h)*pos-(pos>0?0:90)));}catch(e){}};
+  setTimeout(rola,60);setTimeout(function(){rola();leituraRestaurando=false;},750);
+}
+function renderDashContinuar(){
+  var el=document.getElementById('dash-continuar');if(!el)return;
+  var l=DB.leitura,d=leituraItem(l);
+  if(!d){el.style.display='none';el.innerHTML='';return;}
+  var pct=Math.round((+l.pos||0)*100);
+  el.style.display='';
+  el.innerHTML='<div class="card dash-cont" role="button" tabindex="0" data-dash-continuar>'
+    +'<div class="dash-cont-ico">'+(l.tipo==='artigo'?'🔬':'📖')+'</div>'
+    +'<div class="dash-cont-txt"><div class="dash-cont-k">Continuar de onde parou</div>'
+    +'<div class="dash-cont-t">'+esc(l.tema)+'</div>'
+    +'<div class="dash-cont-s">'+esc(l.sub)+' · '+(pct>=95?'lido até o fim':(pct+'% lido'))+'</div>'
+    +'<div class="dash-cont-bar"><span style="width:'+Math.max(3,pct)+'%"></span></div></div>'
+    +'<span class="dash-cont-go">Continuar →</span></div>';
+  var b=el.querySelector('[data-dash-continuar]');
+  if(b){b.addEventListener('click',abrirLeitura);b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();abrirLeitura();}});}
+}
+// ── Grifos ──
+function grifosLista(){return Array.isArray(DB.grifos)?DB.grifos:(DB.grifos=[]);}
+function grifosDoCapitulo(sub,tipo,tema){return grifosLista().filter(function(g){return g&&g.sub===sub&&(g.tipo||'capitulo')===tipo&&g.tema===tema;});}
+// Reencontra o trecho no texto (ignorando espaços e quebras, que a seleção do navegador
+// altera entre parágrafos) e embrulha cada pedaço em <mark class="grifo">.
+function grifoMarca(raiz,txt,id){
+  var alvo=String(txt||'').replace(/\s+/g,'');if(alvo.length<3||!raiz)return false;
+  var w=document.createTreeWalker(raiz,4,null),nos=[],mapa=[],plano='',m;
+  while((m=w.nextNode())){var v=m.nodeValue||'';for(var i=0;i<v.length;i++){if(!/\s/.test(v.charAt(i))){mapa.push([nos.length,i]);plano+=v.charAt(i);}}nos.push(m);}
+  var k=plano.indexOf(alvo);if(k<0)return false;
+  var ini=mapa[k],fim=mapa[k+alvo.length-1];
+  for(var ni=fim[0];ni>=ini[0];ni--){
+    var no=nos[ni],a=(ni===ini[0])?ini[1]:0,b=(ni===fim[0])?fim[1]+1:no.nodeValue.length;
+    if(b<=a||!no.nodeValue.slice(a,b).trim())continue;
+    var meio=no.splitText(a);meio.splitText(b-a);
+    var mk=document.createElement('mark');mk.className='grifo';mk.setAttribute('data-grifo',id);
+    meio.parentNode.insertBefore(mk,meio);mk.appendChild(meio);
+  }
+  return true;
+}
+function grifosAplicar(root){
+  var lst=grifosDoCapitulo(refSubSel,refTipoSel,refTemaSel);if(!lst.length)return;
+  var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');
+  lst.forEach(function(g){for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id))break;}});
+}
+function grifoBarra(){
+  var b=document.getElementById('grifo-barra');if(b)return b;
+  b=document.createElement('div');b.id='grifo-barra';b.className='grifo-barra';
+  b.innerHTML='<button type="button" data-grifar="1">🖍 Grifar</button><button type="button" data-grifar="nota">📝 Grifar e anotar</button><button type="button" data-grifar="x" aria-label="Fechar">✕</button>';
+  // Tocar no botão não pode desfazer a seleção antes de o grifo ser criado.
+  b.addEventListener('mousedown',function(e){e.preventDefault();});
+  b.addEventListener('click',function(e){
+    var t=e.target.closest?e.target.closest('[data-grifar]'):null;if(!t)return;
+    var q=t.getAttribute('data-grifar');
+    if(q==='x'){grifoSel=null;b.classList.remove('on');try{window.getSelection().removeAllRanges();}catch(er){}return;}
+    grifoCria(q==='nota');
+  });
+  document.body.appendChild(b);return b;
+}
+function grifoSelecao(){
+  var s=null;try{s=window.getSelection();}catch(e){}
+  var b=grifoBarra();
+  if(!s||s.isCollapsed||!s.rangeCount){grifoSel=null;b.classList.remove('on');return;}
+  var txt=String(s.toString()||'').trim();
+  var el=function(n){return n&&(n.nodeType===1?n:n.parentNode);};
+  var a=el(s.anchorNode),f=el(s.focusNode),root=document.getElementById('resu-body');
+  var dentro=function(x){return x&&root&&root.contains(x)&&x.closest&&x.closest('.dir-texto,.dir-pts')&&!x.closest('.wys-edit');};
+  if(!refPrivadoMode||!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;b.classList.remove('on');return;}
+  grifoSel={txt:txt,sub:refSubSel,tipo:refTipoSel,tema:refTemaSel};
+  b.classList.add('on');
+}
+function grifoCria(comNota){
+  var s=grifoSel;if(!s)return;
+  var g={id:'g'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),sub:s.sub,tipo:s.tipo,tema:s.tema,txt:s.txt.slice(0,800),nota:'',at:Date.now()};
+  grifosLista().push(g);persist();
+  grifoSel=null;grifoBarra().classList.remove('on');
+  try{window.getSelection().removeAllRanges();}catch(e){}
+  var root=document.getElementById('resu-body');
+  if(root){var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id))break;}}
+  if(comNota)grifoModal(g.id);
+  else try{notify('Trecho grifado. Os grifos ficam reunidos na aba Notas.','ok');}catch(e){}
+}
+function grifoModal(id){
+  var g=grifosLista().filter(function(x){return x.id===id;})[0];if(!g)return;
+  var m=document.getElementById('grifo-modal');
+  if(!m){m=document.createElement('div');m.id='grifo-modal';m.className='grifo-modal';document.body.appendChild(m);
+    m.addEventListener('click',function(e){if(e.target===m)m.style.display='none';});}
+  m.innerHTML='<div class="grifo-caixa" role="dialog" aria-label="Grifo">'
+    +'<div class="grifo-cab">🖍 '+esc(g.tema)+'<span>'+esc(g.sub)+'</span></div>'
+    +'<blockquote class="grifo-trecho">'+esc(g.txt)+'</blockquote>'
+    +'<label class="grifo-lab" for="grifo-nota">Sua nota</label>'
+    +'<textarea id="grifo-nota" rows="4" placeholder="Escreva uma observação sobre este trecho">'+esc(g.nota||'')+'</textarea>'
+    +'<div class="grifo-acoes"><button type="button" class="btn btn-danger btn-sm" data-grifo-del="'+esc(g.id)+'">Remover grifo</button><span style="flex:1"></span>'
+    +'<button type="button" class="btn btn-outline btn-sm" data-grifo-fecha>Fechar</button><button type="button" class="btn btn-primary btn-sm" data-grifo-salva="'+esc(g.id)+'">Salvar nota</button></div></div>';
+  m.style.display='flex';
+  m.querySelector('[data-grifo-fecha]').onclick=function(){m.style.display='none';};
+  m.querySelector('[data-grifo-salva]').onclick=function(){g.nota=String(m.querySelector('#grifo-nota').value||'').trim().slice(0,2000);g.at=Date.now();persist();m.style.display='none';try{notify('Nota salva no grifo.','ok');}catch(e){}grifosNotasAtualiza();};
+  m.querySelector('[data-grifo-del]').onclick=function(){grifoRemove(g.id);m.style.display='none';};
+  try{m.querySelector('#grifo-nota').focus();}catch(e){}
+}
+function grifoRemove(id){
+  DB.grifos=grifosLista().filter(function(x){return x.id!==id;});persist();
+  document.querySelectorAll('mark.grifo[data-grifo="'+id+'"]').forEach(function(mk){var p=mk.parentNode;while(mk.firstChild)p.insertBefore(mk.firstChild,mk);p.removeChild(mk);try{p.normalize();}catch(e){}});
+  grifosNotasAtualiza();
+}
+function grifoAbreNoCapitulo(id){
+  var g=grifosLista().filter(function(x){return x.id===id;})[0];if(!g)return;
+  if(!leituraItem({sub:g.sub,tipo:g.tipo,tema:g.tema})){try{notify('Este capítulo não está disponível agora.','err');}catch(e){}return;}
+  goPanel('resu');
+  refSubSel=g.sub;refTipoSel=g.tipo==='artigo'?'artigo':'capitulo';refTemaSel=g.tema;refFormat='resumo';refVoltaCap=null;refRevArt=null;
+  var root=document.getElementById('resu-body');if(!root)return;
+  renderDiretrizesInto(root);
+  setTimeout(function(){
+    var mk=root.querySelector('mark.grifo[data-grifo="'+id+'"]');if(!mk)return;
+    var det=mk.closest('details');if(det)det.open=true;
+    try{mk.scrollIntoView({block:'center'});}catch(e){}
+    mk.classList.add('grifo-pisca');setTimeout(function(){mk.classList.remove('grifo-pisca');},1800);
+  },80);
+}
+function grifosInit(){
+  if(grifosLigado)return;grifosLigado=true;
+  var t=null;
+  document.addEventListener('selectionchange',function(){clearTimeout(t);t=setTimeout(grifoSelecao,220);});
+  // Tocar num trecho grifado abre a nota (só na leitura, nunca no editor).
+  document.addEventListener('click',function(e){
+    var mk=e.target&&e.target.closest?e.target.closest('mark.grifo'):null;
+    if(!mk||mk.closest('.wys-edit'))return;
+    var s=null;try{s=window.getSelection();}catch(er){}
+    if(s&&!s.isCollapsed)return;
+    grifoModal(mk.getAttribute('data-grifo'));
+  });
+  window.addEventListener('scroll',leituraNoScroll,{passive:true});
+}
+// Aba Notas: os grifos reunidos, por capítulo, como primeira entrada da lista.
+function grifosNotasItemHTML(){
+  var n=grifosLista().length;if(!n)return '';
+  return '<div class="note-item note-grifos" data-note-grifos><div class="note-title">🖍 Grifos dos Resumos</div><div class="note-sub">'+n+' '+(n===1?'trecho grifado':'trechos grifados')+'</div></div>';
+}
+function grifosNotasHTML(){
+  var lst=grifosLista().slice().sort(function(a,b){return (b.at||0)-(a.at||0);});
+  var cab='<div class="grifos-cab"><button type="button" class="note-tb-btn note-voltar" data-grifos-volta>← Notas</button><h2>🖍 Grifos dos Resumos</h2></div>';
+  if(!lst.length)return cab+'<div class="empty">Nenhum trecho grifado. Nos Resumos, selecione um trecho do texto e toque em "Grifar".</div>';
+  var grupos={},ordem=[];
+  lst.forEach(function(g){var k=g.sub+'||'+g.tema;if(!grupos[k]){grupos[k]=[];ordem.push(k);}grupos[k].push(g);});
+  return cab+ordem.map(function(k){var gs=grupos[k],g0=gs[0];
+    return '<div class="grifos-grupo"><div class="grifos-grupo-h">'+(g0.tipo==='artigo'?'🔬 ':'📖 ')+esc(g0.tema)+'<span>'+esc(g0.sub)+'</span></div>'
+      +gs.map(function(g){return '<div class="grifos-item"><blockquote>'+esc(g.txt)+'</blockquote>'
+        +(g.nota?'<div class="grifos-nota">📝 '+esc(g.nota)+'</div>':'')
+        +'<div class="grifos-acoes"><button type="button" class="btn btn-outline btn-sm" data-grifo-abre="'+esc(g.id)+'">Abrir no capítulo</button>'
+        +'<button type="button" class="btn btn-ghost btn-sm" data-grifo-edita="'+esc(g.id)+'">'+(g.nota?'Editar nota':'Anotar')+'</button>'
+        +'<button type="button" class="btn btn-ghost btn-sm" data-grifo-remove="'+esc(g.id)+'">Remover</button></div></div>';}).join('')+'</div>';
+  }).join('');
+}
+function grifosNotasAbre(){
+  var col=document.querySelector('#panel-notas .notas-editor-col');if(!col)return;
+  var gv=document.getElementById('grifos-view');
+  if(!gv){gv=document.createElement('div');gv.id='grifos-view';gv.className='grifos-view';col.appendChild(gv);
+    gv.addEventListener('click',function(e){
+      var c=function(s){return e.target.closest?e.target.closest(s):null;};
+      var x;
+      if(c('[data-grifos-volta]')){notaAbertaCelular(false);return;}
+      if((x=c('[data-grifo-abre]'))){grifoAbreNoCapitulo(x.getAttribute('data-grifo-abre'));return;}
+      if((x=c('[data-grifo-edita]'))){grifoModal(x.getAttribute('data-grifo-edita'));return;}
+      if((x=c('[data-grifo-remove]'))){grifoRemove(x.getAttribute('data-grifo-remove'));return;}
+    });}
+  noteId=null;
+  var e1=document.getElementById('note-empty'),e2=document.getElementById('note-editor');
+  if(e1)e1.style.display='none';if(e2)e2.style.display='none';
+  gv.style.display='block';gv.innerHTML=grifosNotasHTML();
+  notaAbertaCelular(true);renderNoteList();
+}
+function grifosNotasEsconde(){var gv=document.getElementById('grifos-view');if(gv)gv.style.display='none';}
+// ── BUSCA ÚNICA (17/11/2026) ───────────────────────────────────────────────────────────
+// Professor: "Busca única. Uma caixa que procura ao mesmo tempo em Resumos, Diretrizes,
+// artigos, flashcards e questões." Procura no que o aparelho já tem (o mesmo que o aluno
+// pode abrir: rascunho nunca entra), sem acento e sem diferença de maiúsculas; todas as
+// palavras têm de aparecer. Capítulo, artigo e diretriz abrem no ponto do termo; flashcard
+// e questão abrem ali mesmo (verso, alternativas, gabarito e comentário).
+// ── RESUMOS SEM INTERNET (pedido do professor, 17/11/2026: "Resumos sem internet no app. Baixar uma
+// subespecialidade para ler offline") ──
+// O aluno baixa uma área na tela dela (nível 2 dos Resumos). Ficam no aparelho, no IndexedDB:
+//  - os capítulos e artigos publicados da área, exatamente como o servidor os entregou a ESTA conta;
+//  - as figuras (bytes), buscadas uma vez.
+// Sem internet, a carga dos Resumos falha e o app usa a cópia do aparelho (offlineAplicar). As figuras
+// trocam de endereço só na tela (offlineTrocaFiguras), sem mexer no texto do capítulo.
+// ⚠️ É conteúdo de assinante: a cópia é da conta (uid), vale 30 dias sem nova conexão (como os acessos
+// guardados), se renova sozinha a cada carga com internet (some se a área deixar de vir do servidor)
+// e sai do aparelho no "Sair" (menos no "Sair" que só trava com o Face ID).
+// No app do iPhone (1.3+, plugin Filesystem), a mesma cópia vai também para arquivos que a tela "Sem
+// conexão" do próprio app (app-ios/www/erro.html) lê quando o app abre sem rede (offlineEspelhar).
+var OFF_DB='endodirect-offline',OFF_VALIDADE_MS=30*86400000,OFF_FS_DIR='CACHE';
+var offlineIdx={};        // área -> {at,n,figs,falhas} da conta atual
+var offlineFigSet={};     // endereço da figura -> true (bytes guardados no aparelho)
+var offlineFigURL={};     // endereço da figura -> blob: (criado sob demanda)
+var offlineUsando=false;  // a tela mostra a cópia do aparelho (sem internet)
+var offlineSessao=false;  // entrou sem internet com a sessão guardada (token vencido)
+var offlineBaixando=null; // {sub,feito,total}
+var offlineSincTimer=null,offlineEspelhoEmVoo=null,offlineEspelhoDeNovo=false;
+function offlineDisponivel(){try{return !!window.indexedDB;}catch(e){return false;}}
+function offlineSemRede(){try{return navigator.onLine===false;}catch(e){return false;}}
+function offlineIdb(){
+  if(offlineIdb.p)return offlineIdb.p;
+  offlineIdb.p=new Promise(function(ok,falha){
+    var r;try{r=indexedDB.open(OFF_DB,1);}catch(e){falha(e);return;}
+    r.onupgradeneeded=function(){var db=r.result;
+      if(!db.objectStoreNames.contains('subs'))db.createObjectStore('subs',{keyPath:'k'});
+      if(!db.objectStoreNames.contains('figs'))db.createObjectStore('figs',{keyPath:'url'});};
+    r.onsuccess=function(){ok(r.result);};
+    r.onerror=function(){falha(r.error);};
+  });
+  offlineIdb.p.catch(function(){offlineIdb.p=null;});
+  return offlineIdb.p;
+}
+// fn(store) devolve um pedido (get/getAll) ou nada; a promessa resolve quando a transação termina.
+function offlineReq(store,modo,fn){
+  return offlineIdb().then(function(db){return new Promise(function(ok,falha){
+    var tx=db.transaction(store,modo),rq=fn(tx.objectStore(store));
+    tx.oncomplete=function(){ok(rq&&typeof rq==='object'&&'result' in rq?rq.result:undefined);};
+    tx.onerror=tx.onabort=function(){falha(tx.error||new Error('IndexedDB'));};
+  });});
+}
+function offlineRegistros(uid){
+  return offlineReq('subs','readonly',function(st){return st.getAll();}).then(function(l){
+    return (Array.isArray(l)?l:[]).filter(function(r){return r&&(!uid||r.uid===uid);});
+  });
+}
+function offlineNormUrl(u){try{return new URL(String(u||''),location.href).href;}catch(e){return String(u||'');}}
+function offlinePodeBaixar(){return offlineDisponivel()&&!!(currentUser&&currentUser.id)&&!isDegustacao();}
+// O que vai para o aparelho: os capítulos e artigos publicados da área (nunca rascunho nem o vídeo solto da degustação).
+function offlineItensDaSub(sub){
+  return diretrizes.filter(function(d){return d&&d.privado===true&&!d.so_video&&!dirIsRascunho(d)&&estSubDe(d)===sub;});
+}
+// Figuras de cada item: as da lista `figuras` e as do texto (![legenda](https://…)). Data: já está no texto.
+function offlineFigurasDe(itens){
+  var vistos={},out=[];
+  function add(u){u=String(u||'').trim();if(!/^https?:\/\//i.test(u))return;u=offlineNormUrl(u);if(vistos[u])return;vistos[u]=1;out.push(u);}
+  (itens||[]).forEach(function(d){
+    if(!d)return;
+    (Array.isArray(d.figuras)?d.figuras:[]).forEach(function(f){if(f&&f.url)add(f.url);});
+    String(d.resumo||'').replace(/!\[(?:[^\]\\]|\\.)*\]\((https?:\/\/[^\s)]+)\)/g,function(w,u){add(u);return w;});
+  });
+  return out;
+}
+function offlineData(t){var d=new Date(+t||0);return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2);}
+function offlineProgTxt(){var b=offlineBaixando;if(!b)return '';return b.total?(Math.min(b.feito,b.total)+' de '+b.total+' figuras'):'guardando o texto';}
+function offlineBarraAtualiza(){var el=document.getElementById('off-prog');if(el)el.textContent=offlineProgTxt();}
+// Faixa da área (nível 2 dos Resumos): baixar, baixando, ou disponível com "Remover".
+function offlineBarraHTML(sub){
+  if(!refPrivadoMode||!offlinePodeBaixar())return '';
+  var b=offlineBaixando,ix=offlineIdx[sub],inner;
+  if(b&&b.sub===sub)inner='<span class="off-txt">📥 Baixando '+esc(sub)+'… <b id="off-prog">'+esc(offlineProgTxt())+'</b></span>';
+  else if(ix)inner='<span class="off-txt">✓ <b>Disponível sem internet</b> neste aparelho · atualizado em '+offlineData(ix.at)+'</span>'
+    +(offlineUsando?'':'<button type="button" class="off-btn off-btn-sec" data-off-remover="'+esc(sub)+'">Remover</button>');
+  else if(offlineUsando)return '';
+  else inner='<span class="off-txt">Para ler sem internet: o texto e as figuras desta área ficam guardados neste aparelho.</span>'
+    +'<button type="button" class="off-btn" data-off-baixar="'+esc(sub)+'"'+(b?' disabled':'')+'>📥 Baixar</button>';
+  return '<div class="off-barra">'+inner+'</div>';
+}
+function offlineAvisoHTML(){
+  if(!refPrivadoMode||!offlineUsando)return '';
+  return '<div class="off-aviso">📴 <b>Sem internet.</b> Aparecem só as áreas baixadas neste aparelho. O restante volta quando a conexão voltar.</div>';
+}
+// Resumos vazios e sem internet: abrindo a cópia, cópia vencida (30 dias) ou nada baixado.
+function offlineVazioHTML(){
+  var n=Object.keys(offlineIdx),val=n.some(function(k){return Date.now()-(+offlineIdx[k].at||0)<=OFF_VALIDADE_MS;});
+  if(val)return '<div style="margin-top:1rem">'+ldHTML('Abrindo as áreas baixadas…')+'</div>';
+  return '<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">📴</div><h2>Sem internet</h2>'
+    +(n.length?'<p>As áreas baixadas neste aparelho ficaram mais de 30 dias sem conexão. Conecte-se uma vez para renová-las.</p>'
+      :'<p>Nenhuma área foi baixada neste aparelho. Com internet, abra uma área dos Resumos e toque em <b>📥 Baixar</b> para ler sem conexão depois.</p>')
+    +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
+}
+// Redesenha os Resumos se estiverem na tela. Lendo um capítulo, só com `forca` (não tira o aluno do lugar).
+function offlineRedesenha(forca){
+  try{
+    if(!painelNaTela('resu'))return;
+    if(refTemaSel&&!forca)return;
+    var rb=document.getElementById('resu-body');if(!rb)return;
+    var y=window.scrollY;refPrivadoMode=true;renderDiretrizesInto(rb);window.scrollTo(0,y);
+  }catch(e){}
+}
+function offlineB64(buf){
+  var b=new Uint8Array(buf),s='',i,P=0x8000;
+  for(i=0;i<b.length;i+=P)s+=String.fromCharCode.apply(null,b.subarray(i,i+P));
+  return btoa(s);
+}
+// Busca e guarda figuras (4 por vez). Guarda os BYTES (ArrayBuffer + tipo): o WebKit antigo falha com Blob no IndexedDB.
+function offlineBaixarFiguras(urls,aoAvancar){
+  var fila=(urls||[]).slice(),falhas=0,i=0;
+  function uma(u){
+    return fetch(u,{mode:'cors',credentials:'omit',referrerPolicy:'no-referrer'})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);var tipo=(r.headers.get('content-type')||'').split(';')[0].trim();return r.arrayBuffer().then(function(buf){return {buf:buf,tipo:tipo};});})
+      .then(function(x){
+        if(!x.buf||!x.buf.byteLength||!/^image\//i.test(x.tipo))throw new Error('não é figura');
+        return offlineReq('figs','readwrite',function(st){st.put({url:u,buf:x.buf,tipo:x.tipo,at:Date.now()});});
+      })
+      .then(function(){offlineFigSet[u]=true;},function(){falhas++;})
+      .then(function(){if(aoAvancar)aoAvancar();});
+  }
+  function trabalhador(){if(i>=fila.length)return Promise.resolve();var u=fila[i++];return uma(u).then(trabalhador);}
+  var ws=[];for(var w=0;w<4;w++)ws.push(trabalhador());
+  return Promise.all(ws).then(function(){return falhas;});
+}
+function offlineBaixar(sub){
+  if(offlineBaixando||!offlinePodeBaixar())return Promise.resolve(false);
+  var uid=contaAtual(),itens=JSON.parse(JSON.stringify(offlineItensDaSub(sub)));
+  if(!itens.length){notify('Esta área não tem capítulos para baixar.','info');return Promise.resolve(false);}
+  var figs=offlineFigurasDe(itens),novas=figs.filter(function(u){return !offlineFigSet[u];});
+  offlineBaixando={sub:sub,feito:figs.length-novas.length,total:figs.length};
+  offlineRedesenha();
+  return offlineBaixarFiguras(novas,function(){if(offlineBaixando){offlineBaixando.feito++;offlineBarraAtualiza();}}).then(function(falhas){
+    if(!mesmaContaQue(uid))throw {conta:1};
+    var reg={k:uid+'|'+sub,uid:uid,sub:sub,at:Date.now(),itens:itens,figs:figs};
+    return offlineReq('subs','readwrite',function(st){st.put(reg);}).then(function(){
+      offlineIdx[sub]={at:reg.at,n:itens.length,figs:figs.length,falhas:falhas};
+      offlineBaixando=null;
+      var nf=figs.length-falhas;
+      notify(sub+' disponível sem internet: '+itens.length+' '+(itens.length===1?'texto':'textos')
+        +(figs.length?(' e '+nf+' '+(nf===1?'figura':'figuras')):'')+'.'
+        +(falhas?(' '+falhas+' '+(falhas===1?'figura não baixou':'figuras não baixaram')+'; com internet melhor, toque em Remover e baixe de novo.'):''),falhas?'info':'ok');
+      offlineRedesenha();offlineEspelhar();
+      return true;
+    });
+  }).catch(function(e){
+    offlineBaixando=null;offlineRedesenha();
+    if(!(e&&e.conta))notify('Não foi possível baixar '+sub+' agora. Confira a internet e tente de novo.','err');
+    return false;
+  });
+}
+function offlineRemover(sub){
+  var uid=contaAtual();if(!uid)return Promise.resolve(false);
+  return offlineReq('subs','readwrite',function(st){st.delete(uid+'|'+sub);}).then(function(){
+    delete offlineIdx[sub];
+    return offlineLimparFiguras(uid);
+  }).then(function(){
+    notify(sub+' saiu do aparelho.','ok');offlineRedesenha();offlineEspelhar();return true;
+  }).catch(function(){notify('Não foi possível remover agora.','err');return false;});
+}
+// Figuras que nenhuma área baixada desta conta usa mais saem do aparelho.
+function offlineLimparFiguras(uid){
+  return offlineRegistros(uid).then(function(meus){
+    var usa={};meus.forEach(function(r){(r.figs||[]).forEach(function(u){usa[u]=1;});});
+    var sobra=Object.keys(offlineFigSet).filter(function(u){return !usa[u];});
+    if(!sobra.length)return;
+    return offlineReq('figs','readwrite',function(st){sobra.forEach(function(u){st.delete(u);});}).then(function(){
+      sobra.forEach(function(u){delete offlineFigSet[u];if(offlineFigURL[u]){try{URL.revokeObjectURL(offlineFigURL[u]);}catch(e){}delete offlineFigURL[u];}});
+    });
+  });
+}
+// Índice da conta (o que já está no aparelho). Cópias de OUTRA conta neste aparelho saem aqui.
+function offlineCarregarIndice(uid){
+  if(!uid||!offlineDisponivel())return Promise.resolve([]);
+  return offlineRegistros(null).then(function(todos){
+    var meus=todos.filter(function(r){return r.uid===uid;}),outros=todos.filter(function(r){return r.uid!==uid;});
+    var p=outros.length?offlineReq('subs','readwrite',function(st){outros.forEach(function(r){st.delete(r.k);});}).catch(function(){}):Promise.resolve();
+    return p.then(function(){return offlineReq('figs','readonly',function(st){return st.getAllKeys();});}).then(function(ks){
+      if(!mesmaContaQue(uid))return [];
+      offlineIdx={};meus.forEach(function(r){offlineIdx[r.sub]={at:r.at,n:(r.itens||[]).length,figs:(r.figs||[]).length};});
+      offlineFigSet={};(ks||[]).forEach(function(k){offlineFigSet[k]=true;});
+      if(outros.length)offlineLimparFiguras(uid).catch(function(){});
+      return meus;
+    });
+  }).catch(function(){return [];});
+}
+// Sem internet: os Resumos da tela passam a ser a cópia do aparelho (só as áreas baixadas, dentro dos 30 dias).
+function offlineAplicar(uid){
+  if(!uid||!offlineDisponivel())return Promise.resolve(false);
+  return offlineCarregarIndice(uid).then(function(meus){
+    if(!mesmaContaQue(uid))return false;
+    var agora=Date.now(),validos=meus.filter(function(r){return agora-(+r.at||0)<=OFF_VALIDADE_MS&&Array.isArray(r.itens)&&r.itens.length;});
+    if(!validos.length)return false;
+    // Os Resumos do servidor já estão na tela (a rede caiu depois): eles valem mais que a cópia.
+    if(!offlineUsando&&diretrizes.some(function(d){return d&&d.privado===true;}))return false;
+    var itens=[];validos.forEach(function(r){itens=itens.concat(r.itens);});
+    diretrizes=diretrizes.filter(function(d){return !(d&&d.privado===true);}).concat(itens);
+    offlineUsando=true;resumosErro=false;buscaCache=null;
+    offlineRedesenha(true);
+    try{renderDashContinuar();}catch(e){}
+    return true;
+  }).catch(function(){return false;});
+}
+// Ao entrar (hydrateRemoteState): carrega o índice e, se já sabe que está sem rede, usa a cópia na hora.
+function offlineAoEntrar(uid){
+  if(!uid||!offlineDisponivel())return;
+  if(offlineSemRede())offlineAplicar(uid);
+  else offlineCarregarIndice(uid).then(function(){offlineRedesenha();});
+}
+// Troca, na tela, o endereço das figuras guardadas pelo blob: local. Com rede, só se a figura falhar.
+function offlineFigObjURL(u){
+  if(offlineFigURL[u])return Promise.resolve(offlineFigURL[u]);
+  return offlineReq('figs','readonly',function(st){return st.get(u);}).then(function(r){
+    if(!r||!r.buf)return null;
+    var ou=URL.createObjectURL(new Blob([r.buf],{type:r.tipo||'image/png'}));offlineFigURL[u]=ou;return ou;
+  }).catch(function(){return null;});
+}
+function offlinePoeFigura(img,u){
+  offlineFigObjURL(u).then(function(ou){if(!ou)return;img.removeAttribute('onerror');img.style.display='';img.src=ou;});
+}
+function offlineTrocaFiguras(root){
+  if(!root)return;
+  var tem=false;for(var k in offlineFigSet){tem=true;break;}
+  if(!tem)return;
+  var semRede=offlineUsando||offlineSemRede();
+  root.querySelectorAll('img').forEach(function(img){
+    var src=img.getAttribute('src')||'';if(!/^https?:/i.test(src))return;
+    var u=offlineNormUrl(img.src);if(!offlineFigSet[u])return;
+    if(semRede)offlinePoeFigura(img,u);
+    else img.addEventListener('error',function(){offlinePoeFigura(img,u);},{once:true});
+  });
+}
+function offlineLigarBotoes(root){
+  root.querySelectorAll('[data-off-baixar]').forEach(function(b){b.addEventListener('click',function(){offlineBaixar(b.getAttribute('data-off-baixar'));});});
+  root.querySelectorAll('[data-off-remover]').forEach(function(b){b.addEventListener('click',function(){offlineRemover(b.getAttribute('data-off-remover'));});});
+}
+// Com internet de novo (carga dos Resumos ok): a cópia de cada área baixada é refeita a partir do que o
+// servidor mandou agora. Texto igual e cópia de menos de 1 dia: nada a fazer. Área que não veio: sai.
+function offlineAgendarSinc(){
+  if(!offlineDisponivel()||!contaAtual())return;
+  clearTimeout(offlineSincTimer);offlineSincTimer=setTimeout(offlineSincronizar,6000);
+}
+function offlineSincronizar(){
+  var uid=contaAtual();
+  if(!uid||offlineUsando||offlineBaixando||!remoteStateLoaded||resumosErro)return Promise.resolve();
+  if(!diretrizes.some(function(d){return d&&d.privado===true;}))return Promise.resolve();
+  var gravou=false;
+  return offlineCarregarIndice(uid).then(function(meus){
+    var p=Promise.resolve();
+    meus.forEach(function(r){
+      p=p.then(function(){
+        if(!mesmaContaQue(uid)||offlineUsando)return;
+        var itens=JSON.parse(JSON.stringify(offlineItensDaSub(r.sub)));
+        if(!itens.length){gravou=true;delete offlineIdx[r.sub];return offlineReq('subs','readwrite',function(st){st.delete(r.k);});}
+        var igual=JSON.stringify(itens)===JSON.stringify(r.itens);
+        if(igual&&Date.now()-(+r.at||0)<86400000)return;
+        var figs=offlineFigurasDe(itens);
+        return offlineBaixarFiguras(figs.filter(function(u){return !offlineFigSet[u];})).then(function(){
+          var reg={k:r.k,uid:uid,sub:r.sub,at:Date.now(),itens:itens,figs:figs};gravou=true;
+          return offlineReq('subs','readwrite',function(st){st.put(reg);}).then(function(){offlineIdx[r.sub]={at:reg.at,n:itens.length,figs:figs.length};});
+        });
+      });
+    });
+    return p;
+  }).then(function(){
+    if(!gravou)return;
+    return offlineLimparFiguras(uid).then(function(){offlineEspelhar();offlineRedesenha();});
+  }).catch(function(){});
+}
+// "Sair" de verdade: a cópia sai do aparelho (IndexedDB e arquivos do app do iPhone).
+function offlineLimparTudo(){
+  offlineIdx={};offlineFigSet={};offlineUsando=false;offlineSessao=false;
+  for(var u in offlineFigURL){try{URL.revokeObjectURL(offlineFigURL[u]);}catch(e){}}
+  offlineFigURL={};
+  var fs=offlineFS();
+  if(fs){try{fs.rmdir({path:'offline',directory:OFF_FS_DIR,recursive:true}).catch(function(){});}catch(e){}}
+  if(!offlineDisponivel())return;
+  var p=offlineIdb.p;offlineIdb.p=null;
+  (p||Promise.resolve(null)).then(function(db){try{if(db)db.close();}catch(e){}}).catch(function(){}).then(function(){try{indexedDB.deleteDatabase(OFF_DB);}catch(e){}});
+}
+// Sem internet e com o token vencido, o Supabase não devolve a sessão (e ainda tenta renová-la por ~25 s):
+// o app caía na tela de entrar. Se há área baixada (e válida) para a conta guardada, entra com ela.
+// A sessão continua guardada; quando a rede volta, o Supabase a renova na próxima chamada (offlineReconectou).
+function offlineSessaoGuardada(){
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(!k||!/^sb-.*-auth-token$/.test(k))continue;
+      var s=JSON.parse(localStorage.getItem(k));
+      if(s&&s.currentSession)s=s.currentSession;
+      if(s&&s.user&&s.user.id&&s.user.email)return s;
+    }
+  }catch(e){}
+  return null;
+}
+function offlineEntrarSemRede(){
+  if(currentUser||!offlineSemRede()||!offlineDisponivel())return;
+  var s=offlineSessaoGuardada();if(!s)return;
+  offlineRegistros(s.user.id).then(function(regs){
+    var agora=Date.now();
+    if(currentUser||!regs.some(function(r){return agora-(+r.at||0)<=OFF_VALIDADE_MS;}))return;
+    try{if(isPasswordRecoveryUrl())return;}catch(e){}
+    offlineSessao=true;
+    loginFromSupabaseSession(s);
+  }).catch(function(){});
+}
+function offlineErroDeRede(e){return !!e&&(e.name==='AuthRetryableFetchError'||e.status===0||/fetch|network|load failed|offline/i.test(String(e.message||'')));}
+function offlineReconectou(){
+  if(!currentUser||!currentUser.id)return;
+  var client=getSupabaseClient();if(!client)return;
+  if(offlineSessao){
+    client.auth.getSession().then(function(r){
+      var s=r&&r.data&&r.data.session;
+      if(s){offlineSessao=false;offlineRecarregar();return;}
+      // A rede voltou e o servidor recusou a sessão (senha trocada, saiu em outro aparelho): entrar de novo.
+      if(!offlineSemRede()&&!offlineErroDeRede(r&&r.error)){offlineSessao=false;notify('Sua sessão expirou. Entre de novo para continuar.','info');doLogout();}
+    }).catch(function(){});
+    return;
+  }
+  offlineRecarregar();
+}
+function offlineRecarregar(){
+  if(!remoteStateLoaded){try{hydrateRemoteState();}catch(e){}return;}
+  if(resumosErro||offlineUsando){try{recarregarResumos().then(function(){if(!offlineUsando)offlineRedesenha(true);});}catch(e){}}
+}
+try{window.addEventListener('online',offlineReconectou);}catch(e){}
+// ── App do iPhone (1.3+): cópia em arquivos para a tela "Sem conexão" (erro.html) ──
+// Quando o app abre sem rede, o iPhone mostra erro.html, que é do próprio app e não enxerga o
+// IndexedDB do site. Por isso cada área baixada vira também um pacote em Library/Caches/offline:
+// leitor.json (cada capítulo já desenhado pelo dirCardHTML, o CSS do app e a data) e fig/<nome>.
+// Caches, e não Documents: é conteúdo que se baixa de novo, e a Apple pede que fique fora do backup.
+function offlineFS(){try{return appNativoIOS()?pluginNativo('Filesystem'):null;}catch(e){return null;}}
+function offlineNomeFig(u){
+  var h=5381,s=String(u);for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;
+  var m=s.split('?')[0].match(/\.(png|jpe?g|gif|webp|svg)$/i);
+  return h.toString(36)+'-'+s.length.toString(36)+(m?('.'+m[1].toLowerCase()):'.png');
+}
+function offlineHTMLNativo(d,precisa){
+  var fmt=refFormat,pm=refPrivadoMode,h='';
+  refFormat='resumo';refPrivadoMode=true;
+  try{h=dirCardHTML(d,0);}catch(e){h='';}finally{refFormat=fmt;refPrivadoMode=pm;}
+  var t=document.createElement('template');t.innerHTML=h;
+  t.content.querySelectorAll('button,script,iframe,video').forEach(function(x){x.remove();});
+  t.content.querySelectorAll('img').forEach(function(img){
+    img.removeAttribute('onerror');img.removeAttribute('loading');
+    var src=img.getAttribute('src')||'';
+    if(/^data:image\//i.test(src))return;
+    var u=offlineNormUrl(src);
+    if(!offlineFigSet[u]){img.remove();return;}
+    var nome=offlineNomeFig(u);precisa[nome]=u;
+    img.removeAttribute('src');img.setAttribute('data-off',nome);
+  });
+  return t.innerHTML;
+}
+function offlineCSS(){var out=[];document.querySelectorAll('style').forEach(function(s){out.push(s.textContent||'');});return out.join('\n');}
+function offlineEspelhar(){
+  var fs=offlineFS(),uid=contaAtual();
+  if(!fs||!uid)return Promise.resolve(false);
+  if(offlineEspelhoEmVoo){offlineEspelhoDeNovo=true;return offlineEspelhoEmVoo;}
+  offlineEspelhoEmVoo=offlineRegistros(uid).then(function(regs){
+    if(!regs.length)return fs.rmdir({path:'offline',directory:OFF_FS_DIR,recursive:true}).catch(function(){});
+    var precisa={};
+    regs.sort(function(a,b){return String(a.sub).localeCompare(String(b.sub),'pt');});
+    var pacote={v:1,uid:uid,at:Math.min.apply(null,regs.map(function(r){return +r.at||0;})),
+      tema:document.documentElement.getAttribute('data-theme')||'',css:offlineCSS(),
+      subs:regs.map(function(r){return {sub:r.sub,itens:(r.itens||[]).map(function(d){return {tema:dirTemaOf(d),tipo:dirTipoOf(d),html:offlineHTMLNativo(d,precisa)};})};})};
+    return fs.readdir({path:'offline/fig',directory:OFF_FS_DIR}).then(function(r){
+      return ((r&&r.files)||[]).map(function(f){return typeof f==='string'?f:(f&&f.name)||'';});
+    },function(){return [];}).then(function(tem){
+      var temSet={};tem.forEach(function(n){temSet[n]=1;});
+      var p=Promise.resolve();
+      Object.keys(precisa).filter(function(n){return !temSet[n];}).forEach(function(n){
+        p=p.then(function(){return offlineReq('figs','readonly',function(st){return st.get(precisa[n]);});})
+          .then(function(r){if(r&&r.buf)return fs.writeFile({path:'offline/fig/'+n,data:offlineB64(r.buf),directory:OFF_FS_DIR,recursive:true});})
+          .catch(function(){});
+      });
+      tem.filter(function(n){return n&&!precisa[n];}).forEach(function(n){
+        p=p.then(function(){return fs.deleteFile({path:'offline/fig/'+n,directory:OFF_FS_DIR});}).catch(function(){});
+      });
+      return p.then(function(){return fs.writeFile({path:'offline/leitor.json',data:JSON.stringify(pacote),directory:OFF_FS_DIR,encoding:'utf8',recursive:true});});
+    });
+  }).then(function(){return true;},function(){return false;}).then(function(r){
+    offlineEspelhoEmVoo=null;
+    if(offlineEspelhoDeNovo){offlineEspelhoDeNovo=false;return offlineEspelhar();}
+    return r;
+  });
+  return offlineEspelhoEmVoo;
+}
+var buscaCache=null,buscaUltima='',buscaAbertos={},buscaMais={},buscaUlt=null;
+var BUSCA_GRUPOS=[['resumo','📚 Capítulos dos Resumos'],['artigo','🔬 Artigos'],['diretriz','📋 Diretrizes'],['flash','🃏 Flashcards'],['questao','❓ Questões']];
+function buscaPlano(md){
+  return String(md||'').replace(/!\[[^\]]*\]\([^)]*\)/g,' ').replace(/\[\[[^\]]*\]\]/g,' ').replace(/<[^>]+>/g,' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/[#*_>`|]/g,' ').replace(/\s+/g,' ').trim();
+}
+function buscaIndice(){
+  var D=(typeof diretrizes!=='undefined'&&diretrizes)||[],P=(typeof provasDB!=='undefined'&&provasDB)||[],F=(DB&&DB.fc)||[];
+  var chave=D.length+'|'+P.length+'|'+F.length+'|'+(D[0]&&D[0].tema||'');
+  if(buscaCache&&buscaCache.chave===chave)return buscaCache.itens;
+  var it=[];
+  D.forEach(function(d){
+    if(!d||dirIsRascunho(d))return;
+    var art=dirTipoOf(d)==='artigo',priv=d.privado===true;
+    var t=priv?(art?'artigo':'resumo'):(art?null:'diretriz');if(!t)return;
+    var ti=dirTemaOf(d),txt=buscaPlano([d.resumo,Array.isArray(d.pts)?d.pts.join(' '):''].join(' '));
+    it.push({t:t,ti:ti,sub:estSubDe(d),txt:txt,n:estNorm(ti+' '+txt),nt:estNorm(ti),ref:{sub:estSubDe(d),tema:ti,tipo:art?'artigo':'capitulo',priv:priv}});
+  });
+  F.forEach(function(c,i){
+    if(!c||!c.front)return;
+    var f=String(c.front),b=String(c.back||''),s='Geral';try{s=subOf(c);}catch(e){}
+    it.push({t:'flash',ti:f,sub:s,txt:b,n:estNorm(f+' '+b),nt:estNorm(f),fc:i});
+  });
+  P.forEach(function(q,i){
+    if(!q||!q.stem)return;
+    var st=buscaPlano(q.stem),op=buscaOpcoes(q).map(function(o){return o[1];}).join(' ');
+    it.push({t:'questao',ti:st,sub:String(q.area||q.sub||''),txt:st,n:estNorm(st+' '+op+' '+buscaPlano(q.explanation||'')),nt:estNorm(st),q:i});
+  });
+  buscaCache={chave:chave,itens:it};
+  return it;
+}
+function buscaRodar(q){
+  var termos=estNorm(q).split(/\s+/).filter(function(x){return x.length>=2;});
+  if(!termos.length)return null;
+  var res={};BUSCA_GRUPOS.forEach(function(g){res[g[0]]=[];});
+  var junto=termos.join(' ');
+  buscaIndice().forEach(function(x){
+    for(var i=0;i<termos.length;i++){if(x.n.indexOf(termos[i])<0)return;}
+    var sc=0;termos.forEach(function(tm){if(x.nt.indexOf(tm)>=0)sc+=10;});
+    if(x.nt.indexOf(junto)>=0)sc+=25;
+    if(x.nt.indexOf(junto)===0)sc+=10;
+    res[x.t].push({x:x,sc:sc});
+  });
+  Object.keys(res).forEach(function(k){res[k].sort(function(a,b){return b.sc-a.sc||a.x.ti.length-b.x.ti.length;});});
+  return {termos:termos,res:res};
+}
+// Realça os termos num trecho (o texto sem acento tem o mesmo comprimento do original).
+function buscaRealce(s,termos){
+  var ns=estNorm(s),marcas=[];
+  termos.forEach(function(tm){var k=0;while((k=ns.indexOf(tm,k))>=0){marcas.push([k,k+tm.length]);k+=tm.length;}});
+  if(!marcas.length||ns.length!==s.length)return esc(s);
+  marcas.sort(function(a,b){return a[0]-b[0];});
+  var out='',pos=0;
+  marcas.forEach(function(m){if(m[0]<pos)return;out+=esc(s.slice(pos,m[0]))+'<mark>'+esc(s.slice(m[0],m[1]))+'</mark>';pos=m[1];});
+  return out+esc(s.slice(pos));
+}
+function buscaTrecho(x,termos){
+  var nt=estNorm(x.txt),k=-1;
+  termos.forEach(function(tm){var i=nt.indexOf(tm);if(i>=0&&(k<0||i<k))k=i;});
+  if(k<0)return x.txt.length>160?esc(x.txt.slice(0,157))+'…':esc(x.txt);
+  var a=Math.max(0,k-60),b=Math.min(x.txt.length,k+140);
+  return (a>0?'…':'')+buscaRealce(x.txt.slice(a,b),termos)+(b<x.txt.length?'…':'');
+}
+// alternativas: no banco são objeto {A:'..',B:'..'}; aceita também lista ['A) ..','B) ..']
+function buscaOpcoes(q){
+  var o=q&&q.options;if(!o)return [];
+  if(Array.isArray(o))return o.map(function(t,i){return [String.fromCharCode(65+i),String(t).replace(/^[A-E]\)\s*/,'')];});
+  return ['A','B','C','D','E'].filter(function(L){return o[L];}).map(function(L){return [L,String(o[L])];});
+}
+function buscaItemHTML(r,termos,g,j){
+  var x=r.x,id=g+':'+j,ab=!!buscaAbertos[id];
+  if(x.t==='flash'||x.t==='questao'){
+    var corpo='';
+    if(ab&&x.t==='flash'){var c=(DB.fc||[])[x.fc]||{};corpo='<div class="busca-verso">'+buscaRealce(String(c.back||''),termos)+'</div><button type="button" class="btn btn-ghost btn-sm" data-busca-fc="'+x.fc+'">Abrir os flashcards de '+esc(x.sub)+' →</button>';}
+    if(ab&&x.t==='questao'){
+      var q=(provasDB||[])[x.q]||{},ans=String(q.answer||'').trim().toUpperCase();
+      corpo='<ol class="busca-alts">'+buscaOpcoes(q).map(function(o){var L=o[0];return '<li'+(L===ans?' class="certa"':'')+'><span class="busca-l">'+L+'</span> '+buscaRealce(o[1],termos)+(L===ans?' <b>✓ gabarito</b>':'')+'</li>';}).join('')+'</ol>'
+        +(q.explanation?'<div class="busca-coment">'+buscaRealce(buscaPlano(q.explanation),termos)+'</div>':'');
+    }
+    return '<div class="busca-item'+(ab?' aberto':'')+'"><button type="button" class="busca-abre" data-busca-tog="'+esc(id)+'">'
+      +'<span class="busca-ti">'+buscaRealce(x.ti.length>220?x.ti.slice(0,217)+'…':x.ti,termos)+'</span>'
+      +'<span class="busca-sub">'+esc(x.sub||'')+' · '+(ab?'fechar':(x.t==='flash'?'ver o verso':'ver alternativas e gabarito'))+'</span></button>'+corpo+'</div>';
+  }
+  return '<div class="busca-item"><button type="button" class="busca-abre" data-busca-ir="'+esc(id)+'">'
+    +'<span class="busca-ti">'+buscaRealce(x.ti,termos)+'</span><span class="busca-sub">'+esc(x.sub)+'</span>'
+    +'<span class="busca-trecho">'+buscaTrecho(x,termos)+'</span></button></div>';
+}
+function buscaResultadosHTML(q){
+  var r=buscaRodar(q);
+  if(!r)return '<div class="busca-dica">Digite pelo menos 2 letras. A busca procura em capítulos dos Resumos, artigos, Diretrizes, flashcards e questões, sem diferenciar acentos.</div>';
+  var total=0;BUSCA_GRUPOS.forEach(function(g){total+=r.res[g[0]].length;});
+  if(!total)return '<div class="busca-dica">Nada encontrado para "'+esc(q)+'". Tente menos palavras ou outro termo.</div>';
+  buscaUlt=r;
+  return '<div class="busca-total">'+total+' '+(total===1?'resultado':'resultados')+'</div>'+BUSCA_GRUPOS.map(function(g){
+    var l=r.res[g[0]];if(!l.length)return '';
+    var lim=buscaMais[g[0]]||5;
+    return '<section class="busca-grupo"><h3>'+g[1]+' <span>'+l.length+'</span></h3>'
+      +l.slice(0,lim).map(function(it,j){return buscaItemHTML(it,r.termos,g[0],j);}).join('')
+      +(l.length>lim?'<button type="button" class="btn btn-outline btn-sm busca-mais" data-busca-mais="'+g[0]+'">Mostrar mais ('+(l.length-lim)+')</button>':'')
+      +'</section>';
+  }).join('');
+}
+function buscaOverlay(){
+  var ov=document.getElementById('busca-ov');if(ov)return ov;
+  ov=document.createElement('div');ov.id='busca-ov';ov.className='busca-ov';ov.setAttribute('role','dialog');ov.setAttribute('aria-label','Buscar em todo o conteúdo');
+  ov.innerHTML='<div class="busca-topo"><input type="search" id="busca-q" placeholder="Buscar em Resumos, artigos, Diretrizes, flashcards e questões" autocomplete="off" enterkeyhint="search">'
+    +'<button type="button" class="btn btn-ghost btn-sm" data-busca-fecha>Fechar</button></div><div class="busca-res" id="busca-res"></div>';
+  document.body.appendChild(ov);
+  var inp=ov.querySelector('#busca-q'),res=ov.querySelector('#busca-res'),t=null;
+  var desenha=function(){buscaUltima=inp.value;res.innerHTML=buscaResultadosHTML(inp.value);};
+  inp.addEventListener('input',function(){clearTimeout(t);buscaAbertos={};buscaMais={};t=setTimeout(desenha,200);});
+  inp.addEventListener('keydown',function(e){if(e.key==='Escape')fecharBusca();if(e.key==='Enter'){try{inp.blur();}catch(er){}}});
+  ov.addEventListener('click',function(e){
+    var c=function(s){return e.target.closest?e.target.closest(s):null;},b;
+    if(c('[data-busca-fecha]')){fecharBusca();return;}
+    if((b=c('[data-busca-mais]'))){var g=b.getAttribute('data-busca-mais');buscaMais[g]=(buscaMais[g]||5)+10;desenha();return;}
+    if((b=c('[data-busca-tog]'))){var id=b.getAttribute('data-busca-tog');buscaAbertos[id]=!buscaAbertos[id];var y=res.scrollTop;desenha();res.scrollTop=y;return;}
+    if((b=c('[data-busca-fc]'))){var cc=(DB.fc||[])[+b.getAttribute('data-busca-fc')];fecharBusca();goPanel('flash');if(cc){try{fcFilter=subOf(cc);fcTema=temaOf(cc,fcFilter);fcPagina=0;renderFC();}catch(er){}}return;}
+    if((b=c('[data-busca-ir]'))){
+      var p=b.getAttribute('data-busca-ir').split(':'),r=buscaUlt,x=r&&r.res[p[0]]&&r.res[p[0]][+p[1]];
+      if(x)buscaAbre(x.x.ref,r.termos);return;
+    }
+  });
+  return ov;
+}
+function abrirBusca(){
+  var ov=buscaOverlay(),inp=ov.querySelector('#busca-q');
+  ov.style.display='flex';document.body.classList.add('busca-aberta');
+  inp.value=buscaUltima||'';
+  ov.querySelector('#busca-res').innerHTML=buscaResultadosHTML(inp.value);
+  setTimeout(function(){try{inp.focus();inp.select();}catch(e){}},30);
+}
+function fecharBusca(){var ov=document.getElementById('busca-ov');if(ov)ov.style.display='none';document.body.classList.remove('busca-aberta');}
+// Abre capítulo/artigo/diretriz e leva ao primeiro ponto do texto que tem o termo.
+function buscaAbre(ref,termos){
+  fecharBusca();
+  goPanel(ref.priv?'resu':'ref');
+  refSubSel=ref.sub;refTipoSel=ref.tipo;refTemaSel=ref.tema;refFormat='resumo';refVoltaCap=null;refRevArt=null;
+  var root=document.getElementById(ref.priv?'resu-body':'ref-body');if(!root)return;
+  renderDiretrizesInto(root);
+  setTimeout(function(){
+    var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');
+    for(var i=0;i<caixas.length;i++){
+      var w=document.createTreeWalker(caixas[i],4,null),n;
+      while((n=w.nextNode())){
+        var nv=estNorm(n.nodeValue||''),k=-1,tm='';
+        termos.forEach(function(t){var j=nv.indexOf(t);if(j>=0&&(k<0||j<k)){k=j;tm=t;}});
+        if(k<0||nv.length!==(n.nodeValue||'').length)continue;
+        var meio=n.splitText(k);meio.splitText(tm.length);
+        var mk=document.createElement('mark');mk.className='busca-achado';meio.parentNode.insertBefore(mk,meio);mk.appendChild(meio);
+        var det=mk.closest('details');if(det)det.open=true;
+        try{mk.scrollIntoView({block:'center'});}catch(e){}
+        setTimeout(function(){if(mk.parentNode){var pp=mk.parentNode;while(mk.firstChild)pp.insertBefore(mk.firstChild,mk);pp.removeChild(mk);try{pp.normalize();}catch(e){}}},4000);
+        return;
+      }
+    }
+  },80);
+}
+function grifosNotasAtualiza(){
+  var gv=document.getElementById('grifos-view');if(gv&&gv.style.display!=='none')gv.innerHTML=grifosNotasHTML();
+  try{renderNoteList();}catch(e){}
 }
 
 // ── MURAL ──
@@ -16547,6 +17440,8 @@ function dirTipoOf(d){return (d&&d.tipo==='artigo')?'artigo':'capitulo';}
 // ele nem chega ao cliente do aluno; o filtro aqui é a segunda barreira.
 function dirIsRascunho(d){return !!(d&&d.rascunho);}
 var refTipoSel='capitulo';        // aba Capítulos/Artigos ativa dentro dos Resumos
+var refVoltaCap=null;             // {sub,tema} do capítulo de onde o aluno abriu um estudo-chave, ou {sub,rev:idx} da revisão rápida
+var refRevArt=null;               // revisão rápida dos estudos da subespecialidade aberta: {idx}
 // Predicado de visibilidade conforme a aba ativa: Diretrizes mostra !privado; Resumos mostra privado===true.
 // Nos Resumos filtra também pelo tipo (Capítulos × Artigos); nas Diretrizes o tipo é ignorado.
 // ⚠️ ARTIGO É CONTEÚDO SÓ DE RESUMOS — nunca da aba Diretrizes (2026-08-01,
@@ -17055,6 +17950,224 @@ function dirPontoLI(p){
   if(sep)return '<li class="dir-pts-sep">'+mdInline(sep[1])+'</li>';
   return '<li>'+mdInline(s)+'</li>';
 }
+// ── ESTUDOS-CHAVE NO FIM DO CAPÍTULO (17/11/2026) ─────────────────────────────────────
+// Professor: "Artigos-chave em cada capítulo. No fim de cada capítulo dos Resumos, um bloco
+// com os estudos canônicos daquele tema, que levam direto à ficha do artigo." O vínculo
+// capítulo → estudos é esta tabela: por subespecialidade, uma expressão sobre o NOME do
+// capítulo (sem acento, minúsculo) e os estudos, pelo começo do `tema` do artigo
+// ("TRUST", "WHI", "TRAVERSE" pega os dois). "Sub|prefixo" aponta para outra
+// subespecialidade (ex.: o capítulo de raquitismo de Osteometabolismo leva ao burosumabe da
+// Pediátrica). Só aparecem estudos que o aluno já tem (publicados; rascunho nunca). Um
+// artigo novo também pode se ligar sozinho, pelo campo opcional `capitulos` (lista de nomes
+// de capítulo). O caminho inverso ("Capítulos relacionados", na ficha do artigo) sai da
+// mesma tabela.
+var ESTUDOS_CHAVE={
+  'Tireoide':[
+    [/hipotireoidismo(?! cong)/,['TRUST']],
+    [/gesta/,['CATS','Casey','TABLET']],
+    [/diferenciado/,['HiLo','ESTIMABL2','SELECT']],
+    [/medular/,['LIBRETTO-531']],
+    [/anaplasico/,['Subbiah']],
+    [/orbitopatia|oftalmopatia|ocular/,['OPTIC','Marcocci','Bartalena']],
+    [/graves/,['Bartalena']],
+    [/tireotoxicose/,['Endocrinopatias|Bogazzi']]
+  ],
+  'Adrenal':[
+    [/incidentaloma/,['Elhassan']],
+    [/hiperaldosteronismo/,['PAPY','SPARTACUS','PATHWAY-2']],
+    [/induzida por glicocorticoide/,['Endocrinopatias|Broersen','Hahner']],
+    [/cushing/,['LINC 3','Neuroendocrinologia|Colao','Assié']],
+    [/feocromocitoma/,['Lenders']],
+    [/addison|crise adrenal|insuficiencia adrenal/,['Hahner','ADRENAL']],
+    [/hiperplasia adrenal congenita|\(hac\)/,['CAHtalyst','Endocrinologia Pediátrica|CAHtalyst']],
+    [/carcinoma/,['FIRM-ACT','ADIUVO']],
+    [/macronodular|pbmah/,['Assié']]
+  ],
+  'Neuroendocrinologia':[
+    [/prolactin/,['Webster','Zanettini']],
+    [/acromegalia/,['Trainer']],
+    [/diabetes insip|avp/,['Fenske','Refardt']],
+    [/siadh|hiponatremia/,['SALT','SALSA']],
+    [/hipopituitarismo/,['Tomlinson']],
+    [/hipofisite/,['Endocrinopatias|Barroso-Sousa']]
+  ],
+  'Endocrinopatias':[
+    [/checkpoint/,['Barroso-Sousa']],
+    [/glicocorticoides/,['Broersen','Osteometabolismo|Saag']],
+    [/litio/,['Shine']],
+    [/laboratoriais|armadilhas/,['Li','Endocrinologia Básica|Yalow']],
+    [/outras endocrinopatias iatrogenicas/,['Rhee','Li']],
+    [/amiodarona/,['Bogazzi']],
+    [/psicofarmacos/,['SATIETY']],
+    [/paraneoplasicas/,['Ilias']],
+    [/mccune/,['Endocrinologia Básica|Weinstein']],
+    [/induzidas por farmacos/,['Barroso-Sousa','Broersen','Shine','Bogazzi','SATIETY']]
+  ],
+  'Endocrinologia Feminina':[
+    [/somp|ovariana metabolica|policist/,['Consenso de Rotterdam','PPCOS I (','PPCOS II']],
+    [/menopausa|vasomotor/,['WHI','ELITE','SKYLIGHT']],
+    [/infertilidade|anovulacao/,['PPCOS I (','PPCOS II']],
+    [/hirsutismo|hiperandrogenismo/,['Consenso de Rotterdam']],
+    [/amenorreia/,['Endocrinologia do Esporte|REDs']],
+    [/transgenero/,['Transgeneridade|Getahun','Transgeneridade|de Blok']]
+  ],
+  'Endocrinologia Masculina':[
+    [/reposicao de testosterona/,['TOM','Testosterone Trials','T4DM','TRAVERSE']],
+    [/hipogonadismo/,['EMAS','Testosterone Trials','TRAVERSE','T4DM']],
+    [/infertilidade/,['FAZST']],
+    [/disfuncao eretil/,['Goldstein']]
+  ],
+  'Endocrinologia Pediátrica':[
+    [/turner/,['Ross']],
+    [/baixa estatura/,['Ross','Savarirayan']],
+    [/hiperplasia adrenal|\(hac\)/,['CAHtalyst']],
+    [/obesidade/,['STEP TEENS']],
+    [/raquitismo/,['Imel']],
+    [/diabetes/,['TODAY','TN-10','PECARN']]
+  ],
+  'Transgeneridade':[
+    [/feminilizante|masculinizante/,['Getahun']],
+    [/adolescentes|bloqueio puberal/,['de Vries','Taylor']],
+    [/monitorizacao|longo prazo/,['de Blok','Getahun','Dhejne']]
+  ],
+  'Endocrinologia do Esporte':[
+    [/red-s|triade/,['REDs']],
+    [/anabolizantes/,['Bhasin','Baggish']],
+    [/doping|ergogenicas/,['Liu','Meinhardt']],
+    [/diabetes/,['Riddell']],
+    [/osso|fratura/,['Lappe']],
+    [/overtraining/,['Meeusen']]
+  ],
+  'Endocrinologia Básica':[
+    [/classes|transporte/,['Mendel']],
+    [/receptores/,['Evans','Weinstein']],
+    [/fisiologia endocrina/,['Zhang']],
+    [/biologia molecular|genetica/,['Weinstein','Zhang','Farooqi']],
+    [/laboratorial/,['Yalow','Endocrinopatias|Li']],
+    [/disruptores/,['EDC-2']]
+  ],
+  'Diabetes':[
+    [/autoanticorpos|rastreamento do diabetes mellitus tipo 1/,['Ziegler','Endocrinologia Pediátrica|TN-10']],
+    [/diagnostico e classificacao/,['DPP']],
+    [/tratamento do diabetes tipo 2|manejo glicemico e cardiorrenal|algoritmo|antidiabeticos/,['UKPDS','EMPA-REG','LEADER','SUSTAIN-6','REWIND','DECLARE','SURPASS-2','Programa SURPASS','SOUL','DiRECT']],
+    [/metas glicemicas/,['DCCT','UKPDS','ACCORD','DIAMOND']],
+    [/tecnologia/,['DIAMOND','iDCL']],
+    [/insulinoterapia/,['DCCT','iDCL']],
+    [/diabetes mellitus tipo 1|diabetes tipo 1 e lada/,['DCCT','DIAMOND','iDCL','Ziegler']],
+    [/complicacoes|retinopatia|neuropatia/,['DCCT','UKPDS']],
+    [/hipoglicemia/,['ACCORD']],
+    [/idoso/,['ACCORD']],
+    [/gestacao/,['HAPO']],
+    [/hiperglicemia hospitalar|perioperatorio/,['NICE-SUGAR']],
+    [/cetoacidose|emergencias hiperglicemicas/,['Endocrinologia Pediátrica|PECARN']],
+    [/doenca renal|cardiorrenal/,['CREDENCE','FIDELIO-DKD','FLOW']],
+    [/insuficiencia cardiaca/,['DAPA-HF','EMPA-REG']],
+    [/risco cardiovascular/,['EMPA-REG','LEADER','SUSTAIN-6','REWIND','DECLARE','SOUL','DAPA-HF']]
+  ],
+  'Obesidade':[
+    [/tratamento farmacologico/,['XENDOS','SCOUT','COR-I','SCALE','Programa STEP','STEP-1','STEP-2','STEP-4','Programa SURMOUNT','SURMOUNT-1','SURMOUNT-2','SURMOUNT-4','SURMOUNT-5','SURMOUNT-MAINTAIN']],
+    [/tratamento cirurgico/,['SOS','STAMPEDE']],
+    [/dieta e exercicio/,['Look AHEAD','Diabetes|DPP']],
+    [/complicacoes|comorbidades|beneficios da perda/,['SELECT','STEP-HFpEF','SURMOUNT-OSA','STEP-9','ESSENCE','SOS','Look AHEAD']],
+    [/masld|dhem|esteatose/,['ESSENCE']],
+    [/sindromica|monogenica/,['Endocrinologia Básica|Farooqi']],
+    [/fisiopatologia|apetite/,['Endocrinologia Básica|Zhang','Endocrinologia Básica|Farooqi']]
+  ],
+  'Lípides':[
+    [/hipertrigliceridemia(?!s secundarias)/,['REDUCE-IT','PROMINENT','BALANCE']],
+    [/hipertrigliceridemias secundarias/,['REDUCE-IT','PROMINENT']],
+    [/quilomicronemia/,['BALANCE']],
+    [/hipercolesterolemia familiar|hipercolesterolemias primarias/,['Luirink','FOURIER','ODYSSEY','ORION']],
+    [/hipercolesterolemia(?!s secundarias)/,['4S','CTT','JUPITER','IMPROVE-IT','FOURIER','ODYSSEY','ORION','CLEAR']],
+    [/hdl|alfalipoproteinemias/,['AIM-HIGH']]
+  ],
+  'Osteometabolismo':[
+    [/osteoporose(?!.*glicocorticoide)/,['FIT','HORIZON-PFT','HORIZON-RFT','FREEDOM','Teriparatida','ARCH','FRAME','Saag']],
+    [/glicocorticoide/,['Saag']],
+    [/hiperparatireoidismo|hipercalcemia/,['Silverberg']],
+    [/hipoparatireoidismo/,['PaTHway']],
+    [/vitamina d/,['VITAL','Endocrinologia do Esporte|Lappe']],
+    [/paget/,['PRISM']],
+    [/raquitismo|osteomalacia/,['Endocrinologia Pediátrica|Imel']]
+  ]
+};
+function estNorm(s){try{return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}catch(e){return String(s||'').toLowerCase();}}
+function estSubDe(d){return String((d&&d.sub)||'Geral').trim()||'Geral';}
+// Artigos e capítulos que o aluno vê nos Resumos (rascunho nunca entra).
+function estItensResumos(tipo){return (diretrizes||[]).filter(function(d){return d&&!dirIsRascunho(d)&&d.privado===true&&dirTipoOf(d)===tipo;});}
+function estudosDoCapitulo(sub,tema){
+  var t=estNorm(tema),refs=[];
+  (ESTUDOS_CHAVE[sub]||[]).forEach(function(r){if(r[0].test(t))r[1].forEach(function(x){if(refs.indexOf(x)<0)refs.push(x);});});
+  var arts=estItensResumos('artigo'),out=[],vistos={};
+  refs.forEach(function(ref){
+    var k=ref.indexOf('|'),rs=k>=0?ref.slice(0,k):sub,pre=k>=0?ref.slice(k+1):ref;
+    arts.forEach(function(d){var c=estSubDe(d)+'|'+dirTemaOf(d);if(!vistos[c]&&estSubDe(d)===rs&&dirTemaOf(d).indexOf(pre)===0){vistos[c]=1;out.push(d);}});
+  });
+  arts.forEach(function(d){
+    var c=estSubDe(d)+'|'+dirTemaOf(d);
+    if(!vistos[c]&&Array.isArray(d.capitulos)&&d.capitulos.some(function(x){return estNorm(x)===t;})){vistos[c]=1;out.push(d);}
+  });
+  return out;
+}
+function capitulosDoEstudo(d){
+  var out=[],vistos={};
+  estItensResumos('capitulo').forEach(function(c){
+    var k=estSubDe(c)+'|'+dirTemaOf(c);if(vistos[k])return;
+    if(estudosDoCapitulo(estSubDe(c),dirTemaOf(c)).indexOf(d)>=0){vistos[k]=1;out.push(c);}
+  });
+  return out;
+}
+function estDescr(d){
+  var s=String((d&&d.info&&d.info.pergunta)||(d&&Array.isArray(d.pts)&&d.pts[0])||'');
+  s=s.replace(/^\s*\*\*[^*]+\*\*\s*—\s*/,'').replace(/\*\*/g,'').trim();
+  if(s.length>130)s=s.slice(0,127).replace(/\s+\S*$/,'')+'…';
+  return s;
+}
+function dirEstudosHTML(sub,tema){
+  var lst=estudosDoCapitulo(sub,tema);if(!lst.length)return '';
+  return '<div class="dir-estudos"><div class="dir-estudos-h">🔬 Estudos-chave deste tema</div><div class="dir-estudos-lista">'
+    +lst.map(function(d){return '<button type="button" class="dir-estudo" data-dir-estudo="'+esc(estSubDe(d)+'||'+dirTemaOf(d))+'">'
+      +'<span class="dir-estudo-t">'+esc(dirTemaOf(d))+'</span>'
+      +'<span class="dir-estudo-f">'+esc([d.fonte,estSubDe(d)!==sub?estSubDe(d):''].filter(Boolean).join(' · '))+'</span>'
+      +(estDescr(d)?'<span class="dir-estudo-d">'+esc(estDescr(d))+'</span>':'')+'</button>';}).join('')
+    +'</div></div>';
+}
+function dirCapsDoEstudoHTML(d){
+  var caps=capitulosDoEstudo(d);if(!caps.length)return '';
+  return '<div class="dir-estudos"><div class="dir-estudos-h">📚 Capítulos relacionados</div><div class="dir-estudos-lista">'
+    +caps.map(function(c){return '<button type="button" class="dir-estudo" data-dir-capitulo="'+esc(estSubDe(c)+'||'+dirTemaOf(c))+'">'
+      +'<span class="dir-estudo-t">'+esc(dirTemaOf(c))+'</span><span class="dir-estudo-f">'+esc(estSubDe(c))+'</span></button>';}).join('')
+    +'</div></div>';
+}
+// ── REVISÃO RÁPIDA DOS ESTUDOS (17/11/2026) ───────────────────────────────────────────
+// Professor: "Os 6 pontos-chave de cada artigo em cartões para passar com o dedo, por
+// subespecialidade, como revisão antes da prova." Um cartão por estudo, na ordem da grade
+// de artigos; arrastar para o lado (ou ← →) troca o cartão; "Abrir o estudo" leva à ficha
+// completa e a volta retorna ao mesmo cartão.
+function dirRevisaoArtigosHTML(temas){
+  var itens=temas.map(function(t){
+    var d=null;(diretrizes||[]).some(function(x){if(dirIsVisible(x)&&estSubDe(x)===refSubSel&&dirTemaOf(x)===t.tema){d=x;return true;}return false;});
+    return d;
+  }).filter(Boolean);
+  var n=itens.length;
+  var cab='<button class="dir-back" data-dir-revsai>← Artigos de '+esc(refSubSel)+'</button>'
+    +'<div class="ph" style="margin-top:0"><h1>⚡ Revisão rápida</h1></div>';
+  if(!n)return cab+'<div class="dir-empty-fmt">Nenhum estudo nesta subespecialidade.</div>';
+  var i=Math.max(0,Math.min(n-1,(refRevArt&&refRevArt.idx)||0));refRevArt.idx=i;refRevArt.n=n;
+  var d=itens[i],pts=Array.isArray(d.pts)?d.pts:[];
+  return cab+'<div class="dir-rev-prog">Estudo '+(i+1)+' de '+n+' · arraste para o lado para passar</div>'
+    +'<div class="desl-palco"><div class="dir-rev-card" id="dir-rev-card" data-dir-revtema="'+esc(dirTemaOf(d))+'">'
+      +'<div class="dir-rev-tema">'+esc(dirTemaOf(d))+'</div>'
+      +'<div class="dir-rev-fonte">'+esc([d.fonte,d.ano].filter(Boolean).join(' · '))+'</div>'
+      +(pts.length?'<ul>'+pts.map(dirPontoLI).join('')+'</ul>':'<div class="dir-empty-fmt">Este estudo ainda não tem pontos-chave.</div>')
+      +'<button type="button" class="btn btn-outline btn-sm dir-rev-abre" data-dir-revabre="'+esc(dirTemaOf(d))+'">Abrir o estudo completo →</button>'
+    +'</div></div>'
+    +'<div class="dir-flash-nav">'
+      +'<button class="dfn-btn" data-dir-revnav="prev"'+(i===0?' disabled':'')+'>← Anterior</button>'
+      +'<span class="dfn-count">'+(i+1)+' / '+n+'</span>'
+      +'<button class="dfn-btn" data-dir-revnav="next"'+(i===n-1?' disabled':'')+'>Próximo →</button>'
+    +'</div>';
+}
 // VIDEOAULAS DO CAPÍTULO (02/11/2026). Pedido do professor: "Insira ao lado de 'Mapas
 // mentais' o botão de 'Videoaulas'. Dentro dela, iremos inserir aos poucos pequenos vídeos
 // (...) de no máx 15 min cada". Em 12/11/2026: "Deixa até 30 min" (o limite passou a 30 min).
@@ -17538,6 +18651,7 @@ function diretrizesViewHTML(){
     // explica a falha e oferece tentar de novo.
     if(refPrivadoMode&&!subs.length){
       var _cab='<div class="ph"><h1>'+_T+'</h1></div>';
+      if(resumosErro&&offlineSemRede())return _cab+offlineVazioHTML(); // sem internet: o que há (ou não) no aparelho
       if(resumosErro){
         return _cab+'<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">📡</div>'
           +'<h2>Não foi possível carregar os resumos</h2>'
@@ -17561,13 +18675,13 @@ function diretrizesViewHTML(){
         +'<p>A lista abaixo é a última cópia guardada neste aparelho. O acervo completo está no servidor; basta tentar de novo.</p>'
         +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
     }
-    return '<div class="ph"><h1>'+_T+'</h1></div>'+_avisoDir
+    return '<div class="ph"><h1>'+_T+'</h1></div>'+_avisoDir+offlineAvisoHTML()
       +'<div class="dir-sub-grid">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
         var _nv=dirNovosNaSub(s.sub,refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible);
         // Degustação: a área com videoaula liberada avisa já na grade.
         var _vl=(_degFmt&&dirVideoAmostraDaSub(s.sub))?'<div class="dsb-vid">🎬 1 videoaula liberada</div>':'';
-        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div>'+_vl+'</button>';
+        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div>'+_vl+((refPrivadoMode&&offlineIdx[s.sub]&&!offlineUsando)?'<div class="dsb-off">✓ disponível sem internet</div>':'')+'</button>';
       }).join('')+'</div>';
   }
   // Nível 2 — grade de temas dentro da subespecialidade.
@@ -17593,7 +18707,10 @@ function diretrizesViewHTML(){
     var _blocoVid=_vidAm?('<div class="dir-deg-vid"><div class="dir-deg-vid-tit">🎁 Videoaula liberada na degustação</div>'
       +'<div class="dir-video"><div class="dir-video-player">'+dirVideoPlayerHTML(_vidAm.v)+'</div>'+dirVideoCabHTML(_vidAm.v)+'</div>'
       +'<div class="dir-deg-vid-de">Do capítulo <b>'+esc(_vidAm.tema)+'</b>. Na degustação, uma videoaula por área; assine para ver todas.</div></div>'):'';
-    return head2+'<div class="dir-sub-grid">'+temas.map(function(t,ti){
+    // Revisão rápida dos estudos (17/11/2026): os cartões tomam o lugar da grade de artigos.
+    if(_isArt&&refRevArt&&typeof dirRevisaoArtigosHTML==='function')return dirRevisaoArtigosHTML(temas);
+    var _revBtn=(_isArt&&temas.length>1&&!_deg1)?'<button class="btn btn-outline btn-sm dir-rev-btn" data-dir-revart>⚡ Revisão rápida: os pontos-chave de cada estudo</button>':'';
+    return head2+(_deg1?'':offlineBarraHTML(refSubSel))+_revBtn+'<div class="dir-sub-grid">'+temas.map(function(t,ti){
       var lk=_deg1&&ti>0;
       return '<button class="dir-sub-btn'+(lk?' dir-locked':'')+'" data-dir-'+(lk?'lockedtema':'tema')+'="'+esc(t.tema)+'"><div class="dsb-ico">'+(lk?'🔒':(_isArt?'🔬':'📄'))+'</div><h3>'+esc(t.tema)+'</h3>'+(lk?'<div class="dsb-cnt">Exclusivo p/ assinantes</div>':(t.count>1?'<div class="dsb-cnt">'+_cnt(t.count)+'</div>':''))+'</button>';
     }).join('')+'</div>'
@@ -17603,7 +18720,9 @@ function diretrizesViewHTML(){
   // Nível 3 — itens do tema, no formato escolhido.
   var list=diretrizes.map(function(d,i){return {d:d,i:i};}).filter(function(x){return dirIsVisible(x.d)&&(String(x.d.sub||'Geral').trim()||'Geral')===refSubSel&&dirTemaOf(x.d)===refTemaSel;});
   list.sort(function(a,b){return (acervoEhNovo(b.d)?1:0)-(acervoEhNovo(a.d)?1:0);});
-  var head='<button class="dir-back" data-dir-temaback>← '+esc(refSubSel)+'</button>'
+  // Quem chegou por um estudo-chave do capítulo (ou pela revisão rápida) volta para lá.
+  var _voltaCap=(refPrivadoMode&&refVoltaCap)?'<button class="dir-voltacap" data-dir-voltacap>← '+(refVoltaCap.rev!=null?'Voltar à revisão rápida':('Voltar ao capítulo: '+esc(refVoltaCap.tema)))+'</button>':'';
+  var head=_voltaCap+'<button class="dir-back" data-dir-temaback>← '+esc(refSubSel)+'</button>'
     +'<div class="ph" style="margin-top:0"><h1>'+esc(refTemaSel)+'</h1></div>';
   if(!list.length){
     return head+'<div class="dir-empty-fmt">Nenhum conteúdo neste tema.</div>';
@@ -17636,7 +18755,9 @@ function diretrizesViewHTML(){
     +(_ehArtigo?'':('<div class="dir-fmt">'+fmts.map(function(f){var lk=(_degFmt&&f[0]!=='resumo'&&!(f[0]==='video'&&_temVideo))||(_stdVid&&f[0]==='video'&&!_temVideo);return '<button class="dir-fmt-btn'+(fmtAtivo===f[0]?' on':'')+(lk?' dir-fmt-locked':'')+'" data-dir-'+(lk?'fmtlock':'fmt')+'="'+f[0]+'">'+f[1]+(lk?' 🔒':'')+'</button>';}).join('')+'</div>'))
     +((_degFmt&&!_ehArtigo)?'<div class="dir-deg-note">🔒 '+(_vidTrancado?'<b>Flashcards</b>, <b>mapas mentais</b> e <b>videoaulas</b>':'<b>Flashcards</b> e <b>mapas mentais</b>')+' deste capítulo são exclusivos para assinantes.'+(_temVideo?' 🎁 A videoaula liberada desta área está na aba <b>🎬 Videoaulas</b>.':'')+'</div>':'')
     +((_stdVid&&!_ehArtigo&&_vidTrancado)?'<div class="dir-deg-note">🔒 As <b>videoaulas</b> deste capítulo são do plano <b>Gold</b>.</div>':'')
-    +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('');
+    +list.map(function(x){return dirCardHTML(x.d,x.i);}).join('')
+    // Estudos-chave no fim do capítulo; no artigo, os capítulos que o citam (17/11/2026).
+    +((refPrivadoMode&&typeof dirEstudosHTML==='function')?(_ehArtigo?dirCapsDoEstudoHTML(list[0].d):(fmtAtivo==='resumo'?dirEstudosHTML(refSubSel,refTemaSel):'')):'');
 }
 // Liga os eventos da visão dentro de um container (aluno ou pré-visualização).
 function bindDiretrizesView(root){
@@ -17651,7 +18772,7 @@ function bindDiretrizesView(root){
   root.querySelectorAll('[data-dir-fmtlock]').forEach(function(b){b.addEventListener('click',_resuUpsell);});
   var _assb=root.querySelector('[data-dir-assine]');if(_assb)_assb.addEventListener('click',_resuUpsell);
   // Alternador Capítulos × Artigos (Resumos): troca o tipo e volta para a grade de temas.
-  root.querySelectorAll('[data-dir-tipo]').forEach(function(b){b.addEventListener('click',function(){refTipoSel=b.dataset.dirTipo;refTemaSel='';refFlashOpen={};refFlashIdx={};refVideoAberto='';renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-tipo]').forEach(function(b){b.addEventListener('click',function(){refVoltaCap=null;refRevArt=null;refTipoSel=b.dataset.dirTipo;refTemaSel='';refFlashOpen={};refFlashIdx={};refVideoAberto='';renderDiretrizesInto(root);});});
   // "Tentar de novo" quando a carga dos Resumos falhou (ver carregarResumos).
   var _rtry=root.querySelector('#btn-resumos-retry');
   if(_rtry)_rtry.addEventListener('click',function(){
@@ -17659,18 +18780,68 @@ function bindDiretrizesView(root){
     recarregarResumos().then(function(){renderDiretrizesInto(root);});
   });
   // Entrar numa subespecialidade sempre começa pelos capítulos.
-  root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refSubSel=b.dataset.dirSub;refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
-  root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refTemaSel=b.dataset.dirTema;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-sub]').forEach(function(b){b.addEventListener('click',function(){refVoltaCap=null;refRevArt=null;refSubSel=b.dataset.dirSub;refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
+  root.querySelectorAll('[data-dir-tema]').forEach(function(b){b.addEventListener('click',function(){refVoltaCap=null;refTemaSel=b.dataset.dirTema;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);});});
   var back=root.querySelector('[data-dir-back]');
-  if(back)back.addEventListener('click',function(){refSubSel='';refTemaSel='';refTipoSel='capitulo';refVideoAberto='';renderDiretrizesInto(root);});
+  if(back)back.addEventListener('click',function(){refSubSel='';refTemaSel='';refTipoSel='capitulo';refVideoAberto='';refVoltaCap=null;refRevArt=null;renderDiretrizesInto(root);});
   var tback=root.querySelector('[data-dir-temaback]');
-  if(tback)tback.addEventListener('click',function(){refTemaSel='';refVideoAberto='';renderDiretrizesInto(root);});
+  if(tback)tback.addEventListener('click',function(){refTemaSel='';refVideoAberto='';refVoltaCap=null;renderDiretrizesInto(root);});
   root.querySelectorAll('[data-dir-fmt]').forEach(function(b){b.addEventListener('click',function(){
     refFormat=b.dataset.dirFmt;refFlashOpen={};refVideoAberto='';renderDiretrizesInto(root);
     // Aba 🧠 Mapas mentais de UM capítulo: abre direto na tela cheia da ferramenta.
     if(refFormat==='mapa'){var _ma=root.querySelectorAll('[data-dir-abremapa]');if(_ma.length===1)abrirMapaDoCapitulo(+_ma[0].getAttribute('data-dir-abremapa'));}
   });});
   root.querySelectorAll('[data-dir-abremapa]').forEach(function(b){b.addEventListener('click',function(){abrirMapaDoCapitulo(+b.getAttribute('data-dir-abremapa'));});});
+  // ── Estudos-chave, capítulos relacionados e revisão rápida (17/11/2026) ──
+  var _rolaTopo=function(){try{var h=root.querySelector('.dir-voltacap,.dir-back,.ph');if(h&&h.scrollIntoView)h.scrollIntoView({block:'start'});}catch(e){}};
+  root.querySelectorAll('[data-dir-estudo]').forEach(function(b){b.addEventListener('click',function(){
+    var p=String(b.getAttribute('data-dir-estudo')||'').split('||');if(p.length<2)return;
+    refVoltaCap={sub:refSubSel,tema:refTemaSel};refRevArt=null;
+    refSubSel=p[0];refTipoSel='artigo';refTemaSel=p[1];refFormat='resumo';refFlashOpen={};refVideoAberto='';
+    renderDiretrizesInto(root);_rolaTopo();
+  });});
+  root.querySelectorAll('[data-dir-capitulo]').forEach(function(b){b.addEventListener('click',function(){
+    var p=String(b.getAttribute('data-dir-capitulo')||'').split('||');if(p.length<2)return;
+    refVoltaCap=null;refRevArt=null;
+    refSubSel=p[0];refTipoSel='capitulo';refTemaSel=p[1];refFormat='resumo';refFlashOpen={};refVideoAberto='';
+    renderDiretrizesInto(root);_rolaTopo();
+  });});
+  var _vcap=root.querySelector('[data-dir-voltacap]');
+  if(_vcap)_vcap.addEventListener('click',function(){
+    var v=refVoltaCap;refVoltaCap=null;if(!v)return;
+    if(v.rev!=null){refSubSel=v.sub;refTipoSel='artigo';refTemaSel='';refRevArt={idx:v.rev};renderDiretrizesInto(root);_rolaTopo();return;}
+    refSubSel=v.sub;refTipoSel='capitulo';refTemaSel=v.tema;refFormat='resumo';refFlashOpen={};refVideoAberto='';
+    renderDiretrizesInto(root);
+    try{var est=root.querySelector('.dir-estudos');if(est&&est.scrollIntoView)est.scrollIntoView({block:'center'});}catch(e){}
+  });
+  var _revIni=root.querySelector('[data-dir-revart]');
+  if(_revIni)_revIni.addEventListener('click',function(){refRevArt={idx:0};refVoltaCap=null;renderDiretrizesInto(root);_rolaTopo();});
+  var _revSai=root.querySelector('[data-dir-revsai]');
+  if(_revSai)_revSai.addEventListener('click',function(){refRevArt=null;renderDiretrizesInto(root);_rolaTopo();});
+  var _revVai=function(passo){
+    if(!refRevArt)return;
+    var cur=refRevArt.idx+passo;if(cur<0||cur>(refRevArt.n||1)-1)return;
+    deslizar(function(){return root.querySelector('#dir-rev-card');},passo,function(){refRevArt.idx=cur;renderDiretrizesInto(root);});
+  };
+  root.querySelectorAll('[data-dir-revnav]').forEach(function(b){b.addEventListener('click',function(){_revVai(b.getAttribute('data-dir-revnav')==='next'?1:-1);});});
+  var _revCard=root.querySelector('#dir-rev-card');
+  if(_revCard){
+    var _x0=null,_y0=null;
+    _revCard.addEventListener('touchstart',function(e){if(e.touches.length===1){_x0=e.touches[0].clientX;_y0=e.touches[0].clientY;}},{passive:true});
+    _revCard.addEventListener('touchend',function(e){
+      if(_x0==null||!e.changedTouches||!e.changedTouches[0])return;
+      var dx=e.changedTouches[0].clientX-_x0,dy=e.changedTouches[0].clientY-_y0;_x0=null;
+      if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)_revVai(dx<0?1:-1);
+    });
+  }
+  // Último capítulo lido (Dashboard) e grifos: só na leitura do aluno (#resu-body).
+  try{if(typeof resuPosRender==='function')resuPosRender(root);}catch(e){}
+  var _revAbre=root.querySelector('[data-dir-revabre]');
+  if(_revAbre)_revAbre.addEventListener('click',function(){
+    refVoltaCap={sub:refSubSel,rev:refRevArt?refRevArt.idx:0};refRevArt=null;
+    refTipoSel='artigo';refTemaSel=_revAbre.getAttribute('data-dir-revabre')||'';refFormat='resumo';
+    renderDiretrizesInto(root);_rolaTopo();
+  });
   // Videoaulas: tocar na lista abre só aquela; a volta devolve a lista (ver dirVideosHTML).
   // Depois de redesenhar, rola até o topo do que abriu: quem escolheu o último da lista não
   // pode ficar olhando para o meio dos tópicos.
@@ -17701,6 +18872,7 @@ function renderRef(){
   var el=document.getElementById('ref-body'); if(!el)return;
   refPrivadoMode=false; // aba Diretrizes = itens públicos
   refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto=''; // sempre abrir na grade de subespecialidades
+  refVoltaCap=null;refRevArt=null;
   if(DIRETRIZES_PUBLICADO){renderDiretrizesInto(el);return;}
   el.innerHTML='<div class="ph"><h1>📋 Diretrizes</h1></div>'
     +'<div class="ref-soon"><div class="ref-soon-ico">🔜</div><h2>Em breve</h2>'
@@ -17713,6 +18885,7 @@ function renderResu(){
   var el=document.getElementById('resu-body'); if(!el)return;
   refPrivadoMode=true;
   refSubSel='';refTemaSel='';refTipoSel='capitulo';refFlashOpen={};refVideoAberto='';
+  refVoltaCap=null;refRevArt=null;
   renderDiretrizesInto(el);
 }
 // Ordem de prioridade dos periódicos no mural (pedido do Rodolpho, 2026-07-04):
@@ -24244,6 +25417,7 @@ document.addEventListener('click',function(e){
   var sfo=c('[data-sfopt]');if(sfo){sfSelectOpt(sfo.dataset.sfopt);return;}
   var sfn=c('[data-sfnav]');if(sfn){var _ni=parseInt(sfn.dataset.sfnav,10);deslizar(sfPegaCorpo,_ni>sfState.idx?1:(_ni<sfState.idx?-1:0),function(){sfState.idx=_ni;renderSFQuestion();});return;}
   // notas
+  if(c('[data-note-grifos]')){grifosNotasAbre();return;}
   var note=c('[data-note]');if(note){openNote(parseInt(note.dataset.note));return;}
   var ncmd=c('[data-cmd]');if(ncmd){execNoteCmd(ncmd.dataset.cmd);return;}
   // chat sugg
@@ -26328,6 +27502,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.querySelectorAll('.sb-item[data-p]').forEach(function(b){b.addEventListener('click',function(){goPanel(b.dataset.p);});});
   var upBtn=document.getElementById('perfil-upgrade');if(upBtn)upBtn.addEventListener('click',function(){try{closeMobileNav();}catch(e){}showAssineScreen((currentUser&&currentUser.email)||'',{upgrade:!isDegustacao()});});
   document.getElementById('btn-chat-cta').addEventListener('click',function(){goPanel('chat');});
+  try{document.getElementById('btn-busca').addEventListener('click',abrirBusca);}catch(e){} // busca única (17/11/2026)
   // Feedback saiu do topo (17/11/2026): 0 usos desde o convite automático de 01/09; agora no menu e no Perfil.
   var _sbfb=document.getElementById('sb-feedback');if(_sbfb)_sbfb.addEventListener('click',function(){document.body.classList.remove('mobile-nav-open');openFeedback();});
 

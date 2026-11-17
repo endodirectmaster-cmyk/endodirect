@@ -1367,6 +1367,48 @@ try {
   fail('regressão do texto justificado falhou:\n' + out);
 }
 
+// 17c-undecies-bp. ESTUDOS-CHAVE NO CAPÍTULO E REVISÃO RÁPIDA (17/11/2026): bloco de estudos canônicos no fim de
+//      cada capítulo dos Resumos (tabela ESTUDOS_CHAVE + campo `capitulos`), volta ao capítulo, capítulos
+//      relacionados na ficha do artigo e cartões com os pontos-chave de cada estudo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-estudos-chave.js')], { stdio: 'pipe' });
+  ok('estudos-chave no capítulo e revisão rápida dos estudos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos estudos-chave/revisão rápida falhou:\n' + out);
+}
+
+// 17c-undecies-bq. CONTINUAR DE ONDE PAROU E GRIFOS (17/11/2026): último capítulo e posição (cartão no Dashboard),
+//      trechos grifados com nota nos Resumos (reencontrados pelo texto), reunidos na aba Notas; pessoais e sincronizados.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-leitura-grifos.js')], { stdio: 'pipe' });
+  ok('continuar de onde parou e grifos nos Resumos');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão de continuar de onde parou/grifos falhou:\n' + out);
+}
+
+// 17c-undecies-br. BUSCA ÚNICA (17/11/2026): botão 🔍 no topo; procura em capítulos, artigos, Diretrizes,
+//      flashcards e questões, sem acento e sem rascunho; abre no ponto do termo; questão e flashcard abrem ali.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-busca-unica.js')], { stdio: 'pipe' });
+  ok('busca única em todo o conteúdo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da busca única falhou:\n' + out);
+}
+
+// 17c-undecies-bs. RESUMOS SEM INTERNET (17/11/2026): baixar a área (texto + figuras no IndexedDB), ler sem
+//      rede (inclusive com o token vencido), "Sair" apaga; app do iPhone 1.3: plugin Filesystem, manifesto
+//      de privacidade e a tela "Sem conexão" (erro.html) lendo Caches/offline.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-offline-resumos.js')], { stdio: 'pipe' });
+  ok('Resumos sem internet (site e app 1.3)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos Resumos sem internet falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
