@@ -128,7 +128,7 @@ o conteúdo que o revisor enxerga (Analytics, Estudantes, Suporte e fila da Ques
 precisam dos dados do professor). Nada foi mudado. Propostas, numeradas como foram enviadas:
 1. ✅ FEITO em 16/11 (sw v431). Dashboard: os 6 números do topo (um por linha, meia tela) em grade 2×3; o bloco "933 Flashcards / 20 para
    revisar / 0 mapas" (repete o 933) numa linha só; Cronograma/Revisão/Notas num cartão com três linhas.
-2. Listas por subespecialidade (Flashcards, Mapas, Diretrizes, Resumos; aluno e professor): cartões altos
+2. ✅ FEITO em 16/11 (sw v432). Listas por subespecialidade (Flashcards, Mapas, Diretrizes, Resumos; aluno e professor): cartões altos
    (ícone numa linha, nome na outra) → grade de 2 colunas ou linhas compactas; mesma ordem em todas;
    esconder "Transgeneridade · 0 diretrizes". Dentro dos Resumos: tirar o "1 capítulo" repetido.
 3. Mural de artigos: título justificado com buracos no celular → título alinhado à esquerda; filtros

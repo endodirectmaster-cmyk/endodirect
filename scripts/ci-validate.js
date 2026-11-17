@@ -1264,6 +1264,16 @@ try {
   fail('regressão do dashboard compacto falhou:\n' + out);
 }
 
+// 17c-undecies-bf. LISTAS POR SUBESPECIALIDADE COMPACTAS (proposta 2 da revisão de formatação, 16/11/2026): em
+//      linha no celular, mesma ordem em todas as abas, sem área vazia e sem o "1 capítulo" repetido.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-listas-subesp.js')], { stdio: 'pipe' });
+  ok('listas por subespecialidade: em linha, mesma ordem, sem área vazia nem contagem repetida');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das listas por subespecialidade falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
