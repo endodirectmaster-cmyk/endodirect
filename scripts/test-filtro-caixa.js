@@ -33,7 +33,7 @@ const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 const ouv = (html.match(/document\.addEventListener\('change',function\(e\)\{[\s\S]*?\n\}\);/) || [''])[0];
 ok('🧨 ouvinte de change para select[data-filtro]', /sel\.matches\('select\[data-filtro\]'\)/.test(ouv));
 [["calcarea", /calcAreaFiltro=v;renderCalcGrid\(\);/], ["fctema", /fcTema=v;fcPagina=0;renderFC\(\);/], ["mmtema", /mmTema=v;renderMMList\(\);/],
- ["admfctema", /admFcTema=v;admFcEditId=null;renderAdmSec\('flashcards'\);/], ["admmmtema", /admMMTema=v;renderAdmSec\('mapas'\);/], ["podfilter", /podFilter=v;renderPodcasts\(\);/]].forEach(([k, re]) =>
+ ["admfctema", /admFcTema=v;admFcEditId=null;renderAdmSec\('flashcards'\);/], ["admmmtema", /admMMTema=v;renderAdmSec\('mapas'\);/], ["podfilter", /podFilter=v;podPagina=0;renderPodcasts\(\);/]].forEach(([k, re]) =>
   ok('🧨 escolher em ' + k + ' filtra e redesenha', new RegExp("k==='" + k + "'\\)\\{" + re.source).test(ouv)));
 
 // ---- 4. o HTML da caixa ----------------------------------------------------------------------

@@ -1502,6 +1502,9 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 }
 .mural-filtros-bt,.mural-mais{display:none}
 .note-voltar{display:none}
+.lista-por{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:.74rem;color:var(--t3)}
+.lista-por select{width:auto;max-width:170px;font-size:.74rem;padding:.3rem .5rem}
+@media (max-width:820px){.lista-por select{font-size:16px}}
 /* NOTAS NO CELULAR (proposta 4 da revisão de formatação, 17/11/2026): uma coluna. A lista ocupa a tela; a nota abre
    em tela própria (classe .nota-aberta no painel) com "← Notas" na barra. Os !important vencem o estilo em linha
    do painel (duas colunas lado a lado, que segue no computador). */
@@ -13961,6 +13964,17 @@ function drawMMConnections(){
 
 // ── PODCASTS (aluno) ──
 var podFilter='';
+// PAGINAÇÃO 10/30/50 EM PODCASTS E REVISÃO (proposta 5 da revisão de formatação, 17/11/2026): os ~210 episódios e os
+// ~930 cards vinham numa página só. Mesmas opções e mesma navegação da Questão do Dia (QOTD_POR_OPCOES,
+// muralPagerHTML, qotdArchLigaPaginacao); a escolha fica guardada no aparelho.
+function listaPorLido(chave){var v=+lsGet(chave);return QOTD_POR_OPCOES.indexOf(v)>=0?v:10;}
+function listaPaginas(total,por,pagina){var n=Math.max(1,Math.ceil(total/por));return {paginas:n,pagina:Math.min(Math.max(0,pagina|0),n-1)};}
+function listaPorHTML(pre,por,total,rotulo){
+  return '<div class="lista-por"><span>'+(rotulo?total+' '+rotulo:'')+'</span><select id="'+pre+'-por" aria-label="Itens por página">'
+    +QOTD_POR_OPCOES.map(function(n){return '<option value="'+n+'"'+(n===por?' selected':'')+'>'+n+' por página</option>';}).join('')
+    +'</select></div>';
+}
+var podPor=listaPorLido('pod_por_pagina'),podPagina=0;
 // Infere a subespecialidade de um podcast a partir do título/descrição.
 // Retorna '' quando não há correspondência clara (cai no padrão escolhido).
 function inferPodcastSub(text){
@@ -14008,7 +14022,10 @@ function renderPodcasts(){
   var el=document.getElementById('pod-list');if(!el)return;
   var list=podFilter?podcasts.filter(function(p){return podArea(p)===podFilter;}):podcasts;
   if(!list.length){el.innerHTML='<div class="empty">Nenhum podcast disponível ainda. O admin pode adicionar episódios.</div>';return;}
-  el.innerHTML=list.map(function(p){var a=podArea(p);var dt=podDataStr(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div>'+podDescCompletoHTML(p.desc)+podcastPlayerHTML(p)+'</div></div></div>';}).join('');
+  var _pg=listaPaginas(list.length,podPor,podPagina);podPagina=_pg.pagina;
+  var _mostra=list.slice(podPagina*podPor,podPagina*podPor+podPor);
+  el.innerHTML=listaPorHTML('pod',podPor,list.length,list.length===1?'episódio':'episódios')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);return'<div class="card"><div style="display:flex;align-items:flex-start;gap:.8rem"><div style="width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🎧</div><div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px">'+esc(p.title)+'</div><div style="font-size:.68rem;color:var(--t3);margin-bottom:.4rem"><span class="tag tag-blue" style="margin-right:5px">'+esc(a)+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div>'+podDescCompletoHTML(p.desc)+podcastPlayerHTML(p)+'</div></div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
+  qotdArchLigaPaginacao(el,'pod',function(n){podPor=n;lsSet('pod_por_pagina',n);podPagina=0;renderPodcasts();},function(d){podPagina+=d;renderPodcasts();});
 }
 // DESCRIÇÃO EM PARÁGRAFOS, JUSTIFICADA (14/11/2026). Print do professor na aba Podcasts:
 // "Deixar em modo justificado. As frases ficaram todas juntas. Separar em parágrafos". O feed
@@ -14812,6 +14829,7 @@ function srDueReviews(){return DB.fc.filter(function(c){return !srIsNew(c)&&srIs
 function srNewAvail(){return DB.fc.filter(srIsNew);}
 function srBuildQueue(){DB.fc.forEach(srInit);return srDueReviews().concat(srNewAvail().slice(0,srNewRemaining()));}
 function srSessionCount(){DB.fc.forEach(srInit);return srDueReviews().length+Math.min(srNewRemaining(),srNewAvail().length);}
+var srPor=listaPorLido('sr_por_pagina'),srPagina=0; // paginação da lista "Todos os cards" (proposta 5)
 function renderSR(){
   DB.fc.forEach(srInit);
   var revN=srDueReviews().length, newN=Math.min(srNewRemaining(),srNewAvail().length);
@@ -14823,7 +14841,11 @@ function renderSR(){
   setText('sr-list-count','('+DB.fc.length+')');
   if(el){
     if(!DB.fc.length)el.innerHTML='<div class="empty">Crie flashcards primeiro.</div>';
-    else el.innerHTML=DB.fc.map(function(c){var d=srIsDue(c);return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(c.front)+'</div><div class="adm-row-sub">'+esc(c.cat||'Geral')+' • intervalo '+(c.interval||0)+'d • EF '+(Math.round((c.ef||2.5)*100)/100)+'</div></div>'+(d?'<span class="tag tag-red">Devido</span>':'<span class="tag tag-grn">'+Math.max(0,Math.ceil((c.due-Date.now())/86400000))+'d</span>')+'</div>';}).join('');
+    else{
+      var _pg=listaPaginas(DB.fc.length,srPor,srPagina);srPagina=_pg.pagina;
+      el.innerHTML=listaPorHTML('srl',srPor,DB.fc.length,'')+DB.fc.slice(srPagina*srPor,srPagina*srPor+srPor).map(function(c){var d=srIsDue(c);return'<div class="adm-row"><div class="adm-row-info"><div class="adm-row-title">'+esc(c.front)+'</div><div class="adm-row-sub">'+esc(c.cat||'Geral')+' • intervalo '+(c.interval||0)+'d • EF '+(Math.round((c.ef||2.5)*100)/100)+'</div></div>'+(d?'<span class="tag tag-red">Devido</span>':'<span class="tag tag-grn">'+Math.max(0,Math.ceil((c.due-Date.now())/86400000))+'d</span>')+'</div>';}).join('')+muralPagerHTML(srPagina,_pg.paginas,'srl-pag');
+      qotdArchLigaPaginacao(el,'srl',function(n){srPor=n;lsSet('sr_por_pagina',n);srPagina=0;renderSR();},function(d){srPagina+=d;renderSR();});
+    }
   }
 }
 function startSR(all){
@@ -23935,7 +23957,7 @@ document.addEventListener('change',function(e){
   else if(k==='mmtema'){mmTema=v;renderMMList();}
   else if(k==='admfctema'){admFcTema=v;admFcEditId=null;renderAdmSec('flashcards');}
   else if(k==='admmmtema'){admMMTema=v;renderAdmSec('mapas');}
-  else if(k==='podfilter'){podFilter=v;renderPodcasts();}
+  else if(k==='podfilter'){podFilter=v;podPagina=0;renderPodcasts();}
 });
 document.addEventListener('click',function(e){
   var t=e.target;
