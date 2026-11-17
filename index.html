@@ -1511,6 +1511,23 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 .lista-por{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:.74rem;color:var(--t3)}
 .lista-por select{width:auto;max-width:170px;font-size:.74rem;padding:.3rem .5rem}
 @media (max-width:820px){.lista-por select{font-size:16px}}
+/* CONTADORES NUMA LINHA (proposta 8, 17/11/2026): Revisão, Caderno de erros (3 → uma linha) e Enquete da EMC
+   (4 → 2×2) ficavam empilhados no celular, meia tela só de números. Mesmo desenho do Dashboard (dash-mini). */
+@media (max-width:820px){
+  .g3.contadores{grid-template-columns:repeat(3,1fr);gap:8px}
+  .g4.contadores{grid-template-columns:repeat(2,1fr);gap:8px}
+  .contadores .card{padding:.7rem .35rem}
+  /* CALCULADORAS COMPACTAS (proposta 15): nome e unidade numa linha; o cartão inteiro abre (sai o "Abrir →"). */
+  .calc-area-grid{gap:8px}
+  .calc-area-grid .calc-card{flex-direction:row;flex-wrap:wrap;align-items:center;gap:.3rem .6rem;padding:.7rem .85rem}
+  .calc-area-grid .calc-card{flex-wrap:nowrap}
+  .calc-area-grid .calc-card .calc-card-nm{flex:1 1 0;min-width:0}
+  .calc-area-grid .calc-card .calc-card-ft{margin-top:0;padding-top:0;flex:0 1 auto;min-width:0;max-width:46%;justify-content:flex-end}
+  .calc-area-grid .calc-card .calc-unit{max-width:100%}
+  .calc-area-grid .calc-card .calc-go{display:none}
+  .calc-area-grid .calc-card:has(.calc-piloto){flex-wrap:wrap}
+  .calc-area-grid .calc-card .calc-piloto{order:3}
+}
 /* ESCOLHAS COMO BOTÕES GRANDES (proposta 14 da revisão de formatação, 17/11/2026): Fonte do Simulado, Modo de
    resposta do OSCE e Horário do Cronograma eram bolinhas de rádio pequenas, difíceis de tocar. Viram botões lado a
    lado (44 px de altura, o mínimo de toque da Apple), como "Provas anteriores | Banco Salvo". O rádio continua lá
@@ -3235,10 +3252,10 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Revisão</b></div>
       <div class="ph"><h1>Revisão</h1></div>
       <div class="pc">
-        <div class="g3" style="margin-bottom:.85rem">
+        <div class="g3 contadores" style="margin-bottom:.85rem">
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="sr-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="sr-total">0</div><div style="font-size:.66rem;color:var(--t3)">Total de cards</div></div>
-          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)" id="sr-mastered">0</div><div style="font-size:.66rem;color:var(--t3)">Dominados (≥7d)</div></div>
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)" id="sr-mastered">0</div><div style="font-size:.66rem;color:var(--t3)">Dominados</div></div>
         </div>
         <div id="sr-session" style="display:none">
           <div style="max-width:440px;margin:0 auto">
@@ -3273,10 +3290,10 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="breadcrumb">Dashboard <b>/ Caderno de erros</b></div>
       <div class="ph"><h1>📕 Caderno de erros</h1></div>
       <div class="pc">
-        <div class="g3" style="margin-bottom:.85rem">
+        <div class="g3 contadores" style="margin-bottom:.85rem">
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--red)" id="err-due">0</div><div style="font-size:.66rem;color:var(--t3)">Para revisar hoje</div></div>
           <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)" id="err-total">0</div><div style="font-size:.66rem;color:var(--t3)">No caderno</div></div>
-          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)" id="err-mastered">0</div><div style="font-size:.66rem;color:var(--t3)">Dominados (≥7d)</div></div>
+          <div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)" id="err-mastered">0</div><div style="font-size:.66rem;color:var(--t3)">Dominados</div></div>
         </div>
         <div id="err-session" style="display:none">
           <div style="max-width:600px;margin:0 auto">
@@ -12227,16 +12244,23 @@ function qotdArchListHTML(all,mm,aberto,ordem,hoje,pre,pag){
         +(pag?'<select id="'+pre+'-por" aria-label="Questões por página" style="font-size:.74rem;padding:.3rem .5rem;width:auto;max-width:170px">'+porOpts+'</select>':'')
       +'</span>'
     +'</div>'
-    +mostra.map(function(q){
+    // Formato do arquivo do professor (proposta 6 da revisão de formatação, 17/11/2026): mês como título, data em
+    // bloco, subespecialidade, situação e o começo do enunciado (só a data não dizia de que era a questão).
+    +'<div class="adm-qa-lista qa-lista-aluno">'+(function(){var mesAtual='';return mostra.map(function(q){
       var ans=mm[q.id]||null,open=(aberto===q.id);
       var badge=ans?(ans.ok?'<span class="qa-badge ok">✓ Acertou</span>':'<span class="qa-badge err">✗ Errou</span>'):'<span class="qa-badge new">Responder</span>';
-      var pd=qotdArchDate(q);
-      var dstr=pd?new Date(pd).toLocaleDateString('pt-BR'):'—';
+      var pd=qotdArchDate(q),d=pd?new Date(pd):null;
+      var mes=d?MESES_PT[d.getMonth()]+' de '+d.getFullYear():'Sem data',cab='';
+      if(mes!==mesAtual){mesAtual=mes;cab='<div class="adm-qa-mes">'+esc(mes.charAt(0).toUpperCase()+mes.slice(1))+'</div>';}
+      var data=d?'<span class="aqa-data" aria-label="'+esc(d.toLocaleDateString('pt-BR'))+'"><b>'+d.getDate()+'</b><small>'+esc(MESES_PT[d.getMonth()].slice(0,3))+'</small></span>':'<span class="aqa-data"><b>—</b></span>';
       var hj=(hoje&&q.id===hoje.id)?'<span class="qa-badge hoje">🧠 De hoje</span>':'';
-      var head='<button type="button" class="qa-head" data-'+pre+'-toggle="'+esc(q.id)+'"><span class="qa-snip">'+esc(dstr)+'</span>'+hj+badge+'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
+      var head='<button type="button" class="qa-head" data-'+pre+'-toggle="'+esc(q.id)+'">'+data
+        +'<span class="aqa-info"><span class="aqa-topo">'+(q.sub?'<span class="aqa-sub">'+esc(q.sub)+'</span>':'')+hj+badge+'</span>'
+        +'<span class="aqa-trecho">'+esc(admQotdTrecho(q))+'</span></span>'
+        +'<span class="qa-caret">'+(open?'▴':'▾')+'</span></button>';
       var body=open?'<div class="qa-body">'+qotdCardHTML(q,ans)+'</div>':'';
-      return '<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
-    }).join('')
+      return cab+'<div class="qa-item'+(open?' open':'')+'">'+head+body+'</div>';
+    }).join('');})()+'</div>'
     +(pag?muralPagerHTML(pagina,paginas,pre+'-pag'):'');
 }
 // Liga a caixa "N por página" e a navegação de uma lista (aluno ou aba do professor).
@@ -20497,7 +20521,7 @@ function admCmeHTML(d){
   var totalG=Number(d.votantes_gold||0),eleg=Number(d.gold_elegiveis||0);
   var adesao=eleg?Math.round(totalG/eleg*100):0;
   var topo=Math.max.apply(null,[1].concat(rank.map(function(r){return Number(r.votos_gold||0);})));
-  var cab='<div class="g4" style="margin-bottom:1rem">'
+  var cab='<div class="g4 contadores" style="margin-bottom:1rem">'
     +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--gold)">'+totalG+'</div><div style="font-size:.66rem;color:var(--t3)">Gold que responderam</div></div>'
     +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--blue)">'+eleg+'</div><div style="font-size:.66rem;color:var(--t3)">Gold elegíveis</div></div>'
     +'<div class="card" style="text-align:center"><div style="font-size:1.45rem;font-weight:700;color:var(--grn)">'+adesao+'%</div><div style="font-size:.66rem;color:var(--t3)">Adesão</div></div>'
