@@ -5,6 +5,27 @@ atualizado: 2026-11-17
 
 # Pendências
 
+## 📚 Artigos novos dos Resumos: revisão e liberação pelo professor (17/11)
+50 artigos gravados como **rascunho** (só o professor vê) nas 10 subespecialidades que não tinham artigo.
+Ele dá F5 no painel, revisa e libera por subespecialidade ("👁 Liberar todos os rascunhos").
+- **Tireoide:** TRUST (2017), TABLET (2019), Casey — levotiroxina na gestação e QI (2017), ESTIMABL2 (2022), OPTIC (2020).
+- **Adrenal:** CAHtalyst — adultos (2024), LINC 3 (2020), ADRENAL (2018), ADIUVO (2023), PATHWAY-2 (2015).
+- **Neuroendocrinologia:** Webster — cabergolina vs bromocriptina (1994), Trainer — pegvisomanto (2000), Colao — pasireotida (2012), Fenske — copeptina (2018), SALT-1 e SALT-2 (2006), SALSA (2021).
+- **Endocrinopatias:** Barroso-Sousa — inibidores de checkpoint (2018), Broersen — IA pelo corticoide (2015), Shine — lítio (2015), Li — biotina (2017), Rhee — contraste iodado (2012).
+- **Feminina:** WHI estrogênio + progestagênio (2002), WHI estrogênio isolado (2004), ELITE (2016), Legro — letrozol vs clomifeno na SOP (2014), SKYLIGHT 1 (2023).
+- **Masculina:** TOM (2010), Testosterone Trials (2016), T4DM (2021), TRAVERSE (2023), TRAVERSE — fraturas (2024).
+- **Pediátrica:** TODAY (2012), TN-10 / teplizumabe (2019), PECARN DKA FLUID (2018), STEP TEENS (2022), Savarirayan — vosoritida (2020).
+- **Transgeneridade:** Getahun (2018), de Blok (2021), de Vries (2014), Dhejne (2011), Taylor — revisão de York (2024).
+- **Esporte:** Bhasin (1996), Baggish (2017), Lappe (2008), REDs — consenso do COI (2023), Riddell — exercício no DM1 (2017).
+- **Básica:** Yalow & Berson (1960), Zhang — gene ob (1994), Farooqi — leptina recombinante (1999), Lang — bisfenol A (2008).
+
+**Pontos para o professor confirmar (afirmações que não estão no artigo):** aprovação do teplizumabe pela FDA (2022) e da
+vosoritida (2021); fezolinetante 45 mg e monitorização hepática (SKYLIGHT); nomes "STRONG" (coorte do Getahun), "TN-10" e
+"ThyPRO" (TRUST), que são as denominações usuais mas não aparecem no resumo. Riddell (2017) ficou sem números (o resumo não
+traz alvos nem doses) e Yalow & Berson / Farooqi / Zhang usam números de artigos conferidos ao redor (citados no texto),
+porque os originais não têm resumo indexado. Arquivos de verificação por área em `scratchpad/artigos/*.verificacao.md`
+(somem com a sessão; o essencial está aqui).
+
 ## 🧹 Código sem uso depois dos mapas do painel (16/11)
 Desde 16/11 as abas "Mapas mentais" das Diretrizes e dos Resumos usam o visualizador da ferramenta
 (`admCapMapaHTML`). Ficaram sem uso, e podem sair numa limpeza: `admRefMapaHTML`, `admReadRefMapa`,
