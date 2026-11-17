@@ -115,12 +115,14 @@ vm.runInContext([
 
   // Mapas e flashcards: selo + contagem na grade.
   ok(/esc\(m\.topic\)\+novoSeloHTML\(m\)/.test(html), '🧨 o mapa mental perdeu o selo');
-  ok(/novosSufixoHTML\(s\.novos,false\)/.test(html), '⚠️ a grade dos mapas perdeu a contagem de novos');
+  ok(/novosDeTotalHTML\(s\.novos,s\.count,false\)/.test(html), '⚠️ a grade dos mapas perdeu a contagem de novos');
   ok(/pubAt:Number\(card\.at\)\|\|null/.test(html),
     '🧨 a semeadura dos flashcards não guarda a data de PUBLICAÇÃO — o selo usaria a data de semeadura, que é a de hoje');
   ok(/\(c\.shared\?novoSeloHTML\(c\):''\)/.test(html),
     '⚠️ o selo do flashcard passou a valer para cards do próprio aluno (só o publicado pelo professor é "novo no acervo")');
-  ok(/novosSufixoHTML\(o\.novos,false\)/.test(html), '⚠️ a grade dos flashcards perdeu a contagem de novos');
+  ok(/novosDeTotalHTML\(o\.novos,o\.count,false\)/.test(html), '⚠️ a grade dos flashcards perdeu a contagem de novos');
+  // Todos novos: o número não repete a contagem de baixo (proposta 17, 17/11/2026); parte deles: o número segue.
+  ok(/function novosDeTotalHTML\(n,total,fem\)\{return \(n&&total&&n>=total\)\?' <span class="novo-selo">'\+\(fem\?'Todas novas':'Todos novos'\)\+'<\/span>':novosSufixoHTML\(n,fem\);\}/.test(html), 'todos novos: selo sem número; parte: com número');
 
   // Dashboard: a linha existe, e a marca de visita é pessoal e sincroniza.
   ok(/\}\)\.join\(''\)\+acervoNovosHTML\(\);/.test(html), '🧨 o Dashboard não mostra mais o que entrou desde a última visita');

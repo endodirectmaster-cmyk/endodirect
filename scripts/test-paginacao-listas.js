@@ -41,7 +41,7 @@ const pod = corpo('renderPodcasts');
 ok('🧨 Podcasts mostram só a fatia da página', /var _mostra=list\.slice\(podPagina\*podPor,podPagina\*podPor\+podPor\);/.test(pod) && /listaPorHTML\('pod',podPor,list\.length,/.test(pod) && /_mostra\.map\(function\(p\)/.test(pod) && !/el\.innerHTML=list\.map/.test(pod));
 ok('Podcasts: navegação e caixa ligadas, escolha guardada', /muralPagerHTML\(podPagina,_pg\.paginas,'pod-pag'\)/.test(pod) && /qotdArchLigaPaginacao\(el,'pod',function\(n\)\{podPor=n;lsSet\('pod_por_pagina',n\);podPagina=0;renderPodcasts\(\);\}/.test(pod));
 ok('🧨 trocar o filtro dos Podcasts volta à página 1', /k==='podfilter'\)\{podFilter=v;podPagina=0;renderPodcasts\(\);\}/.test(html));
-ok('estado dos Podcasts lido do aparelho', /\nvar podPor=listaPorLido\('pod_por_pagina'\),podPagina=0;/.test(html));
+ok('estado dos Podcasts lido do aparelho', /\nvar podPor=listaPorLido\('pod_por_pagina'\),podPagina=0,podMaisLigado=false;/.test(html));
 const sr = corpo('renderSR');
 ok('🧨 Revisão mostra só a fatia da página', /DB\.fc\.slice\(srPagina\*srPor,srPagina\*srPor\+srPor\)\.map\(/.test(sr) && !/el\.innerHTML=DB\.fc\.map/.test(sr));
 ok('Revisão: navegação e caixa ligadas, escolha guardada', /muralPagerHTML\(srPagina,_pg\.paginas,'srl-pag'\)/.test(sr) && /qotdArchLigaPaginacao\(el,'srl',function\(n\)\{srPor=n;lsSet\('sr_por_pagina',n\);srPagina=0;renderSR\(\);\}/.test(sr) && /\nvar srPor=listaPorLido\('sr_por_pagina'\),srPagina=0;/.test(html));

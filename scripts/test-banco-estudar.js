@@ -37,7 +37,7 @@ ok('🧨 a lista de 3 por página saiu (renderGenQ, GEN_PER_PAGE, Salvar todas)'
 const upi = corpo('updateProvaInfo');
 ok('a contagem muda a cada filtro (change → updateProvaInfo)', /\['q-inst','q-ano','q-parea','q-ptype'\]\.forEach\(function\(id\)\{var e=document\.getElementById\(id\);if\(e\)e\.addEventListener\('change',updateProvaInfo\);\}\);/.test(html));
 ok('🧨 o botão diz quantas questões entram e fica desligado com zero ou carregando',
-  /var podeN=\(!estado&&n>0\)\?n:0;bt\.disabled=!podeN;bt\.textContent=podeN\?\('▶ Estudar '\+podeN\+\(podeN===1\?' questão':' questões'\)\):'▶ Estudar';/.test(upi));
+  /var podeN=\(!estado&&n>0\)\?n:0;bt\.disabled=!podeN;bt\.textContent=podeN\?\('▶ Estudar '\+nBR\(podeN\)\+\(podeN===1\?' questão':' questões'\)\):'▶ Estudar';/.test(upi));
 ok('🧨 Estudar abre a tela cheia (renderProvaResults → qzAbrir)', /qzAbrir\(\);/.test(corpo('renderProvaResults')) && /bancoEstadoHTML\(_est\)/.test(corpo('renderProvaResults')));
 
 ok('🧨 tela de estudo: Voltar, Anterior, Próxima e o card num palco de deslize',
