@@ -5,26 +5,36 @@ atualizado: 2026-11-17
 
 # Pendências
 
-## 📚 Artigos novos dos Resumos: revisão e liberação pelo professor (17/11)
-50 artigos gravados como **rascunho** (só o professor vê) nas 10 subespecialidades que não tinham artigo.
-Ele dá F5 no painel, revisa e libera por subespecialidade ("👁 Liberar todos os rascunhos").
-- **Tireoide:** TRUST (2017), TABLET (2019), Casey — levotiroxina na gestação e QI (2017), ESTIMABL2 (2022), OPTIC (2020).
-- **Adrenal:** CAHtalyst — adultos (2024), LINC 3 (2020), ADRENAL (2018), ADIUVO (2023), PATHWAY-2 (2015).
-- **Neuroendocrinologia:** Webster — cabergolina vs bromocriptina (1994), Trainer — pegvisomanto (2000), Colao — pasireotida (2012), Fenske — copeptina (2018), SALT-1 e SALT-2 (2006), SALSA (2021).
-- **Endocrinopatias:** Barroso-Sousa — inibidores de checkpoint (2018), Broersen — IA pelo corticoide (2015), Shine — lítio (2015), Li — biotina (2017), Rhee — contraste iodado (2012).
-- **Feminina:** WHI estrogênio + progestagênio (2002), WHI estrogênio isolado (2004), ELITE (2016), Legro — letrozol vs clomifeno na SOP (2014), SKYLIGHT 1 (2023).
-- **Masculina:** TOM (2010), Testosterone Trials (2016), T4DM (2021), TRAVERSE (2023), TRAVERSE — fraturas (2024).
-- **Pediátrica:** TODAY (2012), TN-10 / teplizumabe (2019), PECARN DKA FLUID (2018), STEP TEENS (2022), Savarirayan — vosoritida (2020).
-- **Transgeneridade:** Getahun (2018), de Blok (2021), de Vries (2014), Dhejne (2011), Taylor — revisão de York (2024).
-- **Esporte:** Bhasin (1996), Baggish (2017), Lappe (2008), REDs — consenso do COI (2023), Riddell — exercício no DM1 (2017).
-- **Básica:** Yalow & Berson (1960), Zhang — gene ob (1994), Farooqi — leptina recombinante (1999), Lang — bisfenol A (2008).
+## 📚 Artigos canônicos dos Resumos: 110 em rascunho, à espera da liberação (17/11)
+Professor (17/11): "não vou ter como ver todos os artigos"; quer em cada subespecialidade os artigos
+pivotais/canônicos de cada tema, conferidos por subagentes, em texto 100% técnico ("evitar jargão de IA").
+Feito: 110 artigos em rascunho (só o professor vê) — os 49 da 1ª leva revisados e 61 novos. Cada um
+foi escrito por um redator e conferido por um verificador independente (identidade no PubMed, cada
+número, cada afirmação, a ficha, o estilo de `scratchpad/artigos/ESTILO.md` e se é canônico).
+Nenhum número de braço/efeito estava errado; as correções foram de fato, atribuição, unidade (p.p.),
+direção da ficha e estilo. Trocados: Lang 2008 (bisfenol A, não canônico) → EDC-2 (2015); Rao 2004 →
+Silverberg 1999; tema "Legro — letrozol vs clomifeno" → "PPCOS II (2014)".
+- **Tireoide:** TRUST (2017), TABLET (2019), Casey (2017), ESTIMABL2 (2022), OPTIC (2020), CATS (2012), HiLo e ESTIMABL (2012), SELECT (2015), LIBRETTO-531 (2023), Subbiah (2018), Marcocci (2011), Bartalena (1998).
+- **Adrenal:** CAHtalyst (2024), LINC 3 (2020), ADRENAL (2018), ADIUVO (2023), PATHWAY-2 (2015), FIRM-ACT (2012), PAPY (2006), SPARTACUS (2016), Lenders (2002), Elhassan (2019), Hahner (2015), Assié (2013).
+- **Neuroendocrinologia:** Webster (1994), Trainer (2000), Colao (2012), Fenske (2018), SALT-1 e SALT-2 (2006), SALSA (2021), Tomlinson (2001), Refardt (2023), Zanettini (2007).
+- **Endocrinopatias:** Barroso-Sousa (2018), Broersen (2015), Shine (2015), Li (2017), Rhee (2012), Bogazzi (2009), SATIETY (2009), Ilias (2005).
+- **Feminina:** WHI estrogênio + progestagênio (2002), WHI estrogênio isolado (2004), ELITE (2016), PPCOS II (2014), SKYLIGHT 1 (2023), Consenso de Rotterdam (2004), PPCOS I (2007).
+- **Masculina:** TOM (2010), Testosterone Trials (2016), T4DM (2021), TRAVERSE (2023), TRAVERSE (2024), EMAS (2010), Goldstein (1998), FAZST (2020).
+- **Pediátrica:** TODAY (2012), TN-10 / teplizumabe (2019), PECARN DKA FLUID (2018), STEP TEENS (2022), Savarirayan (2020), Ross (2011), Imel (2019), CAHtalyst pediátrico (2024).
+- **Transgeneridade:** Getahun (2018), de Blok (2021), de Vries (2014), Dhejne (2011), Taylor (2024).
+- **Esporte:** Bhasin (1996), Baggish (2017), Lappe (2008), REDs (2023), Riddell (2017), Liu (2008), Meinhardt (2010), Meeusen (2013).
+- **Básica:** Yalow & Berson (1960), Zhang (1994), Farooqi (1999), Evans (1988), Weinstein (1991), Mendel (1989), EDC-2 (2015).
+- **Diabetes (+9):** DPP (2002), HAPO (2008), NICE-SUGAR (2009), DiRECT (2018), DIAMOND (2017), iDCL (2019), FIDELIO-DKD (2020), DAPA-HF (2019), Ziegler (2013).
+- **Lípides (+7):** CTT (2010), CLEAR Outcomes (2023), PROMINENT (2022), Luirink (2019), ORION-10 e ORION-11 (2020), BALANCE (2024), AIM-HIGH (2011).
+- **Obesidade (+3):** SOS (2007), Look AHEAD (2013), STAMPEDE (2017).
+- **Osteometabolismo (+7):** FRAME (2016), HORIZON-RFT (2007), Saag (2007), VITAL (2022), PaTHway (2023), Silverberg (1999), PRISM (2010).
 
-**Pontos para o professor confirmar (afirmações que não estão no artigo):** aprovação do teplizumabe pela FDA (2022) e da
-vosoritida (2021); fezolinetante 45 mg e monitorização hepática (SKYLIGHT); nomes "STRONG" (coorte do Getahun), "TN-10" e
-"ThyPRO" (TRUST), que são as denominações usuais mas não aparecem no resumo. Riddell (2017) ficou sem números (o resumo não
-traz alvos nem doses) e Yalow & Berson / Farooqi / Zhang usam números de artigos conferidos ao redor (citados no texto),
-porque os originais não têm resumo indexado. Arquivos de verificação por área em `scratchpad/artigos/*.verificacao.md`
-(somem com a sessão; o essencial está aqui).
+**Falta:** o professor dar F5 no painel e liberar ("👁 Liberar todos os rascunhos" em cada
+subespecialidade), ou pedir que eu libere (edição de item existente pelo SQL: só com F5 antes).
+Afirmações regulatórias mantidas porque conferidas: teplizumabe (FDA 2022, ≥ 8 anos, estágio 2),
+vosoritida (FDA 2021, ≥ 5 anos com epífises abertas), dabrafenibe + trametinibe no anaplásico (FDA 2018),
+fezolinetante 45 mg e alertas hepáticos (FDA/EMA), romosozumabe (boxed warning da FDA; contraindicação
+da EMA), tolvaptano (FDA, abril de 2013: até 30 dias, evitar na hepatopatia).
 
 ## 🧹 Código sem uso depois dos mapas do painel (16/11)
 Desde 16/11 as abas "Mapas mentais" das Diretrizes e dos Resumos usam o visualizador da ferramenta
