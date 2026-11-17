@@ -6372,15 +6372,36 @@ function uploadErrorMessage(e){
   return msg;
 }
 var mem={};
+// ⚠️ CONTEÚDO GRANDE FORA DO localStorage (17/11/2026; professor, app do iPhone: "depois de uns 2, 3, 4 segundos
+// aparece o restante"). As questões (~6 MB) e os Resumos (~4 MB) passam da cota do WebKit (5 MB por site, somando
+// tudo): no iPhone a gravação falhava SEMPRE, depois de serializar tudo, e o caminho de erro serializava e
+// desserializava de novo. A cada carga o iPhone ficava segundos sem desenhar a tela. Acima de LS_MAX_CHARS não
+// tenta: guarda o texto já serializado na memória (lido sob demanda, cópia nova a cada leitura, como antes) e
+// apaga a cópia velha do aparelho, que senão voltaria na próxima abertura. Esse conteúdo vem do servidor a cada
+// abertura; o que é do aluno (respostas, cards, notas) é pequeno e segue no aparelho, agora com folga na cota.
+var LS_MAX_CHARS=1000000;
+// Chaves sabidamente grandes (o banco de questões e os Resumos): nem serializa para medir. Só são lidas na abertura
+// da página (provasDB, diretrizes), antes de qualquer gravação; por isso a memória guarda a própria referência.
+var LS_SO_MEMORIA={provas:1,diretrizes:1};
 function lsGet(k){
   var key='endodirect_v1_'+k;
   try{var raw=window.localStorage&&localStorage.getItem(key);if(raw!==null)return JSON.parse(raw);}catch(e){}
-  var v=mem[key];return v!==undefined?v:null;
+  var v=mem[key];
+  if(v&&typeof v==='object'&&typeof v.__lsTexto==='string'){try{return JSON.parse(v.__lsTexto);}catch(e){return null;}}
+  return v!==undefined?v:null;
 }
 function lsSet(k,v){
-  var key='endodirect_v1_'+k;
-  try{if(window.localStorage){localStorage.setItem(key,JSON.stringify(v));return;}}catch(e){}
-  try{mem[key]=JSON.parse(JSON.stringify(v));}catch(err){mem[key]=v;}
+  var key='endodirect_v1_'+k,txt;
+  if(LS_SO_MEMORIA[k]){try{if(window.localStorage)localStorage.removeItem(key);}catch(e){}mem[key]=v;return;}
+  try{txt=JSON.stringify(v);}catch(e){mem[key]=v;return;}
+  if(typeof txt==='string'&&txt.length>LS_MAX_CHARS){
+    try{if(window.localStorage)localStorage.removeItem(key);}catch(e){}
+    mem[key]={__lsTexto:txt};return;
+  }
+  try{if(window.localStorage){localStorage.setItem(key,txt);return;}}catch(e){}
+  // Não coube (cota) ou não há localStorage: fica na memória, e a cópia velha sai do aparelho.
+  try{if(window.localStorage)localStorage.removeItem(key);}catch(e){}
+  if(typeof txt==='string')mem[key]={__lsTexto:txt};else mem[key]=v;
 }
 
 var DB={
@@ -6790,11 +6811,13 @@ function muralSortList(list,mode){
   // "Mais relevantes" = DIA mais recente primeiro → dentro do dia, hierarquia de
   // tipo (Breaking>Comunicado>…>Ensaio) → mais novo primeiro no mesmo dia/tipo.
   // Assim os artigos de HOJE ficam na frente, sem uma notícia antiga liderar.
-  if(mode==='relevantes')return arr.sort(function(a,b){
-    var dk=muralDayKey(b)-muralDayKey(a);if(dk!==0)return dk;
-    var r=muralTypeRank(a)-muralTypeRank(b);if(r!==0)return r;
-    return (Number(b.at)||0)-(Number(a.at)||0);
-  });
+  // Dia e tipo calculados UMA vez por item (17/11/2026): muralTypeRank normaliza o texto inteiro do artigo, e
+  // dentro do comparador isso rodava ~2·n·log n vezes a cada desenho do Mural (no iPhone, centenas de ms).
+  if(mode==='relevantes'){
+    var _ord=arr.map(function(a,i){return {a:a,i:i,dk:muralDayKey(a),r:muralTypeRank(a),at:Number(a&&a.at)||0};});
+    _ord.sort(function(x,y){return (y.dk-x.dk)||(x.r-y.r)||(y.at-x.at)||(x.i-y.i);});
+    return _ord.map(function(o){return o.a;});
+  }
   return arr.sort(function(a,b){return (Number(b.at)||0)-(Number(a.at)||0);});
 }
 function muralSortOptions(sel){
@@ -7096,6 +7119,21 @@ var globalBaseline={};
 // FANTASMA, em todo save, para sempre. Nenhum F5 resolvia, porque não havia nada
 // para resolver. Guardar o conjunto deixa o merge reconhecer "o servidor mandou um
 // item que eu já tinha" mesmo quando a chave é ambígua.
+// IMPRESSÃO DIGITAL DO CONTEÚDO GLOBAL (17/11/2026; professor, app do iPhone: "depois de uns 2, 3, 4 segundos
+// aparece o restante"). Todo save do professor relia os ~18 MB do estado global, mesclava e regravava tudo, até o
+// save que o próprio hydrate dispara ao abrir, sem edição nenhuma: no iPhone eram segundos de tela parada e ~36 MB
+// de rede a cada abertura. Agora, se o conteúdo global em memória tem a MESMA serialização da última sincronia com
+// o servidor (a carga, ou o último save global que deu certo), a parte global do save é pulada; o app_state do
+// professor segue salvando. Qualquer diferença, até de ordem, segue o caminho de sempre (releitura, merge,
+// gravação). Dois hashes de 32 bits + comprimento: para pular uma edição real seria preciso colidir os três.
+var globalDigitalSync=null;
+function globalDigital(){
+  var s;try{s=JSON.stringify(globalStatePayload());}catch(e){return null;}
+  if(typeof s!=='string')return null;
+  var h1=5381,h2=0x811c9dc5,i=0,n=s.length,c;
+  for(;i<n;i++){c=s.charCodeAt(i);h1=((h1<<5)+h1+c)|0;h2=Math.imul(h2^c,0x01000193);}
+  return (h1>>>0).toString(36)+'.'+(h2>>>0).toString(36)+'.'+n;
+}
 function captureGlobalBaseline(payload){
   payload=payload||{};globalBaseline={};
   Object.keys(GLOBAL_MERGE_KEYS).forEach(function(coll){
@@ -7358,6 +7396,7 @@ function maybeTrialModal(){
   var skip=document.getElementById('trial-modal-skip');if(skip)skip.addEventListener('click',trialModalClose);
   trialModalEl().style.display='';
 }
+function painelNaTela(id){var el=document.getElementById('panel-'+id);return !!(el&&el.classList.contains('on'));}
 function refreshAfterRemoteState(){
   try{
     // Demo premium (alunopro): completa a coleção localmente para a vitrine.
@@ -7379,13 +7418,15 @@ function refreshAfterRemoteState(){
   try{renderSavedQ();}catch(e){}
   try{renderFC();}catch(e){}
   try{renderMMList();}catch(e){}
-  try{renderPodcasts();}catch(e){}
+  // Mural e Podcasts só se estiverem na tela (17/11/2026): goPanel os desenha ao abrir, e redesenhar os dois
+  // escondidos a cada carga custava centenas de ms no iPhone. painelNaTela: o painel aberto agora.
+  try{if(painelNaTela('podcast'))renderPodcasts();}catch(e){}
   try{renderCursosAluno();}catch(e){}
   // Se o aluno já está na aba Diretrizes quando o estado remoto chega (RPC member/public),
   // re-renderiza para refletir a lista sincronizada (preserva a subespecialidade/tema aberto).
   try{var _rp=document.getElementById('panel-ref');if(_rp&&_rp.classList.contains('on')){var _rb=document.getElementById('ref-body');if(_rb&&DIRETRIZES_PUBLICADO){refPrivadoMode=false;renderDiretrizesInto(_rb);}}}catch(e){}
   try{var _rsp=document.getElementById('panel-resu');if(_rsp&&_rsp.classList.contains('on')){var _rsb=document.getElementById('resu-body');if(_rsb){refPrivadoMode=true;renderDiretrizesInto(_rsb);}}}catch(e){}
-  try{initMural();}catch(e){}
+  try{if(painelNaTela('mural'))initMural();}catch(e){}
   try{populateInst('q-inst');}catch(e){}
   try{updateProvaInfo();}catch(e){}
   try{popularTemasFerramentas();}catch(e){} // temas do OSCE/Prescrição: chegaram os Resumos
@@ -7817,6 +7858,9 @@ function hydrateRemoteState(){
     .then(function(){
       if(!mesmaConta())return; // trocou de conta no meio: nada disto é desta sessão
       remoteStateLoaded=true;
+      // Professor: o conteúdo global como chegou do servidor. Tirado ANTES do refresh, para que qualquer
+      // migração que o refresh faça (ex.: migrateSamplesToShared) conte como mudança e seja salva.
+      if(currentUser.role==='admin'){try{globalDigitalSync=globalDigital();}catch(e){globalDigitalSync=null;}}
       try{prescScrubLog();}catch(e){} // remove PII de paciente de históricos legados
       refreshAfterRemoteState();
       maybeOnboardAfterHydrate();
@@ -7850,7 +7894,10 @@ function saveRemoteState(){
   var client=getSupabaseClient();
   var row={user_id:currentUser.id,email:currentUser.email,role:currentUser.role,payload:userStatePayload(),updated_at:new Date().toISOString()};
   var ops=[client.from('endodirect_app_state').upsert(row,{onConflict:'user_id'}).then(function(res){if(res.error)throw res.error;})];
-  if(currentUser.role==='admin'){
+  var _digAgora=(currentUser.role==='admin'&&globalDigitalSync)?globalDigital():null;
+  if(currentUser.role==='admin'&&_digAgora&&_digAgora===globalDigitalSync){
+    // Nada mudou no conteúdo global desde a última sincronia: nada a reler nem a gravar (ver globalDigital).
+  }else if(currentUser.role==='admin'){
     // O estado global tem chaves que SÓ o cron/servidor escreve: radar_avisos
     // (mural automático) e newsletter_* . O admin não as edita. Para um save do
     // admin com cópia velha (carregada antes do cron rodar) NÃO apagar os itens
@@ -7878,6 +7925,7 @@ function saveRemoteState(){
       globalReadRetries=0;clearTimeout(globalReadRetryTimer);
       var serverP=(g&&g.data&&g.data.payload)||{};
       var serverUpd=(g&&g.data&&g.data.updated_at)||null;
+      var _digEnviado=globalDigital(); // o que a memória tem AGORA, antes de misturar as chaves do servidor
       var p=globalStatePayload();
       // Chaves do servidor que o admin NÃO edita: preserva direto do servidor.
       ['newsletter_extra','newsletter_unsub','newsletter_sent','newsletter','newsletter_recent','newsletter_qotd_id','ig_notice_sent','qotd_autopost_date','trial_emails'].forEach(function(k){if(serverP[k]!==undefined)p[k]=serverP[k];});
@@ -7930,7 +7978,7 @@ function saveRemoteState(){
         }
       }
       var stamp=new Date().toISOString();
-      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;captureGlobalBaseline(p);if(vinhaFalhando){try{notify('Salvo: o servidor voltou e as mudanças pendentes foram gravadas.','info');}catch(e){}}});
+      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;globalDigitalSync=_digEnviado;captureGlobalBaseline(p);if(vinhaFalhando){try{notify('Salvo: o servidor voltou e as mudanças pendentes foram gravadas.','info');}catch(e){}}});
     }));
   }
   return Promise.all(ops)
@@ -12375,7 +12423,8 @@ function acervoContagem(){
   });
   return out;
 }
-function nBR(n){try{return Number(n||0).toLocaleString('pt-BR');}catch(e){return String(n||0);}}
+// Um formatador só (17/11/2026): toLocaleString montava um novo a cada número, e no iPhone isso pesava na carga do Dashboard.
+function nBR(n){try{nBR.f=nBR.f||new Intl.NumberFormat('pt-BR');return nBR.f.format(Number(n||0));}catch(e){return String(n||0);}}
 function kpiCard(label,val,col){
   return '<div class="card" style="flex:1;min-width:130px;padding:.8rem"><div style="font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)">'+esc(label)+'</div><div style="font-size:1.4rem;font-weight:800;color:'+(col||'var(--tx)')+';margin-top:.2rem">'+val+'</div></div>';
 }

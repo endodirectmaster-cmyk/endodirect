@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-11-16
+atualizado: 2026-11-17
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -521,3 +521,11 @@ Mac e do App Store Connect em `app-ios/LEIA-ME.md`.
 - Se a Apple aprovaria app só de acesso, sem compra pela Apple, para esta plataforma.
 
 Ver [[Pendências]] (seção do app) e [[Decisões]].
+
+## 🐢 Travadas no app (17/11/2026)
+
+Professor, TestFlight 1.2, 10h03: rolando os Podcasts (e no Dashboard), o resto da tela aparecia 2–4 s depois. Causa:
+o JavaScript ocupando o iPhone depois de abrir (gravações grandes no localStorage que estouravam a cota de 5 MB do
+WebKit, telas escondidas redesenhadas, e no painel do professor o vaivém de ~18 MB do estado global a cada save).
+Corrigido só no site (sw v436), sem build novo; detalhes em Decisões (17/11). Professor confirma no iPhone.
+

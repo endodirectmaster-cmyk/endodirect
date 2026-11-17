@@ -1304,6 +1304,18 @@ try {
   fail('regressão da paginação de Podcasts e Revisão falhou:\n' + out);
 }
 
+// 17c-undecies-bj. DESEMPENHO NO APP DO IPHONE (17/11/2026; professor: "depois de uns 2, 3, 4 segundos aparece o
+//      restante"): questões e Resumos fora do localStorage (cota de 5 MB do WebKit), Mural ordena sem recalcular o
+//      tipo no comparador, Mural e Podcasts escondidos não redesenham na carga. O save do professor sem mudança
+//      global (impressão digital) está em test-save-painel.js.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-desempenho-app.js')], { stdio: 'pipe' });
+  ok('desempenho do app: conteúdo grande fora do localStorage, Mural sem recálculo, telas escondidas sem redesenho');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do desempenho do app falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
