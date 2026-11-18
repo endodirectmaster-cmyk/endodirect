@@ -20,6 +20,10 @@ continua às 18h) e carrossel de 4 slides no feed às **19h** (melhor horário d
 - **18/11, à tarde (professor: "Troca a imagem do mural por essa da aula"):** no slide 3, a tela do caso clínico
   (OSCE) deu lugar ao print dele da aula "Fisiologia da Adrenal" (vídeo + "Nesta aula"); arquivo novo
   `appstore_slide3b.jpg` (nome novo para o Metricool não pegar a cópia em cache) e mídia trocada no post agendado.
+- **18/11, ~16h (professor):** slide 2 só com questões comentadas e Questão do Dia, flashcards, casos clínicos e
+  calculadoras (saíram resumos e mural); slide 3 sem Face ID, mesma conta e mesmo progresso, com resumos por
+  subespecialidade com videoaulas, programa de Educação Médica Continuada, outros cursos (Endocrinologia
+  Essencial) e Breaking News por notificação. Arquivos `appstore_slide2b.jpg` e `appstore_slide3c.jpg`.
 - Hospedagem: `img/instagram/2026-11-19-app-store/*.jpg` no próprio site (público); o Metricool copia a mídia.
   Caminho mais simples que o Drive para posts avulsos, sem pedir upload ao professor.
 
