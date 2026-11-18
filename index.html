@@ -1870,6 +1870,20 @@ body.busca-aberta{overflow:hidden}
 .busca-item mark,.busca-ov mark{background:rgba(250,204,21,.4);color:inherit;border-radius:2px;padding:0 1px}
 .busca-verso,.busca-coment{font-size:.82rem;line-height:1.5;color:var(--tx);padding:0 .75rem .6rem;white-space:pre-wrap}
 .busca-item .btn{margin:0 .75rem .7rem}
+.dir-marca::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--marca-aluno,none);background-repeat:repeat;z-index:3;border-radius:inherit}
+.lb-marca::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--marca-aluno,none);background-repeat:repeat;z-index:6}
+.marca-video{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden}
+.marca-video span{position:absolute;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:pre;font:600 11px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:rgba(255,255,255,.38);text-shadow:0 0 2px rgba(0,0,0,.6);transition:opacity 2s ease}
+:fullscreen .marca-video span,.marca-tc-falsa .marca-video span{font-size:14px}
+@media (prefers-reduced-motion:reduce){.marca-video span{transition:none}}
+.marca-tc{position:absolute;right:8px;top:8px;z-index:5;width:34px;height:34px;border:0;border-radius:8px;background:rgba(0,0,0,.45);color:#fff;font-size:18px;line-height:34px;cursor:pointer;padding:0}
+.marca-tc:focus-visible{outline:2px solid #7fa6ff;outline-offset:2px}
+:fullscreen{background:#000}
+:fullscreen>video,:fullscreen>iframe{width:100%!important;height:100%!important;max-height:none!important;object-fit:contain}
+.marca-tc-falsa{position:fixed!important;inset:0!important;z-index:99990!important;background:#000!important;border-radius:0!important;margin:0!important;display:flex!important;align-items:center;justify-content:center;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.marca-tc-falsa>video,.marca-tc-falsa>iframe{width:100%!important;height:100%!important;max-height:none!important;object-fit:contain;aspect-ratio:auto!important}
+.marca-tc-falsa .marca-tc{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right))}
+body.marca-tc-aberta{overflow:hidden}
 .off-barra{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:space-between;margin:.2rem 0 .9rem;padding:.6rem .8rem;border:1px solid var(--bd);border-radius:12px;background:var(--s2);font-size:.8rem;line-height:1.4;color:var(--t2)}
 .off-txt{flex:1 1 14rem;min-width:0}
 .off-txt b{color:var(--tx)}
@@ -9691,6 +9705,7 @@ function fecharJanelaEntrada(id){
 }
 function startApp(){
   var u=currentUser;
+  try{marcaIniciar();}catch(e){} // marca d'água do aluno (Resumos, figuras e vídeos)
   try{iosDesfazZoom();}catch(e){} // zoom que o iPhone deixou ao digitar e-mail e senha
   try{restorePrescPanel();}catch(e){} // se o admin moveu o #panel-presc, devolve antes de montar a sessão
   try{restoreMMLive();}catch(e){} // idem para o editor visual de mapas (#mm-live)
@@ -9935,6 +9950,7 @@ function doLogout(){
   var travarFaceId=false;
   try{travarFaceId=!!faceIdPlugin()&&!!currentUser&&faceIdConta()===String(currentUser.email||'').toLowerCase();}catch(e){}
   loggingOut=true;
+  try{marcaParar();}catch(e){}
   if(!travarFaceId){try{offlineLimparTudo();}catch(e){}} // Resumos baixados saem do aparelho (o Face ID só trava: ficam)
   try{lsSet('demo_session',null);lsSet('last_panel',null);lsSet('adm_sec',null);}catch(e){}
   var client=getSupabaseClient();
@@ -16586,6 +16602,7 @@ function leituraNoScroll(){
 function resuPosRender(root){
   if(!root||root.id!=='resu-body'||!refPrivadoMode)return;
   grifosInit();
+  marcaAplicar();
   offlineLigarBotoes(root);offlineTrocaFiguras(root);
   if(!refSubSel||!refTemaSel||refRevArt)return;
   var l=DB.leitura,mesmo=l&&l.sub===refSubSel&&l.tema===refTemaSel&&(l.tipo||'capitulo')===refTipoSel;
@@ -16779,6 +16796,119 @@ function grifosNotasEsconde(){var gv=document.getElementById('grifos-view');if(g
 // pode abrir: rascunho nunca entra), sem acento e sem diferença de maiúsculas; todas as
 // palavras têm de aparecer. Capítulo, artigo e diretriz abrem no ponto do termo; flashcard
 // e questão abrem ali mesmo (verso, alternativas, gabarito e comentário).
+// ── MARCA D'ÁGUA DO ALUNO (professor, 17/11/2026: "meu receio é ele baixar as aulas ou os resumos ... e
+// começar a distribuir para outras pessoas via WhatsApp"; "nas videoaulas ... deixar algum tipo de
+// identificação do aluno também, com alguma marca d'água") ──
+// Nome e e-mail do aluno, em letras claras: em diagonal sobre os capítulos dos Resumos (classe .dir-marca),
+// sobre a figura ampliada e por cima de todo vídeo (EMC, Endocrinologia Essencial, Resumos). Não impede
+// o print nem a gravação de tela (nenhum app consegue no iPhone), mas todo print vazado mostra de quem é.
+// No vídeo a marca troca de canto a cada 60 s, sumindo e reaparecendo devagar (sem deslizar): uma marca
+// fixa sai com um corte ou um borrão; uma que muda de lugar obriga a editar quadro a quadro.
+// O professor (admin) não tem marca. Nada sai do aparelho: é desenho na tela.
+function marcaTexto(){
+  if(!currentUser||!currentUser.id||isAdminUser())return '';
+  var n=String(currentUser.name||'').trim(),e=String(currentUser.email||'').trim();
+  return [n,e].filter(Boolean).join(' · ');
+}
+function marcaSvgURL(t){
+  var x=String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="420" height="230">'
+    +'<text x="210" y="115" text-anchor="middle" transform="rotate(-24 210 115)" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#7d8899" fill-opacity="0.2">'+x+'</text></svg>';
+  return 'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
+}
+function marcaAplicar(){
+  try{var t=marcaTexto();if(t)document.body.style.setProperty('--marca-aluno',marcaSvgURL(t));else document.body.style.removeProperty('--marca-aluno');}catch(e){}
+}
+var MARCA_VIDEO_SEL='video,iframe[src*="vimeo.com"],iframe[src*="youtube.com"],iframe[src*="mediadelivery.net"]';
+var marcaRelogioId=null,marcaObservador=null;
+// Sem movimento visível (professor, 17/11: "deixar de um modo que também não fique distraindo o aluno"):
+// a marca some devagar, troca de canto enquanto está invisível e reaparece devagar. Só nas bordas
+// (alto ou baixo, esquerda ou direita), nunca no meio do slide.
+// Em cima à direita fica o botão ⛶ (a marca desvia dele); embaixo, a barra do player (a marca fica acima).
+function marcaCanto(s){
+  var alto=Math.random()<0.5,esq=Math.random()<0.5;
+  var v=(alto?(4+Math.random()*8):(Math.random()*6)).toFixed(1)+'%',h=(3+Math.random()*7).toFixed(1)+'%';
+  s.style.top=alto?v:'auto';s.style.bottom=alto?'auto':v;
+  s.style.left=esq?h:'auto';s.style.right=esq?'auto':h;
+  s.style.textAlign=esq?'left':'right';
+  s.style.marginRight=(alto&&!esq)?'46px':'0';
+  s.style.marginBottom=alto?'0':'52px';
+}
+function marcaPosicao(s,inicial){
+  if(inicial){marcaCanto(s);return;}
+  s.style.opacity='0';
+  setTimeout(function(){marcaCanto(s);s.style.opacity='';},2200);
+}
+// Tela cheia nativa do <video> (botão do player, duplo clique): o vídeo sozinho em tela cheia esconderia a
+// marca. Troca pela tela cheia do quadro do vídeo; se o navegador recusar, a tela cheia dentro da página.
+function marcaFsTroca(){
+  var el=document.fullscreenElement||document.webkitFullscreenElement;
+  if(!el||el.tagName!=='VIDEO')return;
+  var p=el.parentElement;if(!p||!p.querySelector(':scope > .marca-video'))return;
+  var req=p.requestFullscreen||p.webkitRequestFullscreen,falsa=function(){
+    var sair=document.exitFullscreen||document.webkitExitFullscreen;
+    try{var r=sair&&sair.call(document);if(r&&r.then)r.then(function(){marcaTelaCheiaFalsa(p,true);},function(){});else marcaTelaCheiaFalsa(p,true);}catch(e){marcaTelaCheiaFalsa(p,true);}
+  };
+  if(!req){falsa();return;}
+  try{var r=req.call(p);if(r&&r.catch)r.catch(falsa);}catch(e){falsa();}
+}
+function marcaVideos(raiz){
+  var t=marcaTexto();if(!t||!raiz||!raiz.querySelectorAll)return;
+  t=t.split(' · ').join('\n'); // nome numa linha, e-mail na outra (o e-mail inteiro, sem cortar)
+  var lista=[];if(raiz.matches&&raiz.matches(MARCA_VIDEO_SEL))lista.push(raiz);
+  raiz.querySelectorAll(MARCA_VIDEO_SEL).forEach(function(v){lista.push(v);});
+  lista.forEach(function(v){
+    var p=v.parentElement;if(!p||p.querySelector(':scope > .marca-video'))return;
+    try{if(getComputedStyle(p).position==='static')p.style.position='relative';}catch(e){}
+    var m=document.createElement('div');m.className='marca-video';m.setAttribute('aria-hidden','true');
+    var s=document.createElement('span');s.textContent=t;m.appendChild(s);p.appendChild(m);marcaPosicao(s,true);
+    if(v.tagName==='VIDEO'){
+      // Computador e Android: a tela cheia nativa do <video> esconderia a marca. Sem o botão nativo,
+      // o duplo clique e o botão ⛶ põem em tela cheia o QUADRO do vídeo, com a marca junto.
+      try{v.setAttribute('controlslist','nofullscreen');}catch(e){}
+      v.addEventListener('dblclick',function(ev){ev.preventDefault();marcaTelaCheia(p);});
+      // iPhone: o player nativo do iOS cobre tudo. A tela cheia vira "tela cheia dentro da página".
+      v.addEventListener('webkitbeginfullscreen',function(){setTimeout(function(){try{v.webkitExitFullscreen();}catch(e){}marcaTelaCheiaFalsa(p,true);},60);});
+      var b=document.createElement('button');b.type='button';b.className='marca-tc';b.setAttribute('aria-label','Tela cheia');b.textContent='⛶';
+      b.addEventListener('click',function(){marcaTelaCheia(p);});p.appendChild(b);
+    }
+  });
+  if(!marcaRelogioId)marcaRelogioId=setInterval(function(){
+    var ss=document.querySelectorAll('.marca-video span');
+    if(!ss.length){clearInterval(marcaRelogioId);marcaRelogioId=null;return;}
+    ss.forEach(function(x){marcaPosicao(x,false);});
+  },60000);
+}
+function marcaTelaCheia(p){
+  var fs=document.fullscreenElement||document.webkitFullscreenElement;
+  if(fs){(document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);return;}
+  if(p.classList.contains('marca-tc-falsa')){marcaTelaCheiaFalsa(p,false);return;}
+  var req=p.requestFullscreen||p.webkitRequestFullscreen;
+  if(req){try{var r=req.call(p);if(r&&r.catch)r.catch(function(){marcaTelaCheiaFalsa(p,true);});return;}catch(e){}}
+  marcaTelaCheiaFalsa(p,true); // iPhone (sem tela cheia de elemento): ocupa a tela dentro da página
+}
+function marcaTelaCheiaFalsa(p,liga){
+  p.classList.toggle('marca-tc-falsa',!!liga);
+  try{document.body.classList.toggle('marca-tc-aberta',!!liga);}catch(e){}
+}
+function marcaIniciar(){
+  marcaAplicar();
+  if(!marcaTexto())return;
+  marcaVideos(document.body);
+  if(!window.__marcaFs){window.__marcaFs=true;document.addEventListener('fullscreenchange',marcaFsTroca);document.addEventListener('webkitfullscreenchange',marcaFsTroca);}
+  if(marcaObservador||typeof MutationObserver!=='function')return;
+  marcaObservador=new MutationObserver(function(muts){
+    if(!marcaTexto())return;
+    for(var i=0;i<muts.length;i++){var ad=muts[i].addedNodes;for(var j=0;j<ad.length;j++){var n=ad[j];if(n.nodeType===1&&(n.matches&&n.matches(MARCA_VIDEO_SEL)||n.querySelector&&n.querySelector(MARCA_VIDEO_SEL)))marcaVideos(n);}}
+  });
+  marcaObservador.observe(document.body,{childList:true,subtree:true});
+}
+function marcaParar(){
+  try{if(marcaObservador)marcaObservador.disconnect();}catch(e){}
+  marcaObservador=null;
+  try{document.querySelectorAll('.marca-video,.marca-tc').forEach(function(x){x.remove();});}catch(e){}
+  try{document.body.style.removeProperty('--marca-aluno');document.body.classList.remove('marca-tc-aberta');}catch(e){}
+}
 // ── RESUMOS SEM INTERNET (pedido do professor, 17/11/2026: "Resumos sem internet no app. Baixar uma
 // subespecialidade para ler offline") ──
 // O aluno baixa uma área na tela dela (nível 2 dos Resumos). Ficam no aparelho, no IndexedDB:
@@ -16786,12 +16916,16 @@ function grifosNotasEsconde(){var gv=document.getElementById('grifos-view');if(g
 //  - as figuras (bytes), buscadas uma vez.
 // Sem internet, a carga dos Resumos falha e o app usa a cópia do aparelho (offlineAplicar). As figuras
 // trocam de endereço só na tela (offlineTrocaFiguras), sem mexer no texto do capítulo.
-// ⚠️ É conteúdo de assinante: a cópia é da conta (uid), vale 30 dias sem nova conexão (como os acessos
+// ⚠️ É conteúdo de assinante: a cópia é da conta (uid), vale 7 dias sem nova conexão (professor, 17/11/2026,
 // guardados), se renova sozinha a cada carga com internet (some se a área deixar de vir do servidor)
 // e sai do aparelho no "Sair" (menos no "Sair" que só trava com o Face ID).
 // No app do iPhone (1.3+, plugin Filesystem), a mesma cópia vai também para arquivos que a tela "Sem
 // conexão" do próprio app (app-ios/www/erro.html) lê quando o app abre sem rede (offlineEspelhar).
-var OFF_DB='endodirect-offline',OFF_VALIDADE_MS=30*86400000,OFF_FS_DIR='CACHE';
+var OFF_DB='endodirect-offline',OFF_VALIDADE_MS=7*86400000,OFF_FS_DIR='CACHE';
+// Só no app das lojas (professor, 17/11/2026, com medo de repasse por WhatsApp): lá a cópia fica na área
+// do app, que o iOS isola (não aparece no Arquivos nem em outro app). No site e no navegador do computador,
+// os Resumos seguem só com internet, e o que alguém tenha baixado pelo site é apagado ao entrar.
+function offlineAppNativo(){try{var C=window.Capacitor;return !!(C&&typeof C.isNativePlatform==='function'&&C.isNativePlatform());}catch(e){return false;}}
 var offlineIdx={};        // área -> {at,n,figs,falhas} da conta atual
 var offlineFigSet={};     // endereço da figura -> true (bytes guardados no aparelho)
 var offlineFigURL={};     // endereço da figura -> blob: (criado sob demanda)
@@ -16828,7 +16962,7 @@ function offlineRegistros(uid){
   });
 }
 function offlineNormUrl(u){try{return new URL(String(u||''),location.href).href;}catch(e){return String(u||'');}}
-function offlinePodeBaixar(){return offlineDisponivel()&&!!(currentUser&&currentUser.id)&&!isDegustacao();}
+function offlinePodeBaixar(){return offlineAppNativo()&&offlineDisponivel()&&!!(currentUser&&currentUser.id)&&!isDegustacao();}
 // O que vai para o aparelho: os capítulos e artigos publicados da área (nunca rascunho nem o vídeo solto da degustação).
 function offlineItensDaSub(sub){
   return diretrizes.filter(function(d){return d&&d.privado===true&&!d.so_video&&!dirIsRascunho(d)&&estSubDe(d)===sub;});
@@ -16852,7 +16986,7 @@ function offlineBarraHTML(sub){
   if(!refPrivadoMode||!offlinePodeBaixar())return '';
   var b=offlineBaixando,ix=offlineIdx[sub],inner;
   if(b&&b.sub===sub)inner='<span class="off-txt">📥 Baixando '+esc(sub)+'… <b id="off-prog">'+esc(offlineProgTxt())+'</b></span>';
-  else if(ix)inner='<span class="off-txt">✓ <b>Disponível sem internet</b> neste aparelho · atualizado em '+offlineData(ix.at)+'</span>'
+  else if(ix)inner='<span class="off-txt">✓ <b>Disponível sem internet</b> neste aparelho · atualizado em '+offlineData(ix.at)+' · vale 7 dias sem conexão</span>'
     +(offlineUsando?'':'<button type="button" class="off-btn off-btn-sec" data-off-remover="'+esc(sub)+'">Remover</button>');
   else if(offlineUsando)return '';
   else inner='<span class="off-txt">Para ler sem internet: o texto e as figuras desta área ficam guardados neste aparelho.</span>'
@@ -16863,12 +16997,12 @@ function offlineAvisoHTML(){
   if(!refPrivadoMode||!offlineUsando)return '';
   return '<div class="off-aviso">📴 <b>Sem internet.</b> Aparecem só as áreas baixadas neste aparelho. O restante volta quando a conexão voltar.</div>';
 }
-// Resumos vazios e sem internet: abrindo a cópia, cópia vencida (30 dias) ou nada baixado.
+// Resumos vazios e sem internet: abrindo a cópia, cópia vencida (7 dias) ou nada baixado.
 function offlineVazioHTML(){
   var n=Object.keys(offlineIdx),val=n.some(function(k){return Date.now()-(+offlineIdx[k].at||0)<=OFF_VALIDADE_MS;});
   if(val)return '<div style="margin-top:1rem">'+ldHTML('Abrindo as áreas baixadas…')+'</div>';
   return '<div class="ref-soon" style="margin-top:1rem"><div class="ref-soon-ico">📴</div><h2>Sem internet</h2>'
-    +(n.length?'<p>As áreas baixadas neste aparelho ficaram mais de 30 dias sem conexão. Conecte-se uma vez para renová-las.</p>'
+    +(n.length?'<p>As áreas baixadas neste aparelho ficaram mais de 7 dias sem conexão. Conecte-se uma vez para renová-las.</p>'
       :'<p>Nenhuma área foi baixada neste aparelho. Com internet, abra uma área dos Resumos e toque em <b>📥 Baixar</b> para ler sem conexão depois.</p>')
     +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
 }
@@ -16964,9 +17098,9 @@ function offlineCarregarIndice(uid){
     });
   }).catch(function(){return [];});
 }
-// Sem internet: os Resumos da tela passam a ser a cópia do aparelho (só as áreas baixadas, dentro dos 30 dias).
+// Sem internet: os Resumos da tela passam a ser a cópia do aparelho (só as áreas baixadas, dentro dos 7 dias).
 function offlineAplicar(uid){
-  if(!uid||!offlineDisponivel())return Promise.resolve(false);
+  if(!uid||!offlineAppNativo()||!offlineDisponivel())return Promise.resolve(false);
   return offlineCarregarIndice(uid).then(function(meus){
     if(!mesmaContaQue(uid))return false;
     var agora=Date.now(),validos=meus.filter(function(r){return agora-(+r.at||0)<=OFF_VALIDADE_MS&&Array.isArray(r.itens)&&r.itens.length;});
@@ -16981,9 +17115,18 @@ function offlineAplicar(uid){
     return true;
   }).catch(function(){return false;});
 }
+// Site (fora do app): apaga a cópia que alguém tenha baixado antes de o download ficar só no app. Só abre o
+// IndexedDB se o banco existir (indexedDB.databases), para não criá-lo à toa em todo aluno do site.
+function offlineLimparSite(){
+  try{
+    if(indexedDB.databases){indexedDB.databases().then(function(l){if((l||[]).some(function(d){return d&&d.name===OFF_DB;}))offlineLimparTudo();}).catch(function(){});return;}
+  }catch(e){}
+  offlineRegistros(null).then(function(l){if(l.length)offlineLimparTudo();}).catch(function(){});
+}
 // Ao entrar (hydrateRemoteState): carrega o índice e, se já sabe que está sem rede, usa a cópia na hora.
 function offlineAoEntrar(uid){
   if(!uid||!offlineDisponivel())return;
+  if(!offlineAppNativo()){offlineLimparSite();return;}
   if(offlineSemRede())offlineAplicar(uid);
   else offlineCarregarIndice(uid).then(function(){offlineRedesenha();});
 }
@@ -17074,7 +17217,7 @@ function offlineSessaoGuardada(){
   return null;
 }
 function offlineEntrarSemRede(){
-  if(currentUser||!offlineSemRede()||!offlineDisponivel())return;
+  if(currentUser||!offlineAppNativo()||!offlineSemRede()||!offlineDisponivel())return;
   var s=offlineSessaoGuardada();if(!s)return;
   offlineRegistros(s.user.id).then(function(regs){
     var agora=Date.now();
@@ -17121,6 +17264,9 @@ function offlineHTMLNativo(d,precisa){
   try{h=dirCardHTML(d,0);}catch(e){h='';}finally{refFormat=fmt;refPrivadoMode=pm;}
   var t=document.createElement('template');t.innerHTML=h;
   t.content.querySelectorAll('button,script,iframe,video').forEach(function(x){x.remove();});
+  // Marca d'água do aluno também na leitura sem internet (a regra .dir-marca vai no CSS do pacote).
+  var _m=marcaTexto(),_c=t.content.querySelector('.dir-card');
+  if(_m&&_c)_c.style.setProperty('--marca-aluno',marcaSvgURL(_m));
   t.content.querySelectorAll('img').forEach(function(img){
     img.removeAttribute('onerror');img.removeAttribute('loading');
     var src=img.getAttribute('src')||'';
@@ -17141,7 +17287,8 @@ function offlineEspelhar(){
     if(!regs.length)return fs.rmdir({path:'offline',directory:OFF_FS_DIR,recursive:true}).catch(function(){});
     var precisa={};
     regs.sort(function(a,b){return String(a.sub).localeCompare(String(b.sub),'pt');});
-    var pacote={v:1,uid:uid,at:Math.min.apply(null,regs.map(function(r){return +r.at||0;})),
+    var _at=Math.min.apply(null,regs.map(function(r){return +r.at||0;}));
+    var pacote={v:2,uid:uid,at:_at,ate:_at+OFF_VALIDADE_MS,
       tema:document.documentElement.getAttribute('data-theme')||'',css:offlineCSS(),
       subs:regs.map(function(r){return {sub:r.sub,itens:(r.itens||[]).map(function(d){return {tema:dirTemaOf(d),tipo:dirTipoOf(d),html:offlineHTMLNativo(d,precisa)};})};})};
     return fs.readdir({path:'offline/fig',directory:OFF_FS_DIR}).then(function(r){
@@ -18337,7 +18484,7 @@ function dirCardHTML(d,i){
   // A estrela flutua no canto superior direito do card: o cabecalho de fonte e
   // opcional (some nos resumos privados), entao ancorar nele deixaria metade dos
   // cards sem favorito.
-  return '<div class="dir-card" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
+  return '<div class="dir-card'+(refPrivadoMode?' dir-marca':'')+'" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
     +'<span style="position:absolute;top:.7rem;right:.8rem">'+favStarHTML('resumo',d)+'</span>'
     +head+body+'</div>';
 }
@@ -25998,6 +26145,7 @@ function ensureLightbox(){
   // botão de fechar; antes o ✕ ficava embaixo da bateria e não dava para tocar (11/11/2026).
   // Embaixo, a margem abre espaço para a barra de zoom (−, Ajustar, +).
   ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(8,12,24,.92);display:none;align-items:center;justify-content:center;padding:max(20px,calc(env(safe-area-inset-top,0px) + 56px)) max(20px,env(safe-area-inset-right,0px)) max(76px,calc(env(safe-area-inset-bottom,0px) + 70px)) max(20px,env(safe-area-inset-left,0px));overflow:hidden;touch-action:none;overscroll-behavior:contain;-webkit-user-select:none;user-select:none;cursor:zoom-out';
+  ov.className='lb-marca'; // marca d'água do aluno sobre a figura ampliada
   // ZOOM COM PINÇA (17/11/2026, professor: "não deu a opção de pinçar para aproximar ou
   // afastar"; "quando a gente afastar, deixar naquele modo de zoom diminuído para
   // centralizar a imagem"). A página tem o zoom do navegador desligado no app, então o

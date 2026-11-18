@@ -9,7 +9,8 @@
   site não carrega. Desde a 1.3 (17/11/2026, "Resumos sem internet"), se o aluno baixou áreas dos
   Resumos, ela as lê do pacote que o site gravou em Library/Caches/offline (plugin Filesystem):
   leitor.json (capítulos já desenhados pelo site, o CSS do app e a data) e fig/<nome> (figuras).
-  Sem pacote, sem plugin ou com pacote de mais de 30 dias: só a mensagem de sempre.
+  Sem pacote, sem plugin ou com pacote vencido (7 dias sem conexão, campo `ate`): só a mensagem de sempre.
+  A marca d'água do aluno vem no próprio capítulo (variável --marca-aluno e regra .dir-marca do CSS do pacote).
 -->
 <style>
   :root { color-scheme: dark; }
@@ -60,7 +61,7 @@
 <script>
 (function () {
   var SITE = 'https://www.endodirect.com.br/?app=ios';
-  var VALIDADE_MS = 30 * 86400000;
+  var VALIDADE_MS = 7 * 86400000; // pacote antigo, sem `ate`; o site grava a validade no próprio pacote
   function abrirSite() { location.replace(SITE); }
   document.getElementById('tentar').addEventListener('click', abrirSite);
   document.getElementById('tentar2').addEventListener('click', abrirSite);
@@ -123,8 +124,9 @@
   FS.readFile({ path: 'offline/leitor.json', directory: 'CACHE', encoding: 'utf8' }).then(function (r) {
     var p = JSON.parse(r && r.data);
     if (!p || !Array.isArray(p.subs) || !p.subs.length) return;
-    if (!(Date.now() - (+p.at || 0) <= VALIDADE_MS)) {
-      document.getElementById('aviso-txt').textContent = 'As áreas dos Resumos baixadas neste aparelho ficaram mais de 30 dias sem conexão. Conecte-se uma vez para renová-las.';
+    var ate = +p.ate || ((+p.at || 0) + VALIDADE_MS);
+    if (!(Date.now() <= ate)) {
+      document.getElementById('aviso-txt').textContent = 'As áreas dos Resumos baixadas neste aparelho ficaram mais de 7 dias sem conexão. Conecte-se uma vez para renová-las.';
       return;
     }
     return FS.getUri({ path: 'offline', directory: 'CACHE' }).then(function (u) {

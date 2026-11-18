@@ -2,6 +2,9 @@
 // Baixar uma subespecialidade para ler offline"). O aluno baixa uma área (texto + figuras no IndexedDB);
 // sem rede, o app usa a cópia (inclusive com o token vencido); no "Sair" ela some; no app do iPhone 1.3 a
 // cópia vai também para arquivos que a tela "Sem conexão" (app-ios/www/erro.html) lê.
+// Proteção (professor, 17/11: "meu receio é ele baixar ... e começar a distribuir ... via WhatsApp"):
+// baixar só no app do iPhone (no site, a cópia antiga é apagada), validade de 7 dias sem conexão e a
+// marca d'água do aluno no capítulo guardado.
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
@@ -25,9 +28,12 @@ const vc = new VirtualConsole(); vc.on('jsdomError', function () {});
 const dom = new JSDOM('<body><div id="resu-body"></div></body>', { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
 const ctx = vm.createContext(dom.getInternalVMContext());
 vm.runInContext(`
-  var OFF_VALIDADE_MS=30*86400000,offlineIdx={},offlineFigSet={},offlineFigURL={},offlineUsando=false,offlineSessao=false,offlineBaixando=null;
+  var OFF_DB='endodirect-offline',OFF_VALIDADE_MS=7*86400000,offlineIdx={},offlineFigSet={},offlineFigURL={},offlineUsando=false,offlineSessao=false,offlineBaixando=null;
   var currentUser={id:'u1',email:'a@b.c'},userAcessos=['plano'],refPrivadoMode=true,refFormat='resumo',resumosErro=true,buscaCache={x:1};
-  var redesenhou=0,continuar=0,logins=[];
+  var redesenhou=0,continuar=0,logins=[],nativo=true,limpou=0;
+  window.Capacitor={isNativePlatform:function(){return nativo;}};
+  function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}
+  function offlineLimparTudo(){limpou++;}
   var diretrizes=[
     {sub:'Tireoide',tema:'Hipotireoidismo',privado:true,resumo:'Texto ![Eixo [TSH\\\\]](https://eutizblmrcypzyqzczgq.supabase.co/storage/v1/object/public/fig/eixo%20tsh.png) e ![dado](data:image/png;base64,AAAA)',figuras:[{url:'https://www.endodirect.com.br/figuras/a.jpg'},{svg:'<svg></svg>'}]},
     {sub:'Tireoide',tema:'TRUST (2017)',privado:true,tipo:'artigo',resumo:'sem figura',figuras:[{url:'https://www.endodirect.com.br/figuras/a.jpg'}]},
@@ -51,7 +57,8 @@ vm.runInContext(`
   function dirCardHTML(d,i){return dirCardHTMLsaida;}
 `, ctx);
 ['offlineNormUrl', 'offlinePodeBaixar', 'offlineItensDaSub', 'offlineFigurasDe', 'offlineData', 'offlineProgTxt', 'offlineBarraHTML', 'offlineAvisoHTML',
-  'offlineAplicar', 'offlineSessaoGuardada', 'offlineNomeFig', 'offlineHTMLNativo', 'offlineB64', 'offlineSemRede'].forEach((n) => vm.runInContext(corpo(n), ctx));
+  'offlineAplicar', 'offlineSessaoGuardada', 'offlineNomeFig', 'offlineHTMLNativo', 'offlineB64', 'offlineSemRede',
+  'offlineAppNativo', 'marcaTexto', 'marcaSvgURL'].forEach((n) => vm.runInContext(corpo(n), ctx));
 const run = (c) => vm.runInContext(c, ctx);
 const J = (c) => JSON.parse(run('JSON.stringify(' + c + ')'));
 
@@ -76,18 +83,23 @@ run('userAcessos=["plano"];refPrivadoMode=false');
 ok(run('offlineBarraHTML("Tireoide")') === '', 'só nos Resumos (não nas Diretrizes)');
 run('refPrivadoMode=true');
 ok(run('offlineAvisoHTML()') === '', 'com internet, sem aviso');
+run('nativo=false');
+ok(run('offlineBarraHTML("Tireoide")') === '' && run('offlinePodeBaixar()') === false, 'no site (fora do app do iPhone) não há botão Baixar');
+run('delete window.Capacitor');
+ok(run('offlineAppNativo()') === false, 'sem o Capacitor (navegador comum) não é o app');
+run('window.Capacitor={isNativePlatform:function(){return nativo;}};nativo=true');
 
 // 4) sem internet: a cópia entra no lugar dos Resumos (só as válidas, só se o servidor não mandou nada)
 const agora = Date.now();
 run(`offlineIdx={};var registros=[];function offlineCarregarIndice(uid){return Promise.resolve(registros.filter(function(r){return r.uid===uid;}));}`);
 run(`registros=[{uid:'u1',sub:'Tireoide',at:${agora},itens:[{sub:'Tireoide',tema:'Hipotireoidismo',privado:true}]},
-  {uid:'u1',sub:'Adrenal',at:${agora - 31 * 86400000},itens:[{sub:'Adrenal',tema:'Velho',privado:true}]},
+  {uid:'u1',sub:'Adrenal',at:${agora - 8 * 86400000},itens:[{sub:'Adrenal',tema:'Velho',privado:true}]},
   {uid:'u2',sub:'Diabetes',at:${agora},itens:[{sub:'Diabetes',tema:'De outra conta',privado:true}]}];
   diretrizes=[{sub:'Tireoide',tema:'Diretriz pública',privado:false}];`);
 (async () => {
   let r = await run('offlineAplicar("u1")');
   ok(r === true && run('offlineUsando') === true && run('resumosErro') === false && run('buscaCache') === null, 'sem rede: a cópia entra, o erro sai e a busca reindexa');
-  ok(JSON.stringify(J('diretrizes.map(function(d){return d.tema;})')) === '["Diretriz pública","Hipotireoidismo"]', 'só a área válida da PRÓPRIA conta (30 dias); a pública fica: ' + JSON.stringify(J('diretrizes.map(function(d){return d.tema;})')));
+  ok(JSON.stringify(J('diretrizes.map(function(d){return d.tema;})')) === '["Diretriz pública","Hipotireoidismo"]', 'só a área válida da PRÓPRIA conta (até 7 dias); a pública fica: ' + JSON.stringify(J('diretrizes.map(function(d){return d.tema;})')));
   ok(run('redesenhou') >= 1 && run('continuar') === 1, 'a tela e o "Continuar de onde parou" são redesenhados');
   ok(/Sem internet/.test(run('offlineAvisoHTML()')), 'aviso de sem internet na grade');
   run('offlineIdx={Tireoide:{at:Date.now(),n:1,figs:0}}');
@@ -95,7 +107,9 @@ run(`registros=[{uid:'u1',sub:'Tireoide',at:${agora},itens:[{sub:'Tireoide',tema
   run('offlineUsando=false;diretrizes=[{sub:"Tireoide",tema:"Do servidor",privado:true}]');
   r = await run('offlineAplicar("u1")');
   ok(r === false && J('diretrizes.map(function(d){return d.tema;})')[0] === 'Do servidor', 'Resumos do servidor já na tela (a rede caiu depois): a cópia não os substitui');
-  run('diretrizes=[]');
+  run('offlineUsando=false;diretrizes=[];nativo=false');
+  ok((await run('offlineAplicar("u1")')) === false && J('diretrizes').length === 0, 'no site a cópia não é usada (só no app)');
+  run('nativo=true');
   ok((await run('offlineAplicar("u2")')) === false || run('contaAtual()') !== 'u2', 'cópia de outra conta não entra');
 
   // 5) entrar sem internet com o token vencido: a sessão guardada pelo Supabase
@@ -116,12 +130,19 @@ run(`registros=[{uid:'u1',sub:'Tireoide',at:${agora},itens:[{sub:'Tireoide',tema
   ok(/\.jpg$/.test(nome) && nome === run('offlineNomeFig("https://www.endodirect.com.br/figuras/a.jpg")') && nome !== run('offlineNomeFig("https://www.endodirect.com.br/figuras/b.jpg")'), 'nome do arquivo estável, com a extensão');
   ok(run('offlineB64(new Uint8Array([104,105]).buffer)') === 'aGk=', 'bytes → base64 para o Filesystem');
   ok(run('refFormat') === 'resumo' && run('refPrivadoMode') === true, 'desenhar o pacote não muda a tela');
+  ok(/class="dir-card"[^>]*style="[^"]*--marca-aluno:\s*url\(&quot;data:image\/svg\+xml/.test(h) && h.indexOf(encodeURIComponent('a@b.c')) >= 0, 'capítulo guardado sem a marca d\'água do aluno: ' + h.slice(0, 200));
+  run('currentUser={id:"u1",email:"p@b.c",role:"admin"}');
+  ok(!/--marca-aluno/.test(run('offlineHTMLNativo({sub:"Tireoide",tema:"Hipotireoidismo"},{})')), 'professor: sem marca');
+  run('currentUser={id:"u1",email:"a@b.c"}');
 
   // 7) ligações (estático)
   ok(/console\.warn\('Resumos indisponíveis',e\);\n\s*try\{offlineAplicar\(uid\);\}/.test(html), 'a falha da carga dos Resumos não cai na cópia do aparelho');
   ok(/offlineUsando=false;[^\n]*\n\s*try\{offlineAgendarSinc\(\);\}/.test(corpo('aplicarResumos')), 'chegada dos Resumos do servidor: tira a cópia da tela e atualiza as áreas baixadas');
   ok(/payload\.diretrizes\)\)\{diretrizes=payload\.diretrizes;offlineUsando=false;/.test(html), 'professor: o estado global também tira a cópia da tela');
   ok(/offlineAoEntrar\(currentUser\.id\)/.test(corpo('hydrateRemoteState')), 'ao entrar, carrega o índice (e a cópia, sem rede)');
+  ok(/if\(!offlineAppNativo\(\)\)\{offlineLimparSite\(\);return;\}/.test(corpo('offlineAoEntrar')) && /indexedDB\.databases/.test(corpo('offlineLimparSite')), 'no site, a cópia baixada antes (versão sem trava) tem de ser apagada ao entrar');
+  ok(/!offlineAppNativo\(\)/.test(corpo('offlineEntrarSemRede')), 'entrar sem rede com a cópia: só no app');
+  ok(/vale 7 dias sem conexão/.test(corpo('offlineBarraHTML')) && !/30 dias/.test(corpo('offlineBarraHTML')), 'faixa: o aluno precisa saber que vale 7 dias');
   ok(/offlineEntrarSemRede\(\)/.test(corpo('startSupabaseAuthWatcher')), 'sem rede e com token vencido o app não entra');
   ok(/if\(!travarFaceId\)\{try\{offlineLimparTudo\(\);\}/.test(corpo('doLogout')), '"Sair" tem de apagar a cópia (menos o Face ID, que só trava)');
   ok(/offlineLigarBotoes\(root\);offlineTrocaFiguras\(root\);/.test(corpo('resuPosRender')), 'a tela dos Resumos não liga os botões nem troca as figuras');
@@ -140,8 +161,9 @@ run(`registros=[{uid:'u1',sub:'Tireoide',at:${agora},itens:[{sub:'Tireoide',tema
   const pbx = fs.readFileSync(path.join(IOS, 'ios', 'App', 'App.xcodeproj', 'project.pbxproj'), 'utf8');
   ok(/NSPrivacyAccessedAPICategoryFileTimestamp<\/string>\s*<key>NSPrivacyAccessedAPITypeReasons<\/key>\s*<array>\s*<string>C617\.1<\/string>/.test(priv) && /PrivacyInfo\.xcprivacy in Resources \*\/,/.test(pbx), 'app: manifesto de privacidade (datas de arquivo, C617.1) fora do app; a Apple recusa o envio');
   const erro = fs.readFileSync(path.join(IOS, 'www', 'erro.html'), 'utf8');
-  ok(/readFile\(\{ path: 'offline\/leitor\.json', directory: 'CACHE', encoding: 'utf8' \}\)/.test(erro) && /getUri\(\{ path: 'offline', directory: 'CACHE' \}\)/.test(erro) && /var OFF_DB='endodirect-offline',OFF_VALIDADE_MS=30\*86400000,OFF_FS_DIR='CACHE';/.test(html), 'app: a tela sem conexão e o site precisam usar a mesma pasta (Caches/offline)');
-  ok(/VALIDADE_MS = 30 \* 86400000/.test(erro) && /img\.src = base \+ '\/fig\/'/.test(erro), 'app: tela sem conexão sem a validade de 30 dias ou sem as figuras');
+  ok(/readFile\(\{ path: 'offline\/leitor\.json', directory: 'CACHE', encoding: 'utf8' \}\)/.test(erro) && /getUri\(\{ path: 'offline', directory: 'CACHE' \}\)/.test(erro) && /var OFF_DB='endodirect-offline',OFF_VALIDADE_MS=7\*86400000,OFF_FS_DIR='CACHE';/.test(html), 'app: a tela sem conexão e o site precisam usar a mesma pasta (Caches/offline)');
+  ok(/VALIDADE_MS = 7 \* 86400000/.test(erro) && /var ate = \+p\.ate \|\| \(\(\+p\.at \|\| 0\) \+ VALIDADE_MS\);/.test(erro) && /if \(!\(Date\.now\(\) <= ate\)\)/.test(erro) && /img\.src = base \+ '\/fig\/'/.test(erro), 'app: tela sem conexão sem a validade de 7 dias (campo ate do pacote) ou sem as figuras');
+  ok(/ate:_at\+OFF_VALIDADE_MS/.test(corpo('offlineEspelhar')), 'pacote do app sem a data de validade (ate)');
   ok(/location\.replace\(SITE\)/.test(erro) && /id="tentar"/.test(erro), 'app: a tela sem conexão perdeu o "Tentar de novo"');
 
   if (falhas.length) {
@@ -149,5 +171,5 @@ run(`registros=[{uid:'u1',sub:'Tireoide',at:${agora},itens:[{sub:'Tireoide',tema
     falhas.forEach((f) => console.error('  - ' + f));
     process.exit(1);
   }
-  console.log('✓ Resumos sem internet: baixar a área (texto e figuras), ler sem rede (mesmo com o login vencido), sair apaga, e a tela "Sem conexão" do app 1.3 lê as áreas baixadas');
+  console.log('✓ Resumos sem internet: baixar a área só no app (texto e figuras), ler sem rede por até 7 dias (mesmo com o login vencido), com a marca do aluno; sair apaga; a tela "Sem conexão" do app 1.3 lê as áreas baixadas');
 })().catch((e) => { console.error('✗ Resumos sem internet: ' + (e && e.stack || e)); process.exit(1); });
