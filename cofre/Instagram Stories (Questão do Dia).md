@@ -24,6 +24,9 @@ continua às 18h) e carrossel de 4 slides no feed às **19h** (melhor horário d
   calculadoras (saíram resumos e mural); slide 3 sem Face ID, mesma conta e mesmo progresso, com resumos por
   subespecialidade com videoaulas, programa de Educação Médica Continuada, outros cursos (Endocrinologia
   Essencial) e Breaking News por notificação. Arquivos `appstore_slide2b.jpg` e `appstore_slide3c.jpg`.
+- **18/11, ~16h10 (professor):** "Outros cursos, como o Endocrinologia Essencial" virou "Vários cursos, como
+  Endocrinologia Essencial e EndoTEEM" (os cursos com aulas: EndoTEEM 68, Endocrinologia Essencial 37, EMC 3, que
+  já tem item próprio). Arquivo `appstore_slide3d.jpg`.
 - Hospedagem: `img/instagram/2026-11-19-app-store/*.jpg` no próprio site (público); o Metricool copia a mídia.
   Caminho mais simples que o Drive para posts avulsos, sem pedir upload ao professor.
 
