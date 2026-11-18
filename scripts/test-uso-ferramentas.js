@@ -34,11 +34,11 @@ ok(/coalesce\(x\.provider, ''\) <> 'manual'/.test(sql), 'servidor: assinante = p
 
 // 2) registro no app
 const vc = new VirtualConsole(); vc.on('jsdomError', function () {});
-const dom = new JSDOM('<body><div id="panel-cursos"><video id="v1"></video></div><div class="dir-video"><video id="v2"></video></div><video id="v3"></video><div id="adm-main"><div class="adm-pc"></div></div></body>',
+const dom = new JSDOM('<body><div id="panel-cursos"><video id="v1"></video></div><div class="dir-video"><video id="v2"></video></div><video id="v3"></video><div id="adm-main"><div class="adm-pc"><div id="adm-uso"></div></div></div></body>',
   { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
 const ctx = vm.createContext(dom.getInternalVMContext());
 vm.runInContext(`
-  var currentUser={id:'u1',role:'aluno'},chamadas=[],agora=1000000,admCurrentSec='analytics';
+  var currentUser={id:'u1',role:'aluno'},chamadas=[],agora=1000000,admCurrentSec='analytics',admListasAbertas={};
   Date.now=function(){return agora;};
   var PANEL_LABELS={quest:'Banco de questões',chat:'Chat IA',calc:'Calculadoras'};
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -75,11 +75,22 @@ ok(run("usoRotulo('trava_chat')") === '🔒 Chat IA (sem acesso)' && run("usoRot
   ok(/Banco de questões<\/span>/.test(h) && /3 alunos · 2 assin\. · 9 aberturas/.test(h), 'painel: linha por ferramenta');
   ok(/&lt;x&gt;/.test(h) && !/<x>/.test(h), 'painel: nome escapado');
   ok(/Retrato do que já estava registrado/.test(h) && /Flashcards \(revisou cartões\)/.test(h) && />11</.test(h) && /de 51 assinantes e 110 na degustação/.test(h), 'painel: retrato do que já estava registrado');
+  // recolhido (professor, 18/11/2026: "pode deixar de forma recolhida, deixar um pouco mais abaixo")
+  ok(/<details class="cid-details" data-adm-lista="uso">/.test(h) && /<summary class="card-head cid-summary">[\s\S]*Uso das ferramentas[\s\S]*3 alunos · 30 dias[\s\S]*<\/summary>/.test(h), 'painel: recolhido, com quantos alunos no título');
+  ok(/<span class="cid-previa">Banco de questões 3 · &lt;x&gt; 1<\/span>/.test(h), 'painel: fechado, mostra as ferramentas mais abertas numa linha');
+  ok(!/data-uso-dias/.test(h.slice(h.indexOf('<summary'), h.indexOf('</summary>'))) && /data-uso-dias="7"/.test(h), 'painel: os botões 7/30 dias ficam dentro (tocar neles não fecha o cartão)');
+  run('admListasAbertas.uso=true');
+  ok(/<details class="cid-details" data-adm-lista="uso" open>/.test(run('admUsoHTML()')), 'painel: aberto fica lembrado ao redesenhar');
+  run('admListasAbertas.uso=false');
   ok(/data-uso-dias="7"/.test(h) && /data-uso-dias="30"/.test(h), 'painel: 7 ou 30 dias');
   run('admUsoData[30].itens=[]');
   ok(/Ainda sem registros no período/.test(run('admUsoHTML()')), 'painel: sem registros ainda');
   run('admUsoInserir(document.getElementById("adm-main"))');
-  ok(!!doc.querySelector('#adm-main .adm-pc > #adm-uso'), 'painel: cartão no topo do Analytics');
+  ok(/Ainda sem registros/.test(doc.getElementById('adm-uso').innerHTML), 'painel: preenche o lugar do cartão');
+  const an = corpo('admAnalyticsHTML');
+  ok(/Conteúdo de estudo dos alunos[\s\S]*\+'<div id="adm-uso">'\+admUsoHTML\(\)\+'<\/div>'\s*\+perfilHtml/.test(an), 'Analytics: cartão de uso abaixo de "Conteúdo de estudo dos alunos"');
+  ok(an.indexOf('adm-uso') > an.indexOf("kpi(n(ov.alunos),'Alunos cadastrados'"), 'Analytics: no topo, os números como antes');
+  ok(!/insertAdjacentHTML\('afterbegin'/.test(corpo('admUsoInserir')), 'Analytics: o cartão não vai mais para o topo');
   run("respostas.endodirect_uso_admin={data:{dias:7,alunos:0,pagantes:0,itens:[]}};chamadas.length=0");
   doc.querySelector('[data-uso-dias="7"]').click();
   await new Promise((r) => setTimeout(r, 0));
