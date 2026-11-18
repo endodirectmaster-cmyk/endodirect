@@ -1441,6 +1441,16 @@ try {
   fail('regressão do uso das ferramentas falhou:\n' + out);
 }
 
+// 17c-undecies-bw. DESTAQUES NEJM E LANCET NO DASHBOARD (18/11/2026). Os 5 artigos mais recentes do Mural
+//      vindos do NEJM e do Lancet; tocar abre o artigo no Mural já filtrado.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-destaques-nejm-lancet.js')], { stdio: 'pipe' });
+  ok('Destaques NEJM e Lancet no Dashboard');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos destaques NEJM e Lancet falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
