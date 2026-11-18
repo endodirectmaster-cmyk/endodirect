@@ -19,7 +19,8 @@ MARKETING_VERSION 1.3). O site já grava o pacote quando o app tem o plugin; no 
 - [x] **1.3 enviada à revisão da Apple em 17/11, 22h56 BRT** ("1.3 Aguardando revisão"). "O que há de novo" trocado
   (Resumos sem internet por até 7 dias, estudos-chave, continuar de onde parou, grifos, busca única); nas Notas ao
   revisor, acrescentado o parágrafo "VERSION 1.3: offline reading…" (as notas anteriores ficaram). Lançamento manual.
-- [ ] Aprovada → o professor clica em "Liberar esta versão".
+- [x] **1.3 aprovada pela Apple em 18/11, 15h31 BRT** ("eligible for distribution").
+- [ ] **Professor: liberar a 1.3** no App Store Connect ("Liberar esta versão"; o lançamento é manual).
 
 ## 🎬 Endocrinologia Essencial: capítulos e slides (18/11)
 - [x] "Nesta aula" em 34 das 37 aulas (ver [[Videoaulas dos Resumos]]).

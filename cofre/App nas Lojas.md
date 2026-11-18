@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-11-17
+atualizado: 2026-11-18
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -81,6 +81,8 @@ https://apps.apple.com/br/app/id6833147654.
   9. ✅ **1.3 enviada à revisão da Apple em 17/11, 22h56 BRT** (Resumos sem internet, build 18). Notas ao revisor:
      parágrafo "VERSION 1.3: offline reading" acrescentado ao fim (as notas são cumulativas: não apagar as antigas).
      Lançamento manual.
+     **Aprovada em 18/11, 15h31 BRT** (e-mail "Review of your Endodirect Endocrinologia (iOS) submission is complete",
+     print do professor; ~16 h e meia na fila). Lançamento manual: falta o professor clicar em "Liberar esta versão".
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
