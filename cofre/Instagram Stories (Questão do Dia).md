@@ -17,6 +17,9 @@ continua às 18h) e carrossel de 4 slides no feed às **19h** (melhor horário d
   computador pelo navegador. Story 9:16 com o conteúdo entre 210 e 1660 px.
 - **Sem o selo oficial da Apple** (tools.applemarketingtools.com fora da rede) e sem a maçã: só o texto, como no
   site. "Resumos sem internet" ficou de fora (a 1.3 ainda não tinha sido liberada pelo professor).
+- **18/11, à tarde (professor: "Troca a imagem do mural por essa da aula"):** no slide 3, a tela do caso clínico
+  (OSCE) deu lugar ao print dele da aula "Fisiologia da Adrenal" (vídeo + "Nesta aula"); arquivo novo
+  `appstore_slide3b.jpg` (nome novo para o Metricool não pegar a cópia em cache) e mídia trocada no post agendado.
 - Hospedagem: `img/instagram/2026-11-19-app-store/*.jpg` no próprio site (público); o Metricool copia a mídia.
   Caminho mais simples que o Drive para posts avulsos, sem pedir upload ao professor.
 
