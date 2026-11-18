@@ -7,6 +7,13 @@ atualizado: 2026-11-18
 
 ## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
 
+> 🧪 **PILOTO SÓ DO PROFESSOR (18/11, sw v451).** Professor, depois de ver no ar: "Essa calculadora ainda não
+> publica. Deixa apenas no painel do professor para a gente ir testando ao longo do tempo. Depois, quando
+> amadurecermos, ela fica pronta, aí a gente acaba publicando também para os alunos". Ficou com `soProfessor:true`
+> (cartão "Piloto · só professores"; a tela própria também mostra o selo). O aluno não vê na grade, na busca nem
+> abrindo por id (tudo passa por `calcVisivel`). **Para publicar:** tirar o `soProfessor` da entrada `trajpeso` e
+> trocar a verificação "ainda é piloto" em `test-trajetoria-peso.js`. Só com o "pode publicar" do professor.
+
 Pedido do professor (18/11): "uma espécie de calculadora ... mostrando o segmento do paciente ao longo do tempo na
 sua trajetória da perda de peso. Desde o momento que ele iniciou ... o uso das medicações, a partir do momento de
 início à medicação, como que foi essa curva, a trajetória da perda de peso, o IMC."
