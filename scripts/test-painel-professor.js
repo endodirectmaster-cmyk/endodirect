@@ -143,7 +143,7 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
 
   const esperado = {
     riscocv: 'Lípides', prevent: 'Lípides', prevent30: 'Lípides', ldl: 'Lípides',
-    imc: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade', cliques: 'Obesidade', reganhoglp1: 'Obesidade',
+    imc: 'Obesidade', trajpeso: 'Obesidade', pep: 'Obesidade', sophia: 'Obesidade', fib4: 'Obesidade', cliques: 'Obesidade', reganhoglp1: 'Obesidade',
     bsa: 'Endocrinologia Pediátrica', alvo: 'Endocrinologia Pediátrica', zha: 'Endocrinologia Pediátrica',
     velcresc: 'Endocrinologia Pediátrica', idcorr: 'Endocrinologia Pediátrica',
     ckdepi: 'Diabetes', drc: 'Diabetes', homa: 'Diabetes',
@@ -158,7 +158,8 @@ const semComentarios = SRC.replace(/^\s*\/\/.*$/gm, '');
   // 25 desde 02/11/2026: entrou "Semaglutida: dose em cliques" (cliques), em Obesidade.
   // 26 desde 15/11/2026: entrou o piloto "Reganho de peso após semaglutida ou tirzepatida
   // (Mayo Clinic)" (reganhoglp1), em Obesidade, visível só para professores.
-  ok('as 26 calculadoras estão mapeadas', Object.keys(areaDe).length === 26, String(Object.keys(areaDe).length));
+  // 27 desde 18/11/2026: entrou "Trajetória do peso no tratamento" (trajpeso), em Obesidade.
+  ok('as 27 calculadoras estão mapeadas', Object.keys(areaDe).length === 27, String(Object.keys(areaDe).length));
   ['Risco cardiovascular', 'Antropometria', 'Lipidologia', 'Função renal', 'Fígado (MASLD)', 'Crescimento'].forEach(function (velha) {
     ok('nenhuma calculadora ficou em "' + velha + '"',
        Object.keys(areaDe).every(function (id) { return areaDe[id] !== velha; }));

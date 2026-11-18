@@ -1,9 +1,43 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-11-16
+atualizado: 2026-11-18
 ---
 
 # Calculadoras
+
+## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
+
+Pedido do professor (18/11): "uma espécie de calculadora ... mostrando o segmento do paciente ao longo do tempo na
+sua trajetória da perda de peso. Desde o momento que ele iniciou ... o uso das medicações, a partir do momento de
+início à medicação, como que foi essa curva, a trajetória da perda de peso, o IMC."
+
+- **Onde:** Obesidade, logo depois do IMC (`{id:'trajpeso', render: tpRender}`); código no bloco
+  `// ── TRAJETÓRIA DO PESO NO TRATAMENTO` antes de `var CALCS=[`. 27 calculadoras desde então.
+- **Entrada:** paciente (lista dos salvos, "+ Novo paciente", "Ver exemplo"), identificação (iniciais ou código) e
+  altura; pesos com data (a linha de adicionar fica sempre à vista; a lista fica recolhida com o último peso no
+  título); medicações com dose, início e fim (vazio = em uso), uma linha por dose. A dose termina sozinha quando
+  começa a próxima linha da mesma medicação (nome sem diferenciar maiúscula). Nomes e doses sugeridos (datalist):
+  semaglutida SC e oral, tirzepatida, liraglutida, orlistate, sibutramina, naltrexona/bupropiona, topiramato,
+  cirurgia bariátrica; qualquer outro vale.
+- **Gráfico (SVG próprio, `tpGraficoSVG`):** desenhado na largura real do cartão (320 a 760 px), para a letra não
+  encolher no celular. Retas entre os pesos anotados (não inventa curva). Modos: peso em kg (linhas tracejadas de
+  IMC 25/30/35/40 com rótulo à direita), IMC (faixas nomeadas) e variação % a partir do 1º peso ou do início de uma
+  medicação (linhas de −5/−10/−15/−20%). Embaixo, uma faixa por medicação (cor própria, um bloco por dose, dose
+  escrita quando cabe, seta se em uso) e uma linha tracejada no início de cada uma. Rótulos no 1º, no último e no
+  menor peso (ponto verde).
+- **Resumo:** peso e IMC inicial → atual (classe da OMS), variação total, menor peso e reganho (% do que perdeu),
+  ritmo dos últimos 90 dias, marcos de 5/10/15/20% (data em que atingiu; o próximo com quanto falta) e, por
+  medicação: período, peso no início e no fim (interpolado entre as medidas vizinhas, com ≈ se não há medida a até
+  7 dias; fora das medidas só até 45 dias), variação e **resposta aos 3 meses** (dia 91; perda ≥ 5% = resposta,
+  abaixo disso "rever dose, adesão ou troca"; Apovian, Endocrine Society, JCEM 2015). Cirurgia bariátrica fica
+  fora dos 3 meses; suspensa antes de 3 meses e "completa 3 meses em ..." são ditos.
+- **"Copiar resumo":** texto curto para o prontuário (sem nome).
+- ⚠️ **Privacidade (LGPD):** os pacientes ficam só no aparelho, na chave `trajpeso_<uid>` do `lsSet` (outra conta no
+  mesmo aparelho não vê). `userStatePayload` não lê essa chave: nada vai para o app_state. A exclusão da conta
+  apaga todas as chaves `endodirect_v1_*` do aparelho. Se um dia pedirem sincronizar entre aparelhos, é dado de
+  saúde de terceiro no nosso servidor: decidir com o professor antes.
+- Teste: `scripts/test-trajetoria-peso.js` (ci bx). Conferido no navegador com a conta de revisão (celular e
+  computador, exemplo, modo % a partir da semaglutida).
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 

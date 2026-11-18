@@ -1451,6 +1451,17 @@ try {
   fail('regressão dos destaques NEJM e Lancet falhou:\n' + out);
 }
 
+// 17c-undecies-bx. TRAJETÓRIA DO PESO NO TRATAMENTO (18/11/2026). Calculadora de Obesidade: pesos (data e kg),
+//      altura e medicações com dose e período; curva de peso/IMC/% com uma faixa por medicação, perda desde o
+//      início de cada uma, resposta aos 3 meses (≥ 5%), menor peso e reganho. Dados só no aparelho, por conta.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-trajetoria-peso.js')], { stdio: 'pipe' });
+  ok('Trajetória do peso no tratamento (calculadora)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da calculadora de trajetória do peso falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
