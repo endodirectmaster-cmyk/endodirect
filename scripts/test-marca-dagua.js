@@ -57,6 +57,7 @@ const svg = decodeURIComponent(url.replace(/^url\("data:image\/svg\+xml;charset=
 ok(/^url\("data:image\/svg\+xml;charset=utf-8,/.test(url) && !/["']/.test(url.slice(5, -2)), 'marca não é uma URL de imagem segura para o CSS: ' + url.slice(0, 80));
 ok(/Ana &lt;b&gt;Lima&lt;\/b&gt; &amp; Cia · ana@x\.y/.test(svg) && !/<b>/.test(svg), 'nome com < & > tem de ser escapado no SVG');
 ok(/fill-opacity="0\.2"/.test(svg) && /rotate\(-24/.test(svg), 'marca clara e em diagonal');
+ok(/width="520" height="380"/.test(svg), 'marca espaçada (uma a cada 520×380 px): o professor pediu menos marca na tela');
 run('marcaAplicar()');
 ok(doc.body.style.getPropertyValue('--marca-aluno').indexOf('data:image/svg+xml') >= 0, 'marcaAplicar não pôs a marca no body (--marca-aluno)');
 
@@ -159,6 +160,7 @@ doc.body.appendChild(nova);
   // CSS: a marca não pega cliques, só aparece onde deve e não se move pela tela
   ok(/\.dir-marca::after\{content:"";position:absolute;inset:0;pointer-events:none;background-image:var\(--marca-aluno,none\)/.test(html), 'CSS .dir-marca::after (marca sobre o capítulo, sem pegar o toque)');
   ok(/\.lb-marca::after\{content:"";position:absolute;inset:0;pointer-events:none;background-image:var\(--marca-aluno,none\)/.test(html), 'CSS .lb-marca::after');
+  ok(/\.dir-marca \.dir-video\{position:relative;z-index:4\}/.test(html), 'o padrão diagonal do capítulo não pode cobrir a videoaula (nela vale só a marca do canto)');
   ok(/\.marca-video\{position:absolute;inset:0;pointer-events:none;/.test(html), 'CSS .marca-video (não pode pegar o toque nos controles do vídeo)');
   const regra = (html.match(/\.marca-video span\{[^}]*\}/) || [''])[0];
   ok(/transition:opacity 2s/.test(regra) && !/transition:[^;]*(top|left)/.test(regra), 'marca do vídeo: só some e reaparece (sem deslizar): ' + regra);
