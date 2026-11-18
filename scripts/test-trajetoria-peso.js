@@ -145,7 +145,20 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
 ok(!/trajpeso|tpCarrega/.test(corpo('userStatePayload')), 'pacientes fora do app_state (não vão para o servidor)');
 const iCalc = html.indexOf("  {id:'trajpeso',"), iImc = html.indexOf("  {id:'imc',name:'IMC'"), iPep = html.indexOf("  {id:'pep',");
 ok(iImc > 0 && iImc < iCalc && iCalc < iPep, 'na lista, logo depois do IMC (Obesidade)');
-ok(/\{id:'trajpeso',name:'Trajetória do peso no tratamento',area:'Obesidade',[\s\S]{0,400}render:function\(root\)\{tpRender\(root\);\}/.test(html), 'calculadora de tela própria em Obesidade');
+ok(/\{id:'trajpeso',name:'Trajetória do peso no tratamento',area:'Obesidade',[\s\S]{0,800}render:function\(root\)\{tpRender\(root\);\}/.test(html), 'calculadora de tela própria em Obesidade');
+// Piloto só do professor (18/11/2026: "Essa calculadora ainda não publica. Deixa apenas no painel do professor").
+// Para publicar aos alunos: tirar o soProfessor e trocar esta verificação.
+ok(/soProfessor:true,/.test(html.slice(iCalc, iPep)), 'ainda é piloto: só o professor vê (soProfessor)');
+{
+  const ctx2 = vm.createContext({ admin: false, APP_LOJA: '' });
+  vm.runInContext('function isAdminUser(){return admin;}\n' + corpo('calcVisivel'), ctx2);
+  const ent = { id: 'trajpeso', soProfessor: /soProfessor:true,/.test(html.slice(iCalc, iPep)) };
+  ctx2.ent = ent;
+  ok(vm.runInContext('calcVisivel(ent)', ctx2) === false, 'o aluno não vê a calculadora (grade, busca e abrir por id passam por calcVisivel)');
+  ctx2.admin = true;
+  ok(vm.runInContext('calcVisivel(ent)', ctx2) === true, 'o professor vê a calculadora');
+}
+ok(/\+\(c\.soProfessor\?'<div class="calc-piloto" style="margin:\.1rem 0 \.6rem">Piloto · visível só para professores<\/div>':''\)\s*\+'<div data-calc-render><\/div>'/.test(html), 'tela da calculadora com o selo de piloto');
 ok(/Apovian CM et al\., J Clin Endocrinol Metab 2015/.test(html.slice(iCalc, iPep)), 'nota com a referência do critério dos 3 meses');
 ok(/@media \(hover:none\) and \(pointer:coarse\)\{\.tp input,\.tp select\{font-size:16px\}\}/.test(html), 'campos com 16 px no toque (iPhone não amplia)');
 
