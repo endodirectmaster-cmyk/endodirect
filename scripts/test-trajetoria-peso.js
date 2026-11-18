@@ -125,6 +125,7 @@ ok(root.querySelector('details[data-tp-det="meds"]').open === true && root.query
 const res = root.querySelector('[data-tp-res]');
 ok(/Semaglutida SC/.test(res.textContent) && /−8,5 kg/.test(res.textContent) && /−8,1%/.test(res.textContent) && /obesidade grau I/.test(res.textContent), 'resumo: variação total, IMC atual e a medicação');
 ok(/Aos 3 meses/.test(res.textContent) && /resposta \(perda ≥ 5%\)/.test(res.textContent), 'resposta aos 3 meses');
+ok(res.classList.contains('tp-col-res') && root.querySelector('.tp > .tp-col-ent') && res.querySelectorAll('.tp-med .tp-med-grid .tp-med-st').length === 3, 'resultado em coluna própria; medicação em faixa com período, peso e 3 meses');
 res.querySelector('[data-tp-modo="pct"]').click();
 ok(!!res.querySelector('[data-tp-base]') && /variação do peso/.test(res.innerHTML), 'modo %: escolhe o ponto de partida');
 const sb = res.querySelector('[data-tp-base]'); sb.value = 'semaglutida sc'; sb.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
@@ -161,6 +162,11 @@ ok(/soProfessor:true,/.test(html.slice(iCalc, iPep)), 'ainda é piloto: só o pr
 ok(/\+\(c\.soProfessor\?'<div class="calc-piloto" style="margin:\.1rem 0 \.6rem">Piloto · visível só para professores<\/div>':''\)\s*\+'<div data-calc-render><\/div>'/.test(html), 'tela da calculadora com o selo de piloto');
 ok(/Apovian CM et al\., J Clin Endocrinol Metab 2015/.test(html.slice(iCalc, iPep)), 'nota com a referência do critério dos 3 meses');
 ok(/@media \(hover:none\) and \(pointer:coarse\)\{\.tp input,\.tp select\{font-size:16px\}\}/.test(html), 'campos com 16 px no toque (iPhone não amplia)');
+// Layout (professor, 18/11/2026: "essa parte aqui de baixo ficou muito espremida ... deixar mais centralizado, junto com o gráfico")
+ok(/@container \(min-width:1050px\)\{\s*\.tp\{display:grid;grid-template-columns:minmax\(0,25rem\) minmax\(0,1fr\)/.test(html) && /\[data-calc-render\]:has\(> \.tp\)\{container-type:inline-size\}/.test(html),
+  'cartão largo: preenchimento à esquerda e gráfico + resumo à direita (pela largura do cartão)');
+ok(/\.tp-kpis\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(9rem,1fr\)\)/.test(html), 'quadros do resumo ocupam a largura toda (auto-fit), sem ficar espremidos à esquerda');
+ok(/Math\.min\(1200,Math\.round\(larg\)\)/.test(html) && /y1=208\+Math\.max\(0,Math\.min\(120,/.test(html), 'gráfico desenhado na largura real (até 1200 px) e mais alto quando largo: a letra não estica');
 
 if (falhas.length) {
   console.error('✗ Trajetória do peso:');
