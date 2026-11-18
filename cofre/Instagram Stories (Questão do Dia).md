@@ -1,9 +1,19 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-11-16
+atualizado: 2026-11-18
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## ✅ CONFERÊNCIA DE 18/11/2026 (08h45)
+
+- **Teste de 17/11, 18h:** publicado no Instagram (post 430801651, o mesmo que substituiu o 430499584 em 16/11 às
+  20h22; status `PUBLISHED`, story 4032650537175087185).
+- **Tarefa diária** (trig_0163g4DddpiXz8EPWyvmaZzN): rodou hoje às 08h17 (sucesso, 36 s) e agendou o story de
+  **18/11 às 18h** com a imagem (post 432691101, tipo STORY, autoPublish, status `PENDING`). Primeiro dia da rotina
+  sozinha: funcionou sem intervenção.
+- Não deu para abrir a imagem copiada pelo Metricool (`static.metricool.com` fora da rede desta sessão); a tarefa só
+  agenda depois de conferir a arte do nosso bucket pelo hash.
 
 ## 🤖 STORY AUTOMÁTICO NO METRICOOL, ÀS 18H (2026-11-16)
 
