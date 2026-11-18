@@ -158,6 +158,10 @@ ok(/Este aparelho/.test(h) && (h.match(/data-aparelho-remover=/g) || []).length 
   ok(/<div id="perfil-aparelhos" style="display:none;margin-top:1rem"><\/div>/.test(corpo('renderPerfil')) && /aparelhosPerfilRender\(\)/.test(corpo('renderPerfil')), 'Perfil: lugar do cartão e desenho');
   ok(/'<div id="adm-aparelhos">'\+admAparelhosHTML\(\)\+'<\/div>/.test(html) && /carregaAdmAparelhos\(admAparelhosRedesenha,true\)/.test(html), 'Estudantes: painel de contas suspeitas carregado');
   ok(/client\.rpc\('endodirect_aparelhos_admin_liberar',\{p_user:uid,p_desconectar:desc\}\)/.test(html), 'painel: botões chamam a liberação');
+  // FAQ (professor, 18/11: "frisar isso também no FAQ ... até no máximo 2 dispositivos e que não é permitido compartilhar usuário e senha")
+  const faqLp = (html.match(/<details><summary>Em quantos aparelhos posso usar\? Posso compartilhar a conta\?<\/summary><p>[\s\S]*?<\/p><\/details>/) || [''])[0];
+  const faqSup = (html.match(/<div class="faq-q">Em quantos aparelhos posso usar\? Posso compartilhar a conta\? <span>▾<\/span><\/div><div class="faq-a">[\s\S]*?<\/div><\/div>/) || [''])[0];
+  [['página inicial', faqLp], ['Suporte', faqSup]].forEach(([onde, f]) => ok(/não é permitido compartilhar usuário e senha/.test(f) && /até <b>2 aparelhos<\/b>/.test(f) && /Perfil &gt; Meus aparelhos/.test(f) && /2 vezes a cada 30 dias/.test(f), 'FAQ (' + onde + '): 2 aparelhos, sem compartilhar usuário e senha, troca no Perfil'));
 
   if (falhas.length) {
     console.error('✗ Aparelhos cadastrados:');
