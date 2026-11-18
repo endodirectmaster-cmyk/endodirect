@@ -1431,6 +1431,16 @@ try {
   fail('regressão dos aparelhos cadastrados falhou:\n' + out);
 }
 
+// 17c-undecies-bv. USO DAS FERRAMENTAS (18/11/2026). Cada tela, aba de capítulo, vídeo e busca contam no
+//      servidor (1 a cada 10 min por item); o professor vê em Analytics. supabase/uso-ferramentas.sql.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-uso-ferramentas.js')], { stdio: 'pipe' });
+  ok('Uso das ferramentas (contagem por tela e Analytics)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do uso das ferramentas falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

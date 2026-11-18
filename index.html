@@ -10345,6 +10345,92 @@ function aparelhosPerfilRender(){
     });});
   });
 }
+// ── USO DAS FERRAMENTAS (18/11/2026) ────────────────────────────────────────────────────────────
+// Professor: "mapear o que os alunos estão usando de ferramentas da plataforma". O app_state só guarda o
+// que cada ferramenta precisa; Chat IA, OSCE, Prescrição, Calculadoras, Resumos, Diretrizes, Podcasts e
+// videoaulas não deixavam rastro. Cada tela aberta (goPanel), aba de capítulo dos Resumos, videoaula
+// iniciada e a Busca somam 1 no dia, no servidor (supabase/uso-ferramentas.sql); no máximo 1 registro
+// por item a cada 10 min neste aparelho. Só aluno; o professor vê em Analytics.
+var usoUltimo={};
+function usoRegistrar(item){
+  if(!currentUser||!currentUser.id||currentUser.role!=='aluno')return;
+  item=String(item||'').toLowerCase();
+  if(!/^[a-z0-9_]{2,24}$/.test(item))return;
+  var k=currentUser.id+'|'+item,agora=Date.now();
+  if(usoUltimo[k]&&agora-usoUltimo[k]<600000)return;
+  usoUltimo[k]=agora;
+  var client=getSupabaseClient();if(!client)return;
+  try{client.rpc('endodirect_uso_registrar',{p_item:item}).then(function(){},function(){});}catch(e){}
+}
+var USO_ROTULOS={emc:'Educação Médica Continuada',resu_resumo:'Resumos: texto do capítulo',resu_flash:'Resumos: flashcards do capítulo',
+  resu_mapa:'Resumos: mapa mental do capítulo',resu_video:'Resumos: videoaulas do capítulo',resu_artigo:'Resumos: artigos',
+  video_curso:'Videoaula dos cursos (play)',video_resumo:'Videoaula dos Resumos (play)',busca:'Busca'};
+function usoRotulo(item){
+  item=String(item||'');
+  if(/^trava_/.test(item))return '🔒 '+usoRotulo(item.slice(6))+' (sem acesso)';
+  return USO_ROTULOS[item]||(typeof PANEL_LABELS==='object'&&PANEL_LABELS[item])||item;
+}
+document.addEventListener('play',function(ev){
+  var v=ev.target;if(!v||v.tagName!=='VIDEO'||!v.closest)return;
+  if(v.closest('#panel-cursos'))usoRegistrar('video_curso');
+  else if(v.closest('.dir-video'))usoRegistrar('video_resumo');
+},true);
+// Analytics do professor
+var admUsoData={},admUsoDias=30,admUsoErr='',admUsoLoading=false;
+function carregaAdmUso(cb,forca){
+  var d=admUsoDias;
+  if(!forca&&admUsoData[d]){cb&&cb();return;}
+  if(admUsoLoading)return;
+  var client=getSupabaseClient();if(!client){admUsoErr='Supabase indisponível.';cb&&cb();return;}
+  admUsoLoading=true;
+  client.rpc('endodirect_uso_admin',{p_dias:d}).then(function(res){
+    admUsoLoading=false;
+    if(res&&res.error)admUsoErr=res.error.message||'erro';else{admUsoErr='';admUsoData[d]=(res&&res.data)||{};}
+    cb&&cb();
+  },function(e){admUsoLoading=false;admUsoErr=String(e&&e.message||e);cb&&cb();});
+}
+var USO_RETRATO_ROTULOS={quest:'Banco de questões (respondeu)',qotd:'Questão do Dia (respondeu)',sr:'Revisão espaçada',flash:'Flashcards (revisou cartões)',
+  cursos:'Cursos (concluiu aula)',plano:'Plano de estudo (montou)',simfull:'Simulado (fez)',mmap:'Mapas mentais próprios',notas:'Caderno (escreveu nota)',
+  crono:'Cronograma (montou)',rx:'Prescrição Simulada (emitiu)'};
+function admUsoHTML(){
+  var d=admUsoData[admUsoDias];
+  var botoes=[7,30].map(function(n){return '<button type="button" class="btn btn-sm '+(admUsoDias===n?'btn-primary':'btn-outline')+'" data-uso-dias="'+n+'">'+n+' dias</button>';}).join('');
+  var cab='<div class="card-head" style="flex-wrap:wrap;gap:.5rem"><span class="card-title">🧭 Uso das ferramentas</span><span style="display:flex;gap:.3rem">'+botoes+'</span></div>';
+  if(admUsoErr)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div class="empty">Não consegui carregar: '+esc(admUsoErr)+'</div></div>';
+  if(!d)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div class="empty">Carregando…</div></div>';
+  var n=function(v){return Number(v||0);};
+  var itens=Array.isArray(d.itens)?d.itens:[];
+  var max=itens.reduce(function(m,x){return Math.max(m,n(x.alunos));},0)||1;
+  var desde=d.desde?String(d.desde).split('-').reverse().slice(0,2).join('/'):'';
+  var intro='<p style="font-size:.76rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Quantos alunos abriram cada ferramenta nos últimos '+n(d.dias)+' dias'
+    +(desde?' (contagem desde '+esc(desde)+')':'')+'. No período, <b>'+n(d.alunos)+'</b> aluno'+(n(d.alunos)===1?'':'s')+' usaram a plataforma, <b>'+n(d.pagantes)+'</b> assinante'+(n(d.pagantes)===1?'':'s')+'.</p>';
+  var linhas=itens.length?itens.map(function(x){
+    var w=Math.max(2,Math.round(n(x.alunos)/max*100));
+    return '<div style="margin-bottom:.55rem"><div style="display:flex;justify-content:space-between;gap:.6rem;font-size:.8rem"><span style="font-weight:600">'+esc(usoRotulo(x.item))+'</span>'
+      +'<span style="color:var(--t2);white-space:nowrap;font-variant-numeric:tabular-nums">'+n(x.alunos)+' aluno'+(n(x.alunos)===1?'':'s')+' · '+n(x.pagantes)+' assin. · '+n(x.aberturas)+' aberturas</span></div>'
+      +'<div style="height:6px;border-radius:4px;background:var(--s2);margin-top:.25rem"><div style="height:6px;border-radius:4px;background:var(--blue);width:'+w+'%"></div></div></div>';
+  }).join(''):'<div class="empty">Ainda sem registros no período (a contagem começou em 18/11/2026).</div>';
+  var r=d.retrato||{},ri=Array.isArray(r.itens)?r.itens:[];
+  var retrato=ri.length?'<details style="margin-top:.9rem"><summary style="cursor:pointer;font-size:.8rem;font-weight:700">Retrato do que já estava registrado, desde o início</summary>'
+    +'<p style="font-size:.72rem;color:var(--t3);margin:.4rem 0 .5rem">Alunos que já usaram cada recurso que guarda dados (de '+n(r.pagantes)+' assinantes e '+n(r.degustacao)+' na degustação).</p>'
+    +'<div class="adm-table"><div class="adm-table-head"><span style="flex:3">Recurso</span><span style="flex:1;text-align:right">Assinantes</span><span style="flex:1;text-align:right">Degustação</span></div>'
+    +ri.map(function(x){return '<div class="adm-table-row"><span style="flex:3;font-size:.78rem">'+esc(USO_RETRATO_ROTULOS[x.item]||x.item)+'</span><span style="flex:1;text-align:right;font-size:.78rem;font-variant-numeric:tabular-nums">'+n(x.pagantes)+'</span><span style="flex:1;text-align:right;font-size:.78rem;font-variant-numeric:tabular-nums">'+n(x.degustacao)+'</span></div>';}).join('')
+    +'</div></details>':'';
+  return '<div class="card" style="margin-bottom:1rem">'+cab+intro+linhas+retrato+'</div>';
+}
+function admUsoInserir(m){
+  var pc=m&&m.querySelector?m.querySelector('.adm-pc'):null;
+  if(pc&&!document.getElementById('adm-uso'))pc.insertAdjacentHTML('afterbegin','<div id="adm-uso">'+admUsoHTML()+'</div>');
+}
+function admUsoRedesenha(){
+  if(admCurrentSec!=='analytics')return;
+  var box=document.getElementById('adm-uso');if(box)box.innerHTML=admUsoHTML();
+}
+document.addEventListener('click',function(ev){
+  var b=ev.target&&ev.target.closest?ev.target.closest('[data-uso-dias]'):null;if(!b)return;
+  admUsoDias=+b.getAttribute('data-uso-dias')||30;admUsoErr='';
+  admUsoRedesenha();carregaAdmUso(admUsoRedesenha);
+});
 function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 // Espelha a faixa de Sócio-fundador da landing na tela de planos in-app.
 // Esconde sozinha quando a oferta está desativada/esgotada (config.founder)
@@ -11712,12 +11798,13 @@ function goPanel(id){
   // nele a cada reload, só para ser desviado de novo.
   if(id==='aovivo'&&!AO_VIVO_ATIVO)id='dash';
   if(id==='bula')id='dash'; // Bulário removido em 17/10/2026: painel salvo ou link antigo volta ao início
-  if(!canSeePanel(id)){showLockedPanel(id);return;}
+  if(!canSeePanel(id)){try{usoRegistrar('trava_'+id);}catch(e){}showLockedPanel(id);return;} // tentou abrir sem acesso (uso das ferramentas)
   // `emc` é ITEM DE MENU próprio e PAINEL REAPROVEITADO: abre o de Cursos já
   // filtrado no curso da Educação Médica Continuada. Duplicar o painel
   // duplicaria player, progresso e a regra de amostra grátis — três lugares para
   // divergir. `menuAlvo` guarda o item que fica aceso e o que volta no reload.
   var menuAlvo=id;
+  try{usoRegistrar(menuAlvo);}catch(e){} // uso das ferramentas (18/11/2026)
   try{deviceTickThrottled();}catch(e){} // valida o limite de dispositivos a cada navegação (throttle 4s)
   try{if(currentUser&&currentUser.role!=='admin')lsSet('last_panel',menuAlvo);}catch(e){} // lembra o item do MENU p/ restaurar no reload
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
@@ -16731,6 +16818,7 @@ function resuPosRender(root){
   marcaAplicar();
   offlineLigarBotoes(root);offlineTrocaFiguras(root);
   if(!refSubSel||!refTemaSel||refRevArt)return;
+  try{usoRegistrar(refTipoSel==='artigo'?'resu_artigo':'resu_'+refFormat);}catch(e){} // uso: texto, flashcards, mapa ou vídeo do capítulo
   var l=DB.leitura,mesmo=l&&l.sub===refSubSel&&l.tema===refTemaSel&&(l.tipo||'capitulo')===refTipoSel;
   DB.leitura={sub:refSubSel,tipo:refTipoSel,tema:refTemaSel,pos:mesmo?(+l.pos||0):0,at:Date.now()};
   leituraSalva(!mesmo);
@@ -17568,6 +17656,7 @@ function buscaOverlay(){
   return ov;
 }
 function abrirBusca(){
+  try{usoRegistrar('busca');}catch(e){}
   var ov=buscaOverlay(),inp=ov.querySelector('#busca-q');
   ov.style.display='flex';document.body.classList.add('busca-aberta');
   inp.value=buscaUltima||'';
@@ -22184,7 +22273,7 @@ function renderAdmSec(sec){
       try{bindAdmSec('estudantes');}catch(e){}
     });
   }
-  else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();loadAdmOverview();loadAdmEstudantes();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
+  else if(sec==='analytics'){m.innerHTML=admAnalyticsHTML();admUsoInserir(m);carregaAdmUso(admUsoRedesenha);loadAdmOverview();loadAdmEstudantes();var rtA=document.getElementById('adm-analytics-retry');if(rtA)rtA.addEventListener('click',function(){loadAdmOverview(true);});}
   else if(sec==='mural')m.innerHTML=admMuralSecHTML();
   else if(sec==='ref'||sec==='resumos'){
     var _nm=(sec==='resumos')?'res':'dir';
