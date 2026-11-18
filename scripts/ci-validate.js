@@ -1409,6 +1409,17 @@ try {
   fail('regressão dos Resumos sem internet falhou:\n' + out);
 }
 
+// 17c-undecies-bt. MARCA D'ÁGUA DO ALUNO (17/11/2026). Nome e e-mail do aluno sobre os Resumos, a figura
+//      ampliada e todo vídeo (num canto, trocando a cada 60 s sem deslizar), para que um print ou gravação
+//      repassada mostre de quem é. Tela cheia do vídeo é a do quadro (com a marca).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-marca-dagua.js')], { stdio: 'pipe' });
+  ok("Marca d'água do aluno (Resumos, figura ampliada e vídeos)");
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail("regressão da marca d'água do aluno falhou:\n" + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,

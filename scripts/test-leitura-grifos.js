@@ -45,7 +45,7 @@ const ini = html.indexOf('var leituraRestaurando=false');
 ok(ini > 0, 'o bloco de leitura/grifos sumiu');
 ['leituraItem', 'leituraSalva', 'leituraPosDe', 'resuPosRender', 'renderDashContinuar', 'grifosLista', 'grifosDoCapitulo', 'grifoMarca', 'grifosAplicar',
   'grifosNotasItemHTML', 'grifosNotasHTML', 'grifoRemove', 'grifosNotasAtualiza'].forEach((n) => vm.runInContext(corpo(n), ctx));
-vm.runInContext('var leituraRestaurando=false,leituraUltSalva=0,leituraUltRemota=0,grifoSel=null,grifosLigado=true;function grifosInit(){}function renderNoteList(){}function abrirLeitura(){}function offlineLigarBotoes(){}function offlineTrocaFiguras(){}', ctx);
+vm.runInContext('var leituraRestaurando=false,leituraUltSalva=0,leituraUltRemota=0,grifoSel=null,grifosLigado=true;function grifosInit(){}function renderNoteList(){}function abrirLeitura(){}function offlineLigarBotoes(){}function offlineTrocaFiguras(){}function marcaAplicar(){}', ctx);
 const run = (c) => vm.runInContext(c, ctx);
 const doc = dom.window.document;
 

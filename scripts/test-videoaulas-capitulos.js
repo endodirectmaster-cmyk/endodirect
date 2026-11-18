@@ -128,7 +128,7 @@ ok('skill: SKILL.md com nome e descrição', /^---\nname: capitulos-videoaula\nd
 ok('skill: cobre Resumos e EMC', /diretrizes\[i\]\.videos\[j\]\.caps/.test(skill) && /adm_cursos\[k\]\.caps/.test(skill));
 ok('skill: backup e guarda antes de gravar', /endodirect_global_state_backup/.test(skill) && /confere o `src` e o `titulo`/.test(skill));
 const sh = fs.existsSync(path.join(SK, 'slides.sh')) ? fs.readFileSync(path.join(SK, 'slides.sh'), 'utf8') : '';
-ok('script: baixa por curl (o ffmpeg não passa pelo proxy) e manda o Referer ao Bunny', /curl -sS -H "Referer: \$REF"/.test(sh) && /curl -sS -L "\$URL"/.test(sh));
+ok('script: baixa por curl (o ffmpeg não passa pelo proxy) e manda o Referer ao Bunny', /CURL=\(curl -sS --retry \d/.test(sh) && /"\$\{CURL\[@\]\}" -H "Referer: \$REF"/.test(sh) && /"\$\{CURL\[@\]\}" -L "\$URL"/.test(sh));
 ok('script: corte de cena baixo e tesseract com OMP_THREAD_LIMIT=1', /gt\(scene\\,0\.004\)/.test(sh) && /OMP_THREAD_LIMIT=1 xargs/.test(sh) && /-l por/.test(sh));
 ok('script: os auxiliares estão lá', ['tabela.py', 'agrupa.py', 'cabecalho.py'].every((f) => fs.existsSync(path.join(SK, f))));
 
