@@ -48,18 +48,20 @@ function servidor(opts) {
   opts = opts || {};
   const st = { registrados: new Set(opts.registrados || []), ordem: [], pend: [], derrubar: false, saiu: 0 };
   st.rpc = function (nome, args) {
-    const curto = nome.replace('endodirect_session_', '');
+    // 18/11/2026: o registro passou a ser `endodirect_aparelho_entrar` ('ok' | 'cheio' | 'sem_conta').
+    const curto = nome === 'endodirect_aparelho_entrar' ? 'claim' : nome.replace('endodirect_session_', '');
     st.ordem.push(curto);
     const responde = () => {
       if (opts.claimCai && curto === 'claim') throw new TypeError('Failed to fetch');
-      if (opts.claimFalso && curto === 'claim') return { data: false, error: null }; // sem uid no servidor: não registra
-      if (curto === 'claim') { st.registrados.add(args.p_device_id); return { data: true, error: null }; }
+      if (opts.claimFalso && curto === 'claim') return { data: 'sem_conta', error: null }; // sem uid no servidor: não registra
+      if (opts.cheio && curto === 'claim') return { data: 'cheio', error: null }; // 2 aparelhos cadastrados: este não entra
+      if (curto === 'claim') { st.registrados.add(args.p_device_id); return { data: 'ok', error: null }; }
       if (curto === 'check') return { data: !st.derrubar && st.registrados.has(args.p_device_id), error: null };
       return { data: null, error: null };
     };
     return new Promise((res, rej) => st.pend.push(() => { try { res(responde()); } catch (e) { rej(e); } }));
   };
-  st.auth = { signOut() { st.saiu++; return Promise.resolve({ error: null }); } };
+  st.auth = { signOut(o) { st.saiu++; st.escopo = o && o.scope; return Promise.resolve({ error: null }); } };
   // Entrega os pedidos pendentes, um por vez, na ordem em que saíram.
   st.soltaTudo = async function () { while (st.pend.length) { st.pend.shift()(); await new Promise((r) => setImmediate(r)); } };
   return st;
@@ -85,6 +87,8 @@ function caixa(srv) {
     getSupabaseClient: () => srv,
     setInterval: () => 1, clearInterval: () => {},
     acessosRetentarSePendente() {},
+    aparelhoBloqueadoMostrar() { c.bloq = (c.bloq || 0) + 1; },
+    aparelhoBloqueadoFechar() { c.fechou = (c.fechou || 0) + 1; },
     remoteStateGen: 0,
     overlay: null,
   };
@@ -153,6 +157,19 @@ const roda = (c, js) => vm.runInContext(js, c);
     await srv.soltaTudo();
     ok(srv.saiu === 0 && !c.overlay, 'registro false: ninguém derrubado');
   }
+  // Vagas cheias (18/11/2026, aparelhos cadastrados): este aparelho não entra; aparece a tela de troca,
+  // ninguém é derrubado, e a batida de coração não fica pedindo vaga nem checando.
+  {
+    const srv = servidor({ cheio: true });
+    const c = caixa(srv);
+    roda(c, 'claimDeviceSlot();');
+    await srv.soltaTudo();
+    ok(c.bloq === 1 && roda(c, 'deviceSlot.bloqueado') === true && roda(c, 'deviceSlot.ok') === false, 'vagas cheias: mostra a tela de troca de aparelho');
+    roda(c, 'deviceTick(); deviceTick();');
+    await srv.soltaTudo();
+    ok(srv.ordem.join() === 'claim', 'vagas cheias: a batida de coração não pede vaga de novo nem checa (saiu: ' + srv.ordem.join() + ')');
+    ok(srv.saiu === 0 && !c.overlay, 'vagas cheias: ninguém derrubado');
+  }
   // ── 3. Registro confirmado não se refaz ─────────────────────────────────
   {
     const srv = servidor();
@@ -174,6 +191,7 @@ const roda = (c, js) => vm.runInContext(js, c);
     await srv.soltaTudo();
     await new Promise((r) => setImmediate(r));
     ok(srv.saiu === 1 && !!c.overlay, 'derrubada: o check false encerra a sessão e mostra o aviso');
+    ok(srv.escopo === 'local', 'derrubada: encerra só ESTE aparelho (signOut global derrubava também o outro aparelho do aluno)');
     // ── 5. … e, depois dela, nenhuma resposta da rede vale ──────────────
     ok(roda(c, 'sessaoEncerrada') === true, 'derrubada: a aba fica marcada como encerrada');
     ok(roda(c, 'remoteStateGen') === gen0 + 1, 'derrubada: a geração sobe (o hydrate em voo não fecha a carga)');

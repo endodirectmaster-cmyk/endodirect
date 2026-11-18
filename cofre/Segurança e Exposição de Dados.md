@@ -1,9 +1,38 @@
 ---
 tags: [cofre, seguranca, supabase]
-atualizado: 2026-08-18
+atualizado: 2026-11-18
 ---
 
 # Segurança e Exposição de Dados
+
+## 📱 CONTA COMPARTILHADA: APARELHOS CADASTRADOS (2026-11-18)
+
+Professor, com print da lista de Estudantes: "Provavelmente fizeram uma assinatura para várias pessoas ao
+mesmo tempo compartilharem ... bloquear ao máximo esse tipo de acesso coletivo." A conta do print
+(nome de programa de residência) tinha sido criada naquele dia, em degustação, com um único iPhone e uma
+sessão: nada de uso coletivo ainda. Mas o limite antigo deixava revezar: 2 aparelhos AO MESMO TEMPO e o
+3º derrubava o mais antigo, apagando a linha (sem histórico). Na base, 30 dias: no máximo 6 IPs e 4
+navegadores por conta (o normal de quem troca de rede).
+
+Escolha do professor: **"Bloquear e trocar no Perfil"** + **"Painel de contas suspeitas"**
+(`supabase/aparelhos-cadastrados.sql`, migration `aparelhos_cadastrados`):
+- Até **2 aparelhos cadastrados** por conta. Aparelho novo com as 2 vagas ocupadas **não entra**
+  (`endodirect_aparelho_entrar` → 'cheio'): aparece a tela "Sua conta já está em 2 aparelhos" com os
+  cadastrados e "Remover e entrar aqui". Também em Perfil > Meus aparelhos.
+- **No máximo 2 trocas a cada 30 dias** (linha `#meta` da própria tabela guarda as datas). Vaga parada há
+  30 dias volta sozinha. "Sair" não libera a vaga (senão o revezamento voltava).
+- Nada é apagado: removido = `revogado_em/revogado_motivo` (troca, inativo, professor); tentativa barrada =
+  `bloqueios/bloqueado_em`. O aluno só LÊ a tabela pela API (antes podia apagar a própria linha).
+- **Painel** (Estudantes, no fim): contas com 4+ aparelhos diferentes, 2 trocas ou 2 aparelhos barrados em
+  30 dias; botões "Liberar trocas" e "Desconectar aparelhos" (`endodirect_aparelhos_admin[_liberar]`).
+- Fora do limite: professores e as contas de teste (`endodirect_email_de_teste`: demonstração, vitrine,
+  revisão das lojas).
+- 🧨 Achado no caminho: o aparelho derrubado fazia `signOut()` **global** (padrão do supabase-js), que
+  encerrava também a sessão do OUTRO aparelho do aluno quando o token vencesse. Agora `scope:'local'`.
+- Limite honesto: a regra é aplicada pelo app (a tela cobre o conteúdo); o mesmo vale para o limite antigo.
+  Somado à marca d'água com nome e e-mail, quem repassa a conta é identificável.
+- Testado no banco numa transação desfeita (entrar, cheio, troca, limite, inatividade, painel, liberação,
+  isenção, sem login) e em `scripts/test-aparelhos-cadastrados.js` + `test-aparelho-registra-antes.js`.
 
 ## 🚨 OS BACKUPS ESTAVAM ABERTOS PARA O MUNDO — E NINGUÉM PRECISARIA HACKEAR (2026-08-18)
 

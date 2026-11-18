@@ -1420,6 +1420,17 @@ try {
   fail("regressão da marca d'água do aluno falhou:\n" + out);
 }
 
+// 17c-undecies-bu. APARELHOS CADASTRADOS (18/11/2026). Contra conta compartilhada em revezamento: até 2
+//      aparelhos cadastrados; o 3º não entra (o aluno remove um, até 2 trocas a cada 30 dias); painel de
+//      contas suspeitas para o professor. Regras em supabase/aparelhos-cadastrados.sql.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aparelhos-cadastrados.js')], { stdio: 'pipe' });
+  ok('Aparelhos cadastrados (2 por conta, troca até 2/mês, painel de contas suspeitas)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos aparelhos cadastrados falhou:\n' + out);
+}
+
 // 17c-undecies-ay. NOTIFICAÇÕES NATIVAS NO APP DO IPHONE, VERSÃO 1.1 (16/11/2026). O WKWebView não tem
 //      web push: o app 1.1 traz o plugin PushNotifications; os mesmos botões do site gravam o token
 //      como "apns:<token>" em endodirect_push_subs, e lib/push.js manda esses pela Apple (HTTP/2,
