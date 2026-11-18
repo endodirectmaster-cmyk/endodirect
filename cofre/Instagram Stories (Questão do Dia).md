@@ -5,11 +5,17 @@ atualizado: 2026-11-18
 
 # Instagram Stories — "Questão do Dia"
 
-## 📱 POST E STORY "ENDODIRECT AGORA NA APP STORE" (19/11/2026)
+## 📱 POST E STORY "ENDODIRECT AGORA NA APP STORE" (PUBLICADOS EM 18/11/2026)
+
+> ✅ **Publicados em 18/11** (professor aprovou: "Ok, pode postar hoje"): carrossel às 19h com **3 slides** (o 4º,
+> "Disponível na App Store", saiu a pedido: "não precisa") → https://www.instagram.com/p/Df5iYz8CBUX/ ; story às
+> 19h05 → story 4033406395692415170. Legenda sem mudança (ainda cita Face ID, mesma conta e mesmo progresso).
+> O story automático da Questão do Dia das 18h também saiu (story 4033376019209859821): **1º dia da rotina diária
+> publicado sem intervenção.** Versões finais no site: `appstore_slide1.jpg`, `appstore_slide2b.jpg`,
+> `appstore_slide3e.jpg` e `appstore_story.jpg` (o `appstore_slide4.jpg` ficou na pasta, sem uso).
 
 Pedido do professor (18/11): "Programa um post no feed e também nos stories sobre a plataforma e dizer que está
-disponível no app store". Agendados no Metricool para **19/11 (quinta)**: story às **12h** (o da Questão do Dia
-continua às 18h) e carrossel de 4 slides no feed às **19h** (melhor horário da quinta no Metricool: 18h–19h).
+disponível no app store". Agendados primeiro para 19/11 (story 12h, carrossel 19h) e antecipados para 18/11 depois da aprovação.
 - Artes (Chromium, Fraunces + Inter, navy #002142/#0a2d55 e amarelo #f1d972, logo MD4 do Drive na capa e símbolo
   `logo.png.png` nos demais): capa com três telas do app (capturas da ficha da App Store, conta do revisor),
   "Toda a plataforma no app" (6 recursos), "Recursos do app" (Face ID, mesma conta, mesmo progresso, Breaking
