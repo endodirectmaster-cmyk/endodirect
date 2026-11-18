@@ -383,6 +383,22 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .dest-meta b{font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--blue)}
 .dest-tit{font-size:.84rem;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
 .mural-card.dest-foco{outline:2px solid var(--blue);outline-offset:3px;transition:outline-color 1s}
+/* No computador os destaques moram no trilho da direita, recolhidos; no celular, no corpo do Dashboard. */
+@media (min-width:1081px){.dash-wrap:has(#dash-destaques-rail:not(:empty)) #dash-destaques{display:none!important}}
+@media (max-width:1080px){#dash-destaques-rail{display:none}}
+.dest-rail summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem;cursor:pointer;list-style:none}
+.dest-rail summary::-webkit-details-marker{display:none}
+.dest-rail summary::after{content:"▸";order:2;font-size:.75rem;color:var(--t3);transition:transform .2s}
+.dest-rail details[open] summary::after{transform:rotate(90deg)}
+.dest-rail summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+.dest-rail-n{margin-left:auto;font-size:.62rem;font-weight:800;color:var(--blue);background:var(--blue-l,var(--s2));border-radius:999px;padding:.05rem .45rem;font-variant-numeric:tabular-nums}
+.dest-rail-previa{order:3;flex-basis:100%;font-size:.72rem;color:var(--t2);line-height:1.45;margin-top:-.1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dest-rail details[open] .dest-rail-previa{display:none}
+.dest-rail-lista{display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem}
+.dest-rail-item{display:flex;flex-direction:column;gap:.15rem;width:100%;text-align:left;padding:.45rem .55rem;border:1px solid transparent;border-radius:var(--rs);background:var(--s2);color:var(--tx);font-family:var(--font);cursor:pointer}
+.dest-rail-item:hover{border-color:var(--blue)}
+.dest-rail-tit{font-size:.74rem;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dest-rail-mais{align-self:flex-start;background:none;border:0;padding:.2rem 0;color:var(--blue);font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer}
 .dav-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:.7rem;align-items:start;padding:.65rem .75rem;border:1px solid var(--bd);border-radius:10px;background:var(--s2)}
 .dav-item.dav-manual{border-left:4px solid var(--gold)}
 .dav-ico{font-size:1.15rem;line-height:1.3;flex:0 0 auto}
@@ -11900,7 +11916,10 @@ function renderDashRail(){
   // (`renderDashAcervo`) em 31/08/2026, a pedido do professor: "deixe o dashboard
   // com esses dados na frente". Repeti-lo no trilho seria a mesma informação duas
   // vezes na mesma tela — o erro que já corrigi nos KPIs do Desempenho.
-  el.innerHTML='<div class="rail-card"><div class="rail-t">Seu progresso</div>'+progresso+'</div>';
+  // Destaques NEJM e Lancet no trilho, recolhidos (18/11/2026; professor, print do Dashboard no computador:
+  // "os artigos eles podem ficar nessa coluna da direita que está vazia, de modo recolhido").
+  el.innerHTML='<div class="rail-card"><div class="rail-t">Seu progresso</div>'+progresso+'</div><div id="dash-destaques-rail"></div>';
+  try{renderDashDestaquesRail();}catch(e){}
 }
 // ---------- OS NÚMEROS DO ACERVO, NA FRENTE ----------
 // "Deixe o dashboard com esses dados na frente (total de questões na plataforma,
@@ -12069,7 +12088,7 @@ function renderDashDestaques(){
   var el=document.getElementById('dash-destaques');if(!el)return;
   var itens=canSeePanel('mural')?destaquesLista():[];
   dashDestaquesItens=itens;
-  if(!itens.length){el.style.display='none';el.innerHTML='';return;}
+  if(!itens.length){el.style.display='none';el.innerHTML='';try{renderDashDestaquesRail();}catch(e){}return;}
   var ref=0;try{ref=acervoRefVisita()||0;}catch(e){}
   el.style.display='';
   el.innerHTML='<div class="card dash-avisos"><div class="card-head"><span class="card-title">📰 Destaques: NEJM e Lancet</span>'
@@ -12083,6 +12102,28 @@ function renderDashDestaques(){
     }).join('')+'</div></div>';
   el.querySelectorAll('[data-dest]').forEach(function(b){b.addEventListener('click',function(){destaqueAbrir(dashDestaquesItens[+b.getAttribute('data-dest')]);});});
   var bm=document.getElementById('dash-dest-mural');if(bm)bm.addEventListener('click',function(){goPanel('mural');});
+  try{renderDashDestaquesRail();}catch(e){}
+}
+// Trilho da direita (computador): recolhido, com a contagem e a prévia do mais novo; aberto, a lista curta.
+// Aberto ou fechado fica lembrado neste aparelho.
+function renderDashDestaquesRail(){
+  var box=document.getElementById('dash-destaques-rail');if(!box)return;
+  var itens=canSeePanel('mural')?destaquesLista():[];
+  dashDestaquesItens=itens;
+  if(!itens.length){box.innerHTML='';return;}
+  var aberto=false;try{aberto=lsGet('dash_dest_aberto')===true;}catch(e){}
+  var dia=function(a){var d=Number(a.at)?new Date(Number(a.at)):null;return d&&!isNaN(d.getTime())?d.toLocaleDateString('pt-BR'):'';};
+  box.innerHTML='<div class="rail-card dest-rail"><details id="dest-rail-det"'+(aberto?' open':'')+'>'
+    +'<summary><span class="rail-t" style="margin:0">📰 Destaques NEJM e Lancet</span><span class="dest-rail-n">'+itens.length+'</span>'
+    +'<span class="dest-rail-previa"><b>'+esc(destaquesRevista(itens[0]))+':</b> '+esc(muralTitulo(itens[0]))+'</span></summary>'
+    +'<div class="dest-rail-lista">'+itens.map(function(a,k){
+      return '<button type="button" class="dest-rail-item" data-dest="'+k+'"><span class="dest-meta"><b>'+esc(destaquesRevista(a))+'</b><span>'+esc(dia(a))+'</span></span>'
+        +'<span class="dest-rail-tit">'+esc(muralTitulo(a))+'</span></button>';
+    }).join('')+'<button type="button" class="dest-rail-mais" data-dest-mural>Ver no Mural →</button></div></details></div>';
+  box.querySelectorAll('[data-dest]').forEach(function(b){b.addEventListener('click',function(){destaqueAbrir(dashDestaquesItens[+b.getAttribute('data-dest')]);});});
+  var bm=box.querySelector('[data-dest-mural]');if(bm)bm.addEventListener('click',function(){goPanel('mural');});
+  var det=document.getElementById('dest-rail-det');
+  if(det)det.addEventListener('toggle',function(){try{lsSet('dash_dest_aberto',!!det.open);}catch(e){}});
 }
 // Abre o artigo no Mural: filtra na revista e na subespecialidade dele (sem o corte de 2 por área) e rola até o cartão.
 function destaqueAbrir(a){

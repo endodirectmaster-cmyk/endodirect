@@ -22,10 +22,11 @@ function corpo(nome) {
 }
 
 const vc = new VirtualConsole(); vc.on('jsdomError', function () {});
-const dom = new JSDOM('<body><div id="dash-destaques" style="display:none"></div><div id="mural-pc"></div></body>', { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
+const dom = new JSDOM('<body><div id="dash-destaques" style="display:none"></div><aside id="dash-rail"><div id="dash-destaques-rail"></div></aside><div id="mural-pc"></div></body>', { url: 'https://www.endodirect.com.br/', runScripts: 'outside-only', virtualConsole: vc });
 const ctx = vm.createContext(dom.getInternalVMContext());
 const dia = 86400000, base = Date.UTC(2026, 10, 18);
 vm.runInContext(`
+  var ls={};function lsGet(k){return k in ls?ls[k]:null;}function lsSet(k,v){ls[k]=v;}
   var muralFilter='x',muralTipoFilter='y',muralPeriodicoFilter='z',muralPage=3,podeMural=true,abriu=[],refVisita=${base - 3 * dia};
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   function canSeePanel(p){return p==='mural'&&podeMural;}
@@ -76,8 +77,25 @@ const doc = dom.window.document;
   doc.getElementById('dash-dest-mural').click();
   ok(run("abriu[abriu.length-1]") === 'mural', '"Ver no Mural" abre o Mural');
 
+  // trilho da direita (computador): recolhido, com contagem e prévia; aberto fica lembrado
+  const rail = doc.getElementById('dash-destaques-rail');
+  const det = rail.querySelector('details');
+  ok(!!det && !det.open && /Destaques NEJM e Lancet/.test(rail.textContent) && rail.querySelector('.dest-rail-n').textContent === '5', 'trilho: destaques recolhidos, com a contagem');
+  ok(/NEJM:<\/b> Ensaio da tirzepatida &lt;b&gt;/.test(rail.querySelector('.dest-rail-previa').innerHTML), 'trilho: prévia do artigo mais novo (escapada)');
+  ok(rail.querySelectorAll('.dest-rail-item').length === 5 && !!rail.querySelector('[data-dest-mural]'), 'trilho: a lista curta e "Ver no Mural" ao abrir');
+  det.open = true; det.dispatchEvent(new dom.window.Event('toggle'));
+  ok(run('ls.dash_dest_aberto') === true, 'trilho: aberto fica lembrado no aparelho');
+  run('renderDashDestaquesRail()');
+  ok(doc.querySelector('#dash-destaques-rail details').open === true, 'trilho: volta aberto na próxima vez');
+  rail.querySelector('[data-dest="2"]').click();
+  ok(run("abriu[abriu.length-1]") === 'mural' && run('muralPeriodicoFilter') === 'lancetlondonengland', 'trilho: tocar abre o artigo no Mural');
+  ok(/@media \(min-width:1081px\)\{\.dash-wrap:has\(#dash-destaques-rail:not\(:empty\)\) #dash-destaques\{display:none!important\}\}/.test(html)
+    && /@media \(max-width:1080px\)\{#dash-destaques-rail\{display:none\}\}/.test(html), 'CSS: no computador só no trilho; no celular só no corpo');
+  ok(/<div id="dash-destaques-rail"><\/div>';\n\s*try\{renderDashDestaquesRail\(\);\}catch\(e\)\{\}/.test(corpo('renderDashRail')), 'o trilho do aluno tem o lugar dos destaques');
+  run('renderDashDestaques()');
+
   run('podeMural=false;renderDashDestaques()');
-  ok(el.style.display === 'none' && el.innerHTML === '', 'sem acesso ao Mural: o cartão some');
+  ok(el.style.display === 'none' && el.innerHTML === '' && rail.innerHTML === '', 'sem acesso ao Mural: o cartão some (também do trilho)');
   run('podeMural=true;admAvisos=[{fonte:"JAMA",titulo:"x",at:1,sourceId:"q"}];renderDashDestaques()');
   ok(el.style.display === 'none', 'sem artigo do NEJM ou do Lancet: o cartão some');
 
