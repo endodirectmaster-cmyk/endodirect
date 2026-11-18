@@ -5,6 +5,21 @@ atualizado: 2026-11-18
 
 # Instagram Stories — "Questão do Dia"
 
+## 📱 POST E STORY "ENDODIRECT AGORA NA APP STORE" (19/11/2026)
+
+Pedido do professor (18/11): "Programa um post no feed e também nos stories sobre a plataforma e dizer que está
+disponível no app store". Agendados no Metricool para **19/11 (quinta)**: story às **12h** (o da Questão do Dia
+continua às 18h) e carrossel de 4 slides no feed às **19h** (melhor horário da quinta no Metricool: 18h–19h).
+- Artes (Chromium, Fraunces + Inter, navy #002142/#0a2d55 e amarelo #f1d972, logo MD4 do Drive na capa e símbolo
+  `logo.png.png` nos demais): capa com três telas do app (capturas da ficha da App Store, conta do revisor),
+  "Toda a plataforma no app" (6 recursos), "Recursos do app" (Face ID, mesma conta, mesmo progresso, Breaking
+  News por notificação) e "Disponível na App Store / Procure por Endodirect Endocrinologia" com o Android e o
+  computador pelo navegador. Story 9:16 com o conteúdo entre 210 e 1660 px.
+- **Sem o selo oficial da Apple** (tools.applemarketingtools.com fora da rede) e sem a maçã: só o texto, como no
+  site. "Resumos sem internet" ficou de fora (a 1.3 ainda não tinha sido liberada pelo professor).
+- Hospedagem: `img/instagram/2026-11-19-app-store/*.jpg` no próprio site (público); o Metricool copia a mídia.
+  Caminho mais simples que o Drive para posts avulsos, sem pedir upload ao professor.
+
 ## ✅ CONFERÊNCIA DE 18/11/2026 (08h45)
 
 - **Teste de 17/11, 18h:** publicado no Instagram (post 430801651, o mesmo que substituiu o 430499584 em 16/11 às
