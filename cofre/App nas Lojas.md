@@ -16,11 +16,14 @@ Pedido do professor ("Resumos sem internet no app. Baixar uma subespecialidade p
 O app carrega o site; sem rede, o iPhone mostra `app-ios/www/erro.html`, que é do próprio app e não
 enxerga o IndexedDB do site. Por isso a 1.3 traz o plugin `@capacitor/filesystem` (8.1.5): ao baixar
 uma área, o site grava também `Library/Caches/offline/leitor.json` + `fig/`, e o `erro.html` mostra as
-áreas, os capítulos e o texto com figuras (mesmo visual do app). Sem pacote, ou com mais de 30 dias
-sem conexão, fica a mensagem de sempre. `ios/App/App/PrivacyInfo.xcprivacy` declara as datas de arquivo
+áreas, os capítulos e o texto com figuras (mesmo visual do app). Sem pacote, ou com mais de 7 dias
+sem conexão (campo `ate` do pacote; eram 30 até 18/11), fica a mensagem de sempre. Baixar só existe no app (no site,
+não; ver [[Decisões]], proteção contra repasse). `ios/App/App/PrivacyInfo.xcprivacy` declara as datas de arquivo
 (C617.1), exigência da Apple para o plugin. Por que não service worker no app: no WKWebView ele só
 existe com "App-Bound Domains", que bloqueia navegação para fora dos domínios listados (iframes de
 vídeo, pagamento): risco alto para uma versão em revisão. Situação: ver Pendências.
+- 17/11: build 17 no TestFlight (20h31 BRT). 18/11: **build 18** (validade de 7 dias e marca d'água no capítulo
+  guardado) substitui o 17 no teste e no envio à Apple.
 
 ## ✅ APROVADO NA APP STORE (16/11/2026)
 

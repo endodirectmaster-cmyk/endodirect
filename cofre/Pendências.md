@@ -1,6 +1,6 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-17
+atualizado: 2026-11-18
 ---
 
 # Pendências
@@ -8,17 +8,35 @@ atualizado: 2026-11-17
 ## 📱 App do iPhone 1.3: Resumos sem internet (17/11)
 
 Código pronto (plugin Filesystem 8.1.5, `erro.html` que lê as áreas baixadas, `PrivacyInfo.xcprivacy`,
-MARKETING_VERSION 1.3). O site (sw v443) já grava o pacote quando o app tem o plugin; no app 1.2 nada muda.
-- [x] "App iOS" em `compilar` (rodada 44153472985, sucesso: o projeto com o plugin compila).
-- [ ] `testflight` falhou 2× (builds 14 e 15, 17/11 19:12 e 19:30 UTC) no mesmo ponto: `exportArchive Error
-  Downloading App Information` (a Apple não devolveu os dados do app na exportação; a 2ª tentativa do roteiro,
-  assinatura automática, falha por desenho: "no devices"). A 1.2 (12) subiu do mesmo jeito em 16/11. Suspeita
-  principal: contrato novo pendente no App Store Connect (só o titular aceita) ou instabilidade da Apple.
-  Professor: abrir o App Store Connect e ver se há faixa pedindo para aceitar um contrato; depois, rodar de novo.
-- Notado no e-mail (16/11 23:05 UTC): a **1.1 foi aprovada** ("eligible for distribution").
-- [ ] Professor: no TestFlight, baixar uma área com internet, pôr em modo avião, fechar o app e abrir de novo
-  (deve aparecer a tela "Sem internet" com as áreas baixadas).
-- [ ] Enviar a 1.3 à Apple na fila depois da 1.1 e da 1.2.
+MARKETING_VERSION 1.3). O site já grava o pacote quando o app tem o plugin; no app 1.2 nada muda.
+- [x] "App iOS" em `compilar` (rodada 44153472985, sucesso).
+- [x] `testflight`: builds 14 e 15 falharam (`exportArchive Error Downloading App Information`, instabilidade da
+  Apple com a 1.2 em revisão); 16 cancelado (sem Mac livre no GitHub). **Build 17 no TestFlight** (17/11, 20h31 BRT).
+- [x] 1.1 e 1.2 aprovadas e liberadas pelo professor (1.2 "Pronto para distribuição" em 17/11).
+- 18/11: **build 18** (rodada 44205434608) com a proteção contra repasse (validade de 7 dias no `erro.html`,
+  marca d'água no capítulo guardado; o botão Baixar só aparece no app). Ele substitui o 17.
+- [ ] Professor: no TestFlight, instalar o **build 18**, baixar uma área com internet, pôr em modo avião, fechar
+  o app e abrir de novo (deve aparecer a tela "Sem internet" com as áreas baixadas, com a marca do aluno).
+- [ ] Enviar a 1.3 à Apple: App Store Connect → "+ Versão" 1.3 → escolher o build 18 → "O que há de novo" →
+  nota ao revisor (como testar sem internet) → Enviar para revisão.
+
+## 🎬 Endocrinologia Essencial: capítulos e slides (18/11)
+- [x] "Nesta aula" em 34 das 37 aulas (ver [[Videoaulas dos Resumos]]).
+- [ ] Professor: reenviar a aula **Disfunção Erétil** (a checagem diária gera os capítulos quando o vídeo novo entrar).
+- [ ] Sem capítulos por causa do player: **Avaliação clínica do paciente com obesidade** (Vimeo) e **Uso e abuso
+  dos esteroides anabolizantes** (player embutido). Se o professor subir as duas para o Bunny, ganham capítulos.
+- [ ] Erros nos slides, avisados ao professor em 18/11 (nada foi mexido nos vídeos):
+  - Insulinoterapia no DM2 e DM1: cabeçalho "Pré-diabetes: tratamento" num slide de insulina (~26:28).
+  - Dieta e Exercício na Obesidade: cabeçalho "História Natural" sobre o estudo de exercício (34:54);
+    "Alta ingesta de proteínas: 1,5 a 2kg/semana".
+  - Doença Hepática Esteatótica: "Resmetiron" (o nome é resmetirom).
+  - Suplementação Esportiva: glutamina como "aminoácido essencial" (é não essencial/condicionalmente
+    essencial); "BETA HIDROXI METIL BUTIRADO" (beta-hidroxi-beta-metilbutirato); creatina "0,3gr/kg 4x/d"
+    (seria 0,3 g/kg/dia em 4 tomadas); imagem quebrada no "Protocolo 2".
+  - SOP: "21 dias < Ciclos > 35 dias" (seria < 21 ou > 35); "< 8 ciclos por ano" × "<9 menstruações/ano";
+    hiperandrogenismo clínico sem hirsutismo; lista de indução pula a letra F.
+  - Diabetes Gestacional: "Dose total inicial = 40UI/Kg/dia" (40 UI/dia; e NPH 8 + Regular 8×3 = 32);
+    caso clínico com NPH 10 UI e depois 18 UI; "Glarginna"; "≥ 126mg/d".
 
 ## 📚 Artigos canônicos dos Resumos: 110 em rascunho, à espera da liberação (17/11)
 Professor (17/11): "não vou ter como ver todos os artigos"; quer em cada subespecialidade os artigos

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, resumos, video]
-atualizado: 2026-11-14
+atualizado: 2026-11-18
 ---
 
 # Videoaulas dos Resumos
@@ -187,3 +187,27 @@ tópicos, a minutagem (...) tanto para a versão de computador, mas também para
   avaliar mandar para o Bunny (como as aulas dos cursos) e colar o `.m3u8` no campo de link; o
   player já aceita.
 - Excluir a videoaula no painel tira o item da lista, mas **não apaga o arquivo** do Storage.
+
+## Endocrinologia Essencial: "Nesta aula" (17–18/11/2026)
+
+Pedido do professor (17/11): "implementar nas aulas do curso de endocrinologia essencial os tópicos da
+minutagem, assim como já existe no programa de educação médica e também nos resumos". O player do curso
+é o mesmo da EMC (`renderAulaPlayer` + `aulaCapsHTML`), então só faltava o dado: `adm_cursos[k].caps`.
+- **34 das 37 aulas** com capítulos (7 a 12 tópicos cada), gravados em 5 grupos, cada um com backup
+  (`main-antes-capitulos-ee-2026-11-17a` … `…-17e`), guarda por aula (curso `endo_essencial`, GUID do `src`,
+  `caps` vazio) e conferência por md5 do payload sem os `caps` = backup.
+- **Sem capítulos:** a aula 0 (Avaliação clínica do paciente com obesidade) está no Vimeo e a 4 (Uso e abuso
+  dos esteroides anabolizantes) num player embutido; nenhum dos dois deixa saltar. A 9 (Disfunção Erétil)
+  vai ser reenviada pelo professor ("pode pular ela, por enquanto"); a checagem diária das 03:13 a pega
+  quando o `src` novo chegar.
+- **Bunny das aulas:** `vz-1196f9a8-6ea.b-cdn.net/<GUID>/playlist.m3u8` (exige o Referer do site).
+- 🧨 **O professor aparece filmado à direita** nas aulas deste curso: o corte de cena via o rosto e as mãos
+  como troca de slide. `slides.sh` aceita `CORTE_ESQ=0.6` (só os 60% da esquerda entram na detecção e no
+  OCR). Muitas "trocas" no `tabela.txt` ainda são animação do mesmo slide: agrupar pelo assunto, olhando os
+  quadros.
+- 🧨 **Download longo cai** (curl 35, conexão reiniciada): `slides.sh` agora repete cada pedaço
+  (`--retry 5 --retry-all-errors`) e grava em `video.part`, renomeando só no fim.
+- 🧨 **Dois lotes em paralelo na mesma pasta corrompem a leitura** (a aula 07 saiu com 6.248 s de quadros para
+  um vídeo de 2.242 s). Conferir sempre o último quadro contra a soma dos `EXTINF` da playlist.
+- Erros vistos nos slides (avisados ao professor, não mexidos): ver a conversa de 18/11 e [[Pendências]].
+
