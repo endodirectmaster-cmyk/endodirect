@@ -38,7 +38,7 @@ ok('🧨 sem o cartão "Seu plano" duplicado', !/id="perfil-plan-card"/.test(htm
 const rp = corpo('renderPerfil');
 const desenha = rp.indexOf('body.innerHTML='), face = rp.lastIndexOf('faceIdPerfilRender()');
 ok('🧨 o Face ID é desenhado depois do corpo (o lugar dele está no corpo)', desenha > 0 && face > desenha && rp.indexOf('faceIdPerfilRender()') > desenha);
-ok('ordem: Tema, Face ID, Assinatura e conta, Newsletter, Sua opinião', /themeCardHTML\(\)\+'<div id="perfil-faceid" style="display:none;margin-top:1rem"><\/div>'\+assinaturaCard\+nlCard\n[^\n]*\n\s*\+'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sua opinião/.test(rp));
+ok('ordem: Tema, Face ID, Meus aparelhos, Assinatura e conta, Newsletter, Sua opinião', /themeCardHTML\(\)\+'<div id="perfil-faceid" style="display:none;margin-top:1rem"><\/div>'\+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"><\/div>'\+assinaturaCard\+nlCard\n[^\n]*\n\s*\+'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sua opinião/.test(rp));
 ok('🧨 cartão único "Assinatura e conta" com a exclusão dentro (sem cartão de exclusão separado)', /💳 Assinatura e conta/.test(rp) && /\(podeExcluirConta\(\)\?excluirContaCardHTML\(\):''\)\+'<\/div>';/.test(rp) && !/excluirCard/.test(rp));
 ok('cancelar assinatura continua no cartão', /id="btn-pf-cancel-sub">Cancelar assinatura/.test(rp));
 

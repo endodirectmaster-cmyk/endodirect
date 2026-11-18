@@ -3003,6 +3003,9 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <details><summary>Posso cancelar? Tenho direito de arrependimento?</summary><p>Sim. Como a compra é feita pela internet, você tem direito de arrependimento: pode desistir em até <b>7 dias corridos</b> a contar da assinatura e receber o <b>reembolso integral</b> do valor pago, conforme o art. 49 do Código de Defesa do Consumidor. Após esse prazo, a assinatura mensal pode ser cancelada a qualquer momento (o acesso vale até o fim do período já pago, sem renovação no ciclo seguinte) e o plano anual permanece ativo pelos 12 meses contratados.</p></details>
         <details><summary>O EndoTEEM está incluído?</summary><p>Não. O EndoTEEM é um produto à parte, voltado a quem vai prestar a prova de especialista.</p></details>
         <details><summary>Funciona no celular?</summary><p>Sim. No iPhone, pelo app <b>Endodirect Endocrinologia</b>, na App Store. No computador e no Android, pelo navegador.</p></details>
+        <!-- Aparelhos cadastrados (professor, 18/11/2026: "frisar isso também no FAQ, que os aparelhos ficarão cadastrados
+             com até no máximo 2 dispositivos e que não é permitido compartilhar usuário e senha"). -->
+        <details><summary>Em quantos aparelhos posso usar? Posso compartilhar a conta?</summary><p>A conta é <b>pessoal e intransferível</b>: não é permitido compartilhar usuário e senha. Ela fica cadastrada em até <b>2 aparelhos</b> (por exemplo, celular e computador). Para usar em outro, remova um dos cadastrados em <b>Perfil &gt; Meus aparelhos</b>; dá para trocar de aparelho até 2 vezes a cada 30 dias. Sair da conta não libera a vaga.</p></details>
         <!-- App do iPhone na App Store (aprovado em 16/11/2026; pedido do professor de 11/11: "lá embaixo no FAQ,
              sobre se o aplicativo está disponível na plataforma do iOS"). -->
         <details><summary>📱 Tem app para iPhone e Android?</summary><p><b>iPhone:</b> baixe o <b>Endodirect Endocrinologia</b> na App Store. Entre com o mesmo e-mail, Google ou Apple da sua conta: o progresso é o mesmo do site. A assinatura é feita pelo site.<br><a class="lp-appstore" href="https://apps.apple.com/br/app/id6833147654" target="_blank" rel="noopener">Baixar na App Store ↗</a><br><b>Android:</b> o app da Play Store está em preparação. Até lá, abra o site no <b>Chrome</b> → menu <b>⋮</b> → <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>) → confirme.</p></details>
@@ -3717,6 +3720,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <div class="faq-item"><div class="faq-q">Como usar o Chat IA? <span>▾</span></div><div class="faq-a">Acesse Chat IA no menu e faça perguntas sobre endocrinologia. A IA responde com base em evidências científicas.</div></div>
           <div class="faq-item"><div class="faq-q">Como filtrar questões por subespecialidade? <span>▾</span></div><div class="faq-a">No Banco de questões, aba Provas anteriores, escolha a subespecialidade (diabetes, tireoide, etc.), a instituição, o ano e o tipo: a contagem aparece na hora. Depois clique em "Estudar" para responder uma questão por vez, em tela cheia, com os botões "Anterior" e "Próxima".</div></div>
           <div class="faq-item"><div class="faq-q">Como funciona a revisão espaçada? <span>▾</span></div><div class="faq-a">Utiliza o algoritmo SM-2. Os cards com maior dificuldade aparecem com mais frequência até serem dominados.</div></div>
+          <div class="faq-item"><div class="faq-q">Em quantos aparelhos posso usar? Posso compartilhar a conta? <span>▾</span></div><div class="faq-a">A conta é <b>pessoal e intransferível</b>: não é permitido compartilhar usuário e senha. Ela fica cadastrada em até <b>2 aparelhos</b> (por exemplo, celular e computador). Para usar em outro, remova um dos cadastrados em <b>Perfil &gt; Meus aparelhos</b>; dá para trocar de aparelho até 2 vezes a cada 30 dias. Sair da conta não libera a vaga.</div></div>
           <div class="faq-item so-site"><div class="faq-q">📱 Tem app para iPhone e Android? <span>▾</span></div><div class="faq-a"><b>iPhone:</b> baixe o <b>Endodirect Endocrinologia</b> na <a href="https://apps.apple.com/br/app/id6833147654" target="_blank" rel="noopener">App Store ↗</a>. Entre com o mesmo e-mail, Google ou Apple da sua conta: o progresso é o mesmo.<br><br><b>Android:</b> o app da Play Store está em preparação. Até lá, no <b>Chrome</b>, toque no menu <b>⋮</b> → <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>) → confirme.</div></div>
         </div>
         <div class="card" style="margin-top:.9rem">
@@ -9961,6 +9965,7 @@ function doLogout(){
   else if(client&&client.auth){try{ultimoSair=client.auth.signOut().catch(function(){});}catch(e){}}
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   deviceSlot={uid:null,ok:false,emVoo:false};
+  try{aparelhoBloqueadoFechar();}catch(e){}
   currentUser=null;
   remoteStateLoaded=false;
   // Nada da sessão que acabou pode "completar" a próxima: as cargas em voo
@@ -10169,11 +10174,16 @@ function claimDeviceSlot(){
   // Confirmado não se refaz — um aparelho derrubado que se registrasse de novo
   // derrubaria o outro.
   if(deviceSlot.uid===currentUser.id&&(deviceSlot.emVoo||deviceSlot.ok))return;
-  var meu={uid:currentUser.id,ok:false,emVoo:true};
+  var meu={uid:currentUser.id,ok:false,emVoo:true,bloqueado:false};
   deviceSlot=meu;
-  try{client.rpc('endodirect_session_claim',{p_device_id:getDeviceId(),p_ua:(navigator.userAgent||'').slice(0,300)}).then(function(res){
+  // APARELHOS CADASTRADOS (18/11/2026, supabase/aparelhos-cadastrados.sql): 'ok' = cadastrado (ou havia
+  // vaga); 'cheio' = as 2 vagas estão ocupadas e ESTE aparelho não entra (antes ele derrubava o mais
+  // antigo, e um grupo revezava a conta); 'sem_conta' = o servidor ainda não viu o login (tenta de novo).
+  try{client.rpc('endodirect_aparelho_entrar',{p_device_id:getDeviceId(),p_ua:(navigator.userAgent||'').slice(0,300)}).then(function(res){
     meu.emVoo=false;
-    if(res&&!res.error&&res.data===true)meu.ok=true;
+    var st=(res&&!res.error)?res.data:null;
+    if(st==='ok'){meu.ok=true;try{aparelhoBloqueadoFechar();}catch(e){}}
+    else if(st==='cheio'&&deviceSlot===meu){meu.bloqueado=true;try{aparelhoBloqueadoMostrar();}catch(e){}}
   },function(){meu.emVoo=false;});}catch(e){meu.emVoo=false;}
 }
 function deviceTick(){
@@ -10183,6 +10193,7 @@ function deviceTick(){
   // Registro deste login ainda não confirmado: checar agora derrubaria o próprio
   // aparelho. Se o registro falhou (rede), tenta registrar de novo.
   if(!(deviceSlot.ok&&deviceSlot.uid===currentUser.id)){
+    if(deviceSlot.bloqueado&&deviceSlot.uid===currentUser.id)return; // a tela de bloqueio cuida (troca ou Sair)
     if(!(deviceSlot.emVoo&&deviceSlot.uid===currentUser.id))claimDeviceSlot();
     return;
   }
@@ -10212,13 +10223,127 @@ function onSessionEvicted(){
   // só sai daqui recarregando; até lá, nenhuma resposta da rede vale.
   sessaoEncerrada=true;remoteStateGen++;
   var client=getSupabaseClient();
-  try{if(client&&client.auth)client.auth.signOut().catch(function(){});}catch(e){}
+  // scope 'local': o padrão do supabase-js é 'global', que encerrava também a sessão do OUTRO aparelho
+  // do aluno (o que fez a troca) quando o token dele vencesse.
+  try{if(client&&client.auth)client.auth.signOut({scope:'local'}).catch(function(){});}catch(e){}
   if(document.getElementById('evicted-ov'))return;
   var o=document.createElement('div');o.id='evicted-ov';
   o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(6,11,22,.92);display:flex;align-items:center;justify-content:center;padding:1.2rem';
-  o.innerHTML='<div style="max-width:420px;background:#121c33;border:1px solid #2a3a5c;border-radius:16px;padding:1.8rem 1.6rem;text-align:center;color:#fff;font-family:inherit"><div style="font-size:2rem">🔒</div><div style="font-size:1.12rem;font-weight:800;margin:.4rem 0">Sessão encerrada</div><p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem 0 0">Sua conta atingiu o limite de <b>2 dispositivos</b> e foi acessada em outro aparelho. Por segurança, esta sessão foi encerrada.</p><button id="evicted-ok" style="margin-top:1.1rem;background:#3b6fd4;color:#fff;border:0;border-radius:10px;padding:.7rem 1.4rem;font-weight:700;cursor:pointer">Entendi</button></div>';
+  o.innerHTML='<div style="max-width:420px;background:#121c33;border:1px solid #2a3a5c;border-radius:16px;padding:1.8rem 1.6rem;text-align:center;color:#fff;font-family:inherit"><div style="font-size:2rem">🔒</div><div style="font-size:1.12rem;font-weight:800;margin:.4rem 0">Sessão encerrada</div><p style="font-size:.86rem;color:#9aa3b2;line-height:1.6;margin:.2rem 0 0">Este aparelho foi <b>removido da sua conta</b> (em outro aparelho ou pelo suporte). A conta é pessoal e fica em até <b>2 aparelhos</b>. Para voltar a usar aqui, entre de novo.</p><button id="evicted-ok" style="margin-top:1.1rem;background:#3b6fd4;color:#fff;border:0;border-radius:10px;padding:.7rem 1.4rem;font-weight:700;cursor:pointer">Entendi</button></div>';
   document.body.appendChild(o);
   var b=document.getElementById('evicted-ok');if(b)b.addEventListener('click',function(){try{location.reload();}catch(e){location.href='/';}});
+}
+// ── APARELHOS CADASTRADOS (18/11/2026) ──────────────────────────────────────────────────────────
+// Professor, com print da lista de Estudantes: "Provavelmente fizeram uma assinatura para várias pessoas
+// ao mesmo tempo compartilharem ... bloquear ao máximo esse tipo de acesso coletivo." Escolheu "Bloquear
+// e trocar no Perfil": a conta fica cadastrada em até 2 aparelhos; num 3º, o aluno só entra removendo
+// um dos cadastrados, com no máximo 2 trocas a cada 30 dias. "Sair" não libera a vaga; vaga parada há 30
+// dias volta sozinha. Regras no servidor: supabase/aparelhos-cadastrados.sql.
+function aparelhoNome(ua){
+  ua=String(ua||'');
+  var so=/iPad/.test(ua)?'iPad':/iPhone|iPod/.test(ua)?'iPhone':/Android/.test(ua)?'Android':/Windows/.test(ua)?'Windows':/Macintosh|Mac OS X/.test(ua)?'Mac':/CrOS/.test(ua)?'Chromebook':/Linux/.test(ua)?'Linux':'Aparelho';
+  var nav=/EndodirectApp/.test(ua)?'app Endodirect':/Edg\//.test(ua)?'Edge':/OPR\/|Opera/.test(ua)?'Opera':/Firefox|FxiOS/.test(ua)?'Firefox':/CriOS|Chrome\//.test(ua)?'Chrome':/Safari\//.test(ua)?'Safari':'navegador';
+  return so+' · '+nav;
+}
+function aparelhoData(s){try{var d=new Date(s);if(isNaN(d.getTime()))return '';return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function aparelhoDia(s){try{var d=new Date(s);return isNaN(d.getTime())?'':d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});}catch(e){return '';}}
+// Lista dos aparelhos cadastrados (tela de bloqueio e Perfil). `escuro`: a tela de bloqueio tem fundo
+// próprio, fora do tema.
+function aparelhosListaHTML(d,escuro){
+  var lista=(d&&Array.isArray(d.aparelhos))?d.aparelhos:[];
+  var restam=Math.max(0,(+d.trocas_max||2)-(+d.trocas_usadas||0));
+  var cor=escuro?{bd:'#2a3a5c',t2:'#9aa3b2',bg:'#0e1729'}:{bd:'var(--bd)',t2:'var(--t2)',bg:'var(--s2)'};
+  if(!lista.length)return '<div style="font-size:.8rem;color:'+cor.t2+'">Nenhum aparelho cadastrado.</div>';
+  return lista.map(function(a){
+    var rem=a.este?'<span style="font-size:.7rem;font-weight:700;color:#7fd1a3">Este aparelho</span>'
+      :(restam>0?'<button type="button" class="btn btn-outline btn-sm" data-aparelho-remover="'+esc(a.ref)+'" data-aparelho-nome="'+esc(aparelhoNome(a.ua))+'" style="white-space:nowrap'+(escuro?';color:#fff;background:#3b6fd4;border-color:#3b6fd4':'')+'">'+(escuro?'Remover e entrar aqui':'Remover')+'</button>':'');
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.6rem .75rem;border:1px solid '+cor.bd+';border-radius:10px;background:'+cor.bg+';margin-bottom:.5rem;text-align:left">'
+      +'<div style="min-width:0"><div style="font-size:.86rem;font-weight:700">'+esc(aparelhoNome(a.ua))+'</div>'
+      +'<div style="font-size:.72rem;color:'+cor.t2+'">Último uso: '+esc(aparelhoData(a.visto)||'—')+'</div></div>'+rem+'</div>';
+  }).join('');
+}
+function aparelhosTrocasHTML(d,escuro){
+  var usadas=+d.trocas_usadas||0,max=+d.trocas_max||2,t2=escuro?'#9aa3b2':'var(--t2)';
+  var txt='Trocas usadas: <b>'+usadas+' de '+max+'</b> nos últimos 30 dias.';
+  if(usadas>=max&&d.proxima_troca)txt+=' A próxima fica disponível em <b>'+esc(aparelhoDia(d.proxima_troca))+'</b>.';
+  return '<div style="font-size:.75rem;color:'+t2+';margin:.2rem 0 .1rem">'+txt+'</div>';
+}
+var aparelhoCarregando=false;
+function aparelhosCarregar(cb){
+  var client=getSupabaseClient();
+  if(!client){cb(null,'sem conexão');return;}
+  client.rpc('endodirect_aparelhos_meus',{p_device_id:getDeviceId()}).then(function(res){
+    if(res&&res.error){cb(null,res.error.message||'erro');return;}
+    cb((res&&res.data)||null,null);
+  },function(e){cb(null,String(e&&e.message||e));});
+}
+// Remover um aparelho cadastrado (gasta 1 troca). Na tela de bloqueio, em seguida este aparelho entra.
+function aparelhoRemover(ref,depois){
+  var client=getSupabaseClient();if(!client||!ref)return;
+  client.rpc('endodirect_aparelho_remover',{p_device_id:getDeviceId(),p_ref:ref}).then(function(res){
+    var d=(res&&!res.error)?res.data:null;
+    if(d&&d.ok){depois&&depois(true,d);return;}
+    var msg=(d&&d.motivo==='limite')?'Você já fez as 2 trocas dos últimos 30 dias.'+(d.proxima_troca?' A próxima fica disponível em '+aparelhoDia(d.proxima_troca)+'.':'')
+      :'Não foi possível remover o aparelho. Tente de novo.';
+    try{notify(msg,'error');}catch(e){}
+    depois&&depois(false,d);
+  },function(){try{notify('Sem conexão. Tente de novo.','error');}catch(e){}depois&&depois(false,null);});
+}
+function aparelhoBloqueadoFechar(){var o=document.getElementById('aparelho-bloq-ov');if(o)o.remove();}
+function aparelhoBloqueadoMostrar(){
+  var o=document.getElementById('aparelho-bloq-ov');
+  if(!o){
+    o=document.createElement('div');o.id='aparelho-bloq-ov';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+    o.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(6,11,22,.96);display:flex;align-items:center;justify-content:center;padding:1.2rem;overflow-y:auto';
+    document.body.appendChild(o);
+  }
+  var casca=function(meio){
+    return '<div style="max-width:440px;width:100%;background:#121c33;border:1px solid #2a3a5c;border-radius:16px;padding:1.6rem 1.4rem;text-align:center;color:#fff;font-family:inherit">'
+      +'<div style="font-size:2rem">📱</div><div style="font-size:1.12rem;font-weight:800;margin:.4rem 0">Sua conta já está em 2 aparelhos</div>'
+      +'<p style="font-size:.84rem;color:#9aa3b2;line-height:1.6;margin:.2rem 0 1rem">A conta é pessoal e fica em até <b>2 aparelhos</b>. Para usar neste, remova um dos aparelhos abaixo. Você pode trocar de aparelho até <b>2 vezes a cada 30 dias</b>.</p>'
+      +meio
+      +'<div style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap"><button type="button" id="aparelho-bloq-tentar" class="btn btn-outline btn-sm" style="color:#fff;background:transparent;border-color:#3b5a8c">Tentar de novo</button><button type="button" id="aparelho-bloq-sair" class="btn btn-outline btn-sm" style="color:#fff;background:transparent;border-color:#3b5a8c">Sair</button></div>'
+      +'<p style="font-size:.72rem;color:#7d8899;line-height:1.5;margin:1rem 0 0">Trocou de celular e não consegue entrar? Escreva para <b>contato@endodirect.com.br</b>.</p></div>';
+  };
+  o.innerHTML=casca('<div style="font-size:.8rem;color:#9aa3b2">Carregando seus aparelhos…</div>');
+  var ligar=function(){
+    var bs=document.getElementById('aparelho-bloq-sair');if(bs)bs.addEventListener('click',function(){try{doLogout();}catch(e){location.reload();}});
+    var bt=document.getElementById('aparelho-bloq-tentar');if(bt)bt.addEventListener('click',function(){deviceSlot={uid:null,ok:false,emVoo:false};claimDeviceSlot();});
+    o.querySelectorAll('[data-aparelho-remover]').forEach(function(b){b.addEventListener('click',function(){
+      if(!confirm('Remover "'+(b.getAttribute('data-aparelho-nome')||'este aparelho')+'" da sua conta e entrar neste aparelho? Isso conta como 1 das 2 trocas do mês.'))return;
+      b.disabled=true;b.textContent='Removendo…';
+      aparelhoRemover(b.getAttribute('data-aparelho-remover'),function(ok){
+        if(!ok){aparelhoBloqueadoMostrar();return;}
+        deviceSlot={uid:null,ok:false,emVoo:false};claimDeviceSlot(); // agora há vaga: este aparelho entra
+      });
+    });});
+  };
+  aparelhosCarregar(function(d,err){
+    if(!document.getElementById('aparelho-bloq-ov'))return;
+    if(!d){o.innerHTML=casca('<div style="font-size:.8rem;color:#f0a0a0">Não foi possível carregar seus aparelhos'+(err?' ('+esc(err)+')':'')+'.</div>');ligar();return;}
+    o.innerHTML=casca(aparelhosListaHTML(d,true)+aparelhosTrocasHTML(d,true));
+    ligar();
+  });
+}
+// Perfil > Meus aparelhos (só aluno).
+function aparelhosPerfilRender(){
+  var box=document.getElementById('perfil-aparelhos');
+  if(!box||!currentUser||currentUser.role!=='aluno')return;
+  box.style.display='';
+  var cab='<div class="card-head"><span class="card-title">📱 Meus aparelhos</span></div>'
+    +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Sua conta é pessoal e fica em até <b>2 aparelhos</b>. Para usar em outro, remova um daqui (até 2 trocas a cada 30 dias). Sair da conta não libera a vaga.</p>';
+  box.innerHTML='<div class="card">'+cab+'<div style="font-size:.8rem;color:var(--t2)">Carregando…</div></div>';
+  aparelhosCarregar(function(d,err){
+    var b2=document.getElementById('perfil-aparelhos');if(!b2)return;
+    if(!d){b2.innerHTML='<div class="card">'+cab+'<div style="font-size:.8rem;color:var(--t2)">Não foi possível carregar seus aparelhos agora.</div></div>';return;}
+    if(d.isento){b2.innerHTML='<div class="card">'+cab.replace(/<p[\s\S]*<\/p>/,'')+'<div style="font-size:.8rem;color:var(--t2)">Conta de demonstração: sem limite de aparelhos.</div></div>';return;}
+    b2.innerHTML='<div class="card">'+cab+aparelhosListaHTML(d,false)+aparelhosTrocasHTML(d,false)+'</div>';
+    b2.querySelectorAll('[data-aparelho-remover]').forEach(function(b){b.addEventListener('click',function(){
+      if(!confirm('Remover este aparelho da sua conta? Ele vai precisar entrar de novo, e isso conta como 1 das 2 trocas do mês.'))return;
+      b.disabled=true;b.textContent='Removendo…';
+      aparelhoRemover(b.getAttribute('data-aparelho-remover'),function(ok){if(ok){try{notify('Aparelho removido.','ok');}catch(e){}}aparelhosPerfilRender();});
+    });});
+  });
 }
 function assineBRL(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR');}
 // Espelha a faixa de Sócio-fundador da landing na tela de planos in-app.
@@ -21845,6 +21970,59 @@ function admGerarContaRevisao(){
     admRevisaoErro=(e&&e.message)||'Não foi possível gerar a senha.';
   }).then(function(){admRevisaoGerando=false;admRevisaoRedesenha();});
 }
+// ── APARELHOS: POSSÍVEL CONTA COMPARTILHADA (18/11/2026) ─────────────────────────────────────────
+// Painel do professor, no fim dos Estudantes (junto do bloco de risco). Contas com 4+ aparelhos
+// diferentes, 2 trocas ou 2 aparelhos barrados nos últimos 30 dias (endodirect_aparelhos_admin).
+// O professor libera as trocas de um aluno (trocou de celular de verdade) ou desconecta os aparelhos.
+var admAparData=null,admAparErr='',admAparLoading=false;
+function carregaAdmAparelhos(cb,forca){
+  if(!forca&&(admAparData||admAparErr)){cb&&cb();return;}
+  if(admAparLoading)return;
+  var client=getSupabaseClient();
+  if(!client){admAparErr='Supabase indisponível.';cb&&cb();return;}
+  admAparLoading=true;
+  client.rpc('endodirect_aparelhos_admin').then(function(res){
+    admAparLoading=false;
+    if(res&&res.error){admAparErr=res.error.message||'erro';admAparData=null;}else{admAparErr='';admAparData=Array.isArray(res&&res.data)?res.data:[];}
+    cb&&cb();
+  },function(e){admAparLoading=false;admAparErr=String(e&&e.message||e);cb&&cb();});
+}
+function admAparelhosHTML(){
+  var cab='<div class="card-head"><span class="card-title">🔐 Aparelhos: possível conta compartilhada</span></div>'
+    +'<p style="font-size:.75rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Cada conta fica em até 2 aparelhos e pode trocar 2 vezes a cada 30 dias. Aqui aparecem as contas com <b>4 ou mais aparelhos diferentes</b>, <b>2 trocas</b> ou <b>2 aparelhos barrados</b> nos últimos 30 dias.</p>';
+  if(admAparErr)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div class="empty">Não consegui carregar: '+esc(admAparErr)+'</div></div>';
+  if(!admAparData)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div class="empty">Carregando…</div></div>';
+  if(!admAparData.length)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div style="font-size:.8rem;color:var(--grn);font-weight:600">✅ Nenhuma conta com sinal de compartilhamento nos últimos 30 dias.</div></div>';
+  var linhas=admAparData.map(function(c){
+    var nome=c.nome||String(c.email||'').split('@')[0];
+    var dados='Aparelhos diferentes: <b>'+(+c.aparelhos_30d||0)+'</b> · Trocas: <b>'+(+c.trocas_30d||0)+'</b> · Aparelhos barrados: <b>'+(+c.aparelhos_bloqueados_30d||0)+'</b>'
+      +((+c.bloqueios_30d||0)?' ('+(+c.bloqueios_30d)+' tentativa'+((+c.bloqueios_30d)>1?'s':'')+')':'')+' · Último uso: '+esc(aparelhoData(c.ultimo)||'—');
+    return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.7rem 0;border-top:1px solid var(--bd)">'
+      +'<div style="min-width:0;flex:1 1 260px"><div style="font-size:.85rem;font-weight:700">'+esc(nome)+'</div><div style="font-size:.74rem;color:var(--t2)">'+esc(c.email||'')+'</div>'
+      +'<div style="font-size:.74rem;color:var(--t2);margin-top:.25rem;line-height:1.5">'+dados+'</div></div>'
+      +'<div style="display:flex;gap:.4rem;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" data-apar-liberar="'+esc(c.user_id)+'">Liberar trocas</button>'
+      +'<button type="button" class="btn btn-outline btn-sm" data-apar-desconectar="'+esc(c.user_id)+'" data-apar-nome="'+esc(nome)+'">Desconectar aparelhos</button></div></div>';
+  }).join('');
+  return '<div class="card" style="margin-bottom:1rem">'+cab+linhas+'</div>';
+}
+function admAparelhosRedesenha(){
+  if(admCurrentSec!=='estudantes')return;
+  var box=document.getElementById('adm-aparelhos');if(box)box.innerHTML=admAparelhosHTML();
+}
+document.addEventListener('click',function(ev){
+  var t=ev.target&&ev.target.closest?ev.target.closest('[data-apar-liberar],[data-apar-desconectar]'):null;
+  if(!t)return;
+  var uid=t.getAttribute('data-apar-liberar')||t.getAttribute('data-apar-desconectar');
+  var desc=t.hasAttribute('data-apar-desconectar');
+  if(desc&&!confirm('Desconectar todos os aparelhos de '+(t.getAttribute('data-apar-nome')||'este aluno')+'? Ele precisará entrar de novo, e as trocas do mês também são liberadas.'))return;
+  var client=getSupabaseClient();if(!client)return;
+  t.disabled=true;
+  client.rpc('endodirect_aparelhos_admin_liberar',{p_user:uid,p_desconectar:desc}).then(function(res){
+    if(res&&res.error){t.disabled=false;try{notify('Não foi possível: '+(res.error.message||'erro'),'error');}catch(e){}return;}
+    try{notify(desc?'Aparelhos desconectados e trocas liberadas.':'Trocas liberadas.','ok');}catch(e){}
+    carregaAdmAparelhos(admAparelhosRedesenha,true);
+  },function(){t.disabled=false;try{notify('Sem conexão.','error');}catch(e){}});
+});
 function admRiscoHTML(){
   if(admRiscoErr)return '<div class="card" style="margin-bottom:1rem"><div class="empty">Não consegui apurar o risco: '+esc(admRiscoErr)+'</div></div>';
   if(!admRiscoData)return '<div class="card" style="margin-bottom:1rem"><div class="empty">Apurando risco…</div></div>';
@@ -21996,8 +22174,9 @@ function renderAdmSec(sec){
     // abre esta tela para ver a LISTA; dois blocos de alerta antes do titulo
     // empurravam a lista para baixo da dobra. Embrulhados em `.adm-pc` para
     // alinhar com a tabela — soltos, ficavam encostados na borda.
-    var riscoAoFim=function(){return '<div class="adm-pc">'+admRiscoHTML()+'</div>'+admContaRevisaoHTML();};
+    var riscoAoFim=function(){return '<div class="adm-pc">'+admRiscoHTML()+'<div id="adm-aparelhos">'+admAparelhosHTML()+'</div></div>'+admContaRevisaoHTML();};
     m.innerHTML=admEstudantesHTML()+riscoAoFim();loadAdmEstudantes();
+    carregaAdmAparelhos(admAparelhosRedesenha,true); // possível conta compartilhada (18/11/2026)
     carregaAdmRisco(function(){
       if(admCurrentSec!=='estudantes')return;
       var m2=document.getElementById('adm-main');
@@ -25873,11 +26052,12 @@ function renderPerfil(){
     +'</div>'+(podeExcluirConta()?excluirContaCardHTML():'')+'</div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+assinaturaCard+nlCard
+    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"></div>'+assinaturaCard+nlCard
       // Feedback espontâneo também no Perfil (17/11/2026; saiu do topo). O convite automático (+30 dias) segue.
       +'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sua opinião</span></div><p style="font-size:.78rem;color:var(--t2);margin:0 0 .7rem">Elogios, sugestões e críticas sobre a plataforma vão direto ao professor.</p><button type="button" class="btn btn-outline btn-sm" id="perfil-feedback">Enviar feedback</button></div>');
   wirePerfil();
   try{faceIdPerfilRender();}catch(e){}
+  try{aparelhosPerfilRender();}catch(e){}
   // Vindo da página pública /excluir-conta (link #excluir-conta): rola até o cartão.
   if(perfilRolarExclusao&&!perfilEdit){
     perfilRolarExclusao=false;
