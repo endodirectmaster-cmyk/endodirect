@@ -15,10 +15,11 @@ MARKETING_VERSION 1.3). O site já grava o pacote quando o app tem o plugin; no 
 - [x] 1.1 e 1.2 aprovadas e liberadas pelo professor (1.2 "Pronto para distribuição" em 17/11).
 - 18/11: **build 18** (rodada 44205434608) com a proteção contra repasse (validade de 7 dias no `erro.html`,
   marca d'água no capítulo guardado; o botão Baixar só aparece no app). Ele substitui o 17.
-- [ ] Professor: no TestFlight, instalar o **build 18**, baixar uma área com internet, pôr em modo avião, fechar
-  o app e abrir de novo (deve aparecer a tela "Sem internet" com as áreas baixadas, com a marca do aluno).
-- [ ] Enviar a 1.3 à Apple: App Store Connect → "+ Versão" 1.3 → escolher o build 18 → "O que há de novo" →
-  nota ao revisor (como testar sem internet) → Enviar para revisão.
+- [x] Professor testou a leitura sem internet no TestFlight ("Acho que deu certo!", 17/11).
+- [x] **1.3 enviada à revisão da Apple em 17/11, 22h56 BRT** ("1.3 Aguardando revisão"). "O que há de novo" trocado
+  (Resumos sem internet por até 7 dias, estudos-chave, continuar de onde parou, grifos, busca única); nas Notas ao
+  revisor, acrescentado o parágrafo "VERSION 1.3: offline reading…" (as notas anteriores ficaram). Lançamento manual.
+- [ ] Aprovada → o professor clica em "Liberar esta versão".
 
 ## 🎬 Endocrinologia Essencial: capítulos e slides (18/11)
 - [x] "Nesta aula" em 34 das 37 aulas (ver [[Videoaulas dos Resumos]]).

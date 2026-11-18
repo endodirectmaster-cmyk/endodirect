@@ -77,7 +77,10 @@ https://apps.apple.com/br/app/id6833147654.
      da Apple, permissão de salvar na galeria; teste do "Salvar Imagem" ok no iPhone do professor). "O que há de
      novo" com a linha das notificações (quem pula da 1.0 para a 1.2); nota ao revisor "VERSION 1.2" (Face ID
      opcional). Lançamento manual, todos de uma vez, classificação mantida. Aprovada → o professor libera.
-     Vai no build da 1.1.
+     Vai no build da 1.1. **Aprovada e liberada pelo professor (17/11).**
+  9. ✅ **1.3 enviada à revisão da Apple em 17/11, 22h56 BRT** (Resumos sem internet, build 18). Notas ao revisor:
+     parágrafo "VERSION 1.3: offline reading" acrescentado ao fim (as notas são cumulativas: não apagar as antigas).
+     Lançamento manual.
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
