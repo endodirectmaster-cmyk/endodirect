@@ -552,7 +552,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-graf{margin:0 0 .6rem}
 .tp-graf svg{display:block;width:100%;height:auto;color:var(--tx)}
 .tp-vazio{font-size:.78rem;color:var(--t3);padding:.7rem 0}
-.tp-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:.5rem;margin-bottom:.6rem}
+.tp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.5rem;margin-bottom:.6rem}
 .tp-kpi{border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .65rem;background:var(--s2);min-width:0}
 .tp-kpi-l{font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
 .tp-kpi-v{font-size:.98rem;font-weight:700;margin-top:.15rem;font-variant-numeric:tabular-nums}
@@ -560,14 +560,27 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-kpi-s{font-size:.66rem;color:var(--t2);margin-top:.15rem;line-height:1.4}
 .tp-marcos{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-bottom:.65rem}
 .tp-marcos-t{font-size:.66rem;font-weight:700;color:var(--t2);margin-right:.2rem}
-.tp-meds{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.5rem;margin-bottom:.5rem}
+.tp-meds{display:grid;grid-template-columns:1fr;gap:.5rem;margin-bottom:.5rem}
+.tp-med-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(10.5rem,1fr));gap:.4rem .9rem;margin-top:.45rem}
+.tp-med-st{display:flex;flex-direction:column;gap:.15rem;min-width:0;font-variant-numeric:tabular-nums}
+.tp-med-st small{font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.tp-med-st b{font-size:.92rem;color:var(--tx)}
+.tp-med-st span{font-size:.7rem;color:var(--t2)}
+.tp-med-st .tag{align-self:flex-start}
 .tp-med{border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .65rem;min-width:0}
 .tp-med-cab{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .45rem;font-size:.8rem}
 .tp-med-cab i{width:.6rem;height:.6rem;border-radius:3px;flex-shrink:0}
 .tp-med-cab span{font-size:.7rem;color:var(--t2)}
-.tp-med-l{font-size:.72rem;color:var(--t2);margin-top:.25rem;line-height:1.5;font-variant-numeric:tabular-nums}
-.tp-med-l b{color:var(--tx)}
 .tp-acoes{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:space-between;margin-top:.2rem}
+/* Computador (18/11/2026): preenchimento à esquerda e gráfico + resumo à direita; a curva muda ao lado enquanto se
+   digita. Vale pela largura do CARTÃO (container query), não da janela: com o menu lateral, uma janela de 1280 px
+   deixava a coluna do gráfico com ~500 px. Sem suporte a container query, fica empilhado, como no celular. */
+[data-calc-render]:has(> .tp){container-type:inline-size}
+@container (min-width:1050px){
+  .tp{display:grid;grid-template-columns:minmax(0,25rem) minmax(0,1fr);gap:0 1rem;align-items:start}
+  .tp-acoes{grid-column:1/-1}
+  .tp-col-ent .tp-lm{grid-template-columns:1fr 1fr}
+}
 .tp-excluir:hover{color:var(--red);border-color:var(--red)}
 @media (max-width:640px){
   .tp-lm{grid-template-columns:1fr 1fr}
@@ -6147,7 +6160,7 @@ function tpGraficoSVG(r,modo,baseT,larg){
   G.forEach(function(gr){t0=Math.min(t0,gr.ini);t1=Math.max(t1,gr.fimDesenho);});
   if(t1-t0<60*TP_DIA){var c=(t0+t1)/2;t0=c-30*TP_DIA;t1=c+30*TP_DIA;}
   var folga=(t1-t0)*0.03;t0-=folga;t1+=folga;
-  var W=larg>0?Math.max(320,Math.min(760,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16),y0=14,y1=208,LH=26,yL=y1+28,nL=G.length,H=nL?yL+nL*LH+2:y1+26;
+  var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16),y0=14,y1=208+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),LH=26,yL=y1+28,nL=G.length,H=nL?yL+nL*LH+2:y1+26;
   var vs=pts.map(function(x){return val(x.p);});
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
   if(modo==='pct'){lo=Math.min(lo,0);hi=Math.max(hi,0);}
@@ -6244,22 +6257,26 @@ function tpResumoHTML(r){
   }
   if(r.grupos.length){
     h+='<div class="tp-meds">'+r.grupos.map(function(gr){
-      var per='desde '+tpData(gr.ini)+(gr.aberto?' · em uso':' até '+tpData(gr.fim))+' · '+tpFmt((gr.tAte-gr.ini)/TP_MES,1)+' meses';
-      var linhaPeso;
+      // Cartão em faixa, com três números lado a lado (professor, 18/11/2026: "essa parte aqui de baixo ficou
+      // muito espremida ... deixar mais centralizado, junto com o gráfico").
+      var st=function(rot,val,sub){return '<div class="tp-med-st"><small>'+rot+'</small><b>'+val+'</b>'+(sub?'<span>'+sub+'</span>':'')+'</div>';};
+      var per=st('Período','desde '+tpData(gr.ini)+(gr.aberto?'':' até '+tpData(gr.fim)),(gr.aberto?'em uso · ':'')+tpFmt((gr.tAte-gr.ini)/TP_MES,1)+' meses');
+      var peso;
       if(gr.pIni&&gr.pFim){
         var dk=gr.pFim.p-gr.pIni.p,dp=dk/gr.pIni.p*100;
-        linhaPeso=(gr.pIni.aprox?'≈ ':'')+tpFmt(gr.pIni.p,1)+' → '+(gr.pFim.aprox?'≈ ':'')+tpFmt(gr.pFim.p,1)+' kg · <b>'+tpSinal(dk,1,' kg')+' ('+tpSinal(dp,1,'%')+')</b>';
-      }else linhaPeso='<span style="color:var(--t3)">Sem peso perto do '+(gr.pIni?'fim':'início')+' (anote um peso a até 45 dias).</span>';
+        peso=st('Peso no início → '+(gr.aberto?'atual':'no fim'),(gr.pIni.aprox?'≈ ':'')+tpFmt(gr.pIni.p,1)+' → '+(gr.pFim.aprox?'≈ ':'')+tpFmt(gr.pFim.p,1)+' kg',tpSinal(dk,1,' kg')+' ('+tpSinal(dp,1,'%')+')');
+      }else peso=st('Peso','—','sem peso a até 45 dias do '+(gr.pIni?'fim':'início'));
       var tres='';
       if(gr.cirurgia)tres='';
-      else if(gr.antes3)tres='Suspensa antes de completar 3 meses.';
-      else if(gr.falta3)tres='Completa 3 meses em '+tpData(gr.t3)+'.';
+      else if(gr.antes3)tres=st('Aos 3 meses','—','suspensa antes de 3 meses');
+      else if(gr.falta3)tres=st('Aos 3 meses','—','completa 3 meses em '+tpData(gr.t3));
       else if(gr.p3&&gr.pIni){
         var d3=(gr.p3.p-gr.pIni.p)/gr.pIni.p*100;
-        tres='Aos 3 meses: <b>'+(gr.p3.aprox||gr.pIni.aprox?'≈ ':'')+tpSinal(d3,1,'%')+'</b> '+(d3<=-5?'<span class="tag tag-grn">resposta (perda ≥ 5%)</span>':'<span class="tag tag-gold">perda abaixo de 5%: rever dose, adesão ou troca</span>');
+        tres='<div class="tp-med-st"><small>Aos 3 meses</small><b>'+(gr.p3.aprox||gr.pIni.aprox?'≈ ':'')+tpSinal(d3,1,'%')+'</b>'
+          +(d3<=-5?'<span class="tag tag-grn">resposta (perda ≥ 5%)</span>':'<span class="tag tag-gold">perda abaixo de 5%: rever dose, adesão ou troca</span>')+'</div>';
       }
       return '<div class="tp-med"><div class="tp-med-cab"><i style="background:'+gr.cor+'"></i><b>'+esc(gr.nome)+'</b>'+(gr.doses.length?'<span>'+esc(gr.doses.join(' → '))+'</span>':'')+'</div>'
-        +'<div class="tp-med-l">'+per+'</div><div class="tp-med-l">'+linhaPeso+'</div>'+(tres?'<div class="tp-med-l">'+tres+'</div>':'')+'</div>';
+        +'<div class="tp-med-grid">'+per+peso+tres+'</div></div>';
     }).join('')+'</div>';
   }
   return h;
@@ -6328,7 +6345,7 @@ function tpRender(root){
   function salva(){est.atual=pac.id;tpGrava(est);}
   function nomePac(p,i){return p.rot||('Paciente '+(i+1));}
   function form(){
-    root.innerHTML='<div class="tp">'
+    root.innerHTML='<div class="tp"><div class="tp-col-ent">'
       +'<section class="rcv-sec"><div class="rcv-sec-t">1 · Paciente</div>'
         +'<div class="tp-linha"><select data-tp-pac aria-label="Paciente salvo neste aparelho">'+est.pac.map(function(p,i){return '<option value="'+esc(p.id)+'"'+(p.id===pac.id?' selected':'')+'>'+esc(nomePac(p,i))+'</option>';}).join('')+'</select>'
         +'<button type="button" class="btn btn-outline btn-sm" data-tp-novo>+ Novo paciente</button>'
@@ -6343,7 +6360,7 @@ function tpRender(root){
       +'<section class="rcv-sec"><div class="rcv-sec-t">3 · Medicações e doses</div><div data-tp-meds></div>'
         +'<button type="button" class="btn btn-outline btn-sm" data-tp-addm style="margin:.15rem 0 .2rem">+ Medicação ou nova dose</button>'
         +'<div class="rcv-nota" style="margin-bottom:.5rem">Uma linha por dose: no escalonamento, cada dose nova é uma linha da mesma medicação, e a anterior termina sozinha. Fim em branco = em uso. Cirurgia bariátrica entra aqui, na data da cirurgia.</div></section>'
-      +'<div data-tp-res aria-live="polite"></div>'
+      +'</div><div class="tp-col-res" data-tp-res aria-live="polite"></div>'
       +'<div class="tp-acoes"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button>'
         +'<button type="button" class="btn btn-outline btn-sm tp-excluir" data-tp-excluir>Excluir este paciente</button></div>'
       +'<datalist id="tp-dl-meds">'+TP_MEDS.map(function(m){return '<option value="'+esc(m.n)+'">';}).join('')+'</datalist>'
@@ -6382,7 +6399,13 @@ function tpRender(root){
     }).join('')+'</details>';
   }
   // largura útil do gráfico: a do cartão menos o recuo da seção (rcv-sec)
-  function resultado(){var box=q('[data-tp-res]');if(box)box.innerHTML=tpResultadoHTML(pac,(root.clientWidth||0)-30);}
+  function resultado(){var box=q('[data-tp-res]');if(box)box.innerHTML=tpResultadoHTML(pac,((box&&box.clientWidth)||root.clientWidth||0)-30);}
+  var tpRs=null,tpLarg=0;
+  function aoRedimensionar(){
+    if(!root.isConnected){window.removeEventListener('resize',aoRedimensionar);return;}
+    clearTimeout(tpRs);tpRs=setTimeout(function(){var box=q('[data-tp-res]');var w=box?box.clientWidth:0;if(w&&Math.abs(w-tpLarg)>24){tpLarg=w;resultado();}},180);
+  }
+  try{window.addEventListener('resize',aoRedimensionar);}catch(e){}
   function adicionaPeso(){
     var d=q('[data-tp-nd]').value,np=q('[data-tp-np]'),p=cliqLe(np.value);
     if(!isFinite(tpDia(d))||!(p>=20&&p<=400)){try{notify('Preencha a data e o peso em kg (entre 20 e 400).','err');}catch(e){}return;}

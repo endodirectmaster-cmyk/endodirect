@@ -45,6 +45,14 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   saúde de terceiro no nosso servidor: decidir com o professor antes.
 - Teste: `scripts/test-trajetoria-peso.js` (ci bx). Conferido no navegador com a conta de revisão (celular e
   computador, exemplo, modo % a partir da semaglutida).
+- **Layout (18/11, sw v452; professor, no computador: "essa parte aqui de baixo ficou muito espremida ... deixar mais
+  centralizado, junto com o gráfico"):** o gráfico era desenhado em no máximo 760 px e esticado (letra enorme numa
+  tela de 1900 px), e os quadros (`auto-fill`) se amontoavam à esquerda. Agora: desenho na largura real até 1200 px,
+  com o gráfico mais alto quando largo; quadros `auto-fit` (ocupam a linha); cada medicação numa faixa com
+  Período, Peso (início → atual/fim) e Aos 3 meses lado a lado; e, com o **cartão** acima de 1050 px (container
+  query, não a janela: com o menu lateral, 1280 px deixavam o gráfico com ~500 px), **duas colunas**:
+  preenchimento à esquerda, gráfico e resumo à direita. Redesenha ao mudar o tamanho da janela. Medido: 1366 px
+  empilhado (gráfico 1010 px), 1440 px e 1920 px em duas colunas (668 e 1148 px); celular igual.
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 
