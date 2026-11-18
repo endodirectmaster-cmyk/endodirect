@@ -27,6 +27,7 @@ continua às 18h) e carrossel de 4 slides no feed às **19h** (melhor horário d
 - **18/11, ~16h10 (professor):** "Outros cursos, como o Endocrinologia Essencial" virou "Vários cursos, como
   Endocrinologia Essencial e EndoTEEM" (os cursos com aulas: EndoTEEM 68, Endocrinologia Essencial 37, EMC 3, que
   já tem item próprio). Arquivo `appstore_slide3d.jpg`.
+- **18/11, ~16h15 (professor):** o item dos cursos virou só "Acesse nossos cursos". Arquivo `appstore_slide3e.jpg`.
 - Hospedagem: `img/instagram/2026-11-19-app-store/*.jpg` no próprio site (público); o Metricool copia a mídia.
   Caminho mais simples que o Drive para posts avulsos, sem pedir upload ao professor.
 
