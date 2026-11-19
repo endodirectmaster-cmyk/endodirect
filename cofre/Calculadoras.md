@@ -85,6 +85,13 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   tamanho da tela não. Fechar some em 160 ms. O crescimento fica em `.tp-cheia-in` (camada de dentro) porque o
   navegador trava `transform` no elemento em tela cheia. `prefers-reduced-motion` desliga tudo (`tpSemMovimento`),
   e sem `Element.animate` a tela abre e fecha na hora (jsdom dos testes). Código: `tpAnimaGrafico(box)`.
+- **Composição: número em cada medida (19/11, sw v463; professor: "faltou os percentuais de gordura, massa gorda e
+  massa magra no meio do tratamento também"):** no modo Composição, toda medida do meio ganha o número, não só a 1ª e
+  a última: massa gorda com o % ("38,0 kg (42,2%)") ao lado do ponto laranja, de preferência embaixo (a seta da dose
+  chega por cima), e massa magra acima da linha verde (`rotMeio`, classe `tp-comp-p`). Posição que encosta em outro
+  número é descartada; entre as livres, vence a que não cruza nenhuma das duas linhas (`cruzaLinha`). O que não couber
+  fica só na dica do ponto. Junto: o rótulo do 1º/último ponto (`rot`) ganhou um desempate que evita cruzar a própria
+  curva, então o último ponto de uma descida põe o número embaixo, longe da linha.
 - **Servidor e volume (medido em 19/11):** o banco inteiro tem ~1,1 GB (global_state 18 MB, app_state 17 MB, 170
   contas). 3.000 pacientes = 3 a 12 MB (~1% do banco); 100 mil = 100 a 400 MB. Se a sincronização vier, uma linha por
   paciente (cada edição manda só aquele paciente, 1–4 KB). Sincronização no servidor ainda **não decidida** pelo
