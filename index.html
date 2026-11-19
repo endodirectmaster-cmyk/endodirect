@@ -576,6 +576,12 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-cheia-kpis{flex:none}
 .tp-cheia-kpis .tp-kpis{margin:0;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))}
 @media (max-height:560px),(max-width:700px){.tp-cheia-kpis .tp-kpis{display:flex;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}.tp-cheia-kpis .tp-kpi{flex:0 0 auto;min-width:9.5rem;max-width:13.5rem}}
+.tp-dup{font-size:.76rem;line-height:1.4;color:var(--tx);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);border-left:3px solid #f59e0b;border-radius:var(--rs);padding:.4rem .6rem;margin:-.1rem 0 .55rem}
+.tp-busca{margin:-.1rem 0 .6rem}
+.tp-busca-res{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem}
+.tp-busca-res:empty{display:none}
+.tp-busca-res button{font:inherit;font-size:.76rem;border:1px solid var(--bd);background:var(--s2);color:var(--tx);border-radius:999px;padding:.28rem .65rem;cursor:pointer}
+.tp-busca-res button:hover,.tp-busca-res button[aria-current]{border-color:#60a5fa}
 .tp-chk{display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:var(--t2);margin:.1rem 0 .55rem;cursor:pointer;line-height:1.35}
 .tp-chk input{width:auto;margin:.15rem 0 0;flex:none}
 .tp-add-comp{margin-top:-.25rem}
@@ -6632,6 +6638,7 @@ function tpCelDose(i,m){
     :'<input type="text" autocomplete="off" placeholder="Dose" value="'+esc(m.dose||'')+'" data-tp-m="dose" data-tp-mi="'+i+'">';
 }
 var TP_CROT={gp:'% gordura',mg:'M. gorda',mm:'M. magra'},TP_CROT_L={gp:'Percentual de gordura',mg:'Massa gorda em kg',mm:'Massa magra em kg'};
+function tpNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s.\-_\/]+/g,'');}
 function tpRender(root){
   var est=tpCarrega(),pac=null;
   est.pac.forEach(function(p){if(p.id===est.atual)pac=p;});
@@ -6639,16 +6646,40 @@ function tpRender(root){
   if(!pac){pac=tpNovoPac('');est.pac.push(pac);}
   var q=function(s){return root.querySelector(s);};
   function salva(){est.atual=pac.id;tpGrava(est);}
-  function nomePac(p,i){return p.rot||('Paciente '+(i+1));}
+  // HOMÔNIMOS (professor, 19/11/2026: "existem homônimos ... pacientes que as iniciais sejam as mesmas"): cada paciente
+  // tem um id interno único (os dados nunca se misturam); para o usuário distinguir, a lista mostra desde quando e o
+  // último peso, avisa quando a identificação se repete, sugere o nº do prontuário e tem busca quando a lista cresce.
+  function nomePac(p,i){
+    var base=p.rot||('Paciente '+(i+1)),l=(p.pesos||[]).filter(function(x){return isFinite(tpDia(x.d));}).slice().sort(function(a,b){return String(a.d).localeCompare(String(b.d));});
+    if(!l.length)return base;
+    return base+' · desde '+tpData(tpDia(l[0].d))+' · '+String(l[l.length-1].p).trim()+' kg';
+  }
+  function dupAviso(){
+    var el=q('[data-tp-dup]');if(!el)return;
+    var k=tpNorm(pac.rot),outros=k?est.pac.filter(function(p){return p!==pac&&tpNorm(p.rot)===k;}):[];
+    el.hidden=!outros.length;if(!outros.length){el.textContent='';return;}
+    var o=outros[0],l=(o.pesos||[]).filter(function(x){return isFinite(tpDia(x.d));});
+    el.textContent='Já existe '+(outros.length>1?outros.length+' pacientes':'um paciente')+' "'+String(o.rot).trim()+'"'+(outros.length===1&&l.length?' (desde '+tpData(tpDia(l[0].d))+')':'')
+      +'. Acrescente algo para diferenciar, como "'+String(pac.rot).trim()+'-2" ou o nº do prontuário.';
+  }
+  function buscaPac(txt){
+    var box=q('[data-tp-busca-res]');if(!box)return;var k=tpNorm(txt);if(!k){box.innerHTML='';return;}
+    var achados=[];est.pac.forEach(function(p,i){if(tpNorm(p.rot).indexOf(k)>=0)achados.push({p:p,i:i});});
+    box.innerHTML=!achados.length?'<span class="rcv-nota" style="margin:0">Nenhum paciente com "'+esc(txt)+'".</span>'
+      :achados.slice(0,8).map(function(o){return '<button type="button" data-tp-ir="'+esc(o.p.id)+'"'+(o.p===pac?' aria-current="true"':'')+'>'+esc(nomePac(o.p,o.i))+'</button>';}).join('')
+        +(achados.length>8?'<span class="rcv-nota" style="margin:0">+'+(achados.length-8)+': continue digitando</span>':'');
+  }
   function form(){
     root.innerHTML='<div class="tp"><div class="tp-col-ent">'
       +'<section class="rcv-sec"><div class="rcv-sec-t">1 · Paciente</div>'
         +'<div class="tp-linha"><select data-tp-pac aria-label="Paciente salvo neste aparelho">'+est.pac.map(function(p,i){return '<option value="'+esc(p.id)+'"'+(p.id===pac.id?' selected':'')+'>'+esc(nomePac(p,i))+'</option>';}).join('')+'</select>'
         +'<button type="button" class="btn btn-outline btn-sm" data-tp-novo>+ Novo paciente</button>'
         +'<button type="button" class="btn btn-outline btn-sm" data-tp-exemplo>Ver exemplo</button></div>'
-        +'<div class="rcv-campos"><label class="rcv-num"><span>Identificação (iniciais ou código)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" value="'+esc(pac.rot||'')+'"></label>'
+        +(est.pac.length>=6?'<div class="tp-busca"><input type="search" data-tp-busca autocomplete="off" placeholder="Buscar paciente (iniciais ou nº do prontuário)" aria-label="Buscar paciente"><div class="tp-busca-res" data-tp-busca-res aria-live="polite"></div></div>':'')
+        +'<div class="rcv-campos"><label class="rcv-num"><span>Identificação (iniciais ou nº do prontuário)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" placeholder="ex.: JMS 4821" value="'+esc(pac.rot||'')+'"></label>'
         +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
         +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
+        +'<div class="tp-dup" data-tp-dup role="status" hidden></div>'
         +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">🔒 Só você vê estes pacientes: ficam neste aparelho, na sua conta, e não vão para o servidor. Professores e outros usuários não têm acesso. Não use o nome do paciente.</div></section>'
       +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Peso</div>'
         +'<div class="tp-add"><input type="date" data-tp-nd value="'+tpHojeISO()+'" aria-label="Data do peso"><input type="text" inputmode="decimal" autocomplete="off" data-tp-np placeholder="Peso (kg)" aria-label="Peso em kg">'
@@ -6676,7 +6707,7 @@ function tpRender(root){
         +'<button type="button" class="btn btn-outline btn-sm tp-excluir" data-tp-excluir>Excluir este paciente</button></div>'
 
       +'</div>';
-    pesos();meds();resultado();
+    pesos();meds();resultado();dupAviso();
   }
   // As listas ficam recolhidas (no celular, 16 pesos e 6 doses empurravam o gráfico para longe); a linha de
   // adicionar peso e o botão de nova dose ficam sempre à vista. Aberto ou fechado é lembrado enquanto a tela vive.
@@ -6687,7 +6718,8 @@ function tpRender(root){
     return nomes.map(function(n){var c=cont[n.toLowerCase()];return n+' ('+c+' dose'+(c===1?'':'s')+')';}).join(' · ')+' · ver e editar';
   }
   function pesos(){
-    var alt=tpAltura(pac.alt),l=pac.pesos||[];
+    var alt=tpAltura(pac.alt),l=pac.pesos||[],sp=q('[data-tp-pac]');
+    if(sp&&sp.options[sp.selectedIndex])sp.options[sp.selectedIndex].text=nomePac(pac,sp.selectedIndex);
     q('[data-tp-pesos]').innerHTML=l.length?'<details class="tp-det" data-tp-det="pesos"'+(tpAbertos.pesos?' open':'')+'><summary><span class="cid-caret">▸</span> <span data-tp-pres>'+esc(pesosResumo())+'</span></summary><div class="tp-lista">'+l.map(function(x,i){
       return '<div class="tp-lp"><input type="date" value="'+esc(x.d)+'" data-tp-pd="'+i+'" aria-label="Data">'
         +'<input type="text" inputmode="decimal" autocomplete="off" value="'+esc(x.p)+'" data-tp-pp="'+i+'" aria-label="Peso em kg">'
@@ -6774,10 +6806,11 @@ function tpRender(root){
     var t=ev.target;
     if(t.hasAttribute('data-tp-campo')){
       var k=t.getAttribute('data-tp-campo');pac[k]=t.value;salva();
-      if(k==='rot'){var s=q('[data-tp-pac]');if(s&&s.options[s.selectedIndex])s.options[s.selectedIndex].text=nomePac(pac,s.selectedIndex);}
+      if(k==='rot'){var s=q('[data-tp-pac]');if(s&&s.options[s.selectedIndex])s.options[s.selectedIndex].text=nomePac(pac,s.selectedIndex);dupAviso();}
       if(k==='alt')pesosImc();
       resultado();return;
     }
+    if(t.hasAttribute('data-tp-busca')){buscaPac(t.value);return;}
     if(t.hasAttribute('data-tp-pc')){var xc=pac.pesos[+t.getAttribute('data-tp-pci')];if(xc){xc[t.getAttribute('data-tp-pc')]=t.value;salva();compPhLinha(+t.getAttribute('data-tp-pci'));resultado();}return;}
     if(t.hasAttribute('data-tp-pp')){var x=pac.pesos[+t.getAttribute('data-tp-pp')];if(x){x.p=t.value;salva();pesosImc();compPhLinha(+t.getAttribute('data-tp-pp'));var pr=q('[data-tp-pres]');if(pr)pr.textContent=pesosResumo();resultado();}return;}
     if(t.hasAttribute('data-tp-m')){
@@ -6834,6 +6867,7 @@ function tpRender(root){
     var gc=ev.target.closest('[data-tp-cheia]');if(gc&&root.contains(gc)){abreCheia();return;}
     var b=ev.target.closest('button');if(!b||!root.contains(b))return;
     if(b.hasAttribute('data-tp-addp')){adicionaPeso();return;}
+    if(b.hasAttribute('data-tp-ir')){var id=b.getAttribute('data-tp-ir');est.pac.forEach(function(p){if(p.id===id)pac=p;});tpBase='';tpAbertos={pesos:false,meds:false};salva();form();return;}
     if(b.hasAttribute('data-tp-dt')){
       var n=+b.getAttribute('data-tp-dt'),l=pac.pesos||[],ult=l.length?l[l.length-1].d:'';
       q('[data-tp-nd]').value=n?tpMaisMeses(ult||tpHojeISO(),n):tpHojeISO();try{q('[data-tp-np]').focus();}catch(e){}return;
@@ -6904,7 +6938,7 @@ var CALCS=[
    soProfessor:true,
    desc:'Curva do peso e do IMC do paciente ao longo do tempo, com o início e as doses de cada medicação: perda desde o início, resposta aos 3 meses, menor peso e reganho',
    render:function(root){tpRender(root);},
-   note:'Os pesos e as medicações ficam só neste aparelho, na sua conta, e não vão para o servidor: use iniciais ou um código, nunca o nome. Resposta aos 3 meses: perda de 5% ou mais do peso do início da medicação; abaixo disso, a recomendação é rever e suspender ou trocar (Endocrine Society, Apovian CM et al., J Clin Endocrinol Metab 2015;100:342-62). Não se aplica à cirurgia bariátrica. Faixas de IMC da OMS: 25 sobrepeso; 30, 35 e 40, obesidade graus I, II e III.'},
+   note:'Os pesos e as medicações ficam só neste aparelho, na sua conta, e não vão para o servidor: use iniciais ou o nº do prontuário, nunca o nome. Resposta aos 3 meses: perda de 5% ou mais do peso do início da medicação; abaixo disso, a recomendação é rever e suspender ou trocar (Endocrine Society, Apovian CM et al., J Clin Endocrinol Metab 2015;100:342-62). Não se aplica à cirurgia bariátrica. Faixas de IMC da OMS: 25 sobrepeso; 30, 35 e 40, obesidade graus I, II e III.'},
   {id:'pep',name:'%PEP e %PPT pós-bariátrica',area:'Obesidade',desc:'Perda do excesso de peso e perda de peso total após cirurgia bariátrica',
    fields:[{id:'pep_p0',label:'Peso no dia da cirurgia (kg)',type:'num'},{id:'pep_alt',label:'Altura (cm)',type:'num'},{id:'pep_pat',label:'Peso atual (kg)',type:'num'}],
    calc:function(v){

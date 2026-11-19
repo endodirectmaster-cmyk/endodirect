@@ -290,6 +290,34 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   run("var lsSetVelho=lsSet;lsSet=function(){return false;};avisos.length=0;tpGrava({pac:[]});tpGrava({pac:[]});lsSet=lsSetVelho;tpAvisoCheio=false;");
   ok(J('avisos').length === 1 && /Sem espaço neste aparelho/.test(J('avisos')[0][0]), 'sem espaço no aparelho: avisa (uma vez) que a alteração não foi salva');
   ok(!r5.querySelector('[data-tp-res] .tp-graf') && r5.querySelector('[data-tp-pac]').options.length === 1 && !/trajpeso_u4/.test(run('tpChave()')) && J("ls['trajpeso_u4'].pac.length") === 1, 'outra conta (mesmo professor) no mesmo aparelho não vê os pacientes de quem cadastrou');
+  // HOMÔNIMOS (professor, 19/11/2026): mesmas iniciais não misturam dados; a lista diferencia, avisa e busca
+  const r6 = doc.createElement('div'); r6.id = 'calc6'; doc.body.appendChild(r6);
+  run("currentUser={id:'u6',role:'admin'};tpRender(document.getElementById('calc6'))");
+  ok(/nº do prontuário/.test(r6.textContent) && r6.querySelector('[data-tp-campo="rot"]').placeholder === 'ex.: JMS 4821', 'identificação sugere iniciais ou nº do prontuário');
+  setv(r6.querySelector('[data-tp-campo="rot"]'), 'JMS');
+  setv(r6.querySelector('[data-tp-nd]'), '2026-05-05', 'change'); setv(r6.querySelector('[data-tp-np]'), '85'); r6.querySelector('[data-tp-addp]').click();
+  r6.querySelector('[data-tp-novo]').click();
+  setv(r6.querySelector('[data-tp-campo="rot"]'), 'j.m.s');
+  setv(r6.querySelector('[data-tp-nd]'), '2025-02-12', 'change'); setv(r6.querySelector('[data-tp-np]'), '98'); r6.querySelector('[data-tp-addp]').click();
+  const dup = r6.querySelector('[data-tp-dup]');
+  ok(!dup.hidden && /Já existe um paciente "JMS" \(desde 05\/05\/26\)/.test(dup.textContent) && /nº do prontuário/.test(dup.textContent), 'mesma identificação (sem ligar para pontos e maiúsculas): avisa, com a data do outro');
+  const ops = [...r6.querySelector('[data-tp-pac]').options].map((o) => o.textContent);
+  ok(ops[0] === 'JMS · desde 05/05/26 · 85 kg' && ops[1] === 'j.m.s · desde 12/02/25 · 98 kg', 'lista diferencia pelos dados: desde quando e último peso');
+  ok(J("ls['trajpeso_u6'].pac").map((x) => x.pesos[0].p).join() === '85,98' && J("ls['trajpeso_u6'].pac[0].id") !== J("ls['trajpeso_u6'].pac[1].id"), 'dados não se misturam: cada paciente tem id próprio');
+  setv(r6.querySelector('[data-tp-campo="rot"]'), 'JMS 4821');
+  ok(r6.querySelector('[data-tp-dup]').hidden, 'com o nº do prontuário, o aviso some');
+  ok(!r6.querySelector('[data-tp-busca]'), 'com poucos pacientes, sem busca');
+  ['AB', 'CD', 'EF', 'JMX'].forEach((rot) => { r6.querySelector('[data-tp-novo]').click(); setv(r6.querySelector('[data-tp-campo="rot"]'), rot); });
+  r6.querySelector('[data-tp-novo]').click();
+  const bus = r6.querySelector('[data-tp-busca]');
+  ok(!!bus, 'com 6 pacientes ou mais, aparece a busca');
+  setv(bus, 'jm');
+  const res = [...r6.querySelectorAll('[data-tp-busca-res] [data-tp-ir]')].map((b) => b.textContent);
+  ok(res.length === 3 && res[0].indexOf('JMS · desde') === 0 && res[1].indexOf('JMS 4821') === 0 && res[2] === 'JMX', 'busca por iniciais acha os parecidos');
+  r6.querySelectorAll('[data-tp-busca-res] [data-tp-ir]')[1].click();
+  ok(r6.querySelector('[data-tp-campo="rot"]').value === 'JMS 4821' && J("ls['trajpeso_u6'].atual") === J("ls['trajpeso_u6'].pac[1].id"), 'tocar no resultado abre o paciente');
+  setv(r6.querySelector('[data-tp-busca]'), 'zz');
+  ok(/Nenhum paciente com "zz"/.test(r6.querySelector('[data-tp-busca-res]').textContent), 'busca sem resultado avisa');
 }
 
 // 4) fiação e privacidade
