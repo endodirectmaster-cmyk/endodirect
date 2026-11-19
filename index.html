@@ -1420,6 +1420,13 @@ html[data-theme="light"] .mural-text .mural-h1,html[data-theme="light"] .mural-t
 @media (min-width:760px){.adm-qa-filtros{grid-template-columns:2fr 1fr 1fr}.adm-qa-filtros .f-sub{grid-column:auto}}
 .adm-qa-mes{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin:1rem .15rem .45rem}
 .adm-qa-mes:first-child{margin-top:.2rem}
+.qa-filtro-nota{font-size:.74rem;color:var(--t2);line-height:1.5;margin:0 0 .7rem;padding:.5rem .7rem;border:1px dashed var(--bd);border-radius:var(--rs);background:var(--s2)}
+.qa-filtro-btn{background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--blue2);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.qa-filtro-btn:focus-visible{outline:2px solid var(--blue2);outline-offset:2px;border-radius:3px}
+.pf-qd-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.5rem;margin-bottom:.6rem}
+.pf-qd-op{display:flex;align-items:center;gap:.45rem;font-size:.78rem;padding:.4rem .55rem;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;background:var(--s2)}
+.pf-qd-op.on{background:var(--blue-l)}
+.pf-qd-acoes{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.85rem}
 .adm-qa-lista .qa-head{align-items:flex-start;gap:.8rem}
 .aqa-data{flex-shrink:0;width:2.7rem;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.3rem 0;border-radius:10px;background:var(--s2);border:1px solid var(--bd);line-height:1}
 .aqa-data b{font-size:1.05rem;font-weight:800;color:var(--tx);font-variant-numeric:tabular-nums}
@@ -10715,7 +10722,7 @@ function filaEntradaPendente(){
   // 1º: a primeira questão. Mesma regra do card (`precisaAtivacao`), e por isso
   // ela não aparece para quem já respondeu qualquer questão em qualquer aparelho.
   if(!filaEntradaVista.ativa&&typeof precisaAtivacao==='function'&&precisaAtivacao()
-     &&typeof qotdTodays==='function'&&qotdTodays())return 'ativa';
+     &&typeof qotdTodaysAluno==='function'&&qotdTodaysAluno())return 'ativa';
   // 2º: a enquete — SÓ plano Gold (`cmeElegivel`) e só enquanto não houver voto.
   if(!filaEntradaVista.cme&&typeof cmeElegivel==='function'&&cmeElegivel()
      &&typeof cmeVoto==='function'&&!cmeVoto())return 'cme';
@@ -13299,7 +13306,7 @@ function renderAtivacaoEm(alvoId){
   // Dashboard, ao Mural e à janela sem nunca duplicar markup.
   var emJanela=(alvoId==='ativa-card-modal');
   var wrap=null;
-  var q=(typeof qotdTodays==='function')?qotdTodays():null;
+  var q=(typeof qotdTodaysAluno==='function')?qotdTodaysAluno():null;
   // Sem questão publicada não há o que oferecer — melhor nada que um card vazio.
   if(!precisaAtivacao()||!q){el.style.display='none';el.innerHTML='';if(wrap)wrap.style.display='none';return;}
   el.style.display='';if(wrap)wrap.style.display='';
@@ -13611,6 +13618,21 @@ function qotdTodays(){
   var posted=valid.filter(function(x){return x.status==='posted';});
   return posted.length?posted[posted.length-1]:null;
 }
+// FILTRO DO ALUNO (professor, 19/11/2026: "deixar um filtro no perfil dele para ele escolher as subespecialidades que
+// eles têm interesse em receber a questão do dia"; "se ele não quiser endocrinopediatria e hoje tiver uma questão, ele
+// não vai receber nenhuma questão"). Guarda as subespecialidades DE FORA (user_profile.qotdSubsFora), e não as de
+// dentro: uma subespecialidade nova entra marcada para todos. Questão sem subespecialidade sempre aparece. Vale para a
+// janela do Dashboard, o "Comece por aqui", o selo "De hoje" do arquivo, a notificação e o e-mail (servidor:
+// lib/newsletter.js getQotdFora). O arquivo mostra só as que ele acompanha, com o botão "Ver todas".
+// A lista é a das subespecialidades dos Resumos (DIR_SUBS, com Básica e Endocrinopatias, que a Questão do Dia também usa).
+// Lida na hora: DIR_SUBS é declarada mais abaixo no arquivo, e uma cópia aqui ficaria undefined.
+function qotdSubsLista(){return (typeof DIR_SUBS!=='undefined'&&Array.isArray(DIR_SUBS))?DIR_SUBS:[];}
+function qotdSubsFora(){
+  var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{};
+  return Array.isArray(p.qotdSubsFora)?p.qotdSubsFora.filter(function(s){return typeof s==='string'&&s;}):[];
+}
+function qotdQuerSub(sub){return !sub||qotdSubsFora().indexOf(sub)<0;}
+function qotdTodaysAluno(){var q=qotdTodays();return (q&&qotdQuerSub(q.sub))?q:null;}
 // O caso e a pergunta final ("Qual a melhor conduta inicial?") em separado: a pergunta
 // vai em destaque, abaixo do caso, como numa prancheta de plantão. Só separa quando a
 // última frase é mesmo uma pergunta que começa com maiúscula; senão o enunciado vai
@@ -13674,7 +13696,7 @@ function qotdRenderModal(q,ans){
 // Dashboard volta ao normal. Aparece só no Dashboard (a tela de entrada), 1x por
 // sessão (ou até responder) — nunca no Mural de artigos (professor, 14/11/2026).
 function renderQotd(){
-  var q=qotdTodays();var m=qotdModalEl();
+  var q=qotdTodaysAluno();var m=qotdModalEl();
   if(!q){m.style.display='none';return;}
   // ⚠️ Quem ainda não respondeu NADA recebe o card "Comece por aqui", que traz
   // esta mesma questão embutida e NÃO se dispensa. Abrir o modal por cima
@@ -13704,6 +13726,7 @@ var qotdArchOpen=null;     // id aberto no arquivo do aluno
 // de junho, uma por dia. O arquivo do PROFESSOR já ordenava por data com padrão
 // 'recent', então da tela dele o defeito era invisível.
 var qotdArchSort='recent'; // aluno: 'recent' = mais recente primeiro; 'old' = mais antiga
+var qotdArchTodas=false;   // aluno com filtro no perfil: true = "Ver todas" (só nesta sessão)
 // Paginação (pedido do professor, 11/11/2026: "um filtro para o aluno escolher se na página
 // vai ter uma visualização de 10 ou 30 questões ... e o restante na próxima página"). A
 // escolha fica no aparelho; a página volta à 1ª ao trocar a ordem ou o tamanho.
@@ -13789,17 +13812,32 @@ function qotdArchLigaPaginacao(el,pre,aoMudarPor,aoMudarPagina){
 }
 function renderQotdArchive(){
   var el=document.getElementById('panel-qotd-body');if(!el)return;
-  var all=qotdPublished(),mm=qotdReadAns();
-  if(!all.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda. Volte em breve. 🧠</div>';return;}
-  // A "de hoje" vem de qotdTodays(), a MESMA fonte do modal do mural — se as duas
+  var todas=qotdPublished(),mm=qotdReadAns();
+  if(!todas.length){el.innerHTML='<div class="empty">Nenhuma questão publicada ainda. Volte em breve. 🧠</div>';return;}
+  // Só as subespecialidades que o aluno acompanha (perfil), com "Ver todas". Link direto para uma de fora abre todas.
+  var fora=qotdSubsFora();
+  if(fora.length&&qotdArchOpen&&!qotdArchTodas){for(var _i=0;_i<todas.length;_i++){if(todas[_i].id===qotdArchOpen&&!qotdQuerSub(todas[_i].sub)){qotdArchTodas=true;break;}}}
+  var all=(fora.length&&!qotdArchTodas)?todas.filter(function(q){return qotdQuerSub(q.sub);}):todas;
+  var nota=fora.length?'<div class="qa-filtro-nota">'+(qotdArchTodas
+      ?'Mostrando todas as subespecialidades. <button type="button" class="qa-filtro-btn" data-qa-filtro="minhas">Só as que eu acompanho</button>'
+      :'Mostrando só as subespecialidades que você acompanha ('+all.length+' de '+todas.length+'). <button type="button" class="qa-filtro-btn" data-qa-filtro="todas">Ver todas</button>')
+    +' · <button type="button" class="qa-filtro-btn" data-qa-filtro="perfil">Escolher no perfil</button></div>':'';
+  // A "de hoje" vem de qotdTodaysAluno(), a MESMA fonte do modal do mural — se as duas
   // telas discordassem, o selo apontaria uma questão e a janela outra.
-  var hoje=qotdTodays();
+  var hoje=qotdTodaysAluno();
+  var ligaFiltro=function(){el.querySelectorAll('[data-qa-filtro]').forEach(function(b){b.addEventListener('click',function(){
+    var v=b.getAttribute('data-qa-filtro');
+    if(v==='perfil'){perfilRolarQotd=true;try{goPanel('perfil');}catch(e){}return;}
+    qotdArchTodas=(v==='todas');qotdArchPagina=0;renderQotdArchive();
+  });});};
+  if(!all.length){el.innerHTML=nota+'<div class="empty">Ainda não há Questão do Dia publicada das subespecialidades que você acompanha.</div>';ligaFiltro();return;}
   if(qotdArchAuto){qotdArchAuto=false;if(hoje&&!mm[hoje.id]){qotdArchOpen=hoje.id;qotdArchIrAberto=true;}}
   // A aberta sozinha (a de hoje) ou por link vai para a página dela.
   if((qotdArchIrAberto||qotdArchRolar)&&qotdArchOpen){var _pg=qotdArchPaginaDe(all,qotdArchSort,qotdArchOpen,qotdArchPor);if(_pg>=0){qotdArchPagina=_pg;qotdArchIrAberto=false;}}
   qotdArchPagina=Math.min(qotdArchPagina,qotdArchPaginas(all.length,qotdArchPor)-1);
-  el.innerHTML=qotdArchListHTML(all,mm,qotdArchOpen,qotdArchSort,hoje,'qa',{por:qotdArchPor,pagina:qotdArchPagina});
+  el.innerHTML=nota+qotdArchListHTML(all,mm,qotdArchOpen,qotdArchSort,hoje,'qa',{por:qotdArchPor,pagina:qotdArchPagina});
   try{ensureLightbox();}catch(e){}
+  ligaFiltro();
   var so=document.getElementById('qa-sort');if(so)so.addEventListener('change',function(){qotdArchSort=so.value;qotdArchPagina=0;renderQotdArchive();});
   qotdArchLigaPaginacao(el,'qa',function(n){qotdArchPor=n;lsSet('qotd_por_pagina',n);qotdArchPagina=0;renderQotdArchive();},function(d){qotdArchPagina+=d;renderQotdArchive();});
   el.querySelectorAll('[data-qa-toggle]').forEach(function(h){h.addEventListener('click',function(){var id=h.getAttribute('data-qa-toggle');qotdArchOpen=(qotdArchOpen===id)?null:id;qotdArchRolar=false;renderQotdArchive();});});
@@ -27258,6 +27296,16 @@ function renderPerfil(){
       +row('Função','Aluno',true)
     +'</div>';
   }
+  // Card da Questão do Dia: subespecialidades que o aluno quer receber (todas marcadas de início; ver qotdSubsFora).
+  var qdFora=qotdSubsFora();
+  var qdCard='<div class="card" id="perfil-qotd" style="margin-top:1rem"><div class="card-head"><span class="card-title">🧠 Questão do Dia: subespecialidades</span></div>'
+    +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Marque as subespecialidades em que você quer receber a Questão do Dia. Nos dias em que a questão for de uma subespecialidade desmarcada, ela não aparece para você, nem na notificação nem no e-mail.</p>'
+    +'<div class="pf-qd-grade">'+qotdSubsLista().map(function(s){
+      var on=qdFora.indexOf(s)<0;
+      return '<label class="pf-qd-op'+(on?' on':'')+'"><input type="checkbox" class="pf-qd-sub" value="'+esc(s)+'"'+(on?' checked':'')+'> '+esc(s)+'</label>';
+    }).join('')+'</div>'
+    +'<div class="pf-qd-acoes"><button type="button" class="btn btn-ghost btn-sm" data-pf-qd-todas="1">Marcar todas</button><button type="button" class="btn btn-ghost btn-sm" data-pf-qd-todas="0">Desmarcar todas</button></div>'
+    +'<div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-pf-qd-save">💾 Salvar</button><span id="pf-qd-msg" style="font-size:.76rem;font-weight:600"></span></div></div>';
   // Card de preferências da newsletter (temas de interesse por subespecialidade)
   var nlSubs=Array.isArray(prof.newsletterSubs)?prof.newsletterSubs:[];
   var nlBoxes=MURAL_SUBSPECIALTY_FILTERS.map(function(s){
@@ -27288,13 +27336,19 @@ function renderPerfil(){
     +'</div>'+(podeExcluirConta()?excluirContaCardHTML():'')+'</div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"></div>'+assinaturaCard+nlCard
+    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"></div>'+assinaturaCard+qdCard+nlCard
       // Feedback espontâneo também no Perfil (17/11/2026; saiu do topo). O convite automático (+30 dias) segue.
       +'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sua opinião</span></div><p style="font-size:.78rem;color:var(--t2);margin:0 0 .7rem">Elogios, sugestões e críticas sobre a plataforma vão direto ao professor.</p><button type="button" class="btn btn-outline btn-sm" id="perfil-feedback">Enviar feedback</button></div>');
   wirePerfil();
   try{faceIdPerfilRender();}catch(e){}
   try{aparelhosPerfilRender();}catch(e){}
   // Vindo da página pública /excluir-conta (link #excluir-conta): rola até o cartão.
+  // Vindo do arquivo da Questão do Dia ("Escolher no perfil"): rola até o cartão do filtro.
+  if(perfilRolarQotd&&!perfilEdit){
+    perfilRolarQotd=false;
+    var _cq=document.getElementById('perfil-qotd');
+    if(_cq&&_cq.scrollIntoView)setTimeout(function(){try{_cq.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},150);
+  }
   if(perfilRolarExclusao&&!perfilEdit){
     perfilRolarExclusao=false;
     var _ce=document.getElementById('perfil-excluir');
@@ -27310,6 +27364,7 @@ function renderPerfil(){
 // Só aparece para conta real de aluno: professor não se exclui por aqui, e conta
 // de demonstração local não tem o que apagar no servidor.
 var perfilRolarExclusao=false;
+var perfilRolarQotd=false;
 function podeExcluirConta(){
   return !!(currentUser&&currentUser.id&&currentUser.role==='aluno'&&!isAdminUser());
 }
@@ -27476,6 +27531,30 @@ function wirePerfil(){
     c.addEventListener('change',function(){
       var lbl=c.closest('label');if(lbl)lbl.style.background=c.checked?'var(--blue-l)':'var(--s2)';
     });
+  });
+  // Questão do Dia: subespecialidades (grava as DE FORA; ver qotdSubsFora)
+  var qdBoxes=document.querySelectorAll('.pf-qd-sub');
+  var qdPinta=function(){qdBoxes.forEach(function(c){var l=c.closest('.pf-qd-op');if(l)l.classList.toggle('on',c.checked);});};
+  qdBoxes.forEach(function(c){c.addEventListener('change',qdPinta);});
+  document.querySelectorAll('[data-pf-qd-todas]').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute('data-pf-qd-todas')==='1';qdBoxes.forEach(function(c){c.checked=v;});qdPinta();});});
+  var qdSave=document.getElementById('btn-pf-qd-save');
+  if(qdSave)qdSave.addEventListener('click',function(){
+    var fora=[],dentro=0;
+    qdBoxes.forEach(function(c){if(c.checked)dentro++;else fora.push(c.value);});
+    var prof=lsGet('user_profile')||{};
+    if(fora.length)prof.qotdSubsFora=fora;else delete prof.qotdSubsFora;
+    lsSet('user_profile',prof);
+    if(currentUser)currentUser.profile=prof;
+    queueRemoteStateSave();
+    qotdArchTodas=false;
+    try{var _m=document.getElementById('qotd-modal');if(_m&&!qotdTodaysAluno())_m.style.display='none';}catch(e){}
+    var msg=document.getElementById('pf-qd-msg');
+    if(msg){
+      msg.textContent=!fora.length?'Salvo · você recebe a Questão do Dia de todas as subespecialidades.'
+        :(!dentro?'Salvo · nenhuma marcada: a Questão do Dia não vai aparecer para você.'
+        :'Salvo · você recebe a Questão do Dia de '+dentro+' subespecialidade'+(dentro===1?'':'s')+'.');
+      msg.style.color=dentro?'var(--grn)':'var(--gold)';
+    }
   });
   // Salvar preferências de newsletter
   var nlSave=document.getElementById('btn-pf-nl-save');

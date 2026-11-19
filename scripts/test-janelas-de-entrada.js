@@ -54,6 +54,8 @@ function mundo(cenario) {
     anyModalOpen: () => Object.keys(els).some((k) => els[k].style.display === 'flex'),
     precisaAtivacao: () => !!cenario.nuncaEstudou,
     qotdTodays: () => (cenario.temQotd === false ? null : { id: 'q1', answer: 'A' }),
+    // a fila de entrada usa a de hoje JÁ filtrada pelo perfil do aluno (19/11/2026)
+    qotdTodaysAluno: () => (cenario.temQotd === false ? null : { id: 'q1', answer: 'A' }),
     cmeElegivel: () => !!cenario.gold,
     cmeVoto: () => (cenario.jaVotou ? { temas: ['Diabetes'] } : null),
     renderAtivacao: () => { ctx._render = (ctx._render || []).concat('ativa'); },

@@ -53,13 +53,14 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
   // (3) newsletter
   const nl = fs.readFileSync(path.join(raiz, 'lib', 'newsletter.js'), 'utf8');
   const iEntrega = nl.indexOf("reason: 'delivery_failed'");
-  const iPush = nl.indexOf("pushQdd = await pushQotd({ qotd, enviar: (m) => sendToAll(m), configurado: isConfigured, base: publicBase() })");
+  // 19/11/2026: o envio passa a lista de quem desmarcou a subespecialidade da questão (filtro do perfil).
+  const iPush = nl.indexOf("pushQdd = await pushQotd({ qotd, enviar: (m) => sendToAll(m, { excluirUsuarios }), configurado: isConfigured, base: publicBase() })");
   const iGrava = nl.indexOf('toSave.newsletter_qotd_id = qotd.id');
   ok(iEntrega > 0 && iPush > iEntrega && iGrava > iPush, '(3) o push da newsletter não está entre a confirmação de entrega e a gravação do newsletter_qotd_id');
-  ok(/\n  if \(qotd\) \{\n    try \{ pushQdd = await pushQotd/.test(nl), '(3) o push não está condicionado à questão nova do e-mail');
+  ok(/\n  if \(qotd\) \{\n    const excluirUsuarios = usuariosSemQotd\(qfora, qotd\);\n    try \{ pushQdd = await pushQotd/.test(nl), '(3) o push não está condicionado à questão nova do e-mail');
   ok(/return \{ sent: true, recipients: recipients\.length, delivered: sent, pushQotd: pushQdd \};/.test(nl), '(3) a newsletter não devolve o resultado do push');
   ok(/const \{ sendToAll, isConfigured \} = require\('\.\/push'\);/.test(nl) && /const \{ pushQotd \} = require\('\.\/push-qotd'\);/.test(nl), '(3) imports do push na newsletter');
-  ok(/module\.exports = \{[^}]*currentQotd[^}]*loadPayload, serviceKey \};/.test(nl), '(3) a newsletter precisa exportar loadPayload e serviceKey para o endpoint admin');
+  ok(/module\.exports = \{[^}]*currentQotd[^}]*loadPayload, serviceKey[, }]/.test(nl), '(3) a newsletter precisa exportar loadPayload e serviceKey para o endpoint admin');
 
   // (4) endpoint admin
   const api = fs.readFileSync(path.join(raiz, 'api', 'admin', 'refresh-radar.js'), 'utf8');
@@ -67,7 +68,7 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
   ok(iAcao > 0, '(4) a ação qotd-push não existe no endpoint admin');
   const trecho = api.slice(iAcao, iAcao + 1200);
   ok(/if \(!push\.isConfigured\(\)\) return json\(res, 503/.test(trecho), '(4) a ação qotd-push não guarda o VAPID');
-  ok(/const q = currentQotd\(estado\);/.test(trecho) && /pushQotd\(\{ qotd: q, enviar: \(m\) => push\.sendToAll\(m\), configurado: push\.isConfigured \}\)/.test(trecho), '(4) a ação não usa a questão atual nem o mesmo módulo do envio automático');
+  ok(/const q = currentQotd\(estado\);/.test(trecho) && /pushQotd\(\{ qotd: q, enviar: \(m\) => push\.sendToAll\(m, \{ excluirUsuarios \}\), configurado: push\.isConfigured \}\)/.test(trecho), '(4) a ação não usa a questão atual nem o mesmo módulo do envio automático');
   ok(/return json\(res, 404, \{ ok: false, error: 'Nenhuma Questao do Dia postada ainda\.' \}\)/.test(trecho), '(4) sem questão postada devia responder 404');
 
   // (5) painel

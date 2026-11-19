@@ -1661,6 +1661,17 @@ try {
   fail('regressão da paginação da Questão do Dia falhou:\n' + out);
 }
 
+// 17c-undecies-ah. QUESTÃO DO DIA: FILTRO DE SUBESPECIALIDADES NO PERFIL (19/11/2026). Professor: o aluno escolhe
+//      as subespecialidades em que quer receber a Questão do Dia; nos dias de uma desmarcada, nada aparece para ele
+//      (janela, "Comece por aqui", selo "De hoje"), o e-mail sai só com os artigos e a notificação não vai.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-qotd-filtro-subs.js')], { stdio: 'pipe' });
+  ok('Questão do Dia: filtro de subespecialidades do perfil vale na tela, no e-mail e na notificação');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do filtro de subespecialidades da Questão do Dia falhou:\n' + out);
+}
+
 // 17c-undecies-x. BREAKING NEWS PELA DATA DO EVENTO (10/11/2026). O feed da FDA republicou
 //      páginas de 2024 (selpercatinibe) com data nova; o item entrou no mural e virou o push
 //      das 07:45. Agora a data da aprovação é lida no texto (e pela IA) e vale na captação e
