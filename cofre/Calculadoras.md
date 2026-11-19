@@ -54,6 +54,9 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   versão anterior fica e `tpGrava` avisa "Sem espaço neste aparelho" (uma vez). Limites que continuam: não sincroniza
   entre aparelhos (computador ≠ iPhone) e, se o navegador for limpo ou o app desinstalado, os pacientes somem (não há
   cópia em lugar nenhum). Possível próximo passo, se o professor quiser: exportar/importar um arquivo de backup.
+- **Nota de rodapé (19/11, sw v459; professor marcou a frase e pediu "Retirar"):** saiu da nota da tela a frase "A curva
+  liga os pesos anotados com retas; o peso numa data sem medida ... aparece com ≈ quando não há medida a até 7 dias".
+  Ficam: privacidade, critério dos 3 meses (Apovian 2015) e faixas de IMC. O rodapé do PDF continua com a versão curta.
 - ⚠️ **Privacidade (LGPD):** os pacientes ficam só no aparelho, na chave `trajpeso_<uid>` do `lsSet` (outra conta no
   mesmo aparelho não vê). `userStatePayload` não lê essa chave: nada vai para o app_state. A exclusão da conta
   apaga todas as chaves `endodirect_v1_*` do aparelho. Se um dia pedirem sincronizar entre aparelhos, é dado de

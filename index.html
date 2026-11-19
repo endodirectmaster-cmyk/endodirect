@@ -6904,7 +6904,7 @@ var CALCS=[
    soProfessor:true,
    desc:'Curva do peso e do IMC do paciente ao longo do tempo, com o início e as doses de cada medicação: perda desde o início, resposta aos 3 meses, menor peso e reganho',
    render:function(root){tpRender(root);},
-   note:'Os pesos e as medicações ficam só neste aparelho, na sua conta, e não vão para o servidor: use iniciais ou um código, nunca o nome. A curva liga os pesos anotados com retas; o peso numa data sem medida (início de medicação, 3 meses) é interpolado entre as duas medidas vizinhas e aparece com ≈ quando não há medida a até 7 dias. Resposta aos 3 meses: perda de 5% ou mais do peso do início da medicação; abaixo disso, a recomendação é rever e suspender ou trocar (Endocrine Society, Apovian CM et al., J Clin Endocrinol Metab 2015;100:342-62). Não se aplica à cirurgia bariátrica. Faixas de IMC da OMS: 25 sobrepeso; 30, 35 e 40, obesidade graus I, II e III.'},
+   note:'Os pesos e as medicações ficam só neste aparelho, na sua conta, e não vão para o servidor: use iniciais ou um código, nunca o nome. Resposta aos 3 meses: perda de 5% ou mais do peso do início da medicação; abaixo disso, a recomendação é rever e suspender ou trocar (Endocrine Society, Apovian CM et al., J Clin Endocrinol Metab 2015;100:342-62). Não se aplica à cirurgia bariátrica. Faixas de IMC da OMS: 25 sobrepeso; 30, 35 e 40, obesidade graus I, II e III.'},
   {id:'pep',name:'%PEP e %PPT pós-bariátrica',area:'Obesidade',desc:'Perda do excesso de peso e perda de peso total após cirurgia bariátrica',
    fields:[{id:'pep_p0',label:'Peso no dia da cirurgia (kg)',type:'num'},{id:'pep_alt',label:'Altura (cm)',type:'num'},{id:'pep_pat',label:'Peso atual (kg)',type:'num'}],
    calc:function(v){
