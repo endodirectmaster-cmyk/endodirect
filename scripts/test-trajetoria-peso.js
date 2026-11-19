@@ -105,7 +105,7 @@ ok(!/<script|onload|onerror/i.test(run("tpGraficoSVG(tpAnalisa({pesos:[{d:'2026-
 // 3) tela
 const root = doc.getElementById('calc');
 run("tpRender(document.getElementById('calc'))");
-ok(!!root.querySelector('[data-tp-pac]') && /Ver exemplo/.test(root.textContent) && /não vai para o servidor/.test(root.textContent), 'tela: paciente, exemplo e aviso de que fica no aparelho');
+ok(!!root.querySelector('[data-tp-pac]') && /Ver exemplo/.test(root.textContent) && /não vão para o servidor/.test(root.textContent), 'tela: paciente, exemplo e aviso de que fica no aparelho');
 ok(/Anote os pesos/.test(root.querySelector('[data-tp-res]').textContent), 'tela: sem peso, pede os pesos');
 ok(run("Object.keys(ls).length") === 0, 'abrir não grava nada');
 const setv = (el, v, ev) => { el.value = v; el.dispatchEvent(new dom.window.Event(ev || 'input', { bubbles: true })); };
@@ -236,6 +236,57 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   r3.querySelector('[data-tp-imprimir]').click();
   const imp = run('impresso');
   ok(/<title>Trajetória do peso<\/title>/.test(imp) && /<svg viewBox="0 0 900 /.test(imp) && /Peso-meta/.test(imp) && /Tirzepatida/.test(imp) && /Não substitui a avaliação clínica/.test(imp) && /--surface:#fff/.test(imp), 'imprimir/PDF: gráfico, resumo e medicações em fundo branco');
+}
+
+// 4) COMPOSIÇÃO CORPORAL (professor, 19/11/2026: "adicionar de forma opcional ... a massa magra, a massa gorda, percentual de gordura")
+{
+  const C = (x, p) => J('tpComp(' + JSON.stringify(x) + ',' + p + ')');
+  const c1 = C({ gp: '32' }, 85), c2 = C({ mg: '27,2' }, 85), c3 = C({ mm: '57,8' }, 85), c4 = C({ gp: '30', mm: '60' }, 85);
+  ok(Math.abs(c1.mg - 27.2) < 1e-9 && Math.abs(c1.mm - 57.8) < 1e-9 && Math.abs(c2.gp - 32) < 1e-9 && Math.abs(c3.mg - 27.2) < 1e-9 && Math.abs(c3.gp - 32) < 1e-9, 'basta um dado: com o peso, os outros são calculados');
+  ok(c4.mm === 60 && Math.abs(c4.mg - 25.5) < 1e-9 && C({ gp: '90' }, 85) === null && C({}, 85) === null, 'o digitado prevalece; valor absurdo ou vazio não conta');
+  run(`var RC=tpAnalisa({alt:'168',pesos:[{d:'2026-01-01',p:'100',gp:'40'},{d:'2026-03-01',p:'94'},{d:'2026-06-01',p:'90',mg:'32',mm:'58'}],meds:[{n:'Semaglutida SC',dose:'0,25 mg/sem',ini:'2026-01-01'}]});`);
+  ok(run('RC.comp.length') === 2 && Math.abs(run('tpCompResumo(RC).fMagra') - 20) < 1e-9, 'composição da perda: 2 kg de massa magra em 10 kg perdidos = 20%');
+  const kp = run('tpKpisHTML(RC)');
+  ok(/Gordura corporal/.test(kp) && /40,0 → 35,6%/.test(kp) && /Massa gorda/.test(kp) && /40,0 → 32,0 kg/.test(kp) && /Massa magra/.test(kp) && /60,0 → 58,0 kg/.test(kp) && /Composição da perda/.test(kp) && /20% <small>massa magra/.test(kp), 'quadros: % de gordura, massa gorda, massa magra e composição da perda');
+  ok(/Composição/.test(run('tpModosHTML(RC)')) && !/Composição/.test(run("tpModosHTML(tpAnalisa({pesos:[{d:'2026-01-01',p:'100',gp:'40'},{d:'2026-02-01',p:'98'}],meds:[]}))")), 'escala "Composição" só com duas medidas ou mais');
+  const sc = run("tpGraficoSVG(RC,'comp',RC.pts[0].t,900)");
+  ok((sc.match(/<polyline /g) || []).length === 2 && /stroke="#fb923c"/.test(sc) && /stroke="#34d399"/.test(sc) && /massa gorda \(% de gordura\)/.test(sc) && /massa magra/.test(sc) && />40,0 kg \(40,0%\)</.test(sc) && />58,0 kg</.test(sc) && /massa \(kg\)/.test(sc), 'gráfico de composição: massa gorda (com %) e massa magra, com legenda');
+  ok((sc.match(/class="tp-seta"/g) || []).length === 1 && !/tp-seta-p/.test(sc), 'na composição, a seta da medicação fica na curva da massa gorda, sem o peso ao lado');
+  ok(/Composição corporal \(01\/01\/26 → 01\/06\/26\): gordura 40,0 → 35,6%; massa gorda 40,0 → 32,0 kg; massa magra 60,0 → 58,0 kg \(20% do peso perdido foi massa magra\)/.test(run('tpResumoTexto({alt:"168",pesos:[{d:"2026-01-01",p:"100",gp:"40"},{d:"2026-06-01",p:"90",mg:"32",mm:"58"}],meds:[]})')), 'resumo copiado com a composição');
+  const L = J("tpLerLista('05/04/26 82 31,5\\n15/06/2026 77,9')");
+  ok(L.ok.length === 2 && L.ok[0].gp === '31,5' && !L.ok[1].gp, 'lista colada: 3º número é o % de gordura (opcional)');
+  // tela
+  const r4 = doc.createElement('div'); r4.id = 'calc4'; doc.body.appendChild(r4);
+  run("currentUser={id:'u4',role:'admin'};tpRender(document.getElementById('calc4'))");
+  ok(!r4.querySelector('[data-tp-nc]') && !!r4.querySelector('[data-tp-comp]'), 'composição desligada: só a caixa para ligar');
+  const cb = r4.querySelector('[data-tp-comp]'); cb.checked = true; cb.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  ok(r4.querySelectorAll('[data-tp-nc]').length === 3 && J("ls['trajpeso_u4'].pac[0].comp") === true, 'ligada: % de gordura, massa gorda e massa magra na linha de adicionar');
+  setv(r4.querySelector('[data-tp-nd]'), '2026-01-01', 'change'); setv(r4.querySelector('[data-tp-np]'), '100'); setv(r4.querySelector('[data-tp-nc="gp"]'), '40');
+  r4.querySelector('[data-tp-addp]').click();
+  setv(r4.querySelector('[data-tp-nd]'), '2026-06-01', 'change'); setv(r4.querySelector('[data-tp-np]'), '90'); setv(r4.querySelector('[data-tp-nc="mm"]'), '58');
+  r4.querySelector('[data-tp-addp]').click();
+  ok(J("ls['trajpeso_u4'].pac[0].pesos").map((x) => (x.gp || '') + '/' + (x.mm || '')).join() === '40/,/58' && r4.querySelector('[data-tp-nc="gp"]').value === '', 'a composição vai junto com o peso e os campos se limpam');
+  ok(r4.querySelector('[data-tp-pc="mg"][data-tp-pci="0"]').placeholder === '≈ 40,0 kg' && r4.querySelector('[data-tp-pc="gp"][data-tp-pci="1"]').placeholder === '≈ 35,6%', 'na lista, os valores calculados aparecem como sugestão');
+  setv(r4.querySelector('[data-tp-pc="gp"][data-tp-pci="1"]'), '35');
+  ok(J("ls['trajpeso_u4'].pac[0].pesos[1].gp") === '35' && r4.querySelector('[data-tp-pc="mg"][data-tp-pci="1"]').placeholder === '≈ 31,5 kg', 'editar na lista recalcula a sugestão');
+  ok(/Massa magra/.test(r4.querySelector('[data-tp-res]').textContent) && !!r4.querySelector('[data-tp-modo="comp"]'), 'quadros e escala "Composição" na tela');
+  r4.querySelector('[data-tp-modo="comp"]').click();
+  ok(/massa gorda \(% de gordura\)/.test(r4.querySelector('.tp-graf').innerHTML), 'escala "Composição" desenha as duas massas');
+  // tela cheia com os quadros embaixo (professor, 19/11/2026)
+  r4.querySelector('.tp-graf[data-tp-cheia]').click();
+  const ch = doc.querySelector('.tp-cheia');
+  ok(!!ch && /Peso inicial → atual/.test(ch.querySelector('[data-tp-cheia-kpis]').textContent) && /Variação total/.test(ch.textContent) && /Menor peso/.test(ch.textContent) && /Massa magra/.test(ch.textContent), 'tela cheia: quadros do resumo embaixo do gráfico');
+  ch.querySelector('[data-tp-fecha]').click();
+  run("tpModo='kg'");
+  // desligar esconde os campos, mas guarda os valores
+  const cb2 = r4.querySelector('[data-tp-comp]'); cb2.checked = false; cb2.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  ok(!r4.querySelector('[data-tp-nc]') && J("ls['trajpeso_u4'].pac[0].pesos[0].gp") === '40', 'desligar esconde os campos e guarda o que foi anotado');
+  // privacidade (professor, 19/11/2026: "apenas o usuário vai ter acesso aos seus pacientes. Nenhum dos professores, nem
+  // tampouco os demais alunos"): cada conta lê só a própria chave; nada vai para o servidor
+  ok(/Só você vê estes pacientes/.test(r4.textContent) && /Professores e outros usuários não têm acesso/.test(r4.textContent), 'a tela diz que só o usuário vê os pacientes');
+  const r5 = doc.createElement('div'); r5.id = 'calc5'; doc.body.appendChild(r5);
+  run("currentUser={id:'u5',role:'admin'};tpRender(document.getElementById('calc5'))");
+  ok(!r5.querySelector('[data-tp-res] .tp-graf') && r5.querySelector('[data-tp-pac]').options.length === 1 && !/trajpeso_u4/.test(run('tpChave()')) && J("ls['trajpeso_u4'].pac.length") === 1, 'outra conta (mesmo professor) no mesmo aparelho não vê os pacientes de quem cadastrou');
 }
 
 // 4) fiação e privacidade
