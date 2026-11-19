@@ -541,6 +541,14 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-x:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .tp-lm{position:relative;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,9.5rem) minmax(0,9.5rem);gap:.45rem .55rem;align-items:end;padding:.55rem 2.5rem .55rem 0;border-bottom:1px dashed var(--bd)}
 .tp-lm .tp-x{position:absolute;right:0;bottom:.55rem}
+.tp-atalhos{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:-.25rem 0 .55rem;font-size:.7rem;color:var(--t3)}
+.tp-atalhos button{border:1px solid var(--bd2);background:transparent;color:var(--t2);font-family:var(--font);font-size:.7rem;font-weight:600;border-radius:999px;padding:.2rem .6rem;cursor:pointer}
+.tp-atalhos button:hover{border-color:var(--blue2);color:var(--tx)}
+.tp-atalhos .tp-atalho-colar{margin-left:auto}
+.tp-caixa{border:1px dashed var(--bd2);border-radius:var(--rs);padding:.6rem .65rem;margin:0 0 .6rem}
+.tp-caixa textarea{width:100%;font-family:var(--font);font-size:.8rem}
+.tp-caixa-acoes{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-top:.45rem}
+.tp-caixa-acoes .rcv-nota{margin:0}
 .tp-det{margin-bottom:.45rem}
 .tp-det>summary{cursor:pointer;list-style:none;font-size:.76rem;color:var(--t2);padding:.3rem 0 .4rem;line-height:1.45;user-select:none}
 .tp-det>summary::-webkit-details-marker{display:none}
@@ -586,7 +594,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
   .tp-lm{grid-template-columns:1fr 1fr}
   .tp-lp{grid-template-columns:minmax(0,1fr) minmax(0,5.5rem) auto auto}
 }
-@media (hover:none) and (pointer:coarse){.tp input,.tp select{font-size:16px}}
+@media (hover:none) and (pointer:coarse){.tp input,.tp select,.tp textarea{font-size:16px}}
 .clq-tab{display:grid;grid-template-columns:repeat(auto-fill,minmax(5.6rem,1fr));gap:.3rem;margin-bottom:.6rem}
 .clq-cel{display:flex;justify-content:space-between;gap:.3rem;border:1px solid var(--bd);border-radius:var(--rs);padding:.22rem .45rem;font-size:.7rem;color:var(--t2);font-variant-numeric:tabular-nums}
 .clq-cel b{color:var(--tx)}
@@ -6059,6 +6067,14 @@ var TP_MEDS=[
   {n:'Topiramato',d:['25 mg/dia','50 mg/dia','100 mg/dia']},
   {n:'Cirurgia bariátrica',d:['Bypass gástrico','Sleeve']}
 ];
+// Escalonamento padrão (esquema de bula): semaglutida SC e tirzepatida a cada 4 semanas; liraglutida e
+// naltrexona/bupropiona a cada semana. "Escalonamento padrão" cria as linhas até a dose-alvo; o médico ajusta depois.
+var TP_ESCALA=[
+  {n:'Semaglutida SC',passo:28,d:['0,25 mg/sem','0,5 mg/sem','1 mg/sem','1,7 mg/sem','2,4 mg/sem']},
+  {n:'Tirzepatida',passo:28,d:['2,5 mg/sem','5 mg/sem','7,5 mg/sem','10 mg/sem','12,5 mg/sem','15 mg/sem']},
+  {n:'Liraglutida',passo:7,d:['0,6 mg/dia','1,2 mg/dia','1,8 mg/dia','2,4 mg/dia','3,0 mg/dia']},
+  {n:'Naltrexona/bupropiona',passo:7,d:['8/90 mg 1 cp/dia','8/90 mg 2 cp/dia','8/90 mg 3 cp/dia','8/90 mg 4 cp/dia']}
+];
 var TP_CORES=['#60a5fa','#34d399','#f59e0b','#c084fc','#f472b6','#22d3ee'];
 var TP_MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 var TP_DIA=86400000,TP_MES=30.4375*86400000;
@@ -6066,10 +6082,38 @@ var tpModo='kg',tpBase='',tpAbertos={pesos:false,meds:false};
 function tpChave(){return 'trajpeso_'+((typeof currentUser!=='undefined'&&currentUser&&currentUser.id)||'local');}
 function tpCarrega(){var s=null;try{s=lsGet(tpChave());}catch(e){}if(!s||typeof s!=='object'||!Array.isArray(s.pac))s={pac:[],atual:''};return s;}
 function tpGrava(s){try{lsSet(tpChave(),s);}catch(e){}}
-function tpNovoPac(rot){return {id:'p'+Date.now().toString(36)+Math.floor(Math.random()*46656).toString(36),rot:rot||'',alt:'',pesos:[],meds:[]};}
+function tpNovoPac(rot){return {id:'p'+Date.now().toString(36)+Math.floor(Math.random()*46656).toString(36),rot:rot||'',alt:'',meta:'',pesos:[],meds:[]};}
 function tpDia(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||''));return m?Date.UTC(+m[1],+m[2]-1,+m[3]):NaN;}
 function tpISO(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function tpHojeISO(){return tpISO(new Date());}
+function tpIsoUTC(t){var d=new Date(t);return d.getUTCFullYear()+'-'+('0'+(d.getUTCMonth()+1)).slice(-2)+'-'+('0'+d.getUTCDate()).slice(-2);}
+// data + n meses (atalhos "+1 mês", "+3 meses"... a partir do último peso)
+function tpMaisMeses(iso,n){var t=tpDia(iso);if(!isFinite(t))t=tpDia(tpHojeISO());var d=new Date(t);d.setUTCMonth(d.getUTCMonth()+n);return tpIsoUTC(d.getTime());}
+// "Colar lista": uma medida por linha, com data (dd/mm/aa, dd/mm/aaaa ou aaaa-mm-dd) e peso, como vem do prontuário
+// ou de uma planilha. Linha sem data válida ou com peso fora de 20–400 kg é contada como ignorada.
+function tpLerLista(txt){
+  var ok=[],ruins=0;
+  String(txt||'').split(/\r?\n/).forEach(function(l){
+    l=l.trim();if(!l)return;
+    var m=/(\d{4})-(\d{1,2})-(\d{1,2})/.exec(l),y,mo,d;
+    if(m){y=+m[1];mo=+m[2];d=+m[3];}
+    else{m=/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/.exec(l);if(m){d=+m[1];mo=+m[2];y=+m[3];if(y<100)y+=2000;}}
+    if(!m){ruins++;return;}
+    var resto=l.slice(0,m.index)+' '+l.slice(m.index+m[0].length);
+    var w=/(\d{2,3}(?:[.,]\d{1,2})?)/.exec(resto),p=w?cliqLe(w[1]):NaN;
+    var t=Date.UTC(y,mo-1,d),dd=new Date(t);
+    if(!(p>=20&&p<=400)||y<1950||y>2100||dd.getUTCMonth()!==mo-1||dd.getUTCDate()!==d){ruins++;return;}
+    ok.push({d:tpIsoUTC(t),p:w[1]});
+  });
+  return {ok:ok,ruins:ruins};
+}
+function tpEscalaLinhas(nome,iniISO,alvo){
+  var e=null;TP_ESCALA.forEach(function(x){if(x.n===nome)e=x;});
+  var t0=tpDia(iniISO);if(!e||!isFinite(t0))return [];
+  var fim=Math.max(0,Math.min(e.d.length-1,alvo|0)),l=[];
+  for(var i=0;i<=fim;i++)l.push({n:e.n,dose:e.d[i],ini:tpIsoUTC(t0+i*e.passo*TP_DIA),fim:''});
+  return l;
+}
 function tpData(t){var d=new Date(t);return ('0'+d.getUTCDate()).slice(-2)+'/'+('0'+(d.getUTCMonth()+1)).slice(-2)+'/'+String(d.getUTCFullYear()).slice(2);}
 function tpFmt(v,c){c=c==null?1:c;return Number(v).toFixed(c).replace('.',',');}
 function tpSinal(v,c,u){var a=Math.abs(v);var t=tpFmt(a,c);return (Number(t.replace(',','.'))===0?'':(v<0?'−':'+'))+t+(u||'');}
@@ -6094,7 +6138,8 @@ function tpAnalisa(pac){
   var pts=((pac&&pac.pesos)||[]).map(function(x){return {t:tpDia(x.d),p:cliqLe(x.p)};})
     .filter(function(x){return isFinite(x.t)&&x.p>=20&&x.p<=400;}).sort(function(a,b){return a.t-b.t;});
   var u=[];pts.forEach(function(x){if(u.length&&u[u.length-1].t===x.t)u[u.length-1]=x;else u.push(x);});pts=u;
-  var r={alt:alt,pts:pts,grupos:[]};
+  var meta=cliqLe(pac&&pac.meta);
+  var r={alt:alt,pts:pts,grupos:[],meta:(meta>=20&&meta<=400)?meta:NaN,metaT:NaN};
   if(!pts.length)return r;
   var tUlt=pts[pts.length-1].t;
   var linhas=((pac&&pac.meds)||[]).map(function(m){return {n:String(m.n||'').trim(),dose:String(m.dose||'').trim(),ini:tpDia(m.ini),fim:tpDia(m.fim)};})
@@ -6133,6 +6178,8 @@ function tpAnalisa(pac){
   var t90=z.t-90*TP_DIA,ref=t90<=b.t?b:{t:t90,p:tpPesoEm(pts,t90).p};
   r.ritmo=(pts.length>1&&z.t-ref.t>=28*TP_DIA)?(z.p-ref.p)/((z.t-ref.t)/TP_MES):NaN;
   // marcos de perda a partir do primeiro peso: quando foi atingido cada um
+  // peso-meta: quando foi atingido (primeiro peso ≤ meta, se começou acima)
+  if(isFinite(r.meta)&&b.p>r.meta){for(var im=0;im<pts.length;im++){if(pts[im].p<=r.meta+1e-9){r.metaT=pts[im].t;break;}}}
   r.marcos=[5,10,15,20].map(function(k){
     var alvo=b.p*(1-k/100),q=null;
     for(var i=0;i<pts.length;i++){if(pts[i].p<=alvo+1e-9){q=pts[i];break;}}
@@ -6162,6 +6209,7 @@ function tpGraficoSVG(r,modo,baseT,larg){
   var folga=(t1-t0)*0.03;t0-=folga;t1+=folga;
   var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16),y0=14,y1=208+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),LH=26,yL=y1+28,nL=G.length,H=nL?yL+nL*LH+2:y1+26;
   var vs=pts.map(function(x){return val(x.p);});
+  if(isFinite(r.meta))vs.push(val(r.meta));
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
   if(modo==='pct'){lo=Math.min(lo,0);hi=Math.max(hi,0);}
   var e=tpEscala(lo,hi);
@@ -6188,6 +6236,13 @@ function tpGraficoSVG(r,modo,baseT,larg){
   if(modo==='pct'){
     [-5,-10,-15,-20,-25,-30].forEach(function(v){if(v<=e.lo||v>=e.hi)return;var y=f1(ys(v));
       g.push('<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="#34d399" stroke-opacity=".45" stroke-dasharray="3 4"/>');});
+  }
+  // peso-meta: linha verde tracejada com o rótulo
+  if(isFinite(r.meta)){
+    var vMeta=val(r.meta);
+    if(vMeta>=e.lo&&vMeta<=e.hi){var yMeta=ys(vMeta);
+      g.push('<line x1="'+x0+'" y1="'+f1(yMeta)+'" x2="'+x1+'" y2="'+f1(yMeta)+'" stroke="#34d399" stroke-width="1.6" stroke-dasharray="7 4"/>');
+      g.push('<text x="'+(x1-4)+'" y="'+f1(yMeta-5)+'" text-anchor="end" font-size="9.5" font-weight="700" fill="#34d399">meta '+tpValor(vMeta,modo)+'</text>');}
   }
   // eixo do tempo: meses, de 1 em 1 até de 24 em 24, no máximo ~6 marcas
   g.push('<line x1="'+x0+'" y1="'+y1+'" x2="'+x1+'" y2="'+y1+'" stroke="currentColor" stroke-opacity=".3"/>');
@@ -6244,6 +6299,11 @@ function tpResumoHTML(r){
     var reg=r.reganho>=0.5&&r.perdidoMax>0;
     k.push(tpKpi('Menor peso',tpFmt(r.nadir.p,1)+' kg',tpData(r.nadir.t)+(reg?' · reganho de '+tpFmt(r.reganho,1)+' kg ('+Math.round(r.reganho/r.perdidoMax*100)+'% do que perdeu)':(r.iMin===r.pts.length-1?' · é o peso atual':''))));
     if(isFinite(r.ritmo))k.push(tpKpi('Ritmo recente',tpSinal(r.ritmo,1,' kg/mês'),'últimos 90 dias'));
+  }
+  if(isFinite(r.meta)){
+    var falta=z.p-r.meta;
+    k.push(tpKpi('Peso-meta',tpFmt(r.meta,1)+' kg'+(temImc?' <small>(IMC '+tpFmt(imc(r.meta),1)+')</small>':''),
+      falta<=0.05?'atingida'+(isFinite(r.metaT)?' em '+tpData(r.metaT):''):'faltam '+tpFmt(falta,1)+' kg ('+tpFmt(falta/z.p*100,1)+'% do peso atual)'));
   }
   var h='<div class="tp-kpis">'+k.join('')+'</div>';
   if(!um){
@@ -6305,6 +6365,7 @@ function tpResumoTexto(pac){
     l.push('Variação total: '+tpSinal(r.var,1,' kg')+' ('+tpSinal(r.varPct,1,'%')+') em '+tpFmt(r.meses,1)+' meses');
     l.push('Menor peso: '+tpFmt(r.nadir.p,1)+' kg em '+tpData(r.nadir.t)+(r.reganho>=0.5?'; reganho de '+tpFmt(r.reganho,1)+' kg':''));
   }
+  if(isFinite(r.meta))l.push('Peso-meta: '+tpFmt(r.meta,1)+' kg'+(z.p-r.meta<=0.05?' (atingida)':' (faltam '+tpFmt(z.p-r.meta,1)+' kg)'));
   r.grupos.forEach(function(gr){
     var s=gr.nome+(gr.doses.length?' ('+gr.doses.join(' → ')+')':'')+', '+tpData(gr.ini)+(gr.aberto?' em diante':' a '+tpData(gr.fim));
     if(gr.pIni&&gr.pFim)s+=': '+tpFmt(gr.pIni.p,1)+' → '+tpFmt(gr.pFim.p,1)+' kg ('+tpSinal((gr.pFim.p-gr.pIni.p)/gr.pIni.p*100,1,'%')+')';
@@ -6312,6 +6373,32 @@ function tpResumoTexto(pac){
     l.push(s);
   });
   return l.join('\n');
+}
+// Imprimir ou salvar em PDF para entregar ao paciente: gráfico (na escala que está na tela) e o resumo, em fundo branco.
+function tpImprimir(pac){
+  var r=tpAnalisa(pac);
+  if(!r.pts.length){try{notify('Anote ao menos um peso.','err');}catch(e){}return;}
+  var gb=null;r.grupos.forEach(function(x){if(x.k===tpBase)gb=x;});
+  var modo=(tpModo==='imc'&&!isFinite(r.alt))?'kg':tpModo;
+  var graf=r.pts.length>1?tpGraficoSVG(r,modo,gb?gb.ini:r.pts[0].t,900):'';
+  var css=':root{--surface:#fff;--tx:#1a2744;--t2:#4a5873;--t3:#7a869c;--bd:#d5dbe8;--s2:#f5f7fb;--rs:8px}'
+    +'body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1a2744;margin:0;padding:22px;font-size:12px;background:#fff}'
+    +'h1{font-size:18px;margin:0 0 2px}.sub{color:#66728c;font-size:11px;margin-bottom:10px}.graf svg{width:100%;height:auto;color:#1a2744;display:block;margin-bottom:10px}'
+    +'.tp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-bottom:8px}.tp-kpi{border:1px solid var(--bd);border-radius:8px;padding:6px 8px;background:var(--s2)}'
+    +'.tp-kpi-l,.tp-med-st small{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}.tp-kpi-v{font-size:14px;font-weight:700}.tp-kpi-v small{font-size:11px;color:var(--t2)}.tp-kpi-s{font-size:10px;color:var(--t2)}'
+    +'.tp-marcos{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:8px}.tp-marcos-t{font-size:10px;font-weight:700;color:var(--t2)}'
+    +'.tag{display:inline-block;border-radius:99px;padding:1px 7px;font-size:10px;font-weight:700}.tag-grn{background:#dcfce7;color:#166534}.tag-gold{background:#fef3c7;color:#92400e}.tag-blue{background:#dbeafe;color:#1e3a8a}'
+    +'.tp-meds{display:grid;gap:6px}.tp-med{border:1px solid var(--bd);border-radius:8px;padding:6px 8px;break-inside:avoid}.tp-med-cab{display:flex;gap:6px;align-items:center;font-size:12px}.tp-med-cab i{width:9px;height:9px;border-radius:3px;display:inline-block}.tp-med-cab span{color:var(--t2);font-size:11px}'
+    +'.tp-med-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 12px;margin-top:4px}.tp-med-st{display:flex;flex-direction:column;gap:2px}.tp-med-st b{font-size:13px}.tp-med-st span{font-size:10px;color:var(--t2)}.tp-med-st .tag{align-self:flex-start}'
+    +'.rod{margin-top:12px;color:#7a869c;font-size:9.5px;border-top:1px solid #d5dbe8;padding-top:6px}@page{size:A4;margin:12mm}';
+  var titulo='Trajetória do peso'+(pac.rot?' — '+esc(pac.rot):'');
+  var doc='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>'+titulo+'</title><style>'+css+'</style></head><body>'
+    +'<h1>'+titulo+'</h1><div class="sub">'+(isFinite(r.alt)?'Altura '+tpFmt(r.alt,2)+' m · ':'')+'impresso em '+new Date().toLocaleDateString('pt-BR')+' · Endodirect</div>'
+    +(graf?'<div class="graf">'+graf+'</div>':'')+tpResumoHTML(r)
+    +'<div class="rod">A curva liga os pesos anotados com retas; valores com ≈ foram interpolados entre as medidas vizinhas. Não substitui a avaliação clínica.</div></body></html>';
+  var w=window.open('','_blank','width=1000,height=1100');
+  if(!w){try{notify('Permita pop-ups para imprimir.','err');}catch(e){}return;}
+  w.document.write(doc);w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},500);
 }
 function tpCopiar(txt){
   var ok=function(){try{notify('Resumo copiado.','ok');}catch(e){}};
@@ -6323,13 +6410,17 @@ function tpCopiar(txt){
 // com escalonamento até 2,4 mg, suspensão com reganho e início de tirzepatida.
 function tpExemplo(){
   var h=Date.now(),iso=function(d){return tpISO(new Date(h+d*TP_DIA));};
-  var p=tpNovoPac('Exemplo (fictício)');p.alt='168';
+  var p=tpNovoPac('Exemplo (fictício)');p.alt='168';p.meta='85';
   [[-430,'112,0'],[-400,'111,4'],[-370,'110,6'],[-340,'109,8'],[-310,'107,9'],[-280,'105,6'],[-250,'103,1'],[-220,'100,8'],[-190,'98,9'],
    [-160,'97,2'],[-130,'96,0'],[-100,'95,1'],[-75,'94,6'],[-50,'96,2'],[-28,'97,9'],[0,'97,1']].forEach(function(x){p.pesos.push({d:iso(x[0]),p:x[1]});});
   p.meds=[{n:'Semaglutida SC',dose:'0,25 mg/sem',ini:iso(-355),fim:''},{n:'Semaglutida SC',dose:'0,5 mg/sem',ini:iso(-327),fim:''},
     {n:'Semaglutida SC',dose:'1 mg/sem',ini:iso(-299),fim:''},{n:'Semaglutida SC',dose:'1,7 mg/sem',ini:iso(-271),fim:''},
     {n:'Semaglutida SC',dose:'2,4 mg/sem',ini:iso(-243),fim:iso(-75)},{n:'Tirzepatida',dose:'2,5 mg/sem',ini:iso(-28),fim:''}];
   return p;
+}
+function tpEscalaAlvos(nome){
+  var e=null;TP_ESCALA.forEach(function(x){if(x.n===nome)e=x;});
+  return e?e.d.map(function(d,i){return '<option value="'+i+'"'+(i===e.d.length-1?' selected':'')+'>'+esc(d)+'</option>';}).join(''):'';
 }
 function tpDosesOpt(nome){
   var k=String(nome||'').trim().toLowerCase(),m=null;
@@ -6351,17 +6442,29 @@ function tpRender(root){
         +'<button type="button" class="btn btn-outline btn-sm" data-tp-novo>+ Novo paciente</button>'
         +'<button type="button" class="btn btn-outline btn-sm" data-tp-exemplo>Ver exemplo</button></div>'
         +'<div class="rcv-campos"><label class="rcv-num"><span>Identificação (iniciais ou código)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" value="'+esc(pac.rot||'')+'"></label>'
-        +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label></div>'
+        +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
+        +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
         +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">Fica só neste aparelho, nesta conta; não vai para o servidor. Não use o nome do paciente.</div></section>'
       +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Pesos</div>'
         +'<div class="tp-add"><input type="date" data-tp-nd value="'+tpHojeISO()+'" aria-label="Data do peso"><input type="text" inputmode="decimal" autocomplete="off" data-tp-np placeholder="Peso (kg)" aria-label="Peso em kg">'
         +'<button type="button" class="btn btn-primary btn-sm" data-tp-addp>Adicionar</button></div>'
+        +'<div class="tp-atalhos"><span>Data:</span><button type="button" data-tp-dt="0">hoje</button><button type="button" data-tp-dt="1" title="a partir do último peso">+1 mês</button>'
+          +'<button type="button" data-tp-dt="3" title="a partir do último peso">+3 meses</button><button type="button" data-tp-dt="6" title="a partir do último peso">+6 meses</button>'
+          +'<button type="button" class="tp-atalho-colar" data-tp-colar>Colar lista</button></div>'
+        +'<div class="tp-caixa" data-tp-colar-box hidden><textarea rows="5" data-tp-lista placeholder="Uma medida por linha, com data e peso. Ex.:&#10;05/04/26  82&#10;15/06/2026  77,9"></textarea>'
+          +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-colar-ok>Adicionar estes pesos</button><span class="rcv-nota">Data em dd/mm/aa ou dd/mm/aaaa; o mesmo dia troca o peso.</span></div></div>'
         +'<div data-tp-pesos></div></section>'
       +'<section class="rcv-sec"><div class="rcv-sec-t">3 · Medicações e doses</div><div data-tp-meds></div>'
-        +'<button type="button" class="btn btn-outline btn-sm" data-tp-addm style="margin:.15rem 0 .2rem">+ Medicação ou nova dose</button>'
+        +'<div class="tp-linha" style="margin:.15rem 0 .3rem"><button type="button" class="btn btn-outline btn-sm" data-tp-addm>+ Medicação ou nova dose</button>'
+          +'<button type="button" class="btn btn-outline btn-sm" data-tp-esc>Escalonamento padrão</button></div>'
+        +'<div class="tp-caixa" data-tp-esc-box hidden><div class="rcv-campos">'
+          +'<label class="rcv-num"><span>Medicação</span><select data-tp-esc-med>'+TP_ESCALA.map(function(e){return '<option>'+esc(e.n)+'</option>';}).join('')+'</select></label>'
+          +'<label class="rcv-num"><span>Início</span><input type="date" data-tp-esc-ini value="'+tpHojeISO()+'"></label>'
+          +'<label class="rcv-num"><span>Até a dose</span><select data-tp-esc-alvo>'+tpEscalaAlvos(TP_ESCALA[0].n)+'</select></label></div>'
+          +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-esc-ok>Criar as doses</button><span class="rcv-nota">Esquema de bula: semaglutida e tirzepatida a cada 4 semanas; liraglutida e naltrexona/bupropiona a cada semana. Depois, ajuste o que mudou.</span></div></div>'
         +'<div class="rcv-nota" style="margin-bottom:.5rem">Uma linha por dose: no escalonamento, cada dose nova é uma linha da mesma medicação, e a anterior termina sozinha. Fim em branco = em uso. Cirurgia bariátrica entra aqui, na data da cirurgia.</div></section>'
       +'</div><div class="tp-col-res" data-tp-res aria-live="polite"></div>'
-      +'<div class="tp-acoes"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button>'
+      +'<div class="tp-acoes"><span class="tp-linha" style="margin:0"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button><button type="button" class="btn btn-outline btn-sm" data-tp-imprimir>Imprimir / PDF</button></span>'
         +'<button type="button" class="btn btn-outline btn-sm tp-excluir" data-tp-excluir>Excluir este paciente</button></div>'
       +'<datalist id="tp-dl-meds">'+TP_MEDS.map(function(m){return '<option value="'+esc(m.n)+'">';}).join('')+'</datalist>'
       +'</div>';
@@ -6429,8 +6532,21 @@ function tpRender(root){
       resultado();
     }
   });
+  function colarLista(){
+    var ta=q('[data-tp-lista]'),r=tpLerLista(ta&&ta.value);
+    r.ok.forEach(function(x){var ja=null;pac.pesos.forEach(function(y){if(y.d===x.d)ja=y;});if(ja)ja.p=x.p;else pac.pesos.push(x);});
+    if(r.ok.length){tpOrdena(pac);salva();pesos();resultado();ta.value='';q('[data-tp-colar-box]').hidden=true;}
+    try{notify(r.ok.length?(r.ok.length+' peso'+(r.ok.length===1?'':'s')+' adicionado'+(r.ok.length===1?'':'s')+(r.ruins?' · '+r.ruins+' linha'+(r.ruins===1?'':'s')+' ignorada'+(r.ruins===1?'':'s'):'')):'Nenhuma linha com data e peso reconhecidos.',r.ok.length?'ok':'err');}catch(e){}
+  }
+  function criaEscala(){
+    var nome=q('[data-tp-esc-med]').value,ini=q('[data-tp-esc-ini]').value,alvo=+q('[data-tp-esc-alvo]').value;
+    var l=tpEscalaLinhas(nome,ini,alvo);
+    if(!l.length){try{notify('Escolha a medicação e a data de início.','err');}catch(e){}return;}
+    pac.meds=(pac.meds||[]).concat(l);tpAbertos.meds=true;q('[data-tp-esc-box]').hidden=true;salva();meds();resultado();
+  }
   root.addEventListener('change',function(ev){
     var t=ev.target;
+    if(t.hasAttribute('data-tp-esc-med')){var a=q('[data-tp-esc-alvo]');if(a)a.innerHTML=tpEscalaAlvos(t.value);return;}
     if(t.hasAttribute('data-tp-pac')){est.pac.forEach(function(p){if(p.id===t.value)pac=p;});tpBase='';tpAbertos={pesos:false,meds:false};salva();form();return;}
     if(t.hasAttribute('data-tp-pd')){var x=pac.pesos[+t.getAttribute('data-tp-pd')];if(x&&isFinite(tpDia(t.value))){x.d=t.value;tpOrdena(pac);salva();pesos();resultado();}return;}
     if(t.hasAttribute('data-tp-base')){tpBase=t.value;resultado();}
@@ -6440,6 +6556,15 @@ function tpRender(root){
   root.addEventListener('click',function(ev){
     var b=ev.target.closest('button');if(!b||!root.contains(b))return;
     if(b.hasAttribute('data-tp-addp')){adicionaPeso();return;}
+    if(b.hasAttribute('data-tp-dt')){
+      var n=+b.getAttribute('data-tp-dt'),l=pac.pesos||[],ult=l.length?l[l.length-1].d:'';
+      q('[data-tp-nd]').value=n?tpMaisMeses(ult||tpHojeISO(),n):tpHojeISO();try{q('[data-tp-np]').focus();}catch(e){}return;
+    }
+    if(b.hasAttribute('data-tp-colar')){var cb=q('[data-tp-colar-box]');cb.hidden=!cb.hidden;if(!cb.hidden){try{q('[data-tp-lista]').focus();}catch(e){}}return;}
+    if(b.hasAttribute('data-tp-colar-ok')){colarLista();return;}
+    if(b.hasAttribute('data-tp-esc')){var eb=q('[data-tp-esc-box]');eb.hidden=!eb.hidden;return;}
+    if(b.hasAttribute('data-tp-esc-ok')){criaEscala();return;}
+    if(b.hasAttribute('data-tp-imprimir')){tpImprimir(pac);return;}
     if(b.hasAttribute('data-tp-delp')){pac.pesos.splice(+b.getAttribute('data-tp-delp'),1);salva();pesos();resultado();return;}
     if(b.hasAttribute('data-tp-addm')){
       var ant=pac.meds[pac.meds.length-1];

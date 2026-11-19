@@ -142,6 +142,52 @@ ok(J("ls['trajpeso_u1'].pac.length") === 1 && J("ls['trajpeso_u1'].pac[0].rot") 
 run("currentUser={id:'u2',role:'aluno'};document.getElementById('calc').innerHTML='';tpRender(document.getElementById('calc'))");
 ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelector('[data-tp-campo="rot"]').value === '', 'outra conta no mesmo aparelho não vê os pacientes');
 
+// 3b) preencher mais rápido (professor, 18/11/2026: "mais fluida, mais prática, mais rápida de preencher" → "Vamos ver como fica")
+{
+  const L = J("tpLerLista('05/04/26 82\\n15/06/2026\\t77,9 kg\\n2026-08-01: 75.5\\nabril 80\\n31/02/26 70\\n10/10/26 5\\n\\n')");
+  ok(L.ok.map((x) => x.d + '=' + x.p).join() === '2026-04-05=82,2026-06-15=77,9,2026-08-01=75.5' && L.ruins === 3, 'colar lista: dd/mm/aa, dd/mm/aaaa com tab e kg, aaaa-mm-dd; ignora sem data, data impossível e peso absurdo: ' + JSON.stringify(L));
+  ok(run("tpMaisMeses('2026-01-31',1)") === '2026-03-03' || run("tpMaisMeses('2026-01-31',1)") === '2026-03-02', '+1 mês segue o calendário');
+  ok(run("tpMaisMeses('2026-05-10',3)") === '2026-08-10', '+3 meses');
+  const E = J("tpEscalaLinhas('Semaglutida SC','2026-01-05',4)");
+  ok(E.length === 5 && E.map((x) => x.ini).join() === '2026-01-05,2026-02-02,2026-03-02,2026-03-30,2026-04-27' && E[4].dose === '2,4 mg/sem' && E.every((x) => x.fim === ''), 'escalonamento da semaglutida: 5 doses de 4 em 4 semanas');
+  const EL = J("tpEscalaLinhas('Liraglutida','2026-01-05',2)");
+  ok(EL.length === 3 && EL[2].ini === '2026-01-19' && EL[2].dose === '1,8 mg/dia', 'liraglutida semanal, parando na dose-alvo escolhida');
+  run(`var M=tpAnalisa({alt:'170',meta:'85',pesos:[{d:'2026-01-01',p:'100'},{d:'2026-03-01',p:'90'},{d:'2026-05-01',p:'84'},{d:'2026-07-01',p:'86'}],meds:[]});`);
+  ok(run('M.meta') === 85 && run('M.metaT') === Date.UTC(2026, 4, 1), 'peso-meta: valor e data em que foi atingido');
+  const hm = run('tpResumoHTML(M)');
+  ok(/Peso-meta/.test(hm) && /85,0 kg/.test(hm) && /atingida em 01\/05\/26/.test(hm) === false && /faltam 1,0 kg/.test(hm), 'quadro do peso-meta: com o peso atual acima da meta, mostra quanto falta');
+  run("M=tpAnalisa({meta:'85',pesos:[{d:'2026-01-01',p:'100'},{d:'2026-05-01',p:'84'}],meds:[]})");
+  ok(/atingida em 01\/05\/26/.test(run('tpResumoHTML(M)')), 'quadro do peso-meta: atingida, com a data');
+  ok(/meta 85,0 kg/.test(run("tpGraficoSVG(M,'kg',M.pts[0].t)")) && /stroke="#34d399" stroke-width="1.6" stroke-dasharray="7 4"/.test(run("tpGraficoSVG(M,'kg',M.pts[0].t)")), 'gráfico: linha da meta');
+  ok(/Peso-meta: 85,0 kg \(atingida\)/.test(run("tpResumoTexto({meta:'85',pesos:[{d:'2026-01-01',p:'100'},{d:'2026-05-01',p:'84'}],meds:[]})")), 'resumo em texto com a meta');
+  // na tela: atalhos de data, colar lista, escalonamento e imprimir
+  // contêiner novo, como no app (cada abertura da calculadora cria o seu)
+  const r3 = doc.createElement('div'); r3.id = 'calc3'; doc.body.appendChild(r3);
+  run("currentUser={id:'u3',role:'admin'};tpRender(document.getElementById('calc3'))");
+  setv(r3.querySelector('[data-tp-np]'), '90'); setv(r3.querySelector('[data-tp-nd]'), '2026-02-10', 'change'); r3.querySelector('[data-tp-addp]').click();
+  r3.querySelector('[data-tp-dt="3"]').click();
+  ok(r3.querySelector('[data-tp-nd]').value === '2026-05-10', 'atalho "+3 meses" conta do último peso');
+  r3.querySelector('[data-tp-dt="0"]').click();
+  ok(r3.querySelector('[data-tp-nd]').value === run('tpHojeISO()'), 'atalho "hoje"');
+  r3.querySelector('[data-tp-colar]').click();
+  ok(r3.querySelector('[data-tp-colar-box]').hidden === false, 'colar lista abre a caixa');
+  r3.querySelector('[data-tp-lista]').value = '10/03/26 88\n10/04/26 86,5\nxx';
+  run('avisos.length=0'); r3.querySelector('[data-tp-colar-ok]').click();
+  ok(J("ls['trajpeso_u3'].pac[0].pesos").map((x) => x.d).join() === '2026-02-10,2026-03-10,2026-04-10' && /2 pesos adicionados · 1 linha ignorada/.test(run('avisos[0][0]')) && r3.querySelector('[data-tp-colar-box]').hidden === true, 'colar lista grava em ordem e avisa quantos entraram');
+  r3.querySelector('[data-tp-esc]').click();
+  const sel = r3.querySelector('[data-tp-esc-med]'); sel.value = 'Tirzepatida'; sel.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  ok(r3.querySelectorAll('[data-tp-esc-alvo] option').length === 6 && r3.querySelector('[data-tp-esc-alvo]').value === '5', 'escalonamento: doses da medicação escolhida, dose máxima pré-selecionada');
+  r3.querySelector('[data-tp-esc-alvo]').value = '2'; setv(r3.querySelector('[data-tp-esc-ini]'), '2026-02-12', 'change');
+  r3.querySelector('[data-tp-esc-ok]').click();
+  ok(J("ls['trajpeso_u3'].pac[0].meds").map((x) => x.dose + '@' + x.ini).join() === '2,5 mg/sem@2026-02-12,5 mg/sem@2026-03-12,7,5 mg/sem@2026-04-09' && r3.querySelector('details[data-tp-det="meds"]').open, 'escalonamento cria as doses e abre a lista para ajustar');
+  setv(r3.querySelector('[data-tp-campo="meta"]'), '80');
+  ok(J("ls['trajpeso_u3'].pac[0].meta") === '80' && /Peso-meta/.test(r3.querySelector('[data-tp-res]').textContent), 'peso-meta na tela');
+  run(`var impresso='';window.open=function(){return {document:{write:function(h){impresso+=h;},close:function(){}},focus:function(){},print:function(){}};};`);
+  r3.querySelector('[data-tp-imprimir]').click();
+  const imp = run('impresso');
+  ok(/<title>Trajetória do peso<\/title>/.test(imp) && /<svg viewBox="0 0 900 /.test(imp) && /Peso-meta/.test(imp) && /Tirzepatida/.test(imp) && /Não substitui a avaliação clínica/.test(imp) && /--surface:#fff/.test(imp), 'imprimir/PDF: gráfico, resumo e medicações em fundo branco');
+}
+
 // 4) fiação e privacidade
 ok(!/trajpeso|tpCarrega/.test(corpo('userStatePayload')), 'pacientes fora do app_state (não vão para o servidor)');
 const iCalc = html.indexOf("  {id:'trajpeso',"), iImc = html.indexOf("  {id:'imc',name:'IMC'"), iPep = html.indexOf("  {id:'pep',");
@@ -161,7 +207,7 @@ ok(/soProfessor:true,/.test(html.slice(iCalc, iPep)), 'ainda é piloto: só o pr
 }
 ok(/\+\(c\.soProfessor\?'<div class="calc-piloto" style="margin:\.1rem 0 \.6rem">Piloto · visível só para professores<\/div>':''\)\s*\+'<div data-calc-render><\/div>'/.test(html), 'tela da calculadora com o selo de piloto');
 ok(/Apovian CM et al\., J Clin Endocrinol Metab 2015/.test(html.slice(iCalc, iPep)), 'nota com a referência do critério dos 3 meses');
-ok(/@media \(hover:none\) and \(pointer:coarse\)\{\.tp input,\.tp select\{font-size:16px\}\}/.test(html), 'campos com 16 px no toque (iPhone não amplia)');
+ok(/@media \(hover:none\) and \(pointer:coarse\)\{\.tp input,\.tp select,\.tp textarea\{font-size:16px\}\}/.test(html), 'campos com 16 px no toque (iPhone não amplia)');
 // Layout (professor, 18/11/2026: "essa parte aqui de baixo ficou muito espremida ... deixar mais centralizado, junto com o gráfico")
 ok(/@container \(min-width:1050px\)\{\s*\.tp\{display:grid;grid-template-columns:minmax\(0,25rem\) minmax\(0,1fr\)/.test(html) && /\[data-calc-render\]:has\(> \.tp\)\{container-type:inline-size\}/.test(html),
   'cartão largo: preenchimento à esquerda e gráfico + resumo à direita (pela largura do cartão)');
