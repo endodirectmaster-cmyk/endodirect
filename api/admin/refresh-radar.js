@@ -10,7 +10,7 @@
 // Supabase do admin>. Validamos o token, conferimos que o e-mail esta em
 // endodirect_admins e so entao rodamos o radar (lib/radar.js).
 const { runRadar } = require('../../lib/radar');
-const { sendTestNewsletter, loadPayload, serviceKey: newsletterServiceKey, currentQotd } = require('../../lib/newsletter');
+const { sendTestNewsletter, loadPayload, serviceKey: newsletterServiceKey, currentQotd, getQotdFora, usuariosSemQotd } = require('../../lib/newsletter');
 const { pushQotd } = require('../../lib/push-qotd');
 const { gerarDiscussao } = require('../../lib/discussao');
 const { selecionar } = require('../../lib/discussao-auto');
@@ -101,7 +101,9 @@ module.exports = async function handler(req, res) {
       const estado = await loadPayload(newsletterServiceKey());
       const q = currentQotd(estado);
       if (!q) return json(res, 404, { ok: false, error: 'Nenhuma Questao do Dia postada ainda.' });
-      const r = await pushQotd({ qotd: q, enviar: (m) => push.sendToAll(m), configurado: push.isConfigured });
+      // Quem desmarcou a subespecialidade da questão no perfil fica de fora também no reenvio manual (19/11/2026).
+      const excluirUsuarios = usuariosSemQotd(await getQotdFora(newsletterServiceKey()), q);
+      const r = await pushQotd({ qotd: q, enviar: (m) => push.sendToAll(m, { excluirUsuarios }), configurado: push.isConfigured });
       return json(res, r.sent ? 200 : 500, { ok: !!r.sent, motivo: r.motivo, push: r.push, id: q.id || '' });
     } catch (error) {
       console.error('[refresh-radar:qotd-push] erro:', (error && error.stack) || error);

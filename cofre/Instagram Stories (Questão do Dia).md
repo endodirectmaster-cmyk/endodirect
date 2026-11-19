@@ -1,9 +1,28 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-11-18
+atualizado: 2026-11-19
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 🎯 FILTRO DE SUBESPECIALIDADES NO PERFIL DO ALUNO (19/11/2026, sw v464)
+
+Professor: "deixar um filtro no perfil dele para ele escolher as subespecialidades que eles têm interesse em receber a
+questão do dia"; "se ele não quiser endocrinopediatria e hoje tiver uma questão, ele não vai receber nenhuma questão".
+
+- **Onde:** Meu perfil → cartão "🧠 Questão do Dia: subespecialidades", uma caixa por subespecialidade de `DIR_SUBS`
+  (as 12 do mural + Endocrinologia Básica e Endocrinopatias, que a Questão do Dia também usa), todas marcadas de início,
+  com "Marcar todas"/"Desmarcar todas". Lista lida na hora (`qotdSubsLista()`): DIR_SUBS é declarada mais abaixo no
+  arquivo, e uma cópia no topo ficava `undefined` (quebrou o perfil no primeiro teste).
+- **O que guarda:** as DE FORA, em `user_profile.qotdSubsFora` (vai ao servidor no app_state). Assim uma subespecialidade
+  nova entra marcada para todos. Todas marcadas = a chave é apagada. Questão sem subespecialidade aparece sempre.
+- **Onde vale:** `qotdTodaysAluno()` na janela do Dashboard, no "Comece por aqui"/fila de entrada e no selo "De hoje" do
+  arquivo. O arquivo mostra só as acompanhadas, com "Ver todas" (só na sessão) e "Escolher no perfil"; link direto
+  (/#qotd/<id>) para uma de fora abre "todas". O arquivo do professor e "Como o aluno vê" não são filtrados.
+- **E-mail:** `getQotdFora` lê `qotdSubsFora` de cada aluno; quem desmarcou a subespecialidade da questão do dia recebe
+  a edição só com os artigos e o assunto "3 artigos do dia". **Notificação:** `sendToAll(m, { excluirUsuarios })` pula os
+  aparelhos dessas contas (push_subs.user_id), no cron e no reenvio manual do painel. Falha ao ler os filtros = todos
+  recebem. Teste: `scripts/test-qotd-filtro-subs.js` (inclui a edição de ponta a ponta com dois destinatários).
 
 ## 📱 POST E STORY "ENDODIRECT AGORA NA APP STORE" (PUBLICADOS EM 18/11/2026)
 
