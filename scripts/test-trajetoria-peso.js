@@ -286,6 +286,9 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   ok(/Só você vê estes pacientes/.test(r4.textContent) && /Professores e outros usuários não têm acesso/.test(r4.textContent), 'a tela diz que só o usuário vê os pacientes');
   const r5 = doc.createElement('div'); r5.id = 'calc5'; doc.body.appendChild(r5);
   run("currentUser={id:'u5',role:'admin'};tpRender(document.getElementById('calc5'))");
+  // aparelho sem espaço: avisa uma vez (lsSet devolve false só para os dados que existem apenas no aparelho)
+  run("var lsSetVelho=lsSet;lsSet=function(){return false;};avisos.length=0;tpGrava({pac:[]});tpGrava({pac:[]});lsSet=lsSetVelho;tpAvisoCheio=false;");
+  ok(J('avisos').length === 1 && /Sem espaço neste aparelho/.test(J('avisos')[0][0]), 'sem espaço no aparelho: avisa (uma vez) que a alteração não foi salva');
   ok(!r5.querySelector('[data-tp-res] .tp-graf') && r5.querySelector('[data-tp-pac]').options.length === 1 && !/trajpeso_u4/.test(run('tpChave()')) && J("ls['trajpeso_u4'].pac.length") === 1, 'outra conta (mesmo professor) no mesmo aparelho não vê os pacientes de quem cadastrou');
 }
 

@@ -38,7 +38,7 @@ function ctx(cota) {
   const c = { window: {}, localStorage: ls, JSON };
   c.window.localStorage = ls;
   vm.createContext(c);
-  vm.runInContext('var mem={};' + linha(/\nvar LS_MAX_CHARS=\d+;/) + '\n' + linha(/\nvar LS_SO_MEMORIA=\{[^}]*\};/) + '\n' + corpo('lsGet') + corpo('lsSet'), c);
+  vm.runInContext('var mem={};' + linha(/\nvar LS_MAX_CHARS=\d+;/) + '\n' + linha(/\nvar LS_SO_MEMORIA=\{[^}]*\};/) + '\n' + corpo('lsGet') + corpo('lsSoAparelho') + corpo('lsSet'), c);
   return c;
 }
 {
@@ -69,6 +69,16 @@ function ctx(cota) {
   vm.runInContext("lsSet('fc',[" + Array.from({ length: 40 }, (_, i) => i).join(',') + '])', c);
   ok('🧨 cota estourada: a cópia velha não fica no aparelho', c.localStorage.getItem('endodirect_v1_fc') === null);
   ok('cota estourada: o valor novo segue legível na sessão', vm.runInContext("lsGet('fc').length", c) === 40);
+}
+{
+  // Pacientes da Trajetória do peso só existem no aparelho: sem teto de tamanho e, na cota estourada, a cópia anterior fica
+  const c = ctx(5000000);
+  c.grande = { pac: [{ t: 'x'.repeat(1100000) }] };
+  ok('pacientes acima de LS_MAX_CHARS vão para o aparelho mesmo assim', vm.runInContext("lsSet('trajpeso_u1',grande)", c) === true && c.localStorage.getItem('endodirect_v1_trajpeso_u1').length > 1100000);
+  const d = ctx(80);
+  d.localStorage.setItem('endodirect_v1_trajpeso_u1', JSON.stringify({ pac: [1] }));
+  const r = vm.runInContext("lsSet('trajpeso_u1',{pac:[" + Array.from({ length: 40 }, (_, i) => i).join(',') + "]})", d);
+  ok('🧨 cota estourada nos pacientes: a cópia anterior fica no aparelho e lsSet avisa (false)', r === false && JSON.parse(d.localStorage.getItem('endodirect_v1_trajpeso_u1')).pac.length === 1 && vm.runInContext("lsGet('trajpeso_u1').pac.length", d) === 1);
 }
 // Mural: tipo calculado uma vez por item, mesma ordem de antes
 {
