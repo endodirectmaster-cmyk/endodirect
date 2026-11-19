@@ -41,12 +41,13 @@ ok(i0 > 0 && i1 > i0, "não achei a entrada {id:'reganhoglp1'} em CALCS");
 const entrada = html.slice(i0, i1);
 ok(/area:'Obesidade'/.test(entrada), 'a calculadora tem de ficar em Obesidade');
 ok(!/soProfessor:true/.test(entrada) && !/foraDoAppIos:true/.test(entrada), 'a calculadora é dos alunos, no site e no app do iPhone (app aprovado em 16/11/2026: sem soProfessor e sem foraDoAppIos)');
-ok(/external:true/.test(entrada) && /link:'https:\/\/glp1regainrisk\.com'/.test(entrada), 'a calculadora tem de ser externa, com link https para glp1regainrisk.com');
+ok(/external:true/.test(entrada) && /link:'https:\/\/glp1regainrisk\.com\/\?lang=pt'/.test(entrada), 'a calculadora tem de ser externa, com link https para glp1regainrisk.com, aberta em português (?lang=pt, 19/11/2026)');
 ok(/rotuloExt:'Ferramenta dos autores'/.test(entrada), 'o rótulo do cartão tem de ser "Ferramenta dos autores" (não é ferramenta oficial de sociedade)');
 
 // ── 2. o texto ───────────────────────────────────────────────────────────────
 ok(/TR<sub>50<\/sub>/.test(entrada) && /metade ou mais do peso perdido/.test(entrada), 'o texto tem de explicar o desfecho (TR50: recuperar metade do peso perdido)');
-ok(/<i>Weight at 3 months<\/i>/.test(entrada) && /<i>Treatment duration<\/i>/.test(entrada), 'falta o guia de preenchimento dos campos em inglês');
+// 19/11/2026: o site ganhou português; o guia usa os nomes do site em português e avisa das perguntas de pesquisa.
+ok(/<i>Peso aos 3 meses<\/i>/.test(entrada) && /<i>Duração do tratamento<\/i>/.test(entrada) && /perguntas rápidas para a pesquisa dos autores/.test(entrada) && !/em inglês, com guia/.test(entrada), 'o guia tem de usar os campos do site em português');
 ok(/21\.882/.test(entrada) && /14\.513/.test(entrada) && /0,77/.test(entrada) && /0,82/.test(entrada), 'o texto tem de trazer a coorte (21.882 / 14.513) e o índice C (0,77 / 0,82)');
 ok(/pesquisa/.test(entrada) && /sem validação em brasileiros/.test(entrada) && /em revisão/.test(entrada), 'o texto tem de trazer os limites: só pesquisa, sem validação em brasileiros, artigo em revisão');
 ok(!/'/.test(entrada.replace(/'[^'\n]*'/g, '')), 'aspas soltas na entrada');
