@@ -57,6 +57,18 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
 - **Nota de rodapé (19/11, sw v459; professor marcou a frase e pediu "Retirar"):** saiu da nota da tela a frase "A curva
   liga os pesos anotados com retas; o peso numa data sem medida ... aparece com ≈ quando não há medida a até 7 dias".
   Ficam: privacidade, critério dos 3 meses (Apovian 2015) e faixas de IMC. O rodapé do PDF continua com a versão curta.
+- **Homônimos (19/11, sw v460; professor: "existem homônimos ... pacientes que as iniciais sejam as mesmas"):** cada
+  paciente tem `id` interno único (`tpNovoPac`), então os dados nunca se misturam; o que faltava era o usuário distinguir.
+  (1) A lista mostra "JMS · desde 05/05/26 · 71 kg" (1º peso e último peso; atualiza ao anotar). (2) Aviso ao repetir a
+  identificação (`tpNorm`: sem diferença de maiúsculas, acentos, espaços, pontos e hífens): "Já existe um paciente
+  "JMS" (desde …). Acrescente algo para diferenciar, como "JMS-2" ou o nº do prontuário" — só avisa, não bloqueia.
+  (3) Campo "Identificação (iniciais ou nº do prontuário)", exemplo "JMS 4821" (o nº do prontuário é único e não
+  identifica fora da clínica: melhor para a LGPD do que data de nascimento). (4) Com 6 pacientes ou mais, busca por
+  iniciais/nº (até 8 resultados como botões; tocar abre o paciente).
+- **Servidor e volume (medido em 19/11):** o banco inteiro tem ~1,1 GB (global_state 18 MB, app_state 17 MB, 170
+  contas). 3.000 pacientes = 3 a 12 MB (~1% do banco); 100 mil = 100 a 400 MB. Se a sincronização vier, uma linha por
+  paciente (cada edição manda só aquele paciente, 1–4 KB). Sincronização no servidor ainda **não decidida** pelo
+  professor (opções apresentadas: servidor com RLS só do dono, ou emparelhamento por QR com criptografia).
 - ⚠️ **Privacidade (LGPD):** os pacientes ficam só no aparelho, na chave `trajpeso_<uid>` do `lsSet` (outra conta no
   mesmo aparelho não vê). `userStatePayload` não lê essa chave: nada vai para o app_state. A exclusão da conta
   apaga todas as chaves `endodirect_v1_*` do aparelho. Se um dia pedirem sincronizar entre aparelhos, é dado de
