@@ -174,6 +174,24 @@ ok(!doc.querySelector('.tp-cheia') && doc.body.style.overflow === '', '× fecha 
 res.querySelector('.tp-graf[data-tp-cheia]').click();
 doc.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 ok(!doc.querySelector('.tp-cheia'), 'Esc fecha a tela cheia');
+// animação ao abrir (professor, 19/11/2026: "Deixa uma animação quando o gráfico abrir em tela cheia")
+{
+  const box = doc.createElement('div'); box.innerHTML = run("tpGraficoSVG(R,'kg',R.pts[0].t,900)"); doc.body.appendChild(box);
+  const chamadas = [];
+  dom.window.Element.prototype.animate = function (k, o) { chamadas.push({ el: this, k, o }); return {}; };
+  box.querySelectorAll('polyline').forEach((pl) => { pl.getTotalLength = () => 500; });
+  ctx.__box = box; run('tpAnimaGrafico(__box)');
+  const linha = chamadas.filter((c) => c.el.tagName.toLowerCase() === 'polyline'), pts = chamadas.filter((c) => c.el.tagName.toLowerCase() === 'circle');
+  const rot = chamadas.filter((c) => c.el.tagName.toLowerCase() !== 'polyline' && c.el.tagName.toLowerCase() !== 'circle');
+  ok(linha.length === 1 && linha[0].k[0].strokeDashoffset === 500 && linha[0].k[1].strokeDashoffset === 0 && box.querySelector('polyline').style.strokeDasharray === '500 500', 'a curva se desenha da esquerda para a direita');
+  const ds = pts.map((c) => c.o.delay);
+  ok(pts.length === box.querySelectorAll('circle').length && ds.every((d, i) => i === 0 || d >= ds[i - 1]) && ds[ds.length - 1] > ds[0], 'cada ponto acende quando a linha passa (atraso cresce com a posição)');
+  ok(rot.length >= 5 && rot.every((c) => c.o.delay >= Math.max(...ds) - 100), 'setas e números surgem no fim');
+  chamadas.length = 0; dom.window.matchMedia = () => ({ matches: true });
+  box.innerHTML = run("tpGraficoSVG(R,'kg',R.pts[0].t,900)"); run('tpAnimaGrafico(__box)');
+  ok(chamadas.length === 0, 'com "reduzir movimento" no aparelho, sem animação');
+  delete dom.window.matchMedia; delete dom.window.Element.prototype.animate; box.remove();
+}
 res.querySelector('[data-tp-modo="pct"]').click();
 const txt = run('tpResumoTexto(tpCarrega().pac[0])');
 ok(/^Trajetória do peso — AB \(altura 1,65 m\)/.test(txt) && /Semaglutida SC \(0,25 mg\/sem → 0,5 mg\/sem\)/.test(txt) && /aos 3 meses −/.test(txt), 'resumo em texto para o prontuário');
