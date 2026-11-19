@@ -29,9 +29,8 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
 - **Gráfico (SVG próprio, `tpGraficoSVG`):** desenhado na largura real do cartão (320 a 760 px), para a letra não
   encolher no celular. Retas entre os pesos anotados (não inventa curva). Modos: peso em kg (linhas tracejadas de
   IMC 25/30/35/40 com rótulo à direita), IMC (faixas nomeadas) e variação % a partir do 1º peso ou do início de uma
-  medicação (linhas de −5/−10/−15/−20%). Embaixo, uma faixa por medicação (cor própria, um bloco por dose, dose
-  escrita quando cabe, seta se em uso) e uma linha tracejada no início de cada uma. Rótulos no 1º, no último e no
-  menor peso (ponto verde).
+  medicação (linhas de −5/−10/−15/−20%). ~~Embaixo, uma faixa por medicação~~ (trocada em 19/11 por setas na
+  curva, ver abaixo). Rótulos no 1º, no último e no menor peso (ponto verde).
 - **Resumo:** peso e IMC inicial → atual (classe da OMS), variação total, menor peso e reganho (% do que perdeu),
   ritmo dos últimos 90 dias, marcos de 5/10/15/20% (data em que atingiu; o próximo com quanto falta) e, por
   medicação: período, peso no início e no fim (interpolado entre as medidas vizinhas, com ≈ se não há medida a até
@@ -62,6 +61,23 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   (`pac.meta`: linha verde tracejada no gráfico, quadro "Peso-meta" com quanto falta ou a data em que foi atingido,
   linha no resumo copiado); (5) **Imprimir / PDF** (`tpImprimir`: janela com gráfico em fundo branco, quadros e
   medicações, para entregar ao paciente; precisa de pop-up liberado).
+- **Setas na curva e doses pré-preenchidas (19/11, sw v454; professor: "ao invés de ficar lá embaixo, essa barra
+  azul, colocar uma seta na curva, no gráfico, onde foi iniciado" e "já podia vir mais ou menos preenchido as datas
+  ... conforme a pesagem ... a próxima dose já ser cadastrada para essa data ... conforme até a titulação"):**
+  - As faixas de baixo saíram. Cada início de dose vira uma **seta que desce até a curva** (`.tp-seta`, cor da
+    medicação; rótulo "Nome dose" na 1ª dose e só a dose nas seguintes; no celular sem o "/sem"). A suspensão de
+    uma medicação também tem seta, tracejada e em itálico ("… suspensa"). Os rótulos ficam em até 4 níveis no alto
+    (escolha gulosa pela largura do texto), e o gráfico ganha essa altura (`faixa`). Os números do 1º, do último e
+    do menor peso fogem das setas e uns dos outros (acima, deslocado ou abaixo) e têm contorno da cor do fundo
+    (`paint-order="stroke"`), para ficar legível quando não há espaço.
+  - **"+ Medicação ou nova dose"** já preenche: a 1ª linha começa na data do 1º peso; cada nova linha repete a
+    medicação, põe a **dose seguinte da titulação** (`tpProxDose`, lista `TP_MEDS`; na dose máxima repete) e a
+    **data da pesagem seguinte** ao início da linha anterior (`proxPesagem`; sem pesagem depois, hoje). Tudo
+    editável.
+  - **Escalonamento padrão** ganhou "Datas das doses": **nas datas das pesagens** (padrão quando há mais de um peso:
+    uma dose por pesagem a partir do início, até a dose-alvo; avisa se as pesagens acabam antes) ou **intervalo de
+    bula** (como antes).
+  - Seção 2 passou a se chamar "2 · Peso".
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 

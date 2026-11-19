@@ -72,9 +72,13 @@ ok(run('S.grupos[0].antes3') === true, 'suspensa antes de 3 meses');
 let svg = run("tpGraficoSVG(R,'kg',R.pts[0].t)");
 ok(/<polyline points="[^"]+"/.test(svg) && svg.match(/<polyline points="([^"]+)"/)[1].split(' ').length === 5, 'curva com um ponto por peso');
 ok(/>IMC 30</.test(svg) && /stroke="#f59e0b"/.test(svg), 'peso em kg: linhas dos limites de IMC (com altura)');
-ok((svg.match(/<rect /g) || []).length === 4 && />Tirzepatida · em uso|>Tirzepatida</.test(svg) && />Orlistate · em uso</.test(svg), 'uma faixa por medicação, um bloco por dose, "em uso" na que segue');
+// setas na curva (professor, 18/11/2026: "colocar uma seta na curva, no gráfico, onde foi iniciado"), no lugar das faixas
+ok((svg.match(/class="tp-seta"/g) || []).length === 5 && !/<rect /.test(svg), 'uma seta por início de dose e uma na suspensão; sem as faixas de baixo');
+ok(/>Tirzepatida 2,5 mg\/sem</.test(svg) && />5 mg\/sem</.test(svg) && />7,5 mg\/sem</.test(svg) && />Tirzepatida suspensa</.test(svg) && />Orlistate 120 mg 3×\/dia</.test(svg), 'rótulos: nome na 1ª dose, só a dose nas seguintes, suspensão');
+ok(/>Tirzepatida 2,5 mg</.test(run("tpGraficoSVG(R,'kg',R.pts[0].t,360)")), 'no celular, a dose sem "/sem"');
+ok((svg.match(/paint-order="stroke">/g) || []).length >= 2, 'números do 1º, último e menor peso com contorno do fundo (legíveis sobre as setas)');
 ok(/>100,0 kg</.test(svg) && />90,5 kg</.test(svg) && />88,0 kg</.test(svg), 'rótulos do primeiro, do último e do menor peso');
-ok(/stroke-dasharray="4 3"/.test(svg), 'linha tracejada no início de cada medicação');
+ok(/<path d="M[\d.]+ [\d.]+ L[\d.]+ [\d.]+ L[\d.]+ [\d.]+ Z" fill="#60a5fa"\/>/.test(svg), 'ponta da seta na curva');
 const svgImc = run("tpGraficoSVG(R,'imc',R.pts[0].t)");
 ok(/IMC \(kg\/m²\)/.test(svgImc) && />obesidade I</.test(svgImc), 'modo IMC com as faixas nomeadas');
 const svgPct = run("tpGraficoSVG(R,'pct',R.grupos[0].ini)");
@@ -121,6 +125,8 @@ setv(lm.querySelector('[data-tp-m="dose"]'), '0,25 mg/sem');
 setv(lm.querySelector('[data-tp-m="ini"]'), '2026-01-12');
 root.querySelector('[data-tp-addm]').click();
 ok(root.querySelectorAll('.tp-lm')[1].querySelector('[data-tp-m="n"]').value === 'Semaglutida SC', 'nova dose já vem com a mesma medicação');
+// pré-preenchida pela pesagem e pela titulação (professor, 18/11/2026: "a próxima dose já ser cadastrada para essa data")
+ok(root.querySelectorAll('.tp-lm')[1].querySelector('[data-tp-m="dose"]').value === '0,5 mg/sem' && root.querySelectorAll('.tp-lm')[1].querySelector('[data-tp-m="ini"]').value === '2026-05-10', 'nova dose: a seguinte da titulação, na data da pesagem seguinte');
 ok(root.querySelector('details[data-tp-det="meds"]').open === true && root.querySelector('[data-tp-mres]').textContent === 'Semaglutida SC (2 doses) · ver e editar', 'medicações: abre ao adicionar, título com as doses');
 const res = root.querySelector('[data-tp-res]');
 ok(/Semaglutida SC/.test(res.textContent) && /−8,5 kg/.test(res.textContent) && /−8,1%/.test(res.textContent) && /obesidade grau I/.test(res.textContent), 'resumo: variação total, IMC atual e a medicação');
@@ -131,7 +137,7 @@ ok(!!res.querySelector('[data-tp-base]') && /variação do peso/.test(res.innerH
 const sb = res.querySelector('[data-tp-base]'); sb.value = 'semaglutida sc'; sb.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
 ok(run('tpBase') === 'semaglutida sc' && /início de Semaglutida SC/.test(res.querySelector('[data-tp-base] option[selected]').textContent), 'modo %: a partir do início da medicação');
 const txt = run('tpResumoTexto(tpCarrega().pac[0])');
-ok(/^Trajetória do peso — AB \(altura 1,65 m\)/.test(txt) && /Semaglutida SC \(0,25 mg\/sem\)/.test(txt) && /aos 3 meses −/.test(txt), 'resumo em texto para o prontuário');
+ok(/^Trajetória do peso — AB \(altura 1,65 m\)/.test(txt) && /Semaglutida SC \(0,25 mg\/sem → 0,5 mg\/sem\)/.test(txt) && /aos 3 meses −/.test(txt), 'resumo em texto para o prontuário');
 root.querySelector('[data-tp-exemplo]').click();
 ok(J("ls['trajpeso_u1'].pac.length") === 2 && root.querySelector('[data-tp-pac]').options.length === 2 && /Exemplo \(fictício\)/.test(root.querySelector('[data-tp-pac]').textContent), 'exemplo vira um paciente a mais');
 ok(/Tirzepatida/.test(root.querySelector('[data-tp-res]').textContent) && /reganho de/.test(root.querySelector('[data-tp-res]').textContent), 'exemplo mostra duas medicações e o reganho');
@@ -150,6 +156,9 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   ok(run("tpMaisMeses('2026-05-10',3)") === '2026-08-10', '+3 meses');
   const E = J("tpEscalaLinhas('Semaglutida SC','2026-01-05',4)");
   ok(E.length === 5 && E.map((x) => x.ini).join() === '2026-01-05,2026-02-02,2026-03-02,2026-03-30,2026-04-27' && E[4].dose === '2,4 mg/sem' && E.every((x) => x.fim === ''), 'escalonamento da semaglutida: 5 doses de 4 em 4 semanas');
+  const EP = J("tpEscalaLinhas('Semaglutida SC','2026-04-05',4,['2026-04-05','2026-06-05','2026-08-05','2026-03-01'])");
+  ok(EP.map((x) => x.dose + '@' + x.ini).join() === '0,25 mg/sem@2026-04-05,0,5 mg/sem@2026-06-05,1 mg/sem@2026-08-05', 'escalonamento pelas pesagens: uma dose por pesagem a partir do início, até a última pesagem');
+  ok(run("tpProxDose('semaglutida sc','0,5 mg/sem')") === '1 mg/sem' && run("tpProxDose('Tirzepatida','15 mg/sem')") === '15 mg/sem' && run("tpProxDose('Outra','x')") === '', 'próxima dose da titulação');
   const EL = J("tpEscalaLinhas('Liraglutida','2026-01-05',2)");
   ok(EL.length === 3 && EL[2].ini === '2026-01-19' && EL[2].dose === '1,8 mg/dia', 'liraglutida semanal, parando na dose-alvo escolhida');
   run(`var M=tpAnalisa({alt:'170',meta:'85',pesos:[{d:'2026-01-01',p:'100'},{d:'2026-03-01',p:'90'},{d:'2026-05-01',p:'84'},{d:'2026-07-01',p:'86'}],meds:[]});`);
@@ -179,7 +188,7 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   ok(r3.querySelectorAll('[data-tp-esc-alvo] option').length === 6 && r3.querySelector('[data-tp-esc-alvo]').value === '5', 'escalonamento: doses da medicação escolhida, dose máxima pré-selecionada');
   r3.querySelector('[data-tp-esc-alvo]').value = '2'; setv(r3.querySelector('[data-tp-esc-ini]'), '2026-02-12', 'change');
   r3.querySelector('[data-tp-esc-ok]').click();
-  ok(J("ls['trajpeso_u3'].pac[0].meds").map((x) => x.dose + '@' + x.ini).join() === '2,5 mg/sem@2026-02-12,5 mg/sem@2026-03-12,7,5 mg/sem@2026-04-09' && r3.querySelector('details[data-tp-det="meds"]').open, 'escalonamento cria as doses e abre a lista para ajustar');
+  ok(J("ls['trajpeso_u3'].pac[0].meds").map((x) => x.dose + '@' + x.ini).join() === '2,5 mg/sem@2026-02-12,5 mg/sem@2026-03-10,7,5 mg/sem@2026-04-10' && r3.querySelector('details[data-tp-det="meds"]').open, 'escalonamento nas datas das pesagens: cada dose nova na pesagem seguinte, e abre a lista para ajustar');
   setv(r3.querySelector('[data-tp-campo="meta"]'), '80');
   ok(J("ls['trajpeso_u3'].pac[0].meta") === '80' && /Peso-meta/.test(r3.querySelector('[data-tp-res]').textContent), 'peso-meta na tela');
   run(`var impresso='';window.open=function(){return {document:{write:function(h){impresso+=h;},close:function(){}},focus:function(){},print:function(){}};};`);
@@ -212,11 +221,11 @@ ok(/@media \(hover:none\) and \(pointer:coarse\)\{\.tp input,\.tp select,\.tp te
 ok(/@container \(min-width:1050px\)\{\s*\.tp\{display:grid;grid-template-columns:minmax\(0,25rem\) minmax\(0,1fr\)/.test(html) && /\[data-calc-render\]:has\(> \.tp\)\{container-type:inline-size\}/.test(html),
   'cartão largo: preenchimento à esquerda e gráfico + resumo à direita (pela largura do cartão)');
 ok(/\.tp-kpis\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(9rem,1fr\)\)/.test(html), 'quadros do resumo ocupam a largura toda (auto-fit), sem ficar espremidos à esquerda');
-ok(/Math\.min\(1200,Math\.round\(larg\)\)/.test(html) && /y1=208\+Math\.max\(0,Math\.min\(120,/.test(html), 'gráfico desenhado na largura real (até 1200 px) e mais alto quando largo: a letra não estica');
+ok(/Math\.min\(1200,Math\.round\(larg\)\)/.test(html) && /y1=208\+faixa\+Math\.max\(0,Math\.min\(120,/.test(html), 'gráfico desenhado na largura real (até 1200 px) e mais alto quando largo: a letra não estica');
 
 if (falhas.length) {
   console.error('✗ Trajetória do peso:');
   falhas.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ Trajetória do peso: curva de peso/IMC/% com as faixas das medicações, perda desde cada início, 3 meses, menor peso e reganho; dados só no aparelho');
+console.log('✓ Trajetória do peso: curva de peso/IMC/% com uma seta na curva em cada dose, perda desde cada início, 3 meses, menor peso e reganho; dados só no aparelho');

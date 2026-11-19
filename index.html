@@ -6107,12 +6107,26 @@ function tpLerLista(txt){
   });
   return {ok:ok,ruins:ruins};
 }
-function tpEscalaLinhas(nome,iniISO,alvo){
+// `datas` (opcional): as datas das pesagens a partir do início; cada dose nova cai numa pesagem (a consulta em que se
+// sobe a dose). Sem `datas`, o intervalo de bula. Com datas, para na última pesagem (as próximas doses entram quando
+// houver peso novo, pelo "+ Medicação ou nova dose").
+function tpEscalaLinhas(nome,iniISO,alvo,datas){
   var e=null;TP_ESCALA.forEach(function(x){if(x.n===nome)e=x;});
   var t0=tpDia(iniISO);if(!e||!isFinite(t0))return [];
   var fim=Math.max(0,Math.min(e.d.length-1,alvo|0)),l=[];
+  if(datas&&datas.length){
+    var ds=[iniISO].concat(datas.filter(function(d){return d>iniISO;}).sort());
+    for(var k=0;k<=fim&&k<ds.length;k++)l.push({n:e.n,dose:e.d[k],ini:ds[k],fim:''});
+    return l;
+  }
   for(var i=0;i<=fim;i++)l.push({n:e.n,dose:e.d[i],ini:tpIsoUTC(t0+i*e.passo*TP_DIA),fim:''});
   return l;
+}
+// próxima dose da titulação (0,25 → 0,5 → 1...); na dose máxima, repete; fora da lista, vazio
+function tpProxDose(nome,dose){
+  var k=String(nome||'').trim().toLowerCase(),m=null;TP_MEDS.forEach(function(x){if(x.n.toLowerCase()===k)m=x;});
+  if(!m)return '';var i=m.d.indexOf(String(dose||'').trim());
+  return i<0?'':m.d[Math.min(i+1,m.d.length-1)];
 }
 function tpData(t){var d=new Date(t);return ('0'+d.getUTCDate()).slice(-2)+'/'+('0'+(d.getUTCMonth()+1)).slice(-2)+'/'+String(d.getUTCFullYear()).slice(2);}
 function tpFmt(v,c){c=c==null?1:c;return Number(v).toFixed(c).replace('.',',');}
@@ -6207,13 +6221,35 @@ function tpGraficoSVG(r,modo,baseT,larg){
   G.forEach(function(gr){t0=Math.min(t0,gr.ini);t1=Math.max(t1,gr.fimDesenho);});
   if(t1-t0<60*TP_DIA){var c=(t0+t1)/2;t0=c-30*TP_DIA;t1=c+30*TP_DIA;}
   var folga=(t1-t0)*0.03;t0-=folga;t1+=folga;
-  var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16),y0=14,y1=208+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),LH=26,yL=y1+28,nL=G.length,H=nL?yL+nL*LH+2:y1+26;
+  var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16);
+  var xs=function(t){return x0+(t-t0)/(t1-t0)*(x1-x0);};
+  // SETAS NA CURVA (professor, 18/11/2026: "ao invés de ficar lá embaixo, essa barra azul, colocar uma seta na curva,
+  // no gráfico, onde foi iniciado. Acho que fica visualmente melhor para o paciente"). Uma seta por início de dose
+  // (e uma na suspensão), na cor da medicação; o rótulo fica numa faixa acima do gráfico, em até 4 alturas para os
+  // vizinhos não se encostarem. A 1ª dose leva o nome da medicação; as seguintes, só a dose.
+  var curto=W<560,mk=[];
+  G.forEach(function(gr){
+    gr.segs.forEach(function(sg,si){
+      var dose=sg.dose?(curto?sg.dose.replace(/\/(sem|dia)$/,''):sg.dose):'';
+      mk.push({t:sg.ini,cor:gr.cor,rot:si===0?gr.nome+(dose?' '+dose:''):(dose||'nova dose'),tit:gr.nome+(sg.dose?' '+sg.dose:'')+' · início em '+tpData(sg.ini)});
+    });
+    if(!gr.aberto&&isFinite(gr.fim))mk.push({t:gr.fim,cor:gr.cor,rot:gr.nome+' suspensa',tit:gr.nome+' suspensa em '+tpData(gr.fim),fim:true});
+  });
+  mk.sort(function(a,b){return a.t-b.t;});
+  var ultimo=[-1e9,-1e9,-1e9,-1e9],nLev=0;
+  mk.forEach(function(m){
+    m.x=xs(m.t);var w=m.rot.length*5.3+6;
+    m.cx=Math.max(x0+w/2,Math.min(W-4-w/2,m.x));
+    var lv=-1;for(var i=0;i<4;i++){if(m.cx-w/2>=ultimo[i]+8){lv=i;break;}}
+    if(lv<0){lv=0;for(var j=1;j<4;j++){if(ultimo[j]<ultimo[lv])lv=j;}}
+    ultimo[lv]=m.cx+w/2;m.lv=lv;nLev=Math.max(nLev,lv+1);
+  });
+  var faixa=nLev?nLev*15+8:0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
   var vs=pts.map(function(x){return val(x.p);});
   if(isFinite(r.meta))vs.push(val(r.meta));
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
   if(modo==='pct'){lo=Math.min(lo,0);hi=Math.max(hi,0);}
   var e=tpEscala(lo,hi);
-  var xs=function(t){return x0+(t-t0)/(t1-t0)*(x1-x0);};
   var ys=function(v){return y1-(v-e.lo)/(e.hi-e.lo)*(y1-y0);};
   var f1=function(n){return n.toFixed(1);};
   var g=[];
@@ -6256,9 +6292,19 @@ function tpGraficoSVG(r,modo,baseT,larg){
     g.push('<line x1="'+xm+'" y1="'+y1+'" x2="'+xm+'" y2="'+(y1+4)+'" stroke="currentColor" stroke-opacity=".3"/>');
     g.push('<text x="'+xm+'" y="'+(y1+15)+'" text-anchor="middle" font-size="9" fill="currentColor" fill-opacity=".6">'+TP_MESES[idx%12]+'/'+String(Math.floor(idx/12)).slice(2)+'</text>');
   }
-  // início de cada medicação: linha tracejada na cor dela, do alto do gráfico até a sua faixa
-  G.forEach(function(gr,gi){var x=f1(xs(gr.ini));
-    g.push('<line x1="'+x+'" y1="'+y0+'" x2="'+x+'" y2="'+(yL+gi*LH+12)+'" stroke="'+gr.cor+'" stroke-opacity=".7" stroke-dasharray="4 3"/>');});
+  // setas: do rótulo, na faixa de cima, até o ponto da curva na data (interpolado; fora das medidas, a ponta mais perto)
+  var vCurva=function(t){
+    if(t<=pts[0].t)return val(pts[0].p);var z=pts[pts.length-1];if(t>=z.t)return val(z.p);
+    for(var i=1;i<pts.length;i++){if(pts[i].t>=t){var u=pts[i-1],v=pts[i];return val(u.p+(v.p-u.p)*(t-u.t)/(v.t-u.t));}}
+    return val(z.p);
+  };
+  mk.forEach(function(m){
+    var yl=14+m.lv*15,yc=ys(vCurva(m.t)),x=f1(m.x);
+    g.push('<g class="tp-seta"><title>'+esc(m.tit)+'</title>'
+      +'<text x="'+f1(m.cx)+'" y="'+(yl+9)+'" text-anchor="middle" font-size="9" font-weight="700" fill="'+m.cor+'"'+(m.fim?' font-style="italic"':'')+'>'+esc(m.rot)+'</text>'
+      +'<line x1="'+x+'" y1="'+(yl+13)+'" x2="'+x+'" y2="'+f1(yc-11)+'" stroke="'+m.cor+'" stroke-width="1.3" stroke-opacity=".85"'+(m.fim?' stroke-dasharray="3 3"':'')+'/>'
+      +'<path d="M'+f1(m.x-4.5)+' '+f1(yc-11)+' L'+f1(m.x+4.5)+' '+f1(yc-11)+' L'+x+' '+f1(yc-3.5)+' Z" fill="'+m.cor+'"/></g>');
+  });
   // a curva: retas entre os pesos anotados (não inventa forma entre duas medidas)
   var xy=pts.map(function(p){return [xs(p.t),ys(val(p.p))];});
   g.push('<polyline points="'+xy.map(function(a){return f1(a[0])+','+f1(a[1]);}).join(' ')+'" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>');
@@ -6267,26 +6313,31 @@ function tpGraficoSVG(r,modo,baseT,larg){
     g.push('<circle cx="'+f1(a[0])+'" cy="'+f1(a[1])+'" r="'+(eMin?4.6:3.4)+'" fill="'+(eMin?'#34d399':'#60a5fa')+'" stroke="var(--surface)" stroke-width="1.4"><title>'
       +tpData(p.t)+': '+tpFmt(p.p,1)+' kg'+(isFinite(alt)?' · IMC '+tpFmt(p.p/(alt*alt),1):'')+'</title></circle>');
   });
-  var rot=function(i,acima){
-    var a=xy[i],y=acima?a[1]-8:a[1]+15;if(acima&&y<y0+4)y=a[1]+15;
-    var anc=i===0?'start':(i===xy.length-1?'end':'middle');
-    g.push('<text x="'+f1(a[0])+'" y="'+f1(y)+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="currentColor">'+tpValor(val(pts[i].p),modo)+'</text>');
+  // rótulos do 1º, do último e do menor peso: fogem das setas e uns dos outros
+  var caixas=[];
+  var bate=function(xa,xb,yt,yb){
+    for(var k=0;k<mk.length;k++){var m=mk[k];if(m.x>=xa-3&&m.x<=xb+3&&ys(vCurva(m.t))-3.5>yt&&14+m.lv*15+13<yb)return true;}
+    for(k=0;k<caixas.length;k++){var c=caixas[k];if(c[0]<xb&&c[1]>xa&&c[2]<yb&&c[3]>yt)return true;}
+    return false;
   };
-  rot(0,true);if(xy.length>1)rot(xy.length-1,true);
+  var rot=function(i,acima){
+    var a=xy[i],txt=tpValor(val(pts[i].p),modo),w=txt.length*5.4+2;
+    var anc=i===0?'start':(i===xy.length-1?'end':'middle'),des=anc==='start'?7:(anc==='end'?-7:0);
+    var cima=a[1]-8,baixo=a[1]+15,ops=acima?[[0,cima],[des,cima],[0,baixo]]:[[0,baixo],[0,cima]];
+    var esc0=null;
+    for(var k=0;k<ops.length;k++){
+      var dx=ops[k][0],y=ops[k][1];if(y<y0+4||y>y1-3||(k>0&&dx===0&&y===ops[0][1]))continue;
+      var xa=a[0]+dx-(anc==='start'?0:(anc==='end'?w:w/2));
+      if(!esc0)esc0=[dx,y,xa];
+      if(!bate(xa,xa+w,y-8,y+2)){esc0=[dx,y,xa];break;}
+    }
+    if(!esc0)esc0=[0,acima?baixo:cima,a[0]];
+    caixas.push([esc0[2],esc0[2]+w,esc0[1]-8,esc0[1]+2]);
+    g.push('<text x="'+f1(a[0]+esc0[0])+'" y="'+f1(esc0[1])+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
+  };
   if(r.iMin!==0&&r.iMin!==xy.length-1)rot(r.iMin,false);
-  // faixas das medicações: nome em cima, um bloco por dose
-  G.forEach(function(gr,gi){
-    var ly=yL+gi*LH,xi=xs(gr.ini),xf=xs(gr.fimDesenho),dir=xi>(x0+x1)/2;
-    g.push('<text x="'+f1(dir?Math.min(x1,xf):Math.max(x0,xi))+'" y="'+(ly+8)+'" text-anchor="'+(dir?'end':'start')+'" font-size="9" font-weight="700" fill="'+gr.cor+'">'+esc(gr.nome)+(gr.aberto?' · em uso':'')+'</text>');
-    gr.segs.forEach(function(s,si){
-      var a=xs(s.ini),w=Math.max(3,xs(s.fimDesenho)-a);
-      g.push('<rect x="'+f1(a)+'" y="'+(ly+11)+'" width="'+f1(w)+'" height="11" rx="3" fill="'+gr.cor+'" fill-opacity="'+(si%2?'.6':'.92')+'"><title>'
-        +esc(gr.nome+(s.dose?' '+s.dose:''))+' · '+tpData(s.ini)+(s.aberto?' em diante':' a '+tpData(s.fim))+'</title></rect>');
-      if(s.dose&&w>=s.dose.length*4.4+8)g.push('<text x="'+f1(a+w/2)+'" y="'+(ly+19.5)+'" text-anchor="middle" font-size="7.8" font-weight="700" fill="#0b1220">'+esc(s.dose)+'</text>');
-    });
-    if(gr.aberto)g.push('<path d="M'+f1(xf+1)+' '+(ly+10.5)+' l6 6 l-6 6 z" fill="'+gr.cor+'"/>');
-  });
-  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Curva do '+(modo==='imc'?'IMC':'peso')+' ao longo do tempo, com o período de cada medicação">'+g.join('')+'</svg>';
+  rot(0,true);if(xy.length>1)rot(xy.length-1,true);
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Curva do '+(modo==='imc'?'IMC':'peso')+' ao longo do tempo, com uma seta no início de cada dose">'+g.join('')+'</svg>';
 }
 function tpKpi(l,v,s){return '<div class="tp-kpi"><div class="tp-kpi-l">'+l+'</div><div class="tp-kpi-v">'+v+'</div>'+(s?'<div class="tp-kpi-s">'+s+'</div>':'')+'</div>';}
 function tpResumoHTML(r){
@@ -6445,7 +6496,7 @@ function tpRender(root){
         +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
         +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
         +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">Fica só neste aparelho, nesta conta; não vai para o servidor. Não use o nome do paciente.</div></section>'
-      +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Pesos</div>'
+      +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Peso</div>'
         +'<div class="tp-add"><input type="date" data-tp-nd value="'+tpHojeISO()+'" aria-label="Data do peso"><input type="text" inputmode="decimal" autocomplete="off" data-tp-np placeholder="Peso (kg)" aria-label="Peso em kg">'
         +'<button type="button" class="btn btn-primary btn-sm" data-tp-addp>Adicionar</button></div>'
         +'<div class="tp-atalhos"><span>Data:</span><button type="button" data-tp-dt="0">hoje</button><button type="button" data-tp-dt="1" title="a partir do último peso">+1 mês</button>'
@@ -6460,8 +6511,9 @@ function tpRender(root){
         +'<div class="tp-caixa" data-tp-esc-box hidden><div class="rcv-campos">'
           +'<label class="rcv-num"><span>Medicação</span><select data-tp-esc-med>'+TP_ESCALA.map(function(e){return '<option>'+esc(e.n)+'</option>';}).join('')+'</select></label>'
           +'<label class="rcv-num"><span>Início</span><input type="date" data-tp-esc-ini value="'+tpHojeISO()+'"></label>'
-          +'<label class="rcv-num"><span>Até a dose</span><select data-tp-esc-alvo>'+tpEscalaAlvos(TP_ESCALA[0].n)+'</select></label></div>'
-          +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-esc-ok>Criar as doses</button><span class="rcv-nota">Esquema de bula: semaglutida e tirzepatida a cada 4 semanas; liraglutida e naltrexona/bupropiona a cada semana. Depois, ajuste o que mudou.</span></div></div>'
+          +'<label class="rcv-num"><span>Até a dose</span><select data-tp-esc-alvo>'+tpEscalaAlvos(TP_ESCALA[0].n)+'</select></label>'
+          +'<label class="rcv-num"><span>Datas das doses</span><select data-tp-esc-datas><option value="pesos">nas datas das pesagens</option><option value="bula">intervalo de bula</option></select></label></div>'
+          +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-esc-ok>Criar as doses</button><span class="rcv-nota">Nas pesagens: cada dose nova cai na data do peso seguinte (a consulta). Intervalo de bula: semaglutida e tirzepatida a cada 4 semanas; liraglutida e naltrexona/bupropiona a cada semana. Depois, ajuste o que mudou.</span></div></div>'
         +'<div class="rcv-nota" style="margin-bottom:.5rem">Uma linha por dose: no escalonamento, cada dose nova é uma linha da mesma medicação, e a anterior termina sozinha. Fim em branco = em uso. Cirurgia bariátrica entra aqui, na data da cirurgia.</div></section>'
       +'</div><div class="tp-col-res" data-tp-res aria-live="polite"></div>'
       +'<div class="tp-acoes"><span class="tp-linha" style="margin:0"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button><button type="button" class="btn btn-outline btn-sm" data-tp-imprimir>Imprimir / PDF</button></span>'
@@ -6540,10 +6592,14 @@ function tpRender(root){
   }
   function criaEscala(){
     var nome=q('[data-tp-esc-med]').value,ini=q('[data-tp-esc-ini]').value,alvo=+q('[data-tp-esc-alvo]').value;
-    var l=tpEscalaLinhas(nome,ini,alvo);
+    var pelasPesagens=q('[data-tp-esc-datas]').value==='pesos',datas=pelasPesagens?(pac.pesos||[]).map(function(x){return x.d;}):null;
+    var l=tpEscalaLinhas(nome,ini,alvo,datas);
     if(!l.length){try{notify('Escolha a medicação e a data de início.','err');}catch(e){}return;}
     pac.meds=(pac.meds||[]).concat(l);tpAbertos.meds=true;q('[data-tp-esc-box]').hidden=true;salva();meds();resultado();
+    if(pelasPesagens&&l.length<alvo+1){try{notify(l.length+' dose'+(l.length===1?'':'s')+' criada'+(l.length===1?'':'s')+', uma por pesagem. As próximas entram com o peso novo, em "+ Medicação ou nova dose".','ok');}catch(e){}}
   }
+  // datas das pesagens: a primeira depois de `apos` (ou a primeira de todas)
+  function proxPesagem(apos){var l=pac.pesos||[];for(var i=0;i<l.length;i++){if(!apos||l[i].d>apos)return l[i].d;}return '';}
   root.addEventListener('change',function(ev){
     var t=ev.target;
     if(t.hasAttribute('data-tp-esc-med')){var a=q('[data-tp-esc-alvo]');if(a)a.innerHTML=tpEscalaAlvos(t.value);return;}
@@ -6562,13 +6618,16 @@ function tpRender(root){
     }
     if(b.hasAttribute('data-tp-colar')){var cb=q('[data-tp-colar-box]');cb.hidden=!cb.hidden;if(!cb.hidden){try{q('[data-tp-lista]').focus();}catch(e){}}return;}
     if(b.hasAttribute('data-tp-colar-ok')){colarLista();return;}
-    if(b.hasAttribute('data-tp-esc')){var eb=q('[data-tp-esc-box]');eb.hidden=!eb.hidden;return;}
+    if(b.hasAttribute('data-tp-esc')){var eb=q('[data-tp-esc-box]');eb.hidden=!eb.hidden;if(!eb.hidden){var pi=proxPesagem('');if(pi)q('[data-tp-esc-ini]').value=pi;q('[data-tp-esc-datas]').value=(pac.pesos||[]).length>1?'pesos':'bula';}return;}
     if(b.hasAttribute('data-tp-esc-ok')){criaEscala();return;}
     if(b.hasAttribute('data-tp-imprimir')){tpImprimir(pac);return;}
     if(b.hasAttribute('data-tp-delp')){pac.pesos.splice(+b.getAttribute('data-tp-delp'),1);salva();pesos();resultado();return;}
     if(b.hasAttribute('data-tp-addm')){
+      // Pré-preenchido (professor, 18/11/2026: "já podia vir mais ou menos preenchido as datas ... conforme a pesagem
+      // dele ... a próxima dose já ser cadastrada para essa data ... conforme até a titulação da dose"): a 1ª linha
+      // começa no 1º peso; cada nova dose, na pesagem seguinte à anterior, com a dose seguinte da titulação.
       var ant=pac.meds[pac.meds.length-1];
-      pac.meds.push({n:ant?ant.n:'',dose:'',ini:tpHojeISO(),fim:''});tpAbertos.meds=true;salva();meds();resultado();
+      pac.meds.push({n:ant?ant.n:'',dose:ant?tpProxDose(ant.n,ant.dose):'',ini:(ant?proxPesagem(ant.ini):proxPesagem(''))||tpHojeISO(),fim:''});tpAbertos.meds=true;salva();meds();resultado();
       var ins=root.querySelectorAll('.tp-lm');ins=ins[ins.length-1];if(ins){var f=ins.querySelector(ant?'[data-tp-m="dose"]':'[data-tp-m="n"]');try{f.focus();}catch(e){}}
       return;
     }
