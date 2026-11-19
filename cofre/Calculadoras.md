@@ -1,6 +1,6 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-11-18
+atualizado: 2026-11-19
 ---
 
 # Calculadoras
@@ -53,6 +53,15 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   query, não a janela: com o menu lateral, 1280 px deixavam o gráfico com ~500 px), **duas colunas**:
   preenchimento à esquerda, gráfico e resumo à direita. Redesenha ao mudar o tamanho da janela. Medido: 1366 px
   empilhado (gráfico 1010 px), 1440 px e 1920 px em duas colunas (668 e 1148 px); celular igual.
+- **Preencher mais rápido (19/11, sw v453; professor: "mais fluida, mais prática, mais rápida de preencher?" →
+  sugestões → "Vamos ver como fica"):** (1) **Colar lista** de pesos (`tpLerLista`: uma linha por medida, data
+  dd/mm/aa, dd/mm/aaaa ou aaaa-mm-dd e peso; mesmo dia troca; linhas sem data válida ou peso fora de 20–400 são
+  contadas como ignoradas); (2) **Escalonamento padrão** (`TP_ESCALA`, esquema de bula: semaglutida SC e
+  tirzepatida a cada 4 semanas, liraglutida e naltrexona/bupropiona a cada semana; cria as linhas até a dose-alvo,
+  a última em uso); (3) **atalhos de data** hoje/+1/+3/+6 meses a partir do último peso; (4) **peso-meta** opcional
+  (`pac.meta`: linha verde tracejada no gráfico, quadro "Peso-meta" com quanto falta ou a data em que foi atingido,
+  linha no resumo copiado); (5) **Imprimir / PDF** (`tpImprimir`: janela com gráfico em fundo branco, quadros e
+  medicações, para entregar ao paciente; precisa de pop-up liberado).
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 
