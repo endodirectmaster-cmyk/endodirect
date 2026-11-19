@@ -45,6 +45,15 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   A tela diz: "Só você vê estes pacientes ... Professores e outros usuários não têm acesso". Teste: outra conta no
   mesmo aparelho (inclusive de professor) não vê. Limite conhecido: num computador compartilhado, quem mexer nas
   ferramentas do navegador consegue ler o armazenamento local; a orientação é não usar nome (já na tela).
+- 💾 **Espaço (19/11, sw v459; professor perguntou se dá para guardar ~150 pacientes com muitos usuários):** medido: o
+  exemplo (16 pesos, 4 com composição, 6 doses) ocupa ~1,1 mil caracteres; um paciente pesado (40 consultas com
+  composição, 15 doses), ~4 mil. 150 pacientes = 160 a 600 mil caracteres; o navegador dá ~5 milhões por site (dividido
+  com o resto do app). **Não pesa no servidor**: nada sobe, cada aparelho guarda só o seu. Correção feita: o `lsSet`
+  trocava por memória o que passasse de `LS_MAX_CHARS` (1 milhão) ou estourasse a cota, **apagando a cópia do aparelho**
+  — para os pacientes isso seria perda ao recarregar. Agora `lsSoAparelho('trajpeso_')`: sem teto e, se não couber, a
+  versão anterior fica e `tpGrava` avisa "Sem espaço neste aparelho" (uma vez). Limites que continuam: não sincroniza
+  entre aparelhos (computador ≠ iPhone) e, se o navegador for limpo ou o app desinstalado, os pacientes somem (não há
+  cópia em lugar nenhum). Possível próximo passo, se o professor quiser: exportar/importar um arquivo de backup.
 - ⚠️ **Privacidade (LGPD):** os pacientes ficam só no aparelho, na chave `trajpeso_<uid>` do `lsSet` (outra conta no
   mesmo aparelho não vê). `userStatePayload` não lê essa chave: nada vai para o app_state. A exclusão da conta
   apaga todas as chaves `endodirect_v1_*` do aparelho. Se um dia pedirem sincronizar entre aparelhos, é dado de

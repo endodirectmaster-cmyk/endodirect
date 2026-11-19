@@ -6103,7 +6103,13 @@ var TP_DIA=86400000,TP_MES=30.4375*86400000;
 var tpModo='kg',tpBase='',tpAbertos={pesos:false,meds:false};
 function tpChave(){return 'trajpeso_'+((typeof currentUser!=='undefined'&&currentUser&&currentUser.id)||'local');}
 function tpCarrega(){var s=null;try{s=lsGet(tpChave());}catch(e){}if(!s||typeof s!=='object'||!Array.isArray(s.pac))s={pac:[],atual:''};return s;}
-function tpGrava(s){try{lsSet(tpChave(),s);}catch(e){}}
+// Se o aparelho não tiver mais espaço, a versão anterior continua salva e o usuário é avisado (uma vez por sessão).
+var tpAvisoCheio=false;
+function tpGrava(s){
+  var r;try{r=lsSet(tpChave(),s);}catch(e){r=false;}
+  if(r===false){if(!tpAvisoCheio){tpAvisoCheio=true;try{notify('Sem espaço neste aparelho: a última alteração dos pacientes não foi salva. Exclua pacientes antigos ou libere espaço no navegador.','err');}catch(e){}}}
+  else tpAvisoCheio=false;
+}
 function tpNovoPac(rot){return {id:'p'+Date.now().toString(36)+Math.floor(Math.random()*46656).toString(36),rot:rot||'',alt:'',meta:'',pesos:[],meds:[]};}
 function tpDia(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||''));return m?Date.UTC(+m[1],+m[2]-1,+m[3]):NaN;}
 function tpISO(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
@@ -7515,10 +7521,15 @@ function lsGet(k){
   if(v&&typeof v==='object'&&typeof v.__lsTexto==='string'){try{return JSON.parse(v.__lsTexto);}catch(e){return null;}}
   return v!==undefined?v:null;
 }
+// Dados que SÓ existem no aparelho (pacientes da Trajetória do peso: não há cópia no servidor, por decisão do professor
+// em 19/11/2026). Para eles: sem o teto de LS_MAX_CHARS e, se a cota estourar, a cópia anterior FICA no aparelho (não
+// troca por memória, que some ao recarregar); lsSet devolve false e quem gravou avisa o usuário.
+function lsSoAparelho(k){return String(k).indexOf('trajpeso_')===0;}
 function lsSet(k,v){
   var key='endodirect_v1_'+k,txt;
   if(LS_SO_MEMORIA[k]){try{if(window.localStorage)localStorage.removeItem(key);}catch(e){}mem[key]=v;return;}
   try{txt=JSON.stringify(v);}catch(e){mem[key]=v;return;}
+  if(lsSoAparelho(k)){try{if(window.localStorage){localStorage.setItem(key,txt);return true;}}catch(e){}return false;}
   if(typeof txt==='string'&&txt.length>LS_MAX_CHARS){
     try{if(window.localStorage)localStorage.removeItem(key);}catch(e){}
     mem[key]={__lsTexto:txt};return;
