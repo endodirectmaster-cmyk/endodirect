@@ -75,6 +75,9 @@ ok(/>IMC 30</.test(svg) && /stroke="#f59e0b"/.test(svg), 'peso em kg: linhas dos
 // setas na curva (professor, 18/11/2026: "colocar uma seta na curva, no gráfico, onde foi iniciado"), no lugar das faixas
 ok((svg.match(/class="tp-seta"/g) || []).length === 5 && !/<rect /.test(svg), 'uma seta por início de dose e uma na suspensão; sem as faixas de baixo');
 ok(/>Tirzepatida 2,5 mg\/sem</.test(svg) && />Tirzepatida 5 mg\/sem</.test(svg) && />Tirzepatida 7,5 mg\/sem</.test(svg) && />Tirzepatida suspensa</.test(svg) && />Orlistate 120 mg 3×\/dia</.test(svg) && !/>5 mg\/sem</.test(svg), 'rótulos: nome da medicação e dose em todas as setas (professor, 19/11/2026), e a suspensão');
+// tela cheia (professor, 19/11/2026: "deixar a opção de poder clicar no gráfico e ele ampliar em tela cheia")
+const sCheia = run("tpGraficoSVG(R,'kg',R.pts[0].t,1900,880)");
+ok(/^<svg viewBox="0 0 1900 880"/.test(sCheia), 'tela cheia: desenha na largura e na altura da tela');
 const s360 = run("tpGraficoSVG(R,'kg',R.pts[0].t,360)");
 ok(/>Tirzepatida [\d,]+ mg</.test(s360) && !/mg\/sem</.test(s360), 'no celular, nome e dose sem "/sem"');
 ok((svg.match(/paint-order="stroke">/g) || []).length >= 2, 'números do 1º, último e menor peso com contorno do fundo (legíveis sobre as setas)');
@@ -160,6 +163,18 @@ res.querySelector('[data-tp-modo="pct"]').click();
 ok(!!res.querySelector('[data-tp-base]') && /variação do peso/.test(res.innerHTML), 'modo %: escolhe o ponto de partida');
 const sb = res.querySelector('[data-tp-base]'); sb.value = 'semaglutida sc'; sb.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
 ok(run('tpBase') === 'semaglutida sc' && /início de Semaglutida SC/.test(res.querySelector('[data-tp-base] option[selected]').textContent), 'modo %: a partir do início da medicação');
+// tela cheia: clicar no gráfico abre a camada com o gráfico grande; × e Esc fecham
+res.querySelector('.tp-graf[data-tp-cheia]').click();
+let cheia = doc.querySelector('.tp-cheia');
+ok(!!cheia && !!cheia.querySelector('[data-tp-cheia-g] svg') && cheia.getAttribute('role') === 'dialog' && /Trajetória do peso · AB/.test(cheia.textContent), 'clicar no gráfico abre a tela cheia com o gráfico');
+cheia.querySelector('[data-tp-modo="kg"]').click();
+ok(run('tpModo') === 'kg' && cheia.querySelector('[data-tp-modo="kg"]').getAttribute('aria-pressed') === 'true' && res.querySelector('[data-tp-modo="kg"]').getAttribute('aria-pressed') === 'true', 'tela cheia: troca a escala ali e no cartão');
+cheia.querySelector('[data-tp-fecha]').click();
+ok(!doc.querySelector('.tp-cheia') && doc.body.style.overflow === '', '× fecha a tela cheia e devolve a rolagem');
+res.querySelector('.tp-graf[data-tp-cheia]').click();
+doc.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+ok(!doc.querySelector('.tp-cheia'), 'Esc fecha a tela cheia');
+res.querySelector('[data-tp-modo="pct"]').click();
 const txt = run('tpResumoTexto(tpCarrega().pac[0])');
 ok(/^Trajetória do peso — AB \(altura 1,65 m\)/.test(txt) && /Semaglutida SC \(0,25 mg\/sem → 0,5 mg\/sem\)/.test(txt) && /aos 3 meses −/.test(txt), 'resumo em texto para o prontuário');
 root.querySelector('[data-tp-exemplo]').click();
