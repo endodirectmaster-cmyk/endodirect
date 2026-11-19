@@ -541,6 +541,9 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-x:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .tp-lm{position:relative;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,9.5rem) minmax(0,9.5rem);gap:.45rem .55rem;align-items:end;padding:.55rem 2.5rem .55rem 0;border-bottom:1px dashed var(--bd)}
 .tp-lm .tp-x{position:absolute;right:0;bottom:.55rem}
+.tp-lm input[hidden]{display:none}
+.tp-lm select{padding-left:.5rem;padding-right:1.4rem}
+.tp-lm [data-tp-dcel]{gap:.3rem}
 .tp-atalhos{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:-.25rem 0 .55rem;font-size:.7rem;color:var(--t3)}
 .tp-atalhos button{border:1px solid var(--bd2);background:transparent;color:var(--t2);font-family:var(--font);font-size:.7rem;font-weight:600;border-radius:999px;padding:.2rem .6rem;cursor:pointer}
 .tp-atalhos button:hover{border-color:var(--blue2);color:var(--tx)}
@@ -587,7 +590,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 @container (min-width:1050px){
   .tp{display:grid;grid-template-columns:minmax(0,25rem) minmax(0,1fr);gap:0 1rem;align-items:start}
   .tp-acoes{grid-column:1/-1}
-  .tp-col-ent .tp-lm{grid-template-columns:1fr 1fr}
+  .tp-col-ent .tp-lm{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
 }
 .tp-excluir:hover{color:var(--red);border-color:var(--red)}
 @media (max-width:640px){
@@ -6227,17 +6230,19 @@ function tpGraficoSVG(r,modo,baseT,larg){
   // no gráfico, onde foi iniciado"; 19/11: "as setas ficaram muito longas. Colocar uma seta menor, mais discreta,
   // próxima do ponto"). Uma seta curta logo acima do ponto da curva em cada início de dose (e na suspensão), na cor
   // da medicação, com o rótulo em cima; se o rótulo bater num vizinho ou na curva, sobe um pouco (até 3 degraus).
-  // A 1ª dose leva o nome da medicação; as seguintes, só a dose.
+  // Toda seta leva o nome da medicação e a dose (professor, 19/11/2026: "toda vez que aparecer na seta dosagem, escrever
+  // também o nome da medicação").
   var curto=W<560,mk=[];
   G.forEach(function(gr){
     gr.segs.forEach(function(sg,si){
       var dose=sg.dose?(curto?sg.dose.replace(/\/(sem|dia)$/,''):sg.dose):'';
-      mk.push({t:sg.ini,cor:gr.cor,rot:si===0?gr.nome+(dose?' '+dose:''):(dose||'nova dose'),tit:gr.nome+(sg.dose?' '+sg.dose:'')+' · início em '+tpData(sg.ini)});
+      mk.push({t:sg.ini,cor:gr.cor,rot:gr.nome+(dose?' '+dose:(si?' (nova dose)':'')),tit:gr.nome+(sg.dose?' '+sg.dose:'')+' · início em '+tpData(sg.ini)});
     });
     if(!gr.aberto&&isFinite(gr.fim))mk.push({t:gr.fim,cor:gr.cor,rot:gr.nome+' suspensa',tit:gr.nome+' suspensa em '+tpData(gr.fim),fim:true});
   });
   mk.sort(function(a,b){return a.t-b.t;});
-  var faixa=mk.length?26:0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
+  // no celular, com o nome em toda seta, os rótulos de doses próximas precisam de mais degraus (até 6) e de mais folga no alto
+  var nDeg=curto?6:4,faixa=mk.length?(curto&&mk.length>3?56:26):0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
   var vs=pts.map(function(x){return val(x.p);});
   if(isFinite(r.meta))vs.push(val(r.meta));
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
@@ -6295,18 +6300,22 @@ function tpGraficoSVG(r,modo,baseT,larg){
   var ocup=[];
   var cruza=function(b,a){return b[0]<a[1]&&b[1]>a[0]&&b[2]<a[3]&&b[3]>a[2];};
   var nOcup=function(b){var n=0;for(var k=0;k<ocup.length;k++)if(cruza(b,ocup[k]))n++;return n;};
+  var nTxt=function(b){var n=0;for(var k=0;k<ocup.length;k++)if(!ocup[k][4]&&cruza(b,ocup[k]))n++;return n;};
   var naCurva=function(b){for(var x=Math.max(b[0],xpi);x<=Math.min(b[1],xpf);x+=3){var yv=ys(vCurva(inv(x)));if(yv>=b[2]-2&&yv<=b[3]+2)return true;}return false;};
   mk.forEach(function(m){
     m.x=xs(m.t);m.yc=ys(vCurva(m.t));
     var w=m.rot.length*4.9+6,cx=Math.max(2+w/2,Math.min(W-2-w/2,m.x)),melhor=null;
-    for(var L=0;L<4;L++){
+    for(var L=0;L<nDeg;L++){
       var yb=m.yc-21-L*12;if(yb-8<2)break;
-      var cx2=[cx-w/2,cx+w/2,yb-8,yb+2],custo=nOcup(cx2)+nOcup([m.x-2.5,m.x+2.5,yb+4,m.yc-3])+(naCurva(cx2)?1:0);
-      if(!melhor||custo<melhor.c)melhor={c:custo,yb:yb};
+      var cx2=[cx-w/2,cx+w/2,yb-8,yb+2],lab=nTxt(cx2),custo=lab*4+(nOcup(cx2)-lab)+nTxt([m.x-2.5,m.x+2.5,yb+4,m.yc-3])+(naCurva(cx2)?1:0);
+      if(!melhor||custo<melhor.c)melhor={c:custo,yb:yb,lab:lab};
       if(!custo)break;
     }
     m.cx=cx;m.yb=melhor?melhor.yb:Math.max(10,m.yc-21);
-    ocup.push([cx-w/2,cx+w/2,m.yb-8,m.yb+2],[m.x-2.5,m.x+2.5,m.yb+4,m.yc-3]);
+    // no celular, rótulo que só caberia por cima de outro não é escrito: fica a seta, a dica e o quadro da medicação
+    m.oculto=curto&&(!melhor||melhor.lab>0);
+    if(m.oculto)m.yb=m.yc-21;else{m.caixa=[cx-w/2,cx+w/2,m.yb-8,m.yb+2];ocup.push(m.caixa);}
+    ocup.push([m.x-2.5,m.x+2.5,m.yb+4,m.yc-3,'seta']);
   });
   // a curva: retas entre os pesos anotados (não inventa forma entre duas medidas)
   var xy=pts.map(function(p){return [xs(p.t),ys(val(p.p))];});
@@ -6317,30 +6326,26 @@ function tpGraficoSVG(r,modo,baseT,larg){
       +tpData(p.t)+': '+tpFmt(p.p,1)+' kg'+(isFinite(alt)?' · IMC '+tpFmt(p.p/(alt*alt),1):'')+'</title></circle>');
   });
   // rótulos do 1º, do último e do menor peso: fogem das setas e uns dos outros
-  var bate=function(xa,xb,yt,yb){return nOcup([xa,xb,yt,yb])>0;};
-  mk.forEach(function(m){
-    var x=f1(m.x),ya=m.yb+4,yp=m.yc-8;
-    g.push('<g class="tp-seta"><title>'+esc(m.tit+' · '+tpValor(vCurva(m.t),modo))+'</title>'
-      +'<text x="'+f1(m.cx)+'" y="'+f1(m.yb)+'" text-anchor="middle" font-size="8.5" font-weight="600" fill="'+m.cor+'" stroke="var(--surface)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke"'+(m.fim?' font-style="italic"':'')+'>'+esc(m.rot)+'</text>'
-      +(yp>ya+1?'<line x1="'+x+'" y1="'+f1(ya)+'" x2="'+x+'" y2="'+f1(yp)+'" stroke="'+m.cor+'" stroke-width="1.2" stroke-opacity=".8"'+(m.fim?' stroke-dasharray="2 2"':'')+'/>':'')
-      +'<path d="M'+f1(m.x-3)+' '+f1(yp)+' L'+f1(m.x+3)+' '+f1(yp)+' L'+x+' '+f1(m.yc-3)+' Z" fill="'+m.cor+'"/></g>');
-  });
   var rot=function(i,acima){
     var a=xy[i],txt=tpValor(val(pts[i].p),modo),w=txt.length*5.4+2;
     var anc=i===0?'start':(i===xy.length-1?'end':'middle'),des=anc==='start'?7:(anc==='end'?-7:0);
     var cima=a[1]-8,baixo=a[1]+15,ops=acima?[[0,cima],[des,cima],[0,baixo]]:[[0,baixo],[0,cima]];
-    var esc0=null;
+    // a posição que não cobre texto; cruzar a haste de uma seta é tolerável (contorno do fundo)
+    var esc0=null,custo0=1e9;
     for(var k=0;k<ops.length;k++){
       var dx=ops[k][0],y=ops[k][1];if(y<y0+4||y>y1-3||(k>0&&dx===0&&y===ops[0][1]))continue;
-      var xa=a[0]+dx-(anc==='start'?0:(anc==='end'?w:w/2));
-      if(!esc0)esc0=[dx,y,xa];
-      if(!bate(xa,xa+w,y-8,y+2)){esc0=[dx,y,xa];break;}
+      var xa=a[0]+dx-(anc==='start'?0:(anc==='end'?w:w/2)),bx=[xa,xa+w,y-8,y+2],ct=nTxt(bx)*4+nOcup(bx)-nTxt(bx);
+      if(ct<custo0){custo0=ct;esc0=[dx,y,xa];}
+      if(!ct)break;
     }
     if(!esc0)esc0=[0,acima?baixo:cima,a[0]];
-    ocup.push([esc0[2],esc0[2]+w,esc0[1]-8,esc0[1]+2]);
+    var cx3=[esc0[2],esc0[2]+w,esc0[1]-8,esc0[1]+2];
+    // no celular, o número do peso vence: o nome de seta que ficaria por baixo dele sai (fica a seta e a dica)
+    if(curto)mk.forEach(function(m){if(m.caixa&&cruza(cx3,m.caixa)){m.oculto=true;ocup.splice(ocup.indexOf(m.caixa),1);m.caixa=null;}});
+    ocup.push(cx3);
     g.push('<text x="'+f1(a[0]+esc0[0])+'" y="'+f1(esc0[1])+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
   };
-  var jaRot={};
+  var jaRot={},iSetas=g.length;
   if(r.iMin!==0&&r.iMin!==xy.length-1){rot(r.iMin,false);jaRot[r.iMin]=1;}
   rot(0,true);jaRot[0]=1;if(xy.length>1){rot(xy.length-1,true);jaRot[xy.length-1]=1;}
   // o peso em cada seta (professor, 19/11/2026: "faltou o peso na dose de 0,5 mg por semana, no gráfico, e também não
@@ -6361,6 +6366,16 @@ function tpGraficoSVG(r,modo,baseT,larg){
     ocup.push(e2[1]);
     g.push('<text class="tp-seta-p" x="'+f1(e2[0][0])+'" y="'+f1(e2[0][2])+'" text-anchor="'+e2[0][1]+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
   });
+  // as setas vão por baixo dos números (desenhadas aqui, depois de decidir quais nomes cabem; inseridas antes deles)
+  var gs=[];
+  mk.forEach(function(m){
+    var x=f1(m.x),ya=m.yb+4,yp=m.yc-8;
+    gs.push('<g class="tp-seta"><title>'+esc(m.tit+' · '+tpValor(vCurva(m.t),modo))+'</title>'
+      +(m.oculto?'':'<text x="'+f1(m.cx)+'" y="'+f1(m.yb)+'" text-anchor="middle" font-size="8.5" font-weight="600" fill="'+m.cor+'" stroke="var(--surface)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke"'+(m.fim?' font-style="italic"':'')+'>'+esc(m.rot)+'</text>')
+      +(yp>ya+1?'<line x1="'+x+'" y1="'+f1(ya)+'" x2="'+x+'" y2="'+f1(yp)+'" stroke="'+m.cor+'" stroke-width="1.2" stroke-opacity=".8"'+(m.fim?' stroke-dasharray="2 2"':'')+'/>':'')
+      +'<path d="M'+f1(m.x-3)+' '+f1(yp)+' L'+f1(m.x+3)+' '+f1(yp)+' L'+x+' '+f1(m.yc-3)+' Z" fill="'+m.cor+'"/></g>');
+  });
+  g.splice.apply(g,[iSetas,0].concat(gs));
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Curva do '+(modo==='imc'?'IMC':'peso')+' ao longo do tempo, com uma seta no início de cada dose">'+g.join('')+'</svg>';
 }
 function tpKpi(l,v,s){return '<div class="tp-kpi"><div class="tp-kpi-l">'+l+'</div><div class="tp-kpi-v">'+v+'</div>'+(s?'<div class="tp-kpi-s">'+s+'</div>':'')+'</div>';}
@@ -6497,10 +6512,27 @@ function tpEscalaAlvos(nome){
   var e=null;TP_ESCALA.forEach(function(x){if(x.n===nome)e=x;});
   return e?e.d.map(function(d,i){return '<option value="'+i+'"'+(i===e.d.length-1?' selected':'')+'>'+esc(d)+'</option>';}).join(''):'';
 }
-function tpDosesOpt(nome){
+function tpMedConhecida(nome){
   var k=String(nome||'').trim().toLowerCase(),m=null;
   TP_MEDS.forEach(function(x){if(x.n.toLowerCase()===k)m=x;});
-  return m?m.d.map(function(d){return '<option value="'+esc(d)+'">';}).join(''):'';
+  return m;
+}
+// Medicação e dose em lista de escolha, com todas as opções sempre à vista e "Outra…" para digitar (professor,
+// 19/11/2026: "não está aparecendo as mais doses da semaglutida. Sempre aparecer todas as doses para preenchimento";
+// a sugestão do navegador escondia as opções que não começavam pelo que já estava escrito).
+function tpCampoEscolha(c,i,valor,opcoes,rotOutra){
+  var v=String(valor||''),k=v.trim().toLowerCase(),achou=null;
+  opcoes.forEach(function(o){if(o.toLowerCase()===k)achou=o;});
+  var outra=!!v.trim()&&!achou;
+  return '<select data-tp-msel="'+c+'" data-tp-mi="'+i+'"><option value=""'+(v.trim()?'':' selected')+'>Escolha…</option>'
+    +opcoes.map(function(o){return '<option'+(o===achou?' selected':'')+'>'+esc(o)+'</option>';}).join('')
+    +'<option value="__outra"'+(outra?' selected':'')+'>'+rotOutra+'</option></select>'
+    +'<input type="text" autocomplete="off" placeholder="'+(c==='n'?'Nome da medicação':'Dose')+'" value="'+esc(v)+'" data-tp-m="'+c+'" data-tp-mi="'+i+'"'+(outra?'':' hidden')+'>';
+}
+function tpCelDose(i,m){
+  var k=tpMedConhecida(m.n);
+  return k?tpCampoEscolha('dose',i,m.dose,k.d,'Outra dose…')
+    :'<input type="text" autocomplete="off" placeholder="Dose" value="'+esc(m.dose||'')+'" data-tp-m="dose" data-tp-mi="'+i+'">';
 }
 function tpRender(root){
   var est=tpCarrega(),pac=null;
@@ -6542,7 +6574,7 @@ function tpRender(root){
       +'</div><div class="tp-col-res" data-tp-res aria-live="polite"></div>'
       +'<div class="tp-acoes"><span class="tp-linha" style="margin:0"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button><button type="button" class="btn btn-outline btn-sm" data-tp-imprimir>Imprimir / PDF</button></span>'
         +'<button type="button" class="btn btn-outline btn-sm tp-excluir" data-tp-excluir>Excluir este paciente</button></div>'
-      +'<datalist id="tp-dl-meds">'+TP_MEDS.map(function(m){return '<option value="'+esc(m.n)+'">';}).join('')+'</datalist>'
+
       +'</div>';
     pesos();meds();resultado();
   }
@@ -6568,10 +6600,9 @@ function tpRender(root){
   function meds(){
     var l=pac.meds||[];
     q('[data-tp-meds]').innerHTML=!l.length?'':'<details class="tp-det" data-tp-det="meds"'+(tpAbertos.meds?' open':'')+'><summary><span class="cid-caret">▸</span> <span data-tp-mres>'+esc(medsResumo())+'</span></summary>'+l.map(function(m,i){
-      var dl='tp-dd-'+pac.id+'-'+i;
       return '<div class="tp-lm">'
-        +'<label class="rcv-num"><span>Medicação</span><input type="text" list="tp-dl-meds" autocomplete="off" value="'+esc(m.n||'')+'" data-tp-m="n" data-tp-mi="'+i+'"></label>'
-        +'<label class="rcv-num"><span>Dose</span><input type="text" list="'+dl+'" autocomplete="off" value="'+esc(m.dose||'')+'" data-tp-m="dose" data-tp-mi="'+i+'"><datalist id="'+dl+'">'+tpDosesOpt(m.n)+'</datalist></label>'
+        +'<div class="rcv-num"><span>Medicação</span>'+tpCampoEscolha('n',i,m.n,TP_MEDS.map(function(x){return x.n;}),'Outra medicação…')+'</div>'
+        +'<div class="rcv-num"><span>Dose</span><div class="rcv-num" data-tp-dcel="'+i+'">'+tpCelDose(i,m)+'</div></div>'
         +'<label class="rcv-num"><span>Início</span><input type="date" value="'+esc(m.ini||'')+'" data-tp-m="ini" data-tp-mi="'+i+'"></label>'
         +'<label class="rcv-num"><span>Fim (vazio = em uso)</span><input type="date" value="'+esc(m.fim||'')+'" data-tp-m="fim" data-tp-mi="'+i+'"></label>'
         +'<button type="button" class="tp-x" data-tp-delm="'+i+'" aria-label="Remover esta linha">×</button></div>';
@@ -6604,7 +6635,7 @@ function tpRender(root){
     if(t.hasAttribute('data-tp-m')){
       var m=pac.meds[+t.getAttribute('data-tp-mi')],c=t.getAttribute('data-tp-m');if(!m)return;
       m[c]=t.value;salva();
-      if(c==='n'){var dl=t.closest('.tp-lm');dl=dl&&dl.querySelector('datalist');if(dl)dl.innerHTML=tpDosesOpt(t.value);var mr=q('[data-tp-mres]');if(mr)mr.textContent=medsResumo();}
+      if(c==='n'){var cel=q('[data-tp-dcel="'+t.getAttribute('data-tp-mi')+'"]');if(cel)cel.innerHTML=tpCelDose(+t.getAttribute('data-tp-mi'),m);var mr=q('[data-tp-mres]');if(mr)mr.textContent=medsResumo();}
       resultado();
     }
   });
@@ -6629,7 +6660,17 @@ function tpRender(root){
     if(t.hasAttribute('data-tp-esc-med')){var a=q('[data-tp-esc-alvo]');if(a)a.innerHTML=tpEscalaAlvos(t.value);return;}
     if(t.hasAttribute('data-tp-pac')){est.pac.forEach(function(p){if(p.id===t.value)pac=p;});tpBase='';tpAbertos={pesos:false,meds:false};salva();form();return;}
     if(t.hasAttribute('data-tp-pd')){var x=pac.pesos[+t.getAttribute('data-tp-pd')];if(x&&isFinite(tpDia(t.value))){x.d=t.value;tpOrdena(pac);salva();pesos();resultado();}return;}
-    if(t.hasAttribute('data-tp-base')){tpBase=t.value;resultado();}
+    if(t.hasAttribute('data-tp-base')){tpBase=t.value;resultado();return;}
+    if(t.hasAttribute('data-tp-msel')){
+      var mm=pac.meds[+t.getAttribute('data-tp-mi')],cc=t.getAttribute('data-tp-msel');if(!mm)return;
+      if(t.value==='__outra'){var inp=t.parentNode.querySelector('[data-tp-m="'+cc+'"]');if(inp){inp.hidden=false;inp.value='';try{inp.focus();}catch(e){}}return;}
+      mm[cc]=t.value;
+      // medicação nova: a dose passa para a inicial dela, se a anterior não existe nessa medicação
+      if(cc==='n'){var kn=tpMedConhecida(mm.n);if(kn&&kn.d.indexOf(mm.dose)<0)mm.dose=kn.d[0];}
+      salva();meds();resultado();
+      var lin=root.querySelectorAll('.tp-lm')[+t.getAttribute('data-tp-mi')],de=lin&&lin.querySelector('[data-tp-msel="'+cc+'"]');
+      if(de){try{de.focus();}catch(e){}}
+    }
   });
   root.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.hasAttribute('data-tp-np')){ev.preventDefault();adicionaPeso();}});
   root.addEventListener('toggle',function(ev){var d=ev.target;if(d&&d.getAttribute&&d.getAttribute('data-tp-det'))tpAbertos[d.getAttribute('data-tp-det')]=!!d.open;},true);
@@ -6652,7 +6693,7 @@ function tpRender(root){
       // começa no 1º peso; cada nova dose, na pesagem seguinte à anterior, com a dose seguinte da titulação.
       var ant=pac.meds[pac.meds.length-1];
       pac.meds.push({n:ant?ant.n:'',dose:ant?tpProxDose(ant.n,ant.dose):'',ini:(ant?proxPesagem(ant.ini):proxPesagem(''))||tpHojeISO(),fim:''});tpAbertos.meds=true;salva();meds();resultado();
-      var ins=root.querySelectorAll('.tp-lm');ins=ins[ins.length-1];if(ins){var f=ins.querySelector(ant?'[data-tp-m="dose"]':'[data-tp-m="n"]');try{f.focus();}catch(e){}}
+      var ins=root.querySelectorAll('.tp-lm');ins=ins[ins.length-1];if(ins){var f=ins.querySelector(ant?'[data-tp-msel="dose"],[data-tp-m="dose"]':'[data-tp-msel="n"]');try{f.focus();}catch(e){}}
       return;
     }
     if(b.hasAttribute('data-tp-delm')){pac.meds.splice(+b.getAttribute('data-tp-delm'),1);salva();meds();resultado();return;}
