@@ -6224,9 +6224,10 @@ function tpGraficoSVG(r,modo,baseT,larg){
   var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16);
   var xs=function(t){return x0+(t-t0)/(t1-t0)*(x1-x0);};
   // SETAS NA CURVA (professor, 18/11/2026: "ao invés de ficar lá embaixo, essa barra azul, colocar uma seta na curva,
-  // no gráfico, onde foi iniciado. Acho que fica visualmente melhor para o paciente"). Uma seta por início de dose
-  // (e uma na suspensão), na cor da medicação; o rótulo fica numa faixa acima do gráfico, em até 4 alturas para os
-  // vizinhos não se encostarem. A 1ª dose leva o nome da medicação; as seguintes, só a dose.
+  // no gráfico, onde foi iniciado"; 19/11: "as setas ficaram muito longas. Colocar uma seta menor, mais discreta,
+  // próxima do ponto"). Uma seta curta logo acima do ponto da curva em cada início de dose (e na suspensão), na cor
+  // da medicação, com o rótulo em cima; se o rótulo bater num vizinho ou na curva, sobe um pouco (até 3 degraus).
+  // A 1ª dose leva o nome da medicação; as seguintes, só a dose.
   var curto=W<560,mk=[];
   G.forEach(function(gr){
     gr.segs.forEach(function(sg,si){
@@ -6236,15 +6237,7 @@ function tpGraficoSVG(r,modo,baseT,larg){
     if(!gr.aberto&&isFinite(gr.fim))mk.push({t:gr.fim,cor:gr.cor,rot:gr.nome+' suspensa',tit:gr.nome+' suspensa em '+tpData(gr.fim),fim:true});
   });
   mk.sort(function(a,b){return a.t-b.t;});
-  var ultimo=[-1e9,-1e9,-1e9,-1e9],nLev=0;
-  mk.forEach(function(m){
-    m.x=xs(m.t);var w=m.rot.length*5.3+6;
-    m.cx=Math.max(x0+w/2,Math.min(W-4-w/2,m.x));
-    var lv=-1;for(var i=0;i<4;i++){if(m.cx-w/2>=ultimo[i]+8){lv=i;break;}}
-    if(lv<0){lv=0;for(var j=1;j<4;j++){if(ultimo[j]<ultimo[lv])lv=j;}}
-    ultimo[lv]=m.cx+w/2;m.lv=lv;nLev=Math.max(nLev,lv+1);
-  });
-  var faixa=nLev?nLev*15+8:0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
+  var faixa=mk.length?26:0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
   var vs=pts.map(function(x){return val(x.p);});
   if(isFinite(r.meta))vs.push(val(r.meta));
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
@@ -6298,12 +6291,22 @@ function tpGraficoSVG(r,modo,baseT,larg){
     for(var i=1;i<pts.length;i++){if(pts[i].t>=t){var u=pts[i-1],v=pts[i];return val(u.p+(v.p-u.p)*(t-u.t)/(v.t-u.t));}}
     return val(z.p);
   };
+  var inv=function(x){return t0+(x-x0)/(x1-x0)*(t1-t0);},xpi=xs(pts[0].t),xpf=xs(pts[pts.length-1].t);
+  var ocup=[];
+  var cruza=function(b,a){return b[0]<a[1]&&b[1]>a[0]&&b[2]<a[3]&&b[3]>a[2];};
+  var nOcup=function(b){var n=0;for(var k=0;k<ocup.length;k++)if(cruza(b,ocup[k]))n++;return n;};
+  var naCurva=function(b){for(var x=Math.max(b[0],xpi);x<=Math.min(b[1],xpf);x+=3){var yv=ys(vCurva(inv(x)));if(yv>=b[2]-2&&yv<=b[3]+2)return true;}return false;};
   mk.forEach(function(m){
-    var yl=14+m.lv*15,yc=ys(vCurva(m.t)),x=f1(m.x);
-    g.push('<g class="tp-seta"><title>'+esc(m.tit)+'</title>'
-      +'<text x="'+f1(m.cx)+'" y="'+(yl+9)+'" text-anchor="middle" font-size="9" font-weight="700" fill="'+m.cor+'"'+(m.fim?' font-style="italic"':'')+'>'+esc(m.rot)+'</text>'
-      +'<line x1="'+x+'" y1="'+(yl+13)+'" x2="'+x+'" y2="'+f1(yc-11)+'" stroke="'+m.cor+'" stroke-width="1.3" stroke-opacity=".85"'+(m.fim?' stroke-dasharray="3 3"':'')+'/>'
-      +'<path d="M'+f1(m.x-4.5)+' '+f1(yc-11)+' L'+f1(m.x+4.5)+' '+f1(yc-11)+' L'+x+' '+f1(yc-3.5)+' Z" fill="'+m.cor+'"/></g>');
+    m.x=xs(m.t);m.yc=ys(vCurva(m.t));
+    var w=m.rot.length*4.9+6,cx=Math.max(2+w/2,Math.min(W-2-w/2,m.x)),melhor=null;
+    for(var L=0;L<4;L++){
+      var yb=m.yc-21-L*12;if(yb-8<2)break;
+      var cx2=[cx-w/2,cx+w/2,yb-8,yb+2],custo=nOcup(cx2)+nOcup([m.x-2.5,m.x+2.5,yb+4,m.yc-3])+(naCurva(cx2)?1:0);
+      if(!melhor||custo<melhor.c)melhor={c:custo,yb:yb};
+      if(!custo)break;
+    }
+    m.cx=cx;m.yb=melhor?melhor.yb:Math.max(10,m.yc-21);
+    ocup.push([cx-w/2,cx+w/2,m.yb-8,m.yb+2],[m.x-2.5,m.x+2.5,m.yb+4,m.yc-3]);
   });
   // a curva: retas entre os pesos anotados (não inventa forma entre duas medidas)
   var xy=pts.map(function(p){return [xs(p.t),ys(val(p.p))];});
@@ -6314,12 +6317,14 @@ function tpGraficoSVG(r,modo,baseT,larg){
       +tpData(p.t)+': '+tpFmt(p.p,1)+' kg'+(isFinite(alt)?' · IMC '+tpFmt(p.p/(alt*alt),1):'')+'</title></circle>');
   });
   // rótulos do 1º, do último e do menor peso: fogem das setas e uns dos outros
-  var caixas=[];
-  var bate=function(xa,xb,yt,yb){
-    for(var k=0;k<mk.length;k++){var m=mk[k];if(m.x>=xa-3&&m.x<=xb+3&&ys(vCurva(m.t))-3.5>yt&&14+m.lv*15+13<yb)return true;}
-    for(k=0;k<caixas.length;k++){var c=caixas[k];if(c[0]<xb&&c[1]>xa&&c[2]<yb&&c[3]>yt)return true;}
-    return false;
-  };
+  var bate=function(xa,xb,yt,yb){return nOcup([xa,xb,yt,yb])>0;};
+  mk.forEach(function(m){
+    var x=f1(m.x),ya=m.yb+4,yp=m.yc-8;
+    g.push('<g class="tp-seta"><title>'+esc(m.tit+' · '+tpValor(vCurva(m.t),modo))+'</title>'
+      +'<text x="'+f1(m.cx)+'" y="'+f1(m.yb)+'" text-anchor="middle" font-size="8.5" font-weight="600" fill="'+m.cor+'" stroke="var(--surface)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke"'+(m.fim?' font-style="italic"':'')+'>'+esc(m.rot)+'</text>'
+      +(yp>ya+1?'<line x1="'+x+'" y1="'+f1(ya)+'" x2="'+x+'" y2="'+f1(yp)+'" stroke="'+m.cor+'" stroke-width="1.2" stroke-opacity=".8"'+(m.fim?' stroke-dasharray="2 2"':'')+'/>':'')
+      +'<path d="M'+f1(m.x-3)+' '+f1(yp)+' L'+f1(m.x+3)+' '+f1(yp)+' L'+x+' '+f1(m.yc-3)+' Z" fill="'+m.cor+'"/></g>');
+  });
   var rot=function(i,acima){
     var a=xy[i],txt=tpValor(val(pts[i].p),modo),w=txt.length*5.4+2;
     var anc=i===0?'start':(i===xy.length-1?'end':'middle'),des=anc==='start'?7:(anc==='end'?-7:0);
@@ -6332,11 +6337,30 @@ function tpGraficoSVG(r,modo,baseT,larg){
       if(!bate(xa,xa+w,y-8,y+2)){esc0=[dx,y,xa];break;}
     }
     if(!esc0)esc0=[0,acima?baixo:cima,a[0]];
-    caixas.push([esc0[2],esc0[2]+w,esc0[1]-8,esc0[1]+2]);
+    ocup.push([esc0[2],esc0[2]+w,esc0[1]-8,esc0[1]+2]);
     g.push('<text x="'+f1(a[0]+esc0[0])+'" y="'+f1(esc0[1])+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
   };
-  if(r.iMin!==0&&r.iMin!==xy.length-1)rot(r.iMin,false);
-  rot(0,true);if(xy.length>1)rot(xy.length-1,true);
+  var jaRot={};
+  if(r.iMin!==0&&r.iMin!==xy.length-1){rot(r.iMin,false);jaRot[r.iMin]=1;}
+  rot(0,true);jaRot[0]=1;if(xy.length>1){rot(xy.length-1,true);jaRot[xy.length-1]=1;}
+  // o peso em cada seta (professor, 19/11/2026: "faltou o peso na dose de 0,5 mg por semana, no gráfico, e também não
+  // está registrado na dose de 1 mg"): acima e à direita do ponto; se bater, à esquerda ou embaixo. Sem pesagem no
+  // dia, o valor é o da curva (≈; no celular, só os pesados de fato). Vem depois do 1º, do último e do menor peso, que têm
+  // prioridade; o que não couber sem encostar em outro rótulo fica só na dica da seta.
+  mk.forEach(function(m){
+    var perto=-1;for(var k=0;k<pts.length;k++){if(Math.abs(pts[k].t-m.t)<TP_DIA){perto=k;break;}}
+    if(perto>=0?jaRot[perto]:curto)return;
+    var txt=(perto<0?'≈':'')+tpValor(vCurva(m.t),modo),w=txt.length*5.4+2,livre=null,semCurva=null;
+    [[m.x+5,'start',m.yc-6],[m.x-5,'end',m.yc-6],[m.x,'middle',m.yc+15]].forEach(function(o){
+      var xa=o[1]==='start'?o[0]:(o[1]==='end'?o[0]-w:o[0]-w/2),b=[xa,xa+w,o[2]-8,o[2]+2];
+      if(xa<2||xa+w>W-2||o[2]>y1-3||nOcup(b))return;
+      if(!livre)livre=[o,b];if(!semCurva&&!naCurva(b))semCurva=[o,b];
+    });
+    var e2=semCurva||livre;if(!e2)return;
+    if(perto>=0)jaRot[perto]=1;
+    ocup.push(e2[1]);
+    g.push('<text class="tp-seta-p" x="'+f1(e2[0][0])+'" y="'+f1(e2[0][2])+'" text-anchor="'+e2[0][1]+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
+  });
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Curva do '+(modo==='imc'?'IMC':'peso')+' ao longo do tempo, com uma seta no início de cada dose">'+g.join('')+'</svg>';
 }
 function tpKpi(l,v,s){return '<div class="tp-kpi"><div class="tp-kpi-l">'+l+'</div><div class="tp-kpi-v">'+v+'</div>'+(s?'<div class="tp-kpi-s">'+s+'</div>':'')+'</div>';}
@@ -6499,7 +6523,7 @@ function tpRender(root){
       +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Peso</div>'
         +'<div class="tp-add"><input type="date" data-tp-nd value="'+tpHojeISO()+'" aria-label="Data do peso"><input type="text" inputmode="decimal" autocomplete="off" data-tp-np placeholder="Peso (kg)" aria-label="Peso em kg">'
         +'<button type="button" class="btn btn-primary btn-sm" data-tp-addp>Adicionar</button></div>'
-        +'<div class="tp-atalhos"><span>Data:</span><button type="button" data-tp-dt="0">hoje</button><button type="button" data-tp-dt="1" title="a partir do último peso">+1 mês</button>'
+        +'<div class="tp-atalhos"><span>Data:</span><button type="button" data-tp-dt="0">hoje</button><button type="button" data-tp-dt="1" title="a partir do último peso">+1 mês</button><button type="button" data-tp-dt="2" title="a partir do último peso">+2 meses</button>'
           +'<button type="button" data-tp-dt="3" title="a partir do último peso">+3 meses</button><button type="button" data-tp-dt="6" title="a partir do último peso">+6 meses</button>'
           +'<button type="button" class="tp-atalho-colar" data-tp-colar>Colar lista</button></div>'
         +'<div class="tp-caixa" data-tp-colar-box hidden><textarea rows="5" data-tp-lista placeholder="Uma medida por linha, com data e peso. Ex.:&#10;05/04/26  82&#10;15/06/2026  77,9"></textarea>'

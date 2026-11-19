@@ -77,6 +77,18 @@ ok((svg.match(/class="tp-seta"/g) || []).length === 5 && !/<rect /.test(svg), 'u
 ok(/>Tirzepatida 2,5 mg\/sem</.test(svg) && />5 mg\/sem</.test(svg) && />7,5 mg\/sem</.test(svg) && />Tirzepatida suspensa</.test(svg) && />Orlistate 120 mg 3×\/dia</.test(svg), 'rótulos: nome na 1ª dose, só a dose nas seguintes, suspensão');
 ok(/>Tirzepatida 2,5 mg</.test(run("tpGraficoSVG(R,'kg',R.pts[0].t,360)")), 'no celular, a dose sem "/sem"');
 ok((svg.match(/paint-order="stroke">/g) || []).length >= 2, 'números do 1º, último e menor peso com contorno do fundo (legíveis sobre as setas)');
+// setas curtas, junto do ponto (professor, 19/11/2026: "as setas ficaram muito longas. Colocar uma seta menor, mais discreta, próxima do ponto")
+const hastes = svg.split('<g class="tp-seta">').slice(1).map((s) => s.split('</g>')[0]).map((s) => { const m = s.match(/<line x1="[\d.]+" y1="([\d.]+)" x2="[\d.]+" y2="([\d.]+)"/); return m ? +m[2] - +m[1] : 0; });
+ok(hastes.length === 5 && Math.max(...hastes) <= 46 && Math.min(...hastes) <= 12, 'setas curtas, logo acima do ponto: ' + hastes.join('/'));
+// o peso em cada seta (professor, 19/11/2026: "faltou o peso na dose de 0,5 mg por semana ... e também ... na dose de 1 mg")
+const PJ = run(`tpGraficoSVG(tpAnalisa({alt:'168',pesos:[{d:'2026-05-05',p:'85'},{d:'2026-07-05',p:'79'},{d:'2026-09-05',p:'74'},{d:'2026-11-05',p:'71'}],meds:[{n:'Semaglutida SC',dose:'0,25 mg/sem',ini:'2026-05-05'},{n:'Semaglutida SC',dose:'0,5 mg/sem',ini:'2026-07-05'},{n:'Semaglutida SC',dose:'1 mg/sem',ini:'2026-09-05'}]}),'kg',0,1100)`);
+ok(['85,0', '79,0', '74,0', '71,0'].every((v) => PJ.includes('>' + v + ' kg<')) && (PJ.match(/class="tp-seta-p"/g) || []).length === 2 && (PJ.match(/>85,0 kg</g) || []).length === 1, 'peso escrito em cada seta (0,25 → 85, 0,5 → 79, 1 mg → 74), sem repetir o do 1º ponto');
+ok(/≈[\d,]+ kg</.test(svg), 'seta numa data sem pesagem: peso da curva com ≈');
+const cel = run("tpGraficoSVG(R,'kg',R.pts[0].t,320)");
+ok(!/≈[\d,]+ kg</.test(cel), 'no celular, sem os pesos estimados (≈) nas setas');
+const caixasTxt = (s) => [...s.matchAll(/<text x="([\d.]+)" y="([\d.]+)" text-anchor="(start|end|middle)" font-size="9\.5" font-weight="700"[^>]*>([^<]+)</g)].map((m) => { const w = m[4].length * 5.4 + 2, x = +m[1], y = +m[2]; const xa = m[3] === 'start' ? x : (m[3] === 'end' ? x - w : x - w / 2); return [xa, xa + w, y - 8, y + 2, m[4]]; });
+const encostam = (s) => { const c = caixasTxt(s), r = []; for (let i = 0; i < c.length; i++) for (let j = i + 1; j < c.length; j++) if (c[i][0] < c[j][1] && c[i][1] > c[j][0] && c[i][2] < c[j][3] && c[i][3] > c[j][2]) r.push(c[i][4] + ' × ' + c[j][4]); return r; };
+ok(!encostam(cel).length && !encostam(svg).length && !encostam(PJ).length, 'números de peso não se encostam (celular, padrão e largo): ' + encostam(cel).concat(encostam(svg), encostam(PJ)).join('; '));
 ok(/>100,0 kg</.test(svg) && />90,5 kg</.test(svg) && />88,0 kg</.test(svg), 'rótulos do primeiro, do último e do menor peso');
 ok(/<path d="M[\d.]+ [\d.]+ L[\d.]+ [\d.]+ L[\d.]+ [\d.]+ Z" fill="#60a5fa"\/>/.test(svg), 'ponta da seta na curva');
 const svgImc = run("tpGraficoSVG(R,'imc',R.pts[0].t)");
@@ -174,6 +186,8 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   const r3 = doc.createElement('div'); r3.id = 'calc3'; doc.body.appendChild(r3);
   run("currentUser={id:'u3',role:'admin'};tpRender(document.getElementById('calc3'))");
   setv(r3.querySelector('[data-tp-np]'), '90'); setv(r3.querySelector('[data-tp-nd]'), '2026-02-10', 'change'); r3.querySelector('[data-tp-addp]').click();
+  r3.querySelector('[data-tp-dt="2"]').click();
+  ok(r3.querySelector('[data-tp-nd]').value === '2026-04-10', 'atalho "+2 meses" (professor, 19/11/2026)');
   r3.querySelector('[data-tp-dt="3"]').click();
   ok(r3.querySelector('[data-tp-nd]').value === '2026-05-10', 'atalho "+3 meses" conta do último peso');
   r3.querySelector('[data-tp-dt="0"]').click();
