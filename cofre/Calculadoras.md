@@ -78,6 +78,13 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   "⤢ Tela cheia" vira botão no cabeçalho do gráfico (saiu o selo sobre o gráfico); quadros com a variação e o ritmo
   em verde (perda) ou âmbar (ganho); barra de ações com linha acima. No celular: quadros em 2 colunas e, no cartão da
   dose, medicação e dose na linha toda.
+- **Animação ao abrir a tela cheia (19/11, sw v462; professor: "deixa uma animação quando o gráfico abrir em tela
+  cheia"):** a janela aparece com fade (220 ms) e o conteúdo cresce a partir do cartão do gráfico (360 ms); a curva se
+  desenha da esquerda para a direita em 900 ms (`stroke-dashoffset`), cada ponto surge quando a linha passa por ele, e
+  setas, nomes e pesos aparecem no fim. Trocar o modo (kg, IMC, %, composição) redesenha a curva; girar ou mudar o
+  tamanho da tela não. Fechar some em 160 ms. O crescimento fica em `.tp-cheia-in` (camada de dentro) porque o
+  navegador trava `transform` no elemento em tela cheia. `prefers-reduced-motion` desliga tudo (`tpSemMovimento`),
+  e sem `Element.animate` a tela abre e fecha na hora (jsdom dos testes). Código: `tpAnimaGrafico(box)`.
 - **Servidor e volume (medido em 19/11):** o banco inteiro tem ~1,1 GB (global_state 18 MB, app_state 17 MB, 170
   contas). 3.000 pacientes = 3 a 12 MB (~1% do banco); 100 mil = 100 a 400 MB. Se a sincronização vier, uma linha por
   paciente (cada edição manda só aquele paciente, 1–4 KB). Sincronização no servidor ainda **não decidida** pelo

@@ -578,6 +578,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-kpi-alerta .tp-kpi-v{color:var(--gold)}
 .tp-res-sec{padding-bottom:.6rem}
 .tp-cheia,.tp-cheia:fullscreen{position:fixed;inset:0;z-index:99980;background:var(--surface);color:var(--tx);display:flex;flex-direction:column;gap:.5rem;padding:max(12px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.tp-cheia-in{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.5rem}
 .tp-cheia-cab{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap}
 .tp-cheia-t{font-weight:700;font-size:.95rem;margin-right:auto}
 .tp-cheia-x{width:2.4rem;height:2.4rem;border-radius:50%;border:1px solid var(--bd2,var(--bd));background:transparent;color:var(--tx);font-size:1.4rem;line-height:1;cursor:pointer}
@@ -6544,6 +6545,26 @@ function tpResumoHTML(r){
 }
 // escala válida para o paciente (sem altura não há IMC; sem duas medidas de composição, não há a escala Composição)
 function tpModoOk(r){if((tpModo==='imc'&&!isFinite(r.alt))||(tpModo==='comp'&&r.comp.length<2))tpModo='kg';return tpModo;}
+// ANIMAÇÃO DA TELA CHEIA (professor, 19/11/2026: "Deixa uma animação quando o gráfico abrir em tela cheia"): a curva se
+// desenha da esquerda para a direita, cada ponto acende quando a linha passa por ele, e setas e números surgem no fim.
+// Sem Web Animations (ou com "reduzir movimento" ligado no aparelho) o gráfico aparece pronto, como antes.
+function tpSemMovimento(){try{return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);}catch(e){return false;}}
+function tpAnimaGrafico(box){
+  var svg=box&&box.querySelector('svg');if(!svg||tpSemMovimento()||typeof svg.animate!=='function')return;
+  var T=900,W=(svg.viewBox&&svg.viewBox.baseVal&&svg.viewBox.baseVal.width)||1,E='cubic-bezier(.45,0,.2,1)';
+  svg.querySelectorAll('polyline').forEach(function(pl){
+    try{var L=pl.getTotalLength();if(!(L>0))return;pl.style.strokeDasharray=L+' '+L;
+      pl.animate([{strokeDashoffset:L},{strokeDashoffset:0}],{duration:T,easing:E,fill:'both'});}catch(e){}
+  });
+  svg.querySelectorAll('circle').forEach(function(c){
+    var f=Math.max(0,Math.min(1,(+c.getAttribute('cx')||0)/W));
+    try{c.animate([{opacity:0,transform:'scale(.3)'},{opacity:1,transform:'scale(1)'}],{duration:260,delay:80+f*(T-120),easing:'cubic-bezier(.2,.9,.3,1.3)',fill:'both'});}catch(e){}
+    c.style.transformBox='fill-box';c.style.transformOrigin='center';
+  });
+  svg.querySelectorAll('.tp-seta,.tp-seta-p,text[font-weight="700"]').forEach(function(el,i){
+    try{el.animate([{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}],{duration:320,delay:T-80+Math.min(i,12)*25,easing:'ease-out',fill:'both'});}catch(e){}
+  });
+}
 function tpBaseT(r){
   var gb=null;r.grupos.forEach(function(x){if(x.k===tpBase)gb=x;});
   if(!gb)tpBase='';
@@ -6777,12 +6798,12 @@ function tpRender(root){
   function abreCheia(){
     var r0=tpAnalisa(pac);if(r0.pts.length<2||cheia)return;
     var ov=document.createElement('div');ov.className='tp-cheia';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Gráfico da trajetória do peso em tela cheia');
-    ov.innerHTML='<div class="tp-cheia-cab"><div class="tp-cheia-t">Trajetória do peso'+(pac.rot?' · '+esc(pac.rot):'')+'</div><div data-tp-cheia-modos></div>'
+    ov.innerHTML='<div class="tp-cheia-in"><div class="tp-cheia-cab"><div class="tp-cheia-t">Trajetória do peso'+(pac.rot?' · '+esc(pac.rot):'')+'</div><div data-tp-cheia-modos></div>'
       +'<button type="button" class="tp-cheia-x" data-tp-fecha aria-label="Fechar a tela cheia" title="Fechar (Esc)">×</button></div>'
-      +'<div class="tp-cheia-g" data-tp-cheia-g></div><div class="tp-cheia-kpis" data-tp-cheia-kpis></div><div class="tp-cheia-dica" data-tp-gire hidden>Gire o celular para ver o gráfico maior.</div>';
+      +'<div class="tp-cheia-g" data-tp-cheia-g></div><div class="tp-cheia-kpis" data-tp-cheia-kpis></div><div class="tp-cheia-dica" data-tp-gire hidden>Gire o celular para ver o gráfico maior.</div></div>';
     document.body.appendChild(ov);
     var foco=document.activeElement,emFS=false,ovf=document.body.style.overflow;document.body.style.overflow='hidden';
-    cheia={ov:ov,desenha:function(){
+    cheia={ov:ov,desenha:function(anima){
       var r=tpAnalisa(pac),g=ov.querySelector('[data-tp-cheia-g]');if(r.pts.length<2){fecha();return;}
       tpModoOk(r);ov.querySelector('[data-tp-cheia-modos]').innerHTML=tpModosHTML(r);
       // os quadros do resumo embaixo (professor, 19/11/2026: "quando colocar em tela cheia, coloca também no canto
@@ -6790,13 +6811,18 @@ function tpRender(root){
       ov.querySelector('[data-tp-cheia-kpis]').innerHTML=tpKpisHTML(r);
       var w=g.clientWidth||0,h=g.clientHeight||0,k=w>=1000?1.3:1;
       g.innerHTML=tpGraficoSVG(r,tpModo,tpBaseT(r),w/k,h/k);
+      if(anima)tpAnimaGrafico(g);
       var gi=ov.querySelector('[data-tp-gire]');if(gi)gi.hidden=!(window.innerHeight>window.innerWidth&&window.innerWidth<700);
     }};
     function fecha(){
       if(!cheia)return;var c=cheia;cheia=null;
       window.removeEventListener('resize',redesenha);document.removeEventListener('keydown',tecla,true);document.removeEventListener('fullscreenchange',saiuFS);
       try{if(document.fullscreenElement===c.ov&&document.exitFullscreen)document.exitFullscreen().catch(function(){});}catch(e){}
-      if(c.ov.parentNode)c.ov.parentNode.removeChild(c.ov);document.body.style.overflow=ovf;
+      var tira=function(){if(c.ov.parentNode)c.ov.parentNode.removeChild(c.ov);};
+      // ao fechar, some em 160 ms (sem animação disponível, sai na hora)
+      if(typeof c.ov.animate==='function'&&!tpSemMovimento()){try{c.ov.style.pointerEvents='none';c.ov.animate([{opacity:1,transform:'none'},{opacity:0,transform:'scale(.985)'}],{duration:160,easing:'ease-in',fill:'forwards'}).onfinish=tira;setTimeout(tira,400);}catch(e){tira();}}
+      else tira();
+      document.body.style.overflow=ovf;
       try{(foco&&foco.focus?foco:q('[data-tp-cheia]')).focus();}catch(e){}
     }
     var rs=null;function redesenha(){clearTimeout(rs);rs=setTimeout(function(){if(cheia)cheia.desenha();},120);}
@@ -6805,11 +6831,20 @@ function tpRender(root){
     ov.addEventListener('click',function(ev){
       var b=ev.target.closest('button');
       if(ev.target===ov||(b&&b.hasAttribute('data-tp-fecha'))){fecha();return;}
-      if(b&&b.hasAttribute('data-tp-modo')){tpModo=b.getAttribute('data-tp-modo');cheia.desenha();resultado();}
+      if(b&&b.hasAttribute('data-tp-modo')){tpModo=b.getAttribute('data-tp-modo');cheia.desenha(true);resultado();}
     });
     window.addEventListener('resize',redesenha);document.addEventListener('keydown',tecla,true);document.addEventListener('fullscreenchange',saiuFS);
+    // a tela cheia cresce a partir do gráfico do cartão (na camada interna: a tela cheia do navegador trava o
+    // `transform` do próprio elemento) enquanto o fundo aparece
+    var org=q('.tp-graf'),inn=ov.querySelector('.tp-cheia-in');
+    if(org&&inn&&typeof ov.animate==='function'&&!tpSemMovimento()){
+      try{var rb=org.getBoundingClientRect(),ri=inn.getBoundingClientRect(),s=Math.max(.3,Math.min(.92,rb.width/(ri.width||window.innerWidth||1)));
+        inn.style.transformOrigin=Math.round(rb.left+rb.width/2-ri.left)+'px '+Math.round(rb.top+rb.height/2-ri.top)+'px';
+        ov.animate([{opacity:0},{opacity:1}],{duration:220,easing:'ease-out'});
+        inn.animate([{transform:'scale('+s.toFixed(3)+')'},{transform:'none'}],{duration:360,easing:'cubic-bezier(.2,.8,.2,1)'});}catch(e){}
+    }
     try{if(ov.requestFullscreen){var pr=ov.requestFullscreen();if(pr&&pr.catch)pr.catch(function(){});}}catch(e){}
-    cheia.desenha();
+    cheia.desenha(true);
     try{ov.querySelector('[data-tp-fecha]').focus();}catch(e){}
   }
   // largura útil do gráfico: a do cartão menos o recuo da seção (rcv-sec)
