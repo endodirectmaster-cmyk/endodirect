@@ -92,6 +92,15 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   número é descartada; entre as livres, vence a que não cruza nenhuma das duas linhas (`cruzaLinha`). O que não couber
   fica só na dica do ponto. Junto: o rótulo do 1º/último ponto (`rot`) ganhou um desempate que evita cruzar a própria
   curva, então o último ponto de uma descida põe o número embaixo, longe da linha.
+- **Parecer do advogado (Bruno, 19/11, por áudio) e termo do médico:** dados só no aparelho = "muito sossegado": não
+  precisa de consentimento do paciente (tratamento para fins de saúde) e a gestão dos dados é responsabilidade exclusiva
+  do médico (o Endodirect só fornece a interface). Servidor = "a grande questão": exige sobretudo um contrato/documento
+  com o médico, nada com o paciente. Ele sugeriu um termo simples, mais informativo. Rascunhos no documento "Consulta
+  LGPD" (Claude Docs): **versão 1** (só no aparelho, informativa) e **versão 2** (sincronização: papéis
+  controlador/operador, finalidade única, São Paulo, incidente em [24 h], backups em [7 dias] — plano Pro do Supabase —,
+  exportar em [30 dias], desligar apaga a cópia do servidor). Aceite eletrônico antes do 1º uso (caixa "Li e concordo"),
+  guardando data/hora e versão; versão nova pede novo aceite. **Implementar a tela de aceite só depois que o Bruno
+  aprovar o texto** (professor, 19/11: "Pode fazer").
 - **Servidor e volume (medido em 19/11):** o banco inteiro tem ~1,1 GB (global_state 18 MB, app_state 17 MB, 170
   contas). 3.000 pacientes = 3 a 12 MB (~1% do banco); 100 mil = 100 a 400 MB. Se a sincronização vier, uma linha por
   paciente (cada edição manda só aquele paciente, 1–4 KB). Sincronização no servidor ainda **não decidida** pelo
