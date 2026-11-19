@@ -78,6 +78,18 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
     uma dose por pesagem a partir do início, até a dose-alvo; avisa se as pesagens acabam antes) ou **intervalo de
     bula** (como antes).
   - Seção 2 passou a se chamar "2 · Peso".
+- **Setas curtas e peso em cada seta (19/11, sw v455; professor: "as setas ficaram muito longas. Colocar uma seta
+  menor, mais discreta, próxima do ponto"; "faltou o peso na dose de 0,5 mg por semana, no gráfico, e também não está
+  registrado na dose de 1 mg"; "depois de mais um mês, colocar mais 2 meses"):**
+  - A seta agora é curta (≈ 15 px) e fica logo acima do ponto da curva, com o rótulo da dose em cima (8,5 px,
+    contorno da cor do fundo). Se o rótulo bater num vizinho, numa seta ou na própria curva, sobe 12 px por degrau
+    (até 3). O alto do gráfico só reserva 26 px.
+  - **Peso em cada seta** (`.tp-seta-p`): acima e à direita do ponto; se bater, à esquerda ou embaixo. Sem pesagem
+    no dia, vale a curva com "≈" (no celular, com menos de 560 px, só os pesados de fato). Prioridade: primeiro os
+    números do 1º, do último e do menor peso; depois os das setas, sem repetir o mesmo ponto. O que não couber sem
+    encostar em outro rótulo fica só na dica da seta (que também mostra o peso). Um mapa de ocupação único
+    (`ocup`, `nOcup`, `naCurva`) serve às setas e aos números.
+  - Atalhos de data: hoje, +1 mês, **+2 meses**, +3 meses, +6 meses.
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 
