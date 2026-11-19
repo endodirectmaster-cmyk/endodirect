@@ -18,15 +18,22 @@ atualizado: 2026-11-19
   backup `main-antes-capitulos-ee-2026-11-17e` (18/11 00:11 UTC) + capítulos do grupo 5 do Essencial + ledger de
   e-mails mesclado (backup ∪ envios de hoje) + Questões do Dia de 18 e 19/11 marcadas como postadas (ordem da
   fila) + `qotd_autopost_date`/`newsletter_sent` = 19/11. Conferido: resto do payload idêntico ao backup.
+- **Confirmado pelo professor:** Questão do Dia de 18/11 = insuficiência ovariana prematura; de 19/11 =
+  orforglipron. **E-mails repetidos em 19/11:** 99 winback, 98 "novidades" e 38 reengajamento foram para quem já
+  tinha recebido a mesma mensagem (ledger mesclado; não repete no dia seguinte).
 - **Perdido (sem fonte):** itens do radar e episódios de podcast de 18–19/11 (os crons repõem a partir dos feeds),
   `newsletter_recent` desses dias, ledger dos e-mails de 18/11 e um save do painel feito pelo iPhone em 18/11 às
   08:59 BRT (conteúdo desconhecido; perguntar ao professor).
 - **Correção no código:** `lib/estado-global.js` (`payloadDaResposta` lança em qualquer leitura falha;
   `confereParaGravar` recusa payload sem `provas` nem `diretrizes`), usado em trial-emails, instagram, newsletter,
   aovivo, enquete-lembrete, alert, podcasts e radar. Teste: `scripts/test-estado-global-leitura.js`.
-- **Trava no banco (pendente de aprovação):** gatilho `endodirect_global_zz_guarda_esvaziar_trg` (recusa, para
-  qualquer papel, gravação que derruba à metade uma lista com ≥ 20 itens; liberação pontual com
-  `set local endodirect.permitir_esvaziar = 'on'`). A migração pediu confirmação e ficou sem resposta.
+- **Trava no banco (instalada em 19/11 com o "Pode" do professor):** gatilho `endodirect_global_zz_guarda_esvaziar_trg`
+  → função `endodirect_global_guarda_esvaziar()`. Recusa, para QUALQUER papel (inclusive o service_role dos crons),
+  a gravação que derruba à metade ou menos uma destas listas com ≥ 20 itens: provas, diretrizes, adm_cursos,
+  podcasts, ig_stories, fc_shared, mm_shared, adm_avisos, radar_avisos, curso_mods_extra. Roda por último entre os
+  BEFORE UPDATE (nome com "zz"). Testada: esvaziar as provas é recusado; gravação normal passa. **Limpeza
+  intencional** (ex.: apagar muitas questões de uma vez pelo SQL): `set local endodirect.permitir_esvaziar = 'on';`
+  na mesma transação. Pelo painel, uma exclusão em massa assim aparece como erro de gravação.
 - **Regra:** "não consegui ler" nunca é "servidor vazio". Toda rotina que relê e regrava o payload inteiro lança
   na falha de leitura. O painel já seguia isso desde 19/10 (`queueRemoteStateSave`).
 
