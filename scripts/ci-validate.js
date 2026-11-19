@@ -717,6 +717,17 @@ try {
   fail('regressão da campanha de recuperação falhou (verifique lib/trial-emails.js):\n' + out);
 }
 
+// ⚠️ Incidente de 19/11/2026: um 503 do Supabase no meio do cron virou payload `{}` na rotina
+//     de e-mails, que reenviou campanhas e gravou só o ledger por cima de todo o conteúdo.
+//     Leitura do estado global que falha LANÇA; payload sem provas nem diretrizes não grava.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-estado-global-leitura.js')], { stdio: 'pipe' });
+  ok('estado global: leitura que falha não vira payload vazio (e-mails, newsletter, Questão do Dia)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do estado global falhou (verifique lib/estado-global.js e quem lê o payload):\n' + out);
+}
+
 // ⚠️ Hipogonadismo SBEM/SBU/ABEMSS 2026: dois erros de FATO estavam no bloco que
 //     ancora toda a geração de IA ("repetir em 2 dias" e "Ht >54%" como
 //     contraindicação), e metade dos geradores clínicos não recebia diretriz

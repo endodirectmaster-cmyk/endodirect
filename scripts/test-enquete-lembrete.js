@@ -26,7 +26,7 @@ delete process.env.VAPID_PUBLIC_KEY; delete process.env.VAPID_PRIVATE_KEY;
 
 let estado, chamadas;
 function cenario(pendentes, sent) {
-  estado = { payload: { radar_avisos: [{ t: 1 }], enquete_lembrete_sent: sent || undefined }, pendentes: pendentes };
+  estado = { payload: { provas: [], radar_avisos: [{ t: 1 }], enquete_lembrete_sent: sent || undefined }, pendentes: pendentes }; // provas: payload real (19/11/2026)
   chamadas = { rpc: 0, resend: [], patch: [] };
   global.fetch = async (url, opt) => {
     url = String(url); opt = opt || {};
