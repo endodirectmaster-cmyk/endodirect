@@ -235,6 +235,16 @@ Professor: *"Agora dá para deixar traduzido para o português e disponível no 
   ajustar a lista.
 - Para a janela inteira em português: versão própria quando o modelo sair (ou com os coeficientes dos autores).
 
+## 🇧🇷 REGANHO PÓS-GLP-1 (MAYO): O SITE DOS AUTORES AGORA EM PORTUGUÊS (2026-11-19, sw v465)
+
+O autor (Michael Romanos) respondeu ao e-mail do professor em 19/11: agradeceu o uso na plataforma educacional, contou
+que pôs seleção de idiomas no site (português incluído) e pediu feedback. O site lê `?lang=` antes do `localStorage`
+(`glp1lang`) e do idioma do aparelho: o cartão `reganhoglp1` passou a abrir `https://glp1regainrisk.com/?lang=pt`
+(conferido com navegador em inglês: abre em português). O guia deixou de traduzir os campos; ficou o que o site não diz:
+duas perguntas de pesquisa antes do resultado (para quem é a previsão; quando começou o medicamento) e e-mail opcional
+(o resumo por e-mail sai em inglês). Novidades do site: gráfico "continuar ou interromper" e aviso de fora da faixa de
+treinamento (<3 ou >24 meses, perda >30%, IMC <25 ou >55, idade <25 ou >80).
+
 ## 🧪 REGANHO PÓS-GLP-1: A FERRAMENTA DA MAYO RODA DENTRO DO CARTÃO (2026-11-16)
 
 Professor: *"a ideia é deixar a calculadora dentro da plataforma apenas para os professores, de modo que a
