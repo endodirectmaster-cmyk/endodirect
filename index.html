@@ -573,6 +573,14 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-cheia-g{flex:1 1 auto;min-height:0;color:var(--tx)}
 .tp-cheia-g svg{display:block;width:100%;height:100%}
 .tp-cheia-dica{font-size:.75rem;color:var(--t2);text-align:center}
+.tp-cheia-kpis{flex:none}
+.tp-cheia-kpis .tp-kpis{margin:0;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))}
+@media (max-height:560px),(max-width:700px){.tp-cheia-kpis .tp-kpis{display:flex;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}.tp-cheia-kpis .tp-kpi{flex:0 0 auto;min-width:9.5rem;max-width:13.5rem}}
+.tp-chk{display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:var(--t2);margin:.1rem 0 .55rem;cursor:pointer;line-height:1.35}
+.tp-chk input{width:auto;margin:.15rem 0 0;flex:none}
+.tp-add-comp{margin-top:-.25rem}
+.tp-add-comp input{flex:1 1 0;width:auto;min-width:0}
+.tp-lpc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:-.05rem 2.1rem .5rem 0}
 .tp-vazio{font-size:.78rem;color:var(--t3);padding:.7rem 0}
 .tp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.5rem;margin-bottom:.6rem}
 .tp-kpi{border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .65rem;background:var(--s2);min-width:0}
@@ -6115,9 +6123,10 @@ function tpLerLista(txt){
     if(!m){ruins++;return;}
     var resto=l.slice(0,m.index)+' '+l.slice(m.index+m[0].length);
     var w=/(\d{2,3}(?:[.,]\d{1,2})?)/.exec(resto),p=w?cliqLe(w[1]):NaN;
+    var gm=w?/(\d{1,2}(?:[.,]\d{1,2})?)\s*%?/.exec(resto.slice(w.index+w[0].length)):null,gp=gm?cliqLe(gm[1]):NaN;
     var t=Date.UTC(y,mo-1,d),dd=new Date(t);
     if(!(p>=20&&p<=400)||y<1950||y>2100||dd.getUTCMonth()!==mo-1||dd.getUTCDate()!==d){ruins++;return;}
-    ok.push({d:tpIsoUTC(t),p:w[1]});
+    var it={d:tpIsoUTC(t),p:w[1]};if(gp>=2&&gp<=75)it.gp=gm[1];ok.push(it);
   });
   return {ok:ok,ruins:ruins};
 }
@@ -6161,13 +6170,34 @@ function tpPesoEm(pts,t){
   }
   return null;
 }
+// COMPOSIÇÃO CORPORAL (opcional; professor, 19/11/2026: "adicionar de forma opcional outros dados de composição
+// corporal, como por exemplo, a massa magra, a massa gorda, percentual de gordura da consulta"). Em cada pesagem:
+// gp (% de gordura), mg (massa gorda, kg), mm (massa magra = livre de gordura, kg). Basta um: com o peso, os outros
+// são calculados (mg = peso × %; mm = peso − mg). O que foi digitado prevalece sobre o calculado.
+function tpComp(x,p){
+  if(!x||!(p>0))return null;
+  var ok=function(v,lo,hi){return isFinite(v)&&v>=lo&&v<=hi;};
+  var gp=cliqLe(x.gp),mg=cliqLe(x.mg),mm=cliqLe(x.mm);
+  gp=ok(gp,2,75)?gp:NaN;mg=ok(mg,1,300)?mg:NaN;mm=ok(mm,10,250)?mm:NaN;
+  if(!isFinite(gp)&&!isFinite(mg)&&!isFinite(mm))return null;
+  if(isFinite(gp)){if(!isFinite(mg))mg=p*gp/100;if(!isFinite(mm))mm=p-mg;}
+  else if(isFinite(mg)){gp=mg/p*100;if(!isFinite(mm))mm=p-mg;}
+  else{mg=p-mm;gp=mg/p*100;}
+  return mg>0&&mm>0?{gp:gp,mg:mg,mm:mm}:null;
+}
+function tpCompResumo(r){
+  var l=r.comp||[];if(!l.length)return null;
+  var a=l[0],z=l[l.length-1],o={a:a,z:z,um:l.length===1};
+  if(!o.um){o.dMg=z.c.mg-a.c.mg;o.dMm=z.c.mm-a.c.mm;o.dP=z.p-a.p;if(o.dP<=-1)o.fMagra=Math.max(0,-o.dMm)/(-o.dP)*100;}
+  return o;
+}
 function tpAnalisa(pac){
   var alt=tpAltura(pac&&pac.alt);
-  var pts=((pac&&pac.pesos)||[]).map(function(x){return {t:tpDia(x.d),p:cliqLe(x.p)};})
+  var pts=((pac&&pac.pesos)||[]).map(function(x){var p=cliqLe(x.p);return {t:tpDia(x.d),p:p,c:tpComp(x,p)};})
     .filter(function(x){return isFinite(x.t)&&x.p>=20&&x.p<=400;}).sort(function(a,b){return a.t-b.t;});
   var u=[];pts.forEach(function(x){if(u.length&&u[u.length-1].t===x.t)u[u.length-1]=x;else u.push(x);});pts=u;
   var meta=cliqLe(pac&&pac.meta);
-  var r={alt:alt,pts:pts,grupos:[],meta:(meta>=20&&meta<=400)?meta:NaN,metaT:NaN};
+  var r={alt:alt,pts:pts,grupos:[],meta:(meta>=20&&meta<=400)?meta:NaN,metaT:NaN,comp:pts.filter(function(x){return x.c;})};
   if(!pts.length)return r;
   var tUlt=pts[pts.length-1].t;
   var linhas=((pac&&pac.meds)||[]).map(function(m){return {n:String(m.n||'').trim(),dose:String(m.dose||'').trim(),ini:tpDia(m.ini),fim:tpDia(m.fim)};})
@@ -6228,6 +6258,9 @@ function tpEixo(v,modo,passo){var c=passo<1?1:0;return modo==='pct'?tpSinal(v,c,
 // `larg`: largura do contêiner em px. O desenho é feito nessa largura (1 unidade = 1 px), para a letra ter o mesmo
 // tamanho no celular e no computador; sem medida (teste), 640.
 function tpGraficoSVG(r,modo,baseT,larg,alto){
+  // Composição: a curva principal vira a massa gorda (com o % de gordura no rótulo) e a massa magra entra como 2ª linha
+  if(modo==='comp')r={alt:NaN,meta:NaN,iMin:-1,grupos:r.grupos,pts:r.comp.map(function(x){return {t:x.t,p:x.c.mg,gp:x.c.gp};}),
+    s2:r.comp.map(function(x){return {t:x.t,p:x.c.mm};})};
   var pts=r.pts,alt=r.alt,G=r.grupos;
   var bp=tpPesoEm(pts,baseT),base=bp?bp.p:pts[0].p;
   var val=function(p){return modo==='imc'?p/(alt*alt):(modo==='pct'?(p-base)/base*100:p);};
@@ -6255,9 +6288,10 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
   });
   mk.sort(function(a,b){return a.t-b.t;});
   // no celular, com o nome em toda seta, os rótulos de doses próximas precisam de mais degraus (até 6) e de mais folga no alto
-  var nDeg=curto?6:4,faixa=mk.length?(curto&&mk.length>3?56:26):0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
+  var nDeg=curto?6:4,faixa=Math.max(mk.length?(curto&&mk.length>3?56:26):0,modo==='comp'?18:0),y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
   if(alto>0){y1=Math.max(160+faixa,Math.round(alto)-26);H=y1+26;} // tela cheia: ocupa a altura disponível
   var vs=pts.map(function(x){return val(x.p);});
+  if(r.s2)r.s2.forEach(function(x){vs.push(x.p);});
   if(isFinite(r.meta))vs.push(val(r.meta));
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
   if(modo==='pct'){lo=Math.min(lo,0);hi=Math.max(hi,0);}
@@ -6271,7 +6305,7 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
     g.push('<text x="'+(x0-6)+'" y="'+f1(y+3.2)+'" text-anchor="end" font-size="9.5" fill="currentColor" fill-opacity=".55">'+tpEixo(v,modo,e.passo)+'</text>');
   });
   var ym=f1((y0+y1)/2);
-  g.push('<text x="11" y="'+ym+'" font-size="9" fill="currentColor" fill-opacity=".5" text-anchor="middle" transform="rotate(-90 11 '+ym+')">'+(modo==='kg'?'peso (kg)':modo==='imc'?'IMC (kg/m²)':'variação do peso')+'</text>');
+  g.push('<text x="11" y="'+ym+'" font-size="9" fill="currentColor" fill-opacity=".5" text-anchor="middle" transform="rotate(-90 11 '+ym+')">'+(modo==='kg'?'peso (kg)':modo==='imc'?'IMC (kg/m²)':modo==='comp'?'massa (kg)':'variação do peso')+'</text>');
   // Referências: limites de IMC (kg e IMC) e marcos de perda (%)
   if(isFinite(alt)&&modo!=='pct'){
     [[25,'sobrepeso'],[30,'obesidade I'],[35,'obesidade II'],[40,'obesidade III']].forEach(function(f){
@@ -6316,6 +6350,13 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
   var nOcup=function(b){var n=0;for(var k=0;k<ocup.length;k++)if(cruza(b,ocup[k]))n++;return n;};
   var nTxt=function(b){var n=0;for(var k=0;k<ocup.length;k++)if(!ocup[k][4]&&cruza(b,ocup[k]))n++;return n;};
   var naCurva=function(b){for(var x=Math.max(b[0],xpi);x<=Math.min(b[1],xpf);x+=3){var yv=ys(vCurva(inv(x)));if(yv>=b[2]-2&&yv<=b[3]+2)return true;}return false;};
+  var COR_P=modo==='comp'?'#fb923c':'#60a5fa',COR_S2='#34d399';
+  if(modo==='comp'){
+    // legenda no alto, à esquerda
+    var lg1='● massa gorda (% de gordura)',lg2='● massa magra',xl2=x0+lg1.length*5.2+14;
+    g.push('<text x="'+x0+'" y="11" font-size="9.5" font-weight="700" fill="'+COR_P+'">'+lg1+'</text><text x="'+f1(xl2)+'" y="11" font-size="9.5" font-weight="700" fill="'+COR_S2+'">'+lg2+'</text>');
+    ocup.push([x0,xl2+lg2.length*5.2,1,13]);
+  }
   mk.forEach(function(m){
     m.x=xs(m.t);m.yc=ys(vCurva(m.t));
     var w=m.rot.length*4.9+6,cx=Math.max(2+w/2,Math.min(W-2-w/2,m.x)),melhor=null;
@@ -6333,16 +6374,23 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
   });
   // a curva: retas entre os pesos anotados (não inventa forma entre duas medidas)
   var xy=pts.map(function(p){return [xs(p.t),ys(val(p.p))];});
-  g.push('<polyline points="'+xy.map(function(a){return f1(a[0])+','+f1(a[1]);}).join(' ')+'" fill="none" stroke="#60a5fa" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>');
-  xy.forEach(function(a,i){
-    var p=pts[i],eMin=i===r.iMin&&pts.length>1;
-    g.push('<circle cx="'+f1(a[0])+'" cy="'+f1(a[1])+'" r="'+(eMin?4.6:3.4)+'" fill="'+(eMin?'#34d399':'#60a5fa')+'" stroke="var(--surface)" stroke-width="1.4"><title>'
-      +tpData(p.t)+': '+tpFmt(p.p,1)+' kg'+(isFinite(alt)?' · IMC '+tpFmt(p.p/(alt*alt),1):'')+'</title></circle>');
-  });
+  var linha=function(l,cor,dica){
+    var q=l.map(function(p){return [xs(p.t),ys(val(p.p))];});
+    if(q.length>1)g.push('<polyline points="'+q.map(function(a){return f1(a[0])+','+f1(a[1]);}).join(' ')+'" fill="none" stroke="'+cor+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>');
+    q.forEach(function(a,i){
+      var p=l[i],eMin=dica&&i===r.iMin&&l.length>1;
+      g.push('<circle cx="'+f1(a[0])+'" cy="'+f1(a[1])+'" r="'+(eMin?4.6:3.4)+'" fill="'+(eMin?'#34d399':cor)+'" stroke="var(--surface)" stroke-width="1.4"><title>'
+        +tpData(p.t)+': '+tpFmt(p.p,1)+' kg'+(dica&&isFinite(alt)?' · IMC '+tpFmt(p.p/(alt*alt),1):'')+(isFinite(p.gp)?' · '+tpFmt(p.gp,1)+'% de gordura':'')+'</title></circle>');
+    });
+    return q;
+  };
+  var xy2=r.s2?linha(r.s2,COR_S2,false):null;
+  linha(pts,COR_P,true);
   // rótulos do 1º, do último e do menor peso: fogem das setas e uns dos outros
-  var rot=function(i,acima){
-    var a=xy[i],txt=tpValor(val(pts[i].p),modo),w=txt.length*5.4+2;
-    var anc=i===0?'start':(i===xy.length-1?'end':'middle'),des=anc==='start'?7:(anc==='end'?-7:0);
+  var rot=function(i,acima,a,txt,anc){
+    a=a||xy[i];txt=txt||(tpValor(val(pts[i].p),modo)+(isFinite(pts[i].gp)?' ('+tpFmt(pts[i].gp,1)+'%)':''));
+    var w=txt.length*5.4+2;
+    anc=anc||(i===0?'start':(i===xy.length-1?'end':'middle'));var des=anc==='start'?7:(anc==='end'?-7:0);
     var cima=a[1]-8,baixo=a[1]+15,ops=acima?[[0,cima],[des,cima],[0,baixo]]:[[0,baixo],[0,cima]];
     // a posição que não cobre texto; cruzar a haste de uma seta é tolerável (contorno do fundo)
     var esc0=null,custo0=1e9;
@@ -6360,13 +6408,14 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
     g.push('<text x="'+f1(a[0]+esc0[0])+'" y="'+f1(esc0[1])+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
   };
   var jaRot={},iSetas=g.length;
-  if(r.iMin!==0&&r.iMin!==xy.length-1){rot(r.iMin,false);jaRot[r.iMin]=1;}
+  if(r.iMin>0&&r.iMin!==xy.length-1){rot(r.iMin,false);jaRot[r.iMin]=1;}
   rot(0,true);jaRot[0]=1;if(xy.length>1){rot(xy.length-1,true);jaRot[xy.length-1]=1;}
+  if(xy2){var s2=r.s2,u2=s2.length-1;rot(0,true,xy2[0],tpFmt(s2[0].p,1)+' kg','start');if(u2>0)rot(u2,true,xy2[u2],tpFmt(s2[u2].p,1)+' kg','end');}
   // o peso em cada seta (professor, 19/11/2026: "faltou o peso na dose de 0,5 mg por semana, no gráfico, e também não
   // está registrado na dose de 1 mg"): acima e à direita do ponto; se bater, à esquerda ou embaixo. Sem pesagem no
   // dia, o valor é o da curva (≈; no celular, só os pesados de fato). Vem depois do 1º, do último e do menor peso, que têm
   // prioridade; o que não couber sem encostar em outro rótulo fica só na dica da seta.
-  mk.forEach(function(m){
+  if(modo!=='comp')mk.forEach(function(m){
     var perto=-1;for(var k=0;k<pts.length;k++){if(Math.abs(pts[k].t-m.t)<TP_DIA){perto=k;break;}}
     if(perto>=0?jaRot[perto]:curto)return;
     var txt=(perto<0?'≈':'')+tpValor(vCurva(m.t),modo),w=txt.length*5.4+2,livre=null,semCurva=null;
@@ -6393,7 +6442,7 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Curva do '+(modo==='imc'?'IMC':'peso')+' ao longo do tempo, com uma seta no início de cada dose">'+g.join('')+'</svg>';
 }
 function tpKpi(l,v,s){return '<div class="tp-kpi"><div class="tp-kpi-l">'+l+'</div><div class="tp-kpi-v">'+v+'</div>'+(s?'<div class="tp-kpi-s">'+s+'</div>':'')+'</div>';}
-function tpResumoHTML(r){
+function tpKpisHTML(r){
   var b=r.base,z=r.atual,alt=r.alt,imc=function(p){return p/(alt*alt);},temImc=isFinite(alt),um=r.pts.length===1;
   var k=[];
   k.push(tpKpi(um?'Peso':'Peso inicial → atual',um?tpFmt(z.p,1)+' kg':tpFmt(b.p,1)+' → '+tpFmt(z.p,1)+' kg',um?tpData(z.t):tpData(b.t)+' → '+tpData(z.t)));
@@ -6409,7 +6458,21 @@ function tpResumoHTML(r){
     k.push(tpKpi('Peso-meta',tpFmt(r.meta,1)+' kg'+(temImc?' <small>(IMC '+tpFmt(imc(r.meta),1)+')</small>':''),
       falta<=0.05?'atingida'+(isFinite(r.metaT)?' em '+tpData(r.metaT):''):'faltam '+tpFmt(falta,1)+' kg ('+tpFmt(falta/z.p*100,1)+'% do peso atual)'));
   }
-  var h='<div class="tp-kpis">'+k.join('')+'</div>';
+  var cr=tpCompResumo(r);
+  if(cr&&cr.um)k.push(tpKpi('Composição corporal',tpFmt(cr.a.c.gp,1)+'% <small>de gordura</small>',tpData(cr.a.t)+' · gorda '+tpFmt(cr.a.c.mg,1)+' kg · magra '+tpFmt(cr.a.c.mm,1)+' kg'));
+  else if(cr){
+    var a=cr.a.c,zc=cr.z.c,per=tpData(cr.a.t)+' → '+tpData(cr.z.t);
+    k.push(tpKpi('Gordura corporal',tpFmt(a.gp,1)+' → '+tpFmt(zc.gp,1)+'%',per));
+    k.push(tpKpi('Massa gorda',tpFmt(a.mg,1)+' → '+tpFmt(zc.mg,1)+' kg',tpSinal(cr.dMg,1,' kg')+' ('+tpSinal(cr.dMg/a.mg*100,1,'%')+')'));
+    k.push(tpKpi('Massa magra',tpFmt(a.mm,1)+' → '+tpFmt(zc.mm,1)+' kg',tpSinal(cr.dMm,1,' kg')+' ('+tpSinal(cr.dMm/a.mm*100,1,'%')+')'));
+    if(isFinite(cr.fMagra))k.push(tpKpi('Composição da perda',Math.round(cr.fMagra)+'% <small>massa magra</small>',
+      (cr.dMm>=0?'massa magra mantida · ':Math.round(100-cr.fMagra)+'% gordura · ')+'dos '+tpSinal(cr.dP,1,' kg')+' entre as medidas'));
+  }
+  return '<div class="tp-kpis">'+k.join('')+'</div>';
+}
+function tpResumoHTML(r){
+  var z=r.atual,um=r.pts.length===1;
+  var h=tpKpisHTML(r);
   if(!um){
     var prox=null;
     var chips=r.marcos.map(function(m){
@@ -6445,6 +6508,8 @@ function tpResumoHTML(r){
   }
   return h;
 }
+// escala válida para o paciente (sem altura não há IMC; sem duas medidas de composição, não há a escala Composição)
+function tpModoOk(r){if((tpModo==='imc'&&!isFinite(r.alt))||(tpModo==='comp'&&r.comp.length<2))tpModo='kg';return tpModo;}
 function tpBaseT(r){
   var gb=null;r.grupos.forEach(function(x){if(x.k===tpBase)gb=x;});
   if(!gb)tpBase='';
@@ -6452,13 +6517,13 @@ function tpBaseT(r){
 }
 function tpModosHTML(r){
   var temImc=isFinite(r.alt);
-  return '<div class="rcv-seg" role="group" aria-label="Escala do gráfico">'+[['kg','Peso (kg)'],['imc','IMC'],['pct','Variação (%)']].filter(function(m){return m[0]!=='imc'||temImc;}).map(function(m){return '<button type="button" data-tp-modo="'+m[0]+'" aria-pressed="'+(tpModo===m[0])+'">'+m[1]+'</button>';}).join('')+'</div>';
+  return '<div class="rcv-seg" role="group" aria-label="Escala do gráfico">'+[['kg','Peso (kg)'],['imc','IMC'],['pct','Variação (%)'],['comp','Composição']].filter(function(m){return (m[0]!=='imc'||temImc)&&(m[0]!=='comp'||r.comp.length>1);}).map(function(m){return '<button type="button" data-tp-modo="'+m[0]+'" aria-pressed="'+(tpModo===m[0])+'">'+m[1]+'</button>';}).join('')+'</div>';
 }
 function tpResultadoHTML(pac,larg){
   var r=tpAnalisa(pac);
   if(!r.pts.length)return '<div class="tp-vazio">Anote os pesos (data e kg) para ver a curva.</div>';
   var temImc=isFinite(r.alt);
-  if(tpModo==='imc'&&!temImc)tpModo='kg';
+  tpModoOk(r);
   var baseT=tpBaseT(r);
   var seg=tpModosHTML(r);
   var sel=tpModo==='pct'&&r.grupos.length?'<label class="tp-base"><span>Contar a partir de</span><select data-tp-base><option value="">primeiro peso ('+tpData(r.pts[0].t)+')</option>'
@@ -6476,6 +6541,10 @@ function tpResumoTexto(pac){
     l.push('Menor peso: '+tpFmt(r.nadir.p,1)+' kg em '+tpData(r.nadir.t)+(r.reganho>=0.5?'; reganho de '+tpFmt(r.reganho,1)+' kg':''));
   }
   if(isFinite(r.meta))l.push('Peso-meta: '+tpFmt(r.meta,1)+' kg'+(z.p-r.meta<=0.05?' (atingida)':' (faltam '+tpFmt(z.p-r.meta,1)+' kg)'));
+  var cr=tpCompResumo(r);
+  if(cr&&cr.um)l.push('Composição corporal ('+tpData(cr.a.t)+'): '+tpFmt(cr.a.c.gp,1)+'% de gordura; massa gorda '+tpFmt(cr.a.c.mg,1)+' kg; massa magra '+tpFmt(cr.a.c.mm,1)+' kg');
+  else if(cr)l.push('Composição corporal ('+tpData(cr.a.t)+' → '+tpData(cr.z.t)+'): gordura '+tpFmt(cr.a.c.gp,1)+' → '+tpFmt(cr.z.c.gp,1)+'%; massa gorda '+tpFmt(cr.a.c.mg,1)+' → '+tpFmt(cr.z.c.mg,1)+' kg; massa magra '+tpFmt(cr.a.c.mm,1)+' → '+tpFmt(cr.z.c.mm,1)+' kg'
+    +(isFinite(cr.fMagra)?' ('+Math.round(cr.fMagra)+'% do peso perdido foi massa magra)':''));
   r.grupos.forEach(function(gr){
     var s=gr.nome+(gr.doses.length?' ('+gr.doses.join(' → ')+')':'')+', '+tpData(gr.ini)+(gr.aberto?' em diante':' a '+tpData(gr.fim));
     if(gr.pIni&&gr.pFim)s+=': '+tpFmt(gr.pIni.p,1)+' → '+tpFmt(gr.pFim.p,1)+' kg ('+tpSinal((gr.pFim.p-gr.pIni.p)/gr.pIni.p*100,1,'%')+')';
@@ -6489,7 +6558,7 @@ function tpImprimir(pac){
   var r=tpAnalisa(pac);
   if(!r.pts.length){try{notify('Anote ao menos um peso.','err');}catch(e){}return;}
   var gb=null;r.grupos.forEach(function(x){if(x.k===tpBase)gb=x;});
-  var modo=(tpModo==='imc'&&!isFinite(r.alt))?'kg':tpModo;
+  var modo=tpModoOk(r);
   var graf=r.pts.length>1?tpGraficoSVG(r,modo,gb?gb.ini:r.pts[0].t,900):'';
   var css=':root{--surface:#fff;--tx:#1a2744;--t2:#4a5873;--t3:#7a869c;--bd:#d5dbe8;--s2:#f5f7fb;--rs:8px}'
     +'body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1a2744;margin:0;padding:22px;font-size:12px;background:#fff}'
@@ -6523,6 +6592,8 @@ function tpExemplo(){
   var p=tpNovoPac('Exemplo (fictício)');p.alt='168';p.meta='85';
   [[-430,'112,0'],[-400,'111,4'],[-370,'110,6'],[-340,'109,8'],[-310,'107,9'],[-280,'105,6'],[-250,'103,1'],[-220,'100,8'],[-190,'98,9'],
    [-160,'97,2'],[-130,'96,0'],[-100,'95,1'],[-75,'94,6'],[-50,'96,2'],[-28,'97,9'],[0,'97,1']].forEach(function(x){p.pesos.push({d:iso(x[0]),p:x[1]});});
+  // composição corporal (bioimpedância) em 4 consultas
+  p.comp=true;[[0,'44,0'],[7,'41,5'],[12,'38,5'],[15,'39,8']].forEach(function(c){p.pesos[c[0]].gp=c[1];});
   p.meds=[{n:'Semaglutida SC',dose:'0,25 mg/sem',ini:iso(-355),fim:''},{n:'Semaglutida SC',dose:'0,5 mg/sem',ini:iso(-327),fim:''},
     {n:'Semaglutida SC',dose:'1 mg/sem',ini:iso(-299),fim:''},{n:'Semaglutida SC',dose:'1,7 mg/sem',ini:iso(-271),fim:''},
     {n:'Semaglutida SC',dose:'2,4 mg/sem',ini:iso(-243),fim:iso(-75)},{n:'Tirzepatida',dose:'2,5 mg/sem',ini:iso(-28),fim:''}];
@@ -6554,6 +6625,7 @@ function tpCelDose(i,m){
   return k?tpCampoEscolha('dose',i,m.dose,k.d,'Outra dose…')
     :'<input type="text" autocomplete="off" placeholder="Dose" value="'+esc(m.dose||'')+'" data-tp-m="dose" data-tp-mi="'+i+'">';
 }
+var TP_CROT={gp:'% gordura',mg:'M. gorda',mm:'M. magra'},TP_CROT_L={gp:'Percentual de gordura',mg:'Massa gorda em kg',mm:'Massa magra em kg'};
 function tpRender(root){
   var est=tpCarrega(),pac=null;
   est.pac.forEach(function(p){if(p.id===est.atual)pac=p;});
@@ -6571,15 +6643,17 @@ function tpRender(root){
         +'<div class="rcv-campos"><label class="rcv-num"><span>Identificação (iniciais ou código)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" value="'+esc(pac.rot||'')+'"></label>'
         +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
         +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
-        +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">Fica só neste aparelho, nesta conta; não vai para o servidor. Não use o nome do paciente.</div></section>'
+        +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">🔒 Só você vê estes pacientes: ficam neste aparelho, na sua conta, e não vão para o servidor. Professores e outros usuários não têm acesso. Não use o nome do paciente.</div></section>'
       +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Peso</div>'
         +'<div class="tp-add"><input type="date" data-tp-nd value="'+tpHojeISO()+'" aria-label="Data do peso"><input type="text" inputmode="decimal" autocomplete="off" data-tp-np placeholder="Peso (kg)" aria-label="Peso em kg">'
         +'<button type="button" class="btn btn-primary btn-sm" data-tp-addp>Adicionar</button></div>'
+        +(pac.comp?'<div class="tp-add tp-add-comp">'+['gp','mg','mm'].map(function(c){return '<input type="text" inputmode="decimal" autocomplete="off" data-tp-nc="'+c+'" placeholder="'+TP_CROT[c]+(c==='gp'?'':' (kg)')+'" aria-label="'+TP_CROT_L[c]+', desta pesagem">';}).join('')+'</div>':'')
         +'<div class="tp-atalhos"><span>Data:</span><button type="button" data-tp-dt="0">hoje</button><button type="button" data-tp-dt="1" title="a partir do último peso">+1 mês</button><button type="button" data-tp-dt="2" title="a partir do último peso">+2 meses</button>'
           +'<button type="button" data-tp-dt="3" title="a partir do último peso">+3 meses</button><button type="button" data-tp-dt="6" title="a partir do último peso">+6 meses</button>'
           +'<button type="button" class="tp-atalho-colar" data-tp-colar>Colar lista</button></div>'
-        +'<div class="tp-caixa" data-tp-colar-box hidden><textarea rows="5" data-tp-lista placeholder="Uma medida por linha, com data e peso. Ex.:&#10;05/04/26  82&#10;15/06/2026  77,9"></textarea>'
+        +'<div class="tp-caixa" data-tp-colar-box hidden><textarea rows="5" data-tp-lista placeholder="Uma medida por linha, com data e peso (e, se quiser, o % de gordura). Ex.:&#10;05/04/26  82&#10;15/06/2026  77,9  31,5"></textarea>'
           +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-colar-ok>Adicionar estes pesos</button><span class="rcv-nota">Data em dd/mm/aa ou dd/mm/aaaa; o mesmo dia troca o peso.</span></div></div>'
+        +'<label class="tp-chk"><input type="checkbox" data-tp-comp'+(pac.comp?' checked':'')+'><span>Composição corporal (bioimpedância, opcional): % de gordura, massa gorda e massa magra'+(pac.comp?'. Preencha o que tiver; com o peso, o resto é calculado.':'')+'</span></label>'
         +'<div data-tp-pesos></div></section>'
       +'<section class="rcv-sec"><div class="rcv-sec-t">3 · Medicações e doses</div><div data-tp-meds></div>'
         +'<div class="tp-linha" style="margin:.15rem 0 .3rem"><button type="button" class="btn btn-outline btn-sm" data-tp-addm>+ Medicação ou nova dose</button>'
@@ -6612,9 +6686,12 @@ function tpRender(root){
       return '<div class="tp-lp"><input type="date" value="'+esc(x.d)+'" data-tp-pd="'+i+'" aria-label="Data">'
         +'<input type="text" inputmode="decimal" autocomplete="off" value="'+esc(x.p)+'" data-tp-pp="'+i+'" aria-label="Peso em kg">'
         +'<span class="tp-imc" data-tp-pi="'+i+'">'+tpImcTxt(x.p,alt)+'</span>'
-        +'<button type="button" class="tp-x" data-tp-delp="'+i+'" aria-label="Remover este peso">×</button></div>';
+        +'<button type="button" class="tp-x" data-tp-delp="'+i+'" aria-label="Remover este peso">×</button></div>'
+        +(pac.comp?'<div class="tp-lpc">'+['gp','mg','mm'].map(function(c){return '<input type="text" inputmode="decimal" autocomplete="off" value="'+esc(x[c]||'')+'" data-tp-pc="'+c+'" data-tp-pci="'+i+'" placeholder="'+esc(compPh(x,c))+'" aria-label="'+TP_CROT_L[c]+'">';}).join('')+'</div>':'');
     }).join('')+'</div></details>':'<div class="rcv-nota" style="margin:0 0 .5rem">Nenhum peso ainda. Comece pelo peso do início do acompanhamento.</div>';
   }
+  function compPh(x,c){var v=String(x[c]||'').trim();if(v)return TP_CROT[c];var k=tpComp(x,cliqLe(x.p));return k?'≈ '+tpFmt(k[c],1)+(c==='gp'?'%':' kg'):TP_CROT[c];}
+  function compPhLinha(i){var x=pac.pesos[i];if(x)root.querySelectorAll('[data-tp-pci="'+i+'"]').forEach(function(f){f.placeholder=compPh(x,f.getAttribute('data-tp-pc'));});}
   function tpImcTxt(p,alt){var v=cliqLe(p);return isFinite(alt)&&v>0?'IMC '+tpFmt(v/(alt*alt),1):'';}
   function pesosImc(){var alt=tpAltura(pac.alt);root.querySelectorAll('[data-tp-pi]').forEach(function(s){var x=pac.pesos[+s.getAttribute('data-tp-pi')];s.textContent=x?tpImcTxt(x.p,alt):'';});}
   function meds(){
@@ -6638,12 +6715,15 @@ function tpRender(root){
     var ov=document.createElement('div');ov.className='tp-cheia';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Gráfico da trajetória do peso em tela cheia');
     ov.innerHTML='<div class="tp-cheia-cab"><div class="tp-cheia-t">Trajetória do peso'+(pac.rot?' · '+esc(pac.rot):'')+'</div><div data-tp-cheia-modos></div>'
       +'<button type="button" class="tp-cheia-x" data-tp-fecha aria-label="Fechar a tela cheia" title="Fechar (Esc)">×</button></div>'
-      +'<div class="tp-cheia-g" data-tp-cheia-g></div><div class="tp-cheia-dica" data-tp-gire hidden>Gire o celular para ver o gráfico maior.</div>';
+      +'<div class="tp-cheia-g" data-tp-cheia-g></div><div class="tp-cheia-kpis" data-tp-cheia-kpis></div><div class="tp-cheia-dica" data-tp-gire hidden>Gire o celular para ver o gráfico maior.</div>';
     document.body.appendChild(ov);
     var foco=document.activeElement,emFS=false,ovf=document.body.style.overflow;document.body.style.overflow='hidden';
     cheia={ov:ov,desenha:function(){
       var r=tpAnalisa(pac),g=ov.querySelector('[data-tp-cheia-g]');if(r.pts.length<2){fecha();return;}
-      ov.querySelector('[data-tp-cheia-modos]').innerHTML=tpModosHTML(r);
+      tpModoOk(r);ov.querySelector('[data-tp-cheia-modos]').innerHTML=tpModosHTML(r);
+      // os quadros do resumo embaixo (professor, 19/11/2026: "quando colocar em tela cheia, coloca também no canto
+      // inferior esses dados ... do peso inicial para o atual, IMC ..., a variação total, menor peso, ritmo recente")
+      ov.querySelector('[data-tp-cheia-kpis]').innerHTML=tpKpisHTML(r);
       var w=g.clientWidth||0,h=g.clientHeight||0,k=w>=1000?1.3:1;
       g.innerHTML=tpGraficoSVG(r,tpModo,tpBaseT(r),w/k,h/k);
       var gi=ov.querySelector('[data-tp-gire]');if(gi)gi.hidden=!(window.innerHeight>window.innerWidth&&window.innerWidth<700);
@@ -6680,7 +6760,8 @@ function tpRender(root){
     var d=q('[data-tp-nd]').value,np=q('[data-tp-np]'),p=cliqLe(np.value);
     if(!isFinite(tpDia(d))||!(p>=20&&p<=400)){try{notify('Preencha a data e o peso em kg (entre 20 e 400).','err');}catch(e){}return;}
     var ja=null;pac.pesos.forEach(function(x){if(x.d===d)ja=x;});
-    if(ja)ja.p=np.value.trim();else pac.pesos.push({d:d,p:np.value.trim()});
+    if(ja)ja.p=np.value.trim();else{ja={d:d,p:np.value.trim()};pac.pesos.push(ja);}
+    if(pac.comp)root.querySelectorAll('[data-tp-nc]').forEach(function(f){var v=f.value.trim();if(v)ja[f.getAttribute('data-tp-nc')]=v;f.value='';});
     tpOrdena(pac);salva();pesos();resultado();np.value='';try{np.focus();}catch(e){}
   }
   root.addEventListener('input',function(ev){
@@ -6691,7 +6772,8 @@ function tpRender(root){
       if(k==='alt')pesosImc();
       resultado();return;
     }
-    if(t.hasAttribute('data-tp-pp')){var x=pac.pesos[+t.getAttribute('data-tp-pp')];if(x){x.p=t.value;salva();pesosImc();var pr=q('[data-tp-pres]');if(pr)pr.textContent=pesosResumo();resultado();}return;}
+    if(t.hasAttribute('data-tp-pc')){var xc=pac.pesos[+t.getAttribute('data-tp-pci')];if(xc){xc[t.getAttribute('data-tp-pc')]=t.value;salva();compPhLinha(+t.getAttribute('data-tp-pci'));resultado();}return;}
+    if(t.hasAttribute('data-tp-pp')){var x=pac.pesos[+t.getAttribute('data-tp-pp')];if(x){x.p=t.value;salva();pesosImc();compPhLinha(+t.getAttribute('data-tp-pp'));var pr=q('[data-tp-pres]');if(pr)pr.textContent=pesosResumo();resultado();}return;}
     if(t.hasAttribute('data-tp-m')){
       var m=pac.meds[+t.getAttribute('data-tp-mi')],c=t.getAttribute('data-tp-m');if(!m)return;
       m[c]=t.value;salva();
@@ -6701,8 +6783,12 @@ function tpRender(root){
   });
   function colarLista(){
     var ta=q('[data-tp-lista]'),r=tpLerLista(ta&&ta.value);
-    r.ok.forEach(function(x){var ja=null;pac.pesos.forEach(function(y){if(y.d===x.d)ja=y;});if(ja)ja.p=x.p;else pac.pesos.push(x);});
-    if(r.ok.length){tpOrdena(pac);salva();pesos();resultado();ta.value='';q('[data-tp-colar-box]').hidden=true;}
+    var comGp=false;
+    r.ok.forEach(function(x){var ja=null;pac.pesos.forEach(function(y){if(y.d===x.d)ja=y;});if(x.gp)comGp=true;if(ja){ja.p=x.p;if(x.gp)ja.gp=x.gp;}else pac.pesos.push(x);});
+    if(r.ok.length){
+      tpOrdena(pac);if(comGp&&!pac.comp){pac.comp=true;tpAbertos.pesos=true;}salva();
+      if(comGp){form();}else{pesos();resultado();ta.value='';q('[data-tp-colar-box]').hidden=true;}
+    }
     try{notify(r.ok.length?(r.ok.length+' peso'+(r.ok.length===1?'':'s')+' adicionado'+(r.ok.length===1?'':'s')+(r.ruins?' · '+r.ruins+' linha'+(r.ruins===1?'':'s')+' ignorada'+(r.ruins===1?'':'s'):'')):'Nenhuma linha com data e peso reconhecidos.',r.ok.length?'ok':'err');}catch(e){}
   }
   function criaEscala(){
@@ -6717,6 +6803,7 @@ function tpRender(root){
   function proxPesagem(apos){var l=pac.pesos||[];for(var i=0;i<l.length;i++){if(!apos||l[i].d>apos)return l[i].d;}return '';}
   root.addEventListener('change',function(ev){
     var t=ev.target;
+    if(t.hasAttribute('data-tp-comp')){pac.comp=!!t.checked;if(pac.comp)tpAbertos.pesos=true;salva();form();var cb=q('[data-tp-comp]');try{cb.focus();}catch(e){}return;}
     if(t.hasAttribute('data-tp-esc-med')){var a=q('[data-tp-esc-alvo]');if(a)a.innerHTML=tpEscalaAlvos(t.value);return;}
     if(t.hasAttribute('data-tp-pac')){est.pac.forEach(function(p){if(p.id===t.value)pac=p;});tpBase='';tpAbertos={pesos:false,meds:false};salva();form();return;}
     if(t.hasAttribute('data-tp-pd')){var x=pac.pesos[+t.getAttribute('data-tp-pd')];if(x&&isFinite(tpDia(t.value))){x.d=t.value;tpOrdena(pac);salva();pesos();resultado();}return;}
@@ -6733,7 +6820,7 @@ function tpRender(root){
     }
   });
   root.addEventListener('keydown',function(ev){
-    if(ev.key==='Enter'&&ev.target.hasAttribute('data-tp-np')){ev.preventDefault();adicionaPeso();return;}
+    if(ev.key==='Enter'&&(ev.target.hasAttribute('data-tp-np')||ev.target.hasAttribute('data-tp-nc'))){ev.preventDefault();adicionaPeso();return;}
     if((ev.key==='Enter'||ev.key===' ')&&ev.target.hasAttribute('data-tp-cheia')){ev.preventDefault();abreCheia();}
   });
   root.addEventListener('toggle',function(ev){var d=ev.target;if(d&&d.getAttribute&&d.getAttribute('data-tp-det'))tpAbertos[d.getAttribute('data-tp-det')]=!!d.open;},true);

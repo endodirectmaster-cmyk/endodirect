@@ -38,6 +38,13 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   abaixo disso "rever dose, adesão ou troca"; Apovian, Endocrine Society, JCEM 2015). Cirurgia bariátrica fica
   fora dos 3 meses; suspensa antes de 3 meses e "completa 3 meses em ..." são ditos.
 - **"Copiar resumo":** texto curto para o prontuário (sem nome).
+- 🔒 **REGRA DO PROFESSOR (19/11/2026): só o próprio usuário vê os pacientes que cadastrou.** "Esses pacientes salvos, só
+  quem vai ter acesso a eles são os usuários cadastrados na plataforma. E apenas o usuário vai ter acesso aos seus
+  pacientes. Nenhum dos professores, nem tampouco os demais alunos." Vale também quando a calculadora for publicada aos
+  alunos: **nada de painel do professor, sincronização ou backup no servidor** com esses dados sem uma decisão nova dele.
+  A tela diz: "Só você vê estes pacientes ... Professores e outros usuários não têm acesso". Teste: outra conta no
+  mesmo aparelho (inclusive de professor) não vê. Limite conhecido: num computador compartilhado, quem mexer nas
+  ferramentas do navegador consegue ler o armazenamento local; a orientação é não usar nome (já na tela).
 - ⚠️ **Privacidade (LGPD):** os pacientes ficam só no aparelho, na chave `trajpeso_<uid>` do `lsSet` (outra conta no
   mesmo aparelho não vê). `userStatePayload` não lê essa chave: nada vai para o app_state. A exclusão da conta
   apaga todas as chaves `endodirect_v1_*` do aparelho. Se um dia pedirem sincronizar entre aparelhos, é dado de
@@ -113,6 +120,24 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   fica a camada. Fecha no ×, no Esc, ao sair da tela cheia do navegador ou tocando fora; redesenha ao girar. Em pé no
   celular, sugere "Gire o celular para ver o gráfico maior". ⚠️ Existe regra global `:fullscreen{background:#000}`
   (vídeos): a camada repete o fundo em `.tp-cheia:fullscreen`.
+- **Resumo na tela cheia e composição corporal (19/11, sw v458; professor: "quando colocar em tela cheia, coloca também
+  no canto inferior esses dados ... peso inicial para o atual, IMC ..., a variação total, menor peso, ritmo recente" e
+  "adicionar de forma opcional outros dados de composição corporal, como ... a massa magra, a massa gorda, percentual de
+  gordura da consulta"):**
+  - Tela cheia: os quadros (`tpKpisHTML`, separado de `tpResumoHTML`) ficam embaixo do gráfico; em tela baixa ou
+    estreita (≤ 560 px de altura ou ≤ 700 px de largura) viram uma faixa que rola para o lado.
+  - **Composição corporal, opcional por paciente** (`pac.comp`, caixa "Composição corporal (bioimpedância, opcional)"
+    na seção 2). Ligada, a linha de adicionar ganha % gordura, massa gorda e massa magra, e cada peso da lista ganha
+    os três campos. Em cada pesagem: `gp`, `mg`, `mm` (texto). **Basta um**: `tpComp` calcula os outros pelo peso
+    (mg = peso × %; mm = peso − mg; massa magra = livre de gordura, como na bioimpedância); o digitado prevalece. Os
+    calculados aparecem como sugestão (≈) nos campos vazios. Desligar só esconde: os valores ficam guardados.
+  - Lista colada: um 3º número na linha é o % de gordura ("05/04/26 82 31,5") e liga a composição.
+  - Escala **"Composição"** no gráfico (com 2 medidas ou mais): massa gorda (laranja, rótulo com o %) e massa magra
+    (verde), legenda no alto; as setas das doses ficam na curva da massa gorda, sem o peso ao lado.
+  - Quadros: com uma medida, "Composição corporal" (% e as duas massas); com duas ou mais (a 1ª e a última),
+    Gordura corporal, Massa gorda, Massa magra (variação em kg e %) e **"Composição da perda"**: quanto do peso perdido
+    entre as medidas foi massa magra (−Δmassa magra / −Δpeso; só com perda ≥ 1 kg; ganho de massa magra conta 0% e diz
+    "mantida"). Entra também no resumo copiado e no PDF. O exemplo traz composição em 4 consultas.
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 
