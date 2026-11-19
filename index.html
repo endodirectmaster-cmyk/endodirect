@@ -534,20 +534,19 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-add input[type=date]{flex:0 1 10.5rem;width:auto}
 .tp-add input[data-tp-np]{flex:1 1 6rem;width:auto;min-width:5.5rem}
 .tp-lista{max-height:16rem;overflow-y:auto;display:flex;flex-direction:column;gap:.3rem;margin-bottom:.55rem;padding-right:.15rem}
-.tp-lp{display:grid;grid-template-columns:minmax(0,10.5rem) minmax(0,6.5rem) 1fr auto;gap:.4rem;align-items:center}
+.tp-lp{display:grid;grid-template-columns:minmax(0,9.6rem) minmax(0,5.6rem) minmax(4.4rem,1fr) auto;gap:.4rem;align-items:center}
 .tp-imc{font-size:.72rem;color:var(--t2);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tp-x{border:1px solid var(--bd2);background:transparent;color:var(--t2);border-radius:8px;width:2rem;height:2rem;cursor:pointer;font-size:1rem;line-height:1;flex-shrink:0}
 .tp-x:hover{color:var(--red);border-color:var(--red)}
 .tp-x:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
-.tp-lm{position:relative;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,9.5rem) minmax(0,9.5rem);gap:.45rem .55rem;align-items:end;padding:.55rem 2.5rem .55rem 0;border-bottom:1px dashed var(--bd)}
-.tp-lm .tp-x{position:absolute;right:0;bottom:.55rem}
+.tp-lm{position:relative;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,9.5rem) minmax(0,9.5rem);gap:.45rem .55rem;align-items:end;padding:.6rem 2.75rem .65rem .7rem;margin-bottom:.45rem;border:1px solid var(--bd);border-left:3px solid var(--tp-cor,var(--bd2));border-radius:var(--rs);background:var(--s2)}
+.tp-lm .tp-x{position:absolute;right:.45rem;top:.45rem;bottom:auto;width:1.7rem;height:1.7rem;font-size:.9rem}
 .tp-lm input[hidden]{display:none}
 .tp-lm select{padding-left:.5rem;padding-right:1.4rem}
 .tp-lm [data-tp-dcel]{gap:.3rem}
-.tp-atalhos{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:-.25rem 0 .55rem;font-size:.7rem;color:var(--t3)}
-.tp-atalhos button{border:1px solid var(--bd2);background:transparent;color:var(--t2);font-family:var(--font);font-size:.7rem;font-weight:600;border-radius:999px;padding:.2rem .6rem;cursor:pointer}
+.tp-atalhos{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:-.2rem 0 .65rem;font-size:.7rem;color:var(--t3)}
+.tp-atalhos button{border:1px solid var(--bd2);background:transparent;color:var(--t2);font-family:var(--font);font-size:.68rem;font-weight:600;border-radius:999px;padding:.18rem .5rem;cursor:pointer}
 .tp-atalhos button:hover{border-color:var(--blue2);color:var(--tx)}
-.tp-atalhos .tp-atalho-colar{margin-left:auto}
 .tp-caixa{border:1px dashed var(--bd2);border-radius:var(--rs);padding:.6rem .65rem;margin:0 0 .6rem}
 .tp-caixa textarea{width:100%;font-family:var(--font);font-size:.8rem}
 .tp-caixa-acoes{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-top:.45rem}
@@ -563,8 +562,21 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-graf{position:relative;margin:0 0 .6rem;cursor:zoom-in;border-radius:8px}
 .tp-graf svg{display:block;width:100%;height:auto;color:var(--tx)}
 .tp-graf:focus-visible{outline:2px solid var(--ac,#3b82f6);outline-offset:3px}
-.tp-graf-amp{position:absolute;top:0;right:0;font-size:.66rem;font-weight:600;color:var(--t2);background:var(--surface);border:1px solid var(--bd);border-radius:999px;padding:.12rem .5rem;opacity:.85;pointer-events:none}
-.tp-graf:hover .tp-graf-amp{opacity:1;color:var(--tx)}
+.tp-cab-dir{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}
+.tp-cheia-btn{font:inherit;font-size:.72rem;font-weight:600;border:1px solid var(--bd2);background:transparent;color:var(--t2);border-radius:999px;padding:.32rem .7rem;cursor:pointer;white-space:nowrap}
+.tp-cheia-btn:hover{color:var(--tx);border-color:var(--blue2)}
+.tp-cheia-btn:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+/* Formatação (professor, 19/11/2026: "melhorar a formatação ... mais organizada, mais bonita") */
+.tp .rcv-sec{padding:.85rem .95rem .45rem;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent 3rem)}
+.tp-sec-cab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.45rem .6rem;margin-bottom:.7rem}
+.tp-sec-cab .rcv-sec-t{margin:0;display:flex;align-items:center;font-size:.74rem;color:var(--tx);letter-spacing:.07em}
+.tp-sec-acoes{display:flex;flex-wrap:wrap;gap:.35rem}
+.tp-num{display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--blue-l);color:var(--blue2);border:1px solid var(--blue2);font-size:.68rem;font-weight:800;letter-spacing:0;margin-right:.5rem;flex:none}
+.tp-campos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tp-campos>label:first-child{grid-column:1/-1}
+.tp-kpi-bom .tp-kpi-v{color:var(--grn)}
+.tp-kpi-alerta .tp-kpi-v{color:var(--gold)}
+.tp-res-sec{padding-bottom:.6rem}
 .tp-cheia,.tp-cheia:fullscreen{position:fixed;inset:0;z-index:99980;background:var(--surface);color:var(--tx);display:flex;flex-direction:column;gap:.5rem;padding:max(12px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
 .tp-cheia-cab{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap}
 .tp-cheia-t{font-weight:700;font-size:.95rem;margin-right:auto}
@@ -582,11 +594,18 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-busca-res:empty{display:none}
 .tp-busca-res button{font:inherit;font-size:.76rem;border:1px solid var(--bd);background:var(--s2);color:var(--tx);border-radius:999px;padding:.28rem .65rem;cursor:pointer}
 .tp-busca-res button:hover,.tp-busca-res button[aria-current]{border-color:#60a5fa}
-.tp-chk{display:flex;gap:.45rem;align-items:flex-start;font-size:.78rem;color:var(--t2);margin:.1rem 0 .55rem;cursor:pointer;line-height:1.35}
-.tp-chk input{width:auto;margin:.15rem 0 0;flex:none}
+.tp-chk{display:flex;gap:.6rem;align-items:flex-start;font-size:.78rem;color:var(--t2);margin:.15rem 0 .65rem;padding:.5rem .6rem;border:1px solid var(--bd);border-radius:var(--rs);background:var(--s2);cursor:pointer;line-height:1.4}
+.tp-chk b{color:var(--tx);font-weight:700}
+.tp-chk small{display:block;font-size:.7rem;color:var(--t3);margin-top:.15rem}
+.tp-chk input{-webkit-appearance:none;appearance:none;flex:none;width:2.1rem;height:1.2rem;margin:.05rem 0 0;border-radius:999px;background:var(--bd2);position:relative;cursor:pointer;transition:background .15s}
+.tp-chk input::after{content:'';position:absolute;top:2px;left:2px;width:calc(1.2rem - 4px);height:calc(1.2rem - 4px);border-radius:50%;background:#fff;transition:transform .15s}
+.tp-chk input:checked{background:var(--blue2)}
+.tp-chk input:checked::after{transform:translateX(.9rem)}
+.tp-chk input:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.tp-chk input,.tp-chk input::after{transition:none}}
 .tp-add-comp{margin-top:-.25rem}
 .tp-add-comp input{flex:1 1 0;width:auto;min-width:0}
-.tp-lpc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:-.05rem 2.1rem .5rem 0}
+.tp-lpc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:-.05rem 2.4rem .35rem 0;padding:0 0 .45rem .55rem;border-left:2px solid var(--bd2);border-bottom:1px dashed var(--bd)}
 .tp-vazio{font-size:.78rem;color:var(--t3);padding:.7rem 0}
 .tp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.5rem;margin-bottom:.6rem}
 .tp-kpi{border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .65rem;background:var(--s2);min-width:0}
@@ -607,7 +626,7 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-med-cab{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .45rem;font-size:.8rem}
 .tp-med-cab i{width:.6rem;height:.6rem;border-radius:3px;flex-shrink:0}
 .tp-med-cab span{font-size:.7rem;color:var(--t2)}
-.tp-acoes{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:space-between;margin-top:.2rem}
+.tp-acoes{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:space-between;align-items:center;margin-top:.2rem;padding-top:.65rem;border-top:1px solid var(--bd)}
 /* Computador (18/11/2026): preenchimento à esquerda e gráfico + resumo à direita; a curva muda ao lado enquanto se
    digita. Vale pela largura do CARTÃO (container query), não da janela: com o menu lateral, uma janela de 1280 px
    deixava a coluna do gráfico com ~500 px. Sem suporte a container query, fica empilhado, como no celular. */
@@ -620,6 +639,9 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-excluir:hover{color:var(--red);border-color:var(--red)}
 @media (max-width:640px){
   .tp-lm{grid-template-columns:1fr 1fr}
+  .tp-lm>.rcv-num:first-child,.tp-lm>.rcv-num:nth-child(2){grid-column:1/-1}
+  .tp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tp-kpi-v{font-size:.92rem}
   .tp-lp{grid-template-columns:minmax(0,1fr) minmax(0,5.5rem) auto auto}
 }
 @media (hover:none) and (pointer:coarse){.tp input,.tp select,.tp textarea{font-size:16px}}
@@ -6453,17 +6475,17 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
   g.splice.apply(g,[iSetas,0].concat(gs));
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Curva do '+(modo==='imc'?'IMC':'peso')+' ao longo do tempo, com uma seta no início de cada dose">'+g.join('')+'</svg>';
 }
-function tpKpi(l,v,s){return '<div class="tp-kpi"><div class="tp-kpi-l">'+l+'</div><div class="tp-kpi-v">'+v+'</div>'+(s?'<div class="tp-kpi-s">'+s+'</div>':'')+'</div>';}
+function tpKpi(l,v,s,c){return '<div class="tp-kpi'+(c?' '+c:'')+'"><div class="tp-kpi-l">'+l+'</div><div class="tp-kpi-v">'+v+'</div>'+(s?'<div class="tp-kpi-s">'+s+'</div>':'')+'</div>';}
 function tpKpisHTML(r){
   var b=r.base,z=r.atual,alt=r.alt,imc=function(p){return p/(alt*alt);},temImc=isFinite(alt),um=r.pts.length===1;
   var k=[];
   k.push(tpKpi(um?'Peso':'Peso inicial → atual',um?tpFmt(z.p,1)+' kg':tpFmt(b.p,1)+' → '+tpFmt(z.p,1)+' kg',um?tpData(z.t):tpData(b.t)+' → '+tpData(z.t)));
   if(temImc)k.push(tpKpi(um?'IMC':'IMC inicial → atual',um?tpFmt(imc(z.p),1):tpFmt(imc(b.p),1)+' → '+tpFmt(imc(z.p),1),tpClasseImc(imc(z.p))));
   if(!um){
-    k.push(tpKpi('Variação total',tpSinal(r.var,1,' kg')+' <small>('+tpSinal(r.varPct,1,'%')+')</small>','em '+tpFmt(r.meses,1)+' meses'));
+    k.push(tpKpi('Variação total',tpSinal(r.var,1,' kg')+' <small>('+tpSinal(r.varPct,1,'%')+')</small>','em '+tpFmt(r.meses,1)+' meses',r.var<=-0.5?'tp-kpi-bom':(r.var>=0.5?'tp-kpi-alerta':'')));
     var reg=r.reganho>=0.5&&r.perdidoMax>0;
     k.push(tpKpi('Menor peso',tpFmt(r.nadir.p,1)+' kg',tpData(r.nadir.t)+(reg?' · reganho de '+tpFmt(r.reganho,1)+' kg ('+Math.round(r.reganho/r.perdidoMax*100)+'% do que perdeu)':(r.iMin===r.pts.length-1?' · é o peso atual':''))));
-    if(isFinite(r.ritmo))k.push(tpKpi('Ritmo recente',tpSinal(r.ritmo,1,' kg/mês'),'últimos 90 dias'));
+    if(isFinite(r.ritmo))k.push(tpKpi('Ritmo recente',tpSinal(r.ritmo,1,' kg/mês'),'últimos 90 dias',r.ritmo<=-0.2?'tp-kpi-bom':(r.ritmo>=0.2?'tp-kpi-alerta':'')));
   }
   if(isFinite(r.meta)){
     var falta=z.p-r.meta;
@@ -6540,8 +6562,9 @@ function tpResultadoHTML(pac,larg){
   var seg=tpModosHTML(r);
   var sel=tpModo==='pct'&&r.grupos.length?'<label class="tp-base"><span>Contar a partir de</span><select data-tp-base><option value="">primeiro peso ('+tpData(r.pts[0].t)+')</option>'
     +r.grupos.map(function(x){return '<option value="'+esc(x.k)+'"'+(x.k===tpBase?' selected':'')+'>início de '+esc(x.nome)+' ('+tpData(x.ini)+')</option>';}).join('')+'</select></label>':'';
-  var graf=r.pts.length>1?'<div class="tp-graf" data-tp-cheia tabindex="0" role="button" aria-label="Ampliar o gráfico em tela cheia" title="Toque para ampliar em tela cheia">'+tpGraficoSVG(r,tpModo,baseT,larg)+'<span class="tp-graf-amp" aria-hidden="true">⤢ tela cheia</span></div>':'<div class="tp-vazio">Com um peso só ainda não há curva: anote o próximo.</div>';
-  return '<section class="rcv-sec"><div class="tp-cab"><div class="rcv-sec-t" style="margin:0">Trajetória</div>'+seg+'</div>'+sel+graf+tpResumoHTML(r)+'</section>';
+  var graf=r.pts.length>1?'<div class="tp-graf" data-tp-cheia tabindex="0" role="button" aria-label="Ampliar o gráfico em tela cheia" title="Toque para ampliar em tela cheia">'+tpGraficoSVG(r,tpModo,baseT,larg)+'</div>':'<div class="tp-vazio">Com um peso só ainda não há curva: anote o próximo.</div>';
+  var amp=r.pts.length>1?'<button type="button" class="tp-cheia-btn" data-tp-cheia title="Ampliar em tela cheia" aria-label="Ampliar o gráfico em tela cheia">⤢ Tela cheia</button>':'';
+  return '<section class="rcv-sec tp-res-sec"><div class="tp-cab"><div class="rcv-sec-t" style="margin:0">Trajetória</div><div class="tp-cab-dir">'+seg+amp+'</div></div>'+sel+graf+tpResumoHTML(r)+'</section>';
 }
 function tpResumoTexto(pac){
   var r=tpAnalisa(pac);if(!r.pts.length)return '';
@@ -6671,28 +6694,29 @@ function tpRender(root){
   }
   function form(){
     root.innerHTML='<div class="tp"><div class="tp-col-ent">'
-      +'<section class="rcv-sec"><div class="rcv-sec-t">1 · Paciente</div>'
-        +'<div class="tp-linha"><select data-tp-pac aria-label="Paciente salvo neste aparelho">'+est.pac.map(function(p,i){return '<option value="'+esc(p.id)+'"'+(p.id===pac.id?' selected':'')+'>'+esc(nomePac(p,i))+'</option>';}).join('')+'</select>'
-        +'<button type="button" class="btn btn-outline btn-sm" data-tp-novo>+ Novo paciente</button>'
-        +'<button type="button" class="btn btn-outline btn-sm" data-tp-exemplo>Ver exemplo</button></div>'
+      +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">1</span>Paciente</div>'
+        +'<div class="tp-sec-acoes"><button type="button" class="btn btn-outline btn-sm" data-tp-novo>+ Novo paciente</button>'
+        +'<button type="button" class="btn btn-outline btn-sm" data-tp-exemplo>Ver exemplo</button></div></div>'
+        +'<div class="tp-linha"><select data-tp-pac aria-label="Paciente salvo neste aparelho">'+est.pac.map(function(p,i){return '<option value="'+esc(p.id)+'"'+(p.id===pac.id?' selected':'')+'>'+esc(nomePac(p,i))+'</option>';}).join('')+'</select></div>'
         +(est.pac.length>=6?'<div class="tp-busca"><input type="search" data-tp-busca autocomplete="off" placeholder="Buscar paciente (iniciais ou nº do prontuário)" aria-label="Buscar paciente"><div class="tp-busca-res" data-tp-busca-res aria-live="polite"></div></div>':'')
-        +'<div class="rcv-campos"><label class="rcv-num"><span>Identificação (iniciais ou nº do prontuário)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" placeholder="ex.: JMS 4821" value="'+esc(pac.rot||'')+'"></label>'
+        +'<div class="rcv-campos tp-campos"><label class="rcv-num"><span>Identificação (iniciais ou nº do prontuário)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" placeholder="ex.: JMS 4821" value="'+esc(pac.rot||'')+'"></label>'
         +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
         +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
         +'<div class="tp-dup" data-tp-dup role="status" hidden></div>'
         +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">🔒 Só você vê estes pacientes: ficam neste aparelho, na sua conta, e não vão para o servidor. Professores e outros usuários não têm acesso. Não use o nome do paciente.</div></section>'
-      +'<section class="rcv-sec"><div class="rcv-sec-t">2 · Peso</div>'
+      +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">2</span>Peso</div>'
+        +'<div class="tp-sec-acoes"><button type="button" class="btn btn-outline btn-sm" data-tp-colar>Colar lista</button></div></div>'
         +'<div class="tp-add"><input type="date" data-tp-nd value="'+tpHojeISO()+'" aria-label="Data do peso"><input type="text" inputmode="decimal" autocomplete="off" data-tp-np placeholder="Peso (kg)" aria-label="Peso em kg">'
         +'<button type="button" class="btn btn-primary btn-sm" data-tp-addp>Adicionar</button></div>'
         +(pac.comp?'<div class="tp-add tp-add-comp">'+['gp','mg','mm'].map(function(c){return '<input type="text" inputmode="decimal" autocomplete="off" data-tp-nc="'+c+'" placeholder="'+TP_CROT[c]+(c==='gp'?'':' (kg)')+'" aria-label="'+TP_CROT_L[c]+', desta pesagem">';}).join('')+'</div>':'')
         +'<div class="tp-atalhos"><span>Data:</span><button type="button" data-tp-dt="0">hoje</button><button type="button" data-tp-dt="1" title="a partir do último peso">+1 mês</button><button type="button" data-tp-dt="2" title="a partir do último peso">+2 meses</button>'
           +'<button type="button" data-tp-dt="3" title="a partir do último peso">+3 meses</button><button type="button" data-tp-dt="6" title="a partir do último peso">+6 meses</button>'
-          +'<button type="button" class="tp-atalho-colar" data-tp-colar>Colar lista</button></div>'
+          +'</div>'
         +'<div class="tp-caixa" data-tp-colar-box hidden><textarea rows="5" data-tp-lista placeholder="Uma medida por linha, com data e peso (e, se quiser, o % de gordura). Ex.:&#10;05/04/26  82&#10;15/06/2026  77,9  31,5"></textarea>'
           +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-colar-ok>Adicionar estes pesos</button><span class="rcv-nota">Data em dd/mm/aa ou dd/mm/aaaa; o mesmo dia troca o peso.</span></div></div>'
-        +'<label class="tp-chk"><input type="checkbox" data-tp-comp'+(pac.comp?' checked':'')+'><span>Composição corporal (bioimpedância, opcional): % de gordura, massa gorda e massa magra'+(pac.comp?'. Preencha o que tiver; com o peso, o resto é calculado.':'')+'</span></label>'
+        +'<label class="tp-chk"><input type="checkbox" role="switch" data-tp-comp'+(pac.comp?' checked':'')+'><span><b>Composição corporal</b> (bioimpedância, opcional)'+(pac.comp?'<small>% de gordura, massa gorda ou massa magra: preencha o que tiver; com o peso, o resto é calculado.</small>':'')+'</span></label>'
         +'<div data-tp-pesos></div></section>'
-      +'<section class="rcv-sec"><div class="rcv-sec-t">3 · Medicações e doses</div><div data-tp-meds></div>'
+      +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">3</span>Medicações e doses</div></div><div data-tp-meds></div>'
         +'<div class="tp-linha" style="margin:.15rem 0 .3rem"><button type="button" class="btn btn-outline btn-sm" data-tp-addm>+ Medicação ou nova dose</button>'
           +'<button type="button" class="btn btn-outline btn-sm" data-tp-esc>Escalonamento padrão</button></div>'
         +'<div class="tp-caixa" data-tp-esc-box hidden><div class="rcv-campos">'
@@ -6733,9 +6757,11 @@ function tpRender(root){
   function tpImcTxt(p,alt){var v=cliqLe(p);return isFinite(alt)&&v>0?'IMC '+tpFmt(v/(alt*alt),1):'';}
   function pesosImc(){var alt=tpAltura(pac.alt);root.querySelectorAll('[data-tp-pi]').forEach(function(s){var x=pac.pesos[+s.getAttribute('data-tp-pi')];s.textContent=x?tpImcTxt(x.p,alt):'';});}
   function meds(){
-    var l=pac.meds||[];
+    var l=pac.meds||[],cores={},ord=0;
+    l.map(function(m){return {k:String(m.n||'').trim().toLowerCase(),t:tpDia(m.ini)};}).filter(function(x){return x.k&&isFinite(x.t);})
+      .sort(function(a,b){return a.t-b.t;}).forEach(function(x){if(!(x.k in cores))cores[x.k]=TP_CORES[(ord++)%TP_CORES.length];});
     q('[data-tp-meds]').innerHTML=!l.length?'':'<details class="tp-det" data-tp-det="meds"'+(tpAbertos.meds?' open':'')+'><summary><span class="cid-caret">▸</span> <span data-tp-mres>'+esc(medsResumo())+'</span></summary>'+l.map(function(m,i){
-      return '<div class="tp-lm">'
+      return '<div class="tp-lm" style="--tp-cor:'+(cores[String(m.n||'').trim().toLowerCase()]||'var(--bd2)')+'">'
         +'<div class="rcv-num"><span>Medicação</span>'+tpCampoEscolha('n',i,m.n,TP_MEDS.map(function(x){return x.n;}),'Outra medicação…')+'</div>'
         +'<div class="rcv-num"><span>Dose</span><div class="rcv-num" data-tp-dcel="'+i+'">'+tpCelDose(i,m)+'</div></div>'
         +'<label class="rcv-num"><span>Início</span><input type="date" value="'+esc(m.ini||'')+'" data-tp-m="ini" data-tp-mi="'+i+'"></label>'
@@ -6936,6 +6962,8 @@ var CALCS=[
    // para a gente ir testando ao longo do tempo. Depois, quando amadurecermos ... publicando também para os
    // alunos"). Para publicar: tirar o `soProfessor` (e ajustar test-trajetoria-peso.js).
    soProfessor:true,
+   // Mesmo depois de publicada: só profissionais de saúde (perfil médico com CRM); estudantes não (professor, 19/11/2026).
+   soMedico:true,
    desc:'Curva do peso e do IMC do paciente ao longo do tempo, com o início e as doses de cada medicação: perda desde o início, resposta aos 3 meses, menor peso e reganho',
    render:function(root){tpRender(root);},
    note:'Os pesos e as medicações ficam só neste aparelho, na sua conta, e não vão para o servidor: use iniciais ou o nº do prontuário, nunca o nome. Resposta aos 3 meses: perda de 5% ou mais do peso do início da medicação; abaixo disso, a recomendação é rever e suspender ou trocar (Endocrine Society, Apovian CM et al., J Clin Endocrinol Metab 2015;100:342-62). Não se aplica à cirurgia bariátrica. Faixas de IMC da OMS: 25 sobrepeso; 30, 35 e 40, obesidade graus I, II e III.'},
@@ -16521,7 +16549,10 @@ function initCalc(root){
 // o índice é montado depois do login.
 // `foraDoAppIos` (16/11/2026, reganhoglp1): no app do iPhone, só o professor vê, até a Apple aprovar
 // o app; no site e no Android, todos.
-function calcVisivel(c){if(!c)return false;var adm=(typeof isAdminUser==='function'&&isAdminUser());if(c.soProfessor&&!adm)return false;if(c.foraDoAppIos&&!adm&&typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios')return false;return true;}
+// `soMedico` (19/11/2026, professor: "a calculadora deve ser liberada apenas para os profissionais de saúde. Usuários e
+// estudantes não devem utilizar"): só o perfil médico do cadastro — Residente, Endocrinologista ou Outros, todos com CRM
+// (prescProfileOk, o mesmo critério do Consultório). Estudante e conta sem perfil não veem; o professor (admin) vê.
+function calcVisivel(c){if(!c)return false;var adm=(typeof isAdminUser==='function'&&isAdminUser());if(c.soProfessor&&!adm)return false;if(c.soMedico&&!adm&&!(typeof prescProfileOk==='function'&&prescProfileOk()))return false;if(c.foraDoAppIos&&!adm&&typeof APP_LOJA!=='undefined'&&APP_LOJA==='ios')return false;return true;}
 function calcAreasIndex(){
   var areas=[],porArea={};
   CALCS.filter(calcVisivel).forEach(function(c){

@@ -65,6 +65,19 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
   (3) Campo "Identificação (iniciais ou nº do prontuário)", exemplo "JMS 4821" (o nº do prontuário é único e não
   identifica fora da clínica: melhor para a LGPD do que data de nascimento). (4) Com 6 pacientes ou mais, busca por
   iniciais/nº (até 8 resultados como botões; tocar abre o paciente).
+- 🩺 **SÓ PROFISSIONAIS DE SAÚDE (19/11, sw v461; professor: "a calculadora deve ser liberada apenas para os profissionais
+  de saúde. Usuários e estudantes não devem utilizar essa calculadora").** Entrada `trajpeso` com `soMedico:true`;
+  `calcVisivel` só mostra a quem tem `prescProfileOk()` (perfil Residente, Endocrinologista ou Outros — os três pedem
+  CRM no cadastro; o mesmo critério do Consultório) ou é admin. Estudante e conta sem perfil não veem (grade, busca e
+  abrir por id). **Vale também depois de tirar o `soProfessor`** ao publicar. O documento para o advogado diz isso.
+- **Formatação (19/11, sw v461; professor: "melhorar a formatação ... mais organizada, mais bonita"):** seções com
+  número em círculo e as ações no cabeçalho (1 Paciente: "+ Novo paciente" e "Ver exemplo"; 2 Peso: "Colar lista");
+  seletor do paciente na linha toda; identificação larga e altura + peso-meta lado a lado (`.tp-campos`); atalhos de
+  data numa linha; composição corporal como interruptor (`role="switch"`) com a explicação só quando ligada; lista de
+  pesos com a coluna de IMC legível; cada dose num cartão com a faixa na cor da medicação (a mesma do gráfico);
+  "⤢ Tela cheia" vira botão no cabeçalho do gráfico (saiu o selo sobre o gráfico); quadros com a variação e o ritmo
+  em verde (perda) ou âmbar (ganho); barra de ações com linha acima. No celular: quadros em 2 colunas e, no cartão da
+  dose, medicação e dose na linha toda.
 - **Servidor e volume (medido em 19/11):** o banco inteiro tem ~1,1 GB (global_state 18 MB, app_state 17 MB, 170
   contas). 3.000 pacientes = 3 a 12 MB (~1% do banco); 100 mil = 100 a 400 MB. Se a sincronização vier, uma linha por
   paciente (cada edição manda só aquele paciente, 1–4 KB). Sincronização no servidor ainda **não decidida** pelo
