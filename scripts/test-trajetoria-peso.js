@@ -74,8 +74,9 @@ ok(/<polyline points="[^"]+"/.test(svg) && svg.match(/<polyline points="([^"]+)"
 ok(/>IMC 30</.test(svg) && /stroke="#f59e0b"/.test(svg), 'peso em kg: linhas dos limites de IMC (com altura)');
 // setas na curva (professor, 18/11/2026: "colocar uma seta na curva, no gráfico, onde foi iniciado"), no lugar das faixas
 ok((svg.match(/class="tp-seta"/g) || []).length === 5 && !/<rect /.test(svg), 'uma seta por início de dose e uma na suspensão; sem as faixas de baixo');
-ok(/>Tirzepatida 2,5 mg\/sem</.test(svg) && />5 mg\/sem</.test(svg) && />7,5 mg\/sem</.test(svg) && />Tirzepatida suspensa</.test(svg) && />Orlistate 120 mg 3×\/dia</.test(svg), 'rótulos: nome na 1ª dose, só a dose nas seguintes, suspensão');
-ok(/>Tirzepatida 2,5 mg</.test(run("tpGraficoSVG(R,'kg',R.pts[0].t,360)")), 'no celular, a dose sem "/sem"');
+ok(/>Tirzepatida 2,5 mg\/sem</.test(svg) && />Tirzepatida 5 mg\/sem</.test(svg) && />Tirzepatida 7,5 mg\/sem</.test(svg) && />Tirzepatida suspensa</.test(svg) && />Orlistate 120 mg 3×\/dia</.test(svg) && !/>5 mg\/sem</.test(svg), 'rótulos: nome da medicação e dose em todas as setas (professor, 19/11/2026), e a suspensão');
+const s360 = run("tpGraficoSVG(R,'kg',R.pts[0].t,360)");
+ok(/>Tirzepatida [\d,]+ mg</.test(s360) && !/mg\/sem</.test(s360), 'no celular, nome e dose sem "/sem"');
 ok((svg.match(/paint-order="stroke">/g) || []).length >= 2, 'números do 1º, último e menor peso com contorno do fundo (legíveis sobre as setas)');
 // setas curtas, junto do ponto (professor, 19/11/2026: "as setas ficaram muito longas. Colocar uma seta menor, mais discreta, próxima do ponto")
 const hastes = svg.split('<g class="tp-seta">').slice(1).map((s) => s.split('</g>')[0]).map((s) => { const m = s.match(/<line x1="[\d.]+" y1="([\d.]+)" x2="[\d.]+" y2="([\d.]+)"/); return m ? +m[2] - +m[1] : 0; });
@@ -131,9 +132,20 @@ setv(root.querySelector('[data-tp-pp="1"]'), '96');
 ok(/último: 96 kg/.test(root.querySelector('[data-tp-pres]').textContent), 'título acompanha a edição do peso');
 root.querySelector('[data-tp-addm]').click();
 const lm = root.querySelector('.tp-lm');
-setv(lm.querySelector('[data-tp-m="n"]'), 'Semaglutida SC');
-ok(/2,4 mg\/sem/.test(lm.querySelector('datalist').innerHTML), 'doses sugeridas conforme a medicação');
-setv(lm.querySelector('[data-tp-m="dose"]'), '0,25 mg/sem');
+// medicação e dose em lista de escolha, com todas as opções sempre à vista (professor, 19/11/2026: "sempre aparecer todas as doses para preenchimento")
+ok(lm.querySelector('select[data-tp-msel="n"]').options.length === run('TP_MEDS.length') + 2 && lm.querySelector('[data-tp-m="n"]').hidden, 'medicação: lista com todas as medicações, "Escolha…" e "Outra medicação…"');
+setv(lm.querySelector('select[data-tp-msel="n"]'), 'Semaglutida SC', 'change');
+const lm1 = () => root.querySelector('.tp-lm');
+ok([...lm1().querySelector('select[data-tp-msel="dose"]').options].map((o) => o.textContent).join('|') === 'Escolha…|0,25 mg/sem|0,5 mg/sem|1 mg/sem|1,7 mg/sem|2,4 mg/sem|Outra dose…', 'dose: todas as doses da semaglutida SC, sempre');
+ok(lm1().querySelector('select[data-tp-msel="dose"]').value === '0,25 mg/sem' && J("ls['trajpeso_u1'].pac[0].meds[0].dose") === '0,25 mg/sem', 'ao escolher a medicação, a dose começa na inicial');
+setv(lm1().querySelector('select[data-tp-msel="dose"]'), '1 mg/sem', 'change');
+ok(lm1().querySelector('select[data-tp-msel="dose"]').value === '1 mg/sem' && [...lm1().querySelector('select[data-tp-msel="dose"]').options].length === 7, 'com 1 mg escolhido, as outras doses continuam na lista');
+setv(lm1().querySelector('select[data-tp-msel="dose"]'), '__outra', 'change');
+ok(!lm1().querySelector('[data-tp-m="dose"]').hidden, '"Outra dose…" abre o campo para digitar');
+setv(lm1().querySelector('[data-tp-m="dose"]'), '0,75 mg/sem');
+root.querySelector('[data-tp-addm]').click(); root.querySelector('[data-tp-delm="1"]').click();
+ok(lm1().querySelector('select[data-tp-msel="dose"]').value === '__outra' && lm1().querySelector('[data-tp-m="dose"]').value === '0,75 mg/sem' && !lm1().querySelector('[data-tp-m="dose"]').hidden, 'dose digitada fica como "Outra" ao redesenhar');
+setv(lm1().querySelector('select[data-tp-msel="dose"]'), '0,25 mg/sem', 'change');
 setv(lm.querySelector('[data-tp-m="ini"]'), '2026-01-12');
 root.querySelector('[data-tp-addm]').click();
 ok(root.querySelectorAll('.tp-lm')[1].querySelector('[data-tp-m="n"]').value === 'Semaglutida SC', 'nova dose já vem com a mesma medicação');

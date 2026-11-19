@@ -90,6 +90,20 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
     encostar em outro rótulo fica só na dica da seta (que também mostra o peso). Um mapa de ocupação único
     (`ocup`, `nOcup`, `naCurva`) serve às setas e aos números.
   - Atalhos de data: hoje, +1 mês, **+2 meses**, +3 meses, +6 meses.
+- **Nome em toda seta e lista com todas as doses (19/11, sw v456; professor: "toda vez que aparecer na seta dosagem,
+  escrever também o nome da medicação" e "não está aparecendo as mais doses da semaglutida. Sempre aparecer todas as
+  doses para preenchimento"):**
+  - Toda seta diz "Semaglutida SC 1 mg/sem" (antes, só a 1ª dose levava o nome).
+  - **Medicação e dose viraram lista de escolha** (`tpCampoEscolha`): todas as medicações de `TP_MEDS` e todas as
+    doses da medicação escolhida ficam sempre à vista, mais "Outra medicação…"/"Outra dose…", que abre o campo de
+    texto. O `<datalist>` antigo filtrava pelo que já estava escrito (com "1 mg/sem" no campo, só aparecia 1 e 1,7).
+    Medicação fora da lista: a dose é texto livre. Ao trocar a medicação, a dose vai para a inicial dela se a
+    anterior não existe nessa medicação. No computador, a coluna da medicação é um pouco mais larga (1,2 : 1).
+  - **Rótulos sem encavalar:** o mapa de ocupação distingue texto de haste de seta (`nTxt`). Cruzar a haste de uma
+    seta é tolerado (contorno do fundo); cobrir texto, não. No celular (menos de 560 px), com o nome em toda seta,
+    há até 6 degraus e 56 px de folga no alto. Rótulo de seta que só caberia sobre outro texto não é escrito; fica
+    a seta, a dica (com o peso) e o quadro da medicação. Os números do 1º, do último e do menor peso vencem: o nome
+    que ficaria por baixo deles sai. As setas são desenhadas por baixo dos números.
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 
