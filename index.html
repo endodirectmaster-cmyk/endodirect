@@ -6431,7 +6431,8 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
     var esc0=null,custo0=1e9;
     for(var k=0;k<ops.length;k++){
       var dx=ops[k][0],y=ops[k][1];if(y<y0+4||y>y1-3||(k>0&&dx===0&&y===ops[0][1]))continue;
-      var xa=a[0]+dx-(anc==='start'?0:(anc==='end'?w:w/2)),bx=[xa,xa+w,y-8,y+2],ct=nTxt(bx)*4+nOcup(bx)-nTxt(bx);
+      // cruzar a própria curva pesa pouco (desempata): o último ponto de uma descida põe o número embaixo, longe da linha
+      var xa=a[0]+dx-(anc==='start'?0:(anc==='end'?w:w/2)),bx=[xa,xa+w,y-8,y+2],ct=nTxt(bx)*4+nOcup(bx)-nTxt(bx)+(naCurva(bx)?0.5:0);
       if(ct<custo0){custo0=ct;esc0=[dx,y,xa];}
       if(!ct)break;
     }
@@ -6446,6 +6447,29 @@ function tpGraficoSVG(r,modo,baseT,larg,alto){
   if(r.iMin>0&&r.iMin!==xy.length-1){rot(r.iMin,false);jaRot[r.iMin]=1;}
   rot(0,true);jaRot[0]=1;if(xy.length>1){rot(xy.length-1,true);jaRot[xy.length-1]=1;}
   if(xy2){var s2=r.s2,u2=s2.length-1;rot(0,true,xy2[0],tpFmt(s2[0].p,1)+' kg','start');if(u2>0)rot(u2,true,xy2[u2],tpFmt(s2[u2].p,1)+' kg','end');}
+  // Composição: o número em CADA medida, não só na 1ª e na última (professor, 19/11/2026: "faltou os percentuais de
+  // gordura, massa gorda e massa magra no meio do tratamento também"). Massa gorda com o % ao lado do ponto laranja,
+  // de preferência embaixo (a seta da dose chega por cima); massa magra acima da linha verde. Posição que encosta em
+  // outro número é descartada; entre as livres, vence a que não cruza nenhuma das duas linhas. O que não couber fica
+  // só na dica do ponto.
+  if(modo==='comp'){
+    var cruzaLinha=function(b,q){if(!q)return false;for(var k=0;k+1<q.length;k++){var p0=q[k],p1=q[k+1];if(p1[0]<b[0]||p0[0]>b[1])continue;
+      for(var x=Math.max(b[0],p0[0]);x<=Math.min(b[1],p1[0]);x+=3){var yv=p1[0]===p0[0]?p0[1]:p0[1]+(p1[1]-p0[1])*(x-p0[0])/(p1[0]-p0[0]);if(yv>=b[2]-2&&yv<=b[3]+2)return true;}}return false;};
+    var rotMeio=function(a,txt,ops){
+      var w=txt.length*5.4+2,livre=null,limpo=null;
+      ops.forEach(function(o){
+        var x=a[0]+o[0],y=a[1]+o[1],xa=o[2]==='start'?x:(o[2]==='end'?x-w:x-w/2),b=[xa,xa+w,y-8,y+2];
+        if(xa<2||xa+w>W-2||y<y0+4||y>y1-3||nOcup(b))return;
+        if(!livre)livre=[x,y,o[2],b];if(!limpo&&!cruzaLinha(b,xy)&&!cruzaLinha(b,xy2))limpo=[x,y,o[2],b];
+      });
+      var e=limpo||livre;if(!e)return;
+      ocup.push(e[3]);
+      g.push('<text class="tp-comp-p" x="'+f1(e[0])+'" y="'+f1(e[1])+'" text-anchor="'+e[2]+'" font-size="9.5" font-weight="700" fill="currentColor" stroke="var(--surface)" stroke-width="3" stroke-linejoin="round" paint-order="stroke">'+txt+'</text>');
+    };
+    for(var iM=1;iM<xy.length-1;iM++)rotMeio(xy[iM],tpValor(val(pts[iM].p),modo)+(isFinite(pts[iM].gp)?' ('+tpFmt(pts[iM].gp,1)+'%)':''),
+      [[7,15,'start'],[-7,15,'end'],[0,16,'middle'],[7,-6,'start'],[-7,-6,'end']]);
+    if(xy2)for(var jM=1;jM<xy2.length-1;jM++)rotMeio(xy2[jM],tpFmt(r.s2[jM].p,1)+' kg',[[0,-8,'middle'],[7,-7,'start'],[-7,-7,'end'],[0,16,'middle']]);
+  }
   // o peso em cada seta (professor, 19/11/2026: "faltou o peso na dose de 0,5 mg por semana, no gráfico, e também não
   // está registrado na dose de 1 mg"): acima e à direita do ponto; se bater, à esquerda ou embaixo. Sem pesagem no
   // dia, o valor é o da curva (≈; no celular, só os pesados de fato). Vem depois do 1º, do último e do menor peso, que têm

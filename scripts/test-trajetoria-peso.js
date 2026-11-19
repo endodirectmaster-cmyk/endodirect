@@ -271,6 +271,17 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   ok((sc.match(/<polyline /g) || []).length === 2 && /stroke="#fb923c"/.test(sc) && /stroke="#34d399"/.test(sc) && /massa gorda \(% de gordura\)/.test(sc) && /massa magra/.test(sc) && />40,0 kg \(40,0%\)</.test(sc) && />58,0 kg</.test(sc) && /massa \(kg\)/.test(sc), 'gráfico de composição: massa gorda (com %) e massa magra, com legenda');
   ok((sc.match(/class="tp-seta"/g) || []).length === 1 && !/tp-seta-p/.test(sc), 'na composição, a seta da medicação fica na curva da massa gorda, sem o peso ao lado');
   ok(/Composição corporal \(01\/01\/26 → 01\/06\/26\): gordura 40,0 → 35,6%; massa gorda 40,0 → 32,0 kg; massa magra 60,0 → 58,0 kg \(20% do peso perdido foi massa magra\)/.test(run('tpResumoTexto({alt:"168",pesos:[{d:"2026-01-01",p:"100",gp:"40"},{d:"2026-06-01",p:"90",mg:"32",mm:"58"}],meds:[]})')), 'resumo copiado com a composição');
+  // número em cada medida do meio, não só na 1ª e na última (professor, 19/11/2026: "faltou os percentuais de gordura,
+  // massa gorda e massa magra no meio do tratamento também")
+  run(`var RC5=tpAnalisa({alt:'168',comp:true,pesos:[{d:'2025-11-10',p:'98',gp:'45',mg:'44',mm:'53'},{d:'2026-01-10',p:'90',mg:'38',mm:'52'},
+    {d:'2026-03-10',p:'86',mg:'34',mm:'52'},{d:'2026-05-10',p:'84',mg:'31',mm:'53'},{d:'2026-07-10',p:'82',gp:'35',mg:'28',mm:'52'}],
+    meds:[{n:'Tirzepatida',dose:'2,5 mg/sem',ini:'2025-11-10'},{n:'Tirzepatida',dose:'5 mg/sem',ini:'2026-01-10'},{n:'Semaglutida SC',dose:'1 mg/sem',ini:'2026-05-10'}]});`);
+  for (const [larg, nome] of [[1900, 'tela cheia'], [900, 'computador']]) {
+    const s5 = run(`tpGraficoSVG(RC5,'comp',RC5.pts[0].t,${larg})`);
+    const meio = ['38,0 kg (42,2%)', '34,0 kg (39,5%)', '31,0 kg (36,9%)'].filter((t) => s5.indexOf('>' + t + '<') >= 0);
+    const magra = (s5.match(/class="tp-comp-p"[^>]*>5[23],0 kg</g) || []).length;
+    ok(meio.length === 3 && magra === 3, 'composição (' + nome + '): massa gorda com % e massa magra em cada medida do meio', meio.join(' | ') + ' · magra ' + magra);
+  }
   const L = J("tpLerLista('05/04/26 82 31,5\\n15/06/2026 77,9')");
   ok(L.ok.length === 2 && L.ok[0].gp === '31,5' && !L.ok[1].gp, 'lista colada: 3º número é o % de gordura (opcional)');
   // tela
