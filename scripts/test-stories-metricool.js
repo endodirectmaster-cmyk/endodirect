@@ -158,7 +158,7 @@ console.error = () => {};
     };
     global.fetch = fetchRobo;
     const naFila = Object.assign(clone(base), { id: 'q9', status: 'queued' }); naFila.storyArte = { url: URL_OK.replace('q1-', 'q9-'), hash: lib.igArteHash(naFila) };
-    servidor = { ig_stories: [naFila] };
+    servidor = { provas: [], ig_stories: [naFila] }; // payload real tem provas: sem elas o servidor recusa gravar (19/11/2026)
     chamadas = [];
     let rr = await lib.autoPostDailyQotd(DIA(7, 30));
     const ultimo = gravados[gravados.length - 1] || {};
@@ -169,7 +169,7 @@ console.error = () => {};
     ok('🧨 healthcheck das 17h: nada de novo (nem story, nem save)', rr.reason === 'already_posted_today' && rr.story.motivo === 'ja_agendado' && !gravados.length && !chamadas.length);
     // "✓ Postada" pelo professor (sem o robô): o robô só agenda.
     const manual = Object.assign(clone(naFila), { status: 'posted', postedAt: DIA(9, 0).getTime() });
-    servidor = { ig_stories: [manual] }; gravados.length = 0; chamadas = [];
+    servidor = { provas: [], ig_stories: [manual] }; gravados.length = 0; chamadas = [];
     rr = await lib.autoPostDailyQotd(DIA(17, 0));
     ok('🧨 questão postada à mão pelo professor: o robô agenda o story dela e grava a marca', rr.reason === 'already_posted_today' && rr.story.agendado === true && gravados.length === 1 && gravados[0].ig_story_auto.ok === true);
   } finally {

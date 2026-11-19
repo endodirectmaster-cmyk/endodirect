@@ -1,9 +1,34 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-11-17
+atualizado: 2026-11-19
 ---
 
 # Dados e Supabase
+
+## 🚨 INCIDENTE DE 19/11/2026: CONTEÚDO ESVAZIADO POR LEITURA QUE FALHOU
+
+- **O que houve:** às 07:46 BRT o Supabase respondeu 503/521/522 por alguns segundos, no meio do cron diário
+  (`/api/cron/endocrine-radar`, 10:30 UTC, que vai até ~10:47).
+  - O `loadPayload` de `lib/trial-emails.js` fazia `if (!r.ok) return {}`. A rotina de e-mails achou o ledger
+    vazio, reenviou winback (101), "novidades" (101) e reengajamento (39), e gravou `{ trial_emails }` como o
+    payload INTEIRO (service_role não passa pelo gatilho que preserva chaves).
+  - Às 07:47 o app do iPhone do professor leu o estado já vazio e gravou por cima as cópias locais (8 diretrizes,
+    240 flashcards). O professor viu "Fila (0) / Postados (0)" na Questão do Dia.
+- **Restauração (mesmo dia, ~08:01 BRT):** cópia do estado quebrado em `main-esvaziado-2026-11-19-0747`; base =
+  backup `main-antes-capitulos-ee-2026-11-17e` (18/11 00:11 UTC) + capítulos do grupo 5 do Essencial + ledger de
+  e-mails mesclado (backup ∪ envios de hoje) + Questões do Dia de 18 e 19/11 marcadas como postadas (ordem da
+  fila) + `qotd_autopost_date`/`newsletter_sent` = 19/11. Conferido: resto do payload idêntico ao backup.
+- **Perdido (sem fonte):** itens do radar e episódios de podcast de 18–19/11 (os crons repõem a partir dos feeds),
+  `newsletter_recent` desses dias, ledger dos e-mails de 18/11 e um save do painel feito pelo iPhone em 18/11 às
+  08:59 BRT (conteúdo desconhecido; perguntar ao professor).
+- **Correção no código:** `lib/estado-global.js` (`payloadDaResposta` lança em qualquer leitura falha;
+  `confereParaGravar` recusa payload sem `provas` nem `diretrizes`), usado em trial-emails, instagram, newsletter,
+  aovivo, enquete-lembrete, alert, podcasts e radar. Teste: `scripts/test-estado-global-leitura.js`.
+- **Trava no banco (pendente de aprovação):** gatilho `endodirect_global_zz_guarda_esvaziar_trg` (recusa, para
+  qualquer papel, gravação que derruba à metade uma lista com ≥ 20 itens; liberação pontual com
+  `set local endodirect.permitir_esvaziar = 'on'`). A migração pediu confirmação e ficou sem resposta.
+- **Regra:** "não consegui ler" nunca é "servidor vazio". Toda rotina que relê e regrava o payload inteiro lança
+  na falha de leitura. O painel já seguia isso desde 19/10 (`queueRemoteStateSave`).
 
 
 ## 📦 Armazenamento dos livros e dos recortes (18/10/2026)

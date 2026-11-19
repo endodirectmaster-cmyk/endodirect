@@ -21,7 +21,8 @@ const MUDO_B = [{ nome: 'ANVISA oficial', ok: false, status: 404, url: 'u1' },
 
 // Banco e Resend de mentira: guardam o payload e contam os e-mails.
 function montarAmbiente(payloadInicial) {
-  const estado = { payload: Object.assign({}, payloadInicial), enviados: [] };
+  // provas: payload real; sem elas o servidor recusa gravar (incidente de 19/11/2026)
+  const estado = { payload: Object.assign({ provas: [] }, payloadInicial), enviados: [] };
   process.env.RESEND_API_KEY = 'fake';
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'fake';
   process.env.ALERT_TO = 'prof@exemplo.com';
