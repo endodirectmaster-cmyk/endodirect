@@ -337,6 +337,17 @@ ok(/soProfessor:true,/.test(html.slice(iCalc, iPep)), 'ainda é piloto: só o pr
   ctx2.admin = true;
   ok(vm.runInContext('calcVisivel(ent)', ctx2) === true, 'o professor vê a calculadora');
 }
+// Só profissionais de saúde (professor, 19/11/2026: "a calculadora deve ser liberada apenas para os profissionais de
+// saúde. Usuários e estudantes não devem utilizar"): vale mesmo depois de tirar o soProfessor
+ok(/soMedico:true,/.test(html.slice(iCalc, iPep)), 'marcada como só para profissionais de saúde (soMedico)');
+{
+  const ctx3 = vm.createContext({ admin: false, perfil: '', APP_LOJA: '' });
+  vm.runInContext('function isAdminUser(){return admin;}\nfunction prescProfileOk(){return perfil===\'Residente\'||perfil===\'Endocrinologista\'||perfil===\'Outros\';}\n' + corpo('calcVisivel'), ctx3);
+  ctx3.ent = { id: 'trajpeso', soMedico: true };
+  const ve = (p, a) => { ctx3.perfil = p; ctx3.admin = !!a; return vm.runInContext('calcVisivel(ent)', ctx3); };
+  ok(!ve('Estudante') && !ve('') && ve('Residente') && ve('Endocrinologista') && ve('Outros') && ve('', true), 'publicada: estudante e conta sem perfil não veem; residente, endocrinologista e outros médicos (com CRM) veem; professor vê');
+  ok(/function prescProfileOk\(\)\{var pf=userPerfil\(\);return pf==='Residente'\|\|pf==='Endocrinologista'\|\|pf==='Outros';\}/.test(html), 'critério de profissional de saúde = o do Consultório (perfis com CRM)');
+}
 ok(/\+\(c\.soProfessor\?'<div class="calc-piloto" style="margin:\.1rem 0 \.6rem">Piloto · visível só para professores<\/div>':''\)\s*\+'<div data-calc-render><\/div>'/.test(html), 'tela da calculadora com o selo de piloto');
 ok(/Apovian CM et al\., J Clin Endocrinol Metab 2015/.test(html.slice(iCalc, iPep)), 'nota com a referência do critério dos 3 meses');
 ok(/@media \(hover:none\) and \(pointer:coarse\)\{\.tp input,\.tp select,\.tp textarea\{font-size:16px\}\}/.test(html), 'campos com 16 px no toque (iPhone não amplia)');
