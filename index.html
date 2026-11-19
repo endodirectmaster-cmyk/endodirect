@@ -560,8 +560,19 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-cab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.55rem}
 .tp-base{display:flex;align-items:center;gap:.45rem;margin:0 0 .5rem;font-size:.72rem;color:var(--t2)}
 .tp-base select{width:auto;max-width:100%;min-width:0}
-.tp-graf{margin:0 0 .6rem}
+.tp-graf{position:relative;margin:0 0 .6rem;cursor:zoom-in;border-radius:8px}
 .tp-graf svg{display:block;width:100%;height:auto;color:var(--tx)}
+.tp-graf:focus-visible{outline:2px solid var(--ac,#3b82f6);outline-offset:3px}
+.tp-graf-amp{position:absolute;top:0;right:0;font-size:.66rem;font-weight:600;color:var(--t2);background:var(--surface);border:1px solid var(--bd);border-radius:999px;padding:.12rem .5rem;opacity:.85;pointer-events:none}
+.tp-graf:hover .tp-graf-amp{opacity:1;color:var(--tx)}
+.tp-cheia,.tp-cheia:fullscreen{position:fixed;inset:0;z-index:99980;background:var(--surface);color:var(--tx);display:flex;flex-direction:column;gap:.5rem;padding:max(12px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.tp-cheia-cab{display:flex;align-items:center;gap:.6rem .9rem;flex-wrap:wrap}
+.tp-cheia-t{font-weight:700;font-size:.95rem;margin-right:auto}
+.tp-cheia-x{width:2.4rem;height:2.4rem;border-radius:50%;border:1px solid var(--bd2,var(--bd));background:transparent;color:var(--tx);font-size:1.4rem;line-height:1;cursor:pointer}
+.tp-cheia-x:hover{background:var(--bd)}
+.tp-cheia-g{flex:1 1 auto;min-height:0;color:var(--tx)}
+.tp-cheia-g svg{display:block;width:100%;height:100%}
+.tp-cheia-dica{font-size:.75rem;color:var(--t2);text-align:center}
 .tp-vazio{font-size:.78rem;color:var(--t3);padding:.7rem 0}
 .tp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.5rem;margin-bottom:.6rem}
 .tp-kpi{border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem .65rem;background:var(--s2);min-width:0}
@@ -6216,7 +6227,7 @@ function tpValor(v,modo){return modo==='pct'?tpSinal(v,1,'%'):(modo==='imc'?tpFm
 function tpEixo(v,modo,passo){var c=passo<1?1:0;return modo==='pct'?tpSinal(v,c,'%'):tpFmt(v,c);}
 // `larg`: largura do contêiner em px. O desenho é feito nessa largura (1 unidade = 1 px), para a letra ter o mesmo
 // tamanho no celular e no computador; sem medida (teste), 640.
-function tpGraficoSVG(r,modo,baseT,larg){
+function tpGraficoSVG(r,modo,baseT,larg,alto){
   var pts=r.pts,alt=r.alt,G=r.grupos;
   var bp=tpPesoEm(pts,baseT),base=bp?bp.p:pts[0].p;
   var val=function(p){return modo==='imc'?p/(alt*alt):(modo==='pct'?(p-base)/base*100:p);};
@@ -6224,7 +6235,9 @@ function tpGraficoSVG(r,modo,baseT,larg){
   G.forEach(function(gr){t0=Math.min(t0,gr.ini);t1=Math.max(t1,gr.fimDesenho);});
   if(t1-t0<60*TP_DIA){var c=(t0+t1)/2;t0=c-30*TP_DIA;t1=c+30*TP_DIA;}
   var folga=(t1-t0)*0.03;t0-=folga;t1+=folga;
-  var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640,x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16);
+  var W=larg>0?Math.max(320,Math.min(1200,Math.round(larg))):640;
+  if(alto>0&&larg>1200)W=Math.round(Math.min(larg,2400)); // tela cheia: desenha na largura da tela
+  var x0=46,x1=W-((modo==='kg'&&isFinite(alt))?50:16);
   var xs=function(t){return x0+(t-t0)/(t1-t0)*(x1-x0);};
   // SETAS NA CURVA (professor, 18/11/2026: "ao invés de ficar lá embaixo, essa barra azul, colocar uma seta na curva,
   // no gráfico, onde foi iniciado"; 19/11: "as setas ficaram muito longas. Colocar uma seta menor, mais discreta,
@@ -6243,6 +6256,7 @@ function tpGraficoSVG(r,modo,baseT,larg){
   mk.sort(function(a,b){return a.t-b.t;});
   // no celular, com o nome em toda seta, os rótulos de doses próximas precisam de mais degraus (até 6) e de mais folga no alto
   var nDeg=curto?6:4,faixa=mk.length?(curto&&mk.length>3?56:26):0,y0=14+faixa,y1=208+faixa+Math.max(0,Math.min(120,Math.round((W-640)*0.25))),H=y1+26;
+  if(alto>0){y1=Math.max(160+faixa,Math.round(alto)-26);H=y1+26;} // tela cheia: ocupa a altura disponível
   var vs=pts.map(function(x){return val(x.p);});
   if(isFinite(r.meta))vs.push(val(r.meta));
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
@@ -6431,19 +6445,25 @@ function tpResumoHTML(r){
   }
   return h;
 }
+function tpBaseT(r){
+  var gb=null;r.grupos.forEach(function(x){if(x.k===tpBase)gb=x;});
+  if(!gb)tpBase='';
+  return gb?gb.ini:r.pts[0].t;
+}
+function tpModosHTML(r){
+  var temImc=isFinite(r.alt);
+  return '<div class="rcv-seg" role="group" aria-label="Escala do gráfico">'+[['kg','Peso (kg)'],['imc','IMC'],['pct','Variação (%)']].filter(function(m){return m[0]!=='imc'||temImc;}).map(function(m){return '<button type="button" data-tp-modo="'+m[0]+'" aria-pressed="'+(tpModo===m[0])+'">'+m[1]+'</button>';}).join('')+'</div>';
+}
 function tpResultadoHTML(pac,larg){
   var r=tpAnalisa(pac);
   if(!r.pts.length)return '<div class="tp-vazio">Anote os pesos (data e kg) para ver a curva.</div>';
   var temImc=isFinite(r.alt);
   if(tpModo==='imc'&&!temImc)tpModo='kg';
-  var gb=null;r.grupos.forEach(function(x){if(x.k===tpBase)gb=x;});
-  if(!gb)tpBase='';
-  var baseT=gb?gb.ini:r.pts[0].t;
-  var modos=[['kg','Peso (kg)'],['imc','IMC'],['pct','Variação (%)']].filter(function(m){return m[0]!=='imc'||temImc;});
-  var seg='<div class="rcv-seg" role="group" aria-label="Escala do gráfico">'+modos.map(function(m){return '<button type="button" data-tp-modo="'+m[0]+'" aria-pressed="'+(tpModo===m[0])+'">'+m[1]+'</button>';}).join('')+'</div>';
+  var baseT=tpBaseT(r);
+  var seg=tpModosHTML(r);
   var sel=tpModo==='pct'&&r.grupos.length?'<label class="tp-base"><span>Contar a partir de</span><select data-tp-base><option value="">primeiro peso ('+tpData(r.pts[0].t)+')</option>'
     +r.grupos.map(function(x){return '<option value="'+esc(x.k)+'"'+(x.k===tpBase?' selected':'')+'>início de '+esc(x.nome)+' ('+tpData(x.ini)+')</option>';}).join('')+'</select></label>':'';
-  var graf=r.pts.length>1?'<div class="tp-graf">'+tpGraficoSVG(r,tpModo,baseT,larg)+'</div>':'<div class="tp-vazio">Com um peso só ainda não há curva: anote o próximo.</div>';
+  var graf=r.pts.length>1?'<div class="tp-graf" data-tp-cheia tabindex="0" role="button" aria-label="Ampliar o gráfico em tela cheia" title="Toque para ampliar em tela cheia">'+tpGraficoSVG(r,tpModo,baseT,larg)+'<span class="tp-graf-amp" aria-hidden="true">⤢ tela cheia</span></div>':'<div class="tp-vazio">Com um peso só ainda não há curva: anote o próximo.</div>';
   return '<section class="rcv-sec"><div class="tp-cab"><div class="rcv-sec-t" style="margin:0">Trajetória</div>'+seg+'</div>'+sel+graf+tpResumoHTML(r)+'</section>';
 }
 function tpResumoTexto(pac){
@@ -6608,6 +6628,46 @@ function tpRender(root){
         +'<button type="button" class="tp-x" data-tp-delm="'+i+'" aria-label="Remover esta linha">×</button></div>';
     }).join('')+'</details>';
   }
+  // TELA CHEIA (professor, 19/11/2026: "deixar a opção de poder clicar no gráfico e ele ampliar em tela cheia"):
+  // camada fixa sobre a página, com o gráfico redesenhado no tamanho da tela (letra ~30% maior em tela grande) e a
+  // escala (kg/IMC/%); fecha no ×, no Esc ou ao sair da tela cheia do navegador. Onde o navegador deixa (computador,
+  // Android), pede também a tela cheia de verdade; no iPhone fica a camada, que já cobre a tela.
+  var cheia=null;
+  function abreCheia(){
+    var r0=tpAnalisa(pac);if(r0.pts.length<2||cheia)return;
+    var ov=document.createElement('div');ov.className='tp-cheia';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Gráfico da trajetória do peso em tela cheia');
+    ov.innerHTML='<div class="tp-cheia-cab"><div class="tp-cheia-t">Trajetória do peso'+(pac.rot?' · '+esc(pac.rot):'')+'</div><div data-tp-cheia-modos></div>'
+      +'<button type="button" class="tp-cheia-x" data-tp-fecha aria-label="Fechar a tela cheia" title="Fechar (Esc)">×</button></div>'
+      +'<div class="tp-cheia-g" data-tp-cheia-g></div><div class="tp-cheia-dica" data-tp-gire hidden>Gire o celular para ver o gráfico maior.</div>';
+    document.body.appendChild(ov);
+    var foco=document.activeElement,emFS=false,ovf=document.body.style.overflow;document.body.style.overflow='hidden';
+    cheia={ov:ov,desenha:function(){
+      var r=tpAnalisa(pac),g=ov.querySelector('[data-tp-cheia-g]');if(r.pts.length<2){fecha();return;}
+      ov.querySelector('[data-tp-cheia-modos]').innerHTML=tpModosHTML(r);
+      var w=g.clientWidth||0,h=g.clientHeight||0,k=w>=1000?1.3:1;
+      g.innerHTML=tpGraficoSVG(r,tpModo,tpBaseT(r),w/k,h/k);
+      var gi=ov.querySelector('[data-tp-gire]');if(gi)gi.hidden=!(window.innerHeight>window.innerWidth&&window.innerWidth<700);
+    }};
+    function fecha(){
+      if(!cheia)return;var c=cheia;cheia=null;
+      window.removeEventListener('resize',redesenha);document.removeEventListener('keydown',tecla,true);document.removeEventListener('fullscreenchange',saiuFS);
+      try{if(document.fullscreenElement===c.ov&&document.exitFullscreen)document.exitFullscreen().catch(function(){});}catch(e){}
+      if(c.ov.parentNode)c.ov.parentNode.removeChild(c.ov);document.body.style.overflow=ovf;
+      try{(foco&&foco.focus?foco:q('[data-tp-cheia]')).focus();}catch(e){}
+    }
+    var rs=null;function redesenha(){clearTimeout(rs);rs=setTimeout(function(){if(cheia)cheia.desenha();},120);}
+    function tecla(ev){if(ev.key==='Escape'){ev.preventDefault();fecha();}}
+    function saiuFS(){if(document.fullscreenElement)emFS=true;else if(emFS)fecha();}
+    ov.addEventListener('click',function(ev){
+      var b=ev.target.closest('button');
+      if(ev.target===ov||(b&&b.hasAttribute('data-tp-fecha'))){fecha();return;}
+      if(b&&b.hasAttribute('data-tp-modo')){tpModo=b.getAttribute('data-tp-modo');cheia.desenha();resultado();}
+    });
+    window.addEventListener('resize',redesenha);document.addEventListener('keydown',tecla,true);document.addEventListener('fullscreenchange',saiuFS);
+    try{if(ov.requestFullscreen){var pr=ov.requestFullscreen();if(pr&&pr.catch)pr.catch(function(){});}}catch(e){}
+    cheia.desenha();
+    try{ov.querySelector('[data-tp-fecha]').focus();}catch(e){}
+  }
   // largura útil do gráfico: a do cartão menos o recuo da seção (rcv-sec)
   function resultado(){var box=q('[data-tp-res]');if(box)box.innerHTML=tpResultadoHTML(pac,((box&&box.clientWidth)||root.clientWidth||0)-30);}
   var tpRs=null,tpLarg=0;
@@ -6672,9 +6732,13 @@ function tpRender(root){
       if(de){try{de.focus();}catch(e){}}
     }
   });
-  root.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.hasAttribute('data-tp-np')){ev.preventDefault();adicionaPeso();}});
+  root.addEventListener('keydown',function(ev){
+    if(ev.key==='Enter'&&ev.target.hasAttribute('data-tp-np')){ev.preventDefault();adicionaPeso();return;}
+    if((ev.key==='Enter'||ev.key===' ')&&ev.target.hasAttribute('data-tp-cheia')){ev.preventDefault();abreCheia();}
+  });
   root.addEventListener('toggle',function(ev){var d=ev.target;if(d&&d.getAttribute&&d.getAttribute('data-tp-det'))tpAbertos[d.getAttribute('data-tp-det')]=!!d.open;},true);
   root.addEventListener('click',function(ev){
+    var gc=ev.target.closest('[data-tp-cheia]');if(gc&&root.contains(gc)){abreCheia();return;}
     var b=ev.target.closest('button');if(!b||!root.contains(b))return;
     if(b.hasAttribute('data-tp-addp')){adicionaPeso();return;}
     if(b.hasAttribute('data-tp-dt')){

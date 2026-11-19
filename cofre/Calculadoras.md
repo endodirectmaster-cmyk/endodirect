@@ -104,6 +104,15 @@ início à medicação, como que foi essa curva, a trajetória da perda de peso,
     há até 6 degraus e 56 px de folga no alto. Rótulo de seta que só caberia sobre outro texto não é escrito; fica
     a seta, a dica (com o peso) e o quadro da medicação. Os números do 1º, do último e do menor peso vencem: o nome
     que ficaria por baixo deles sai. As setas são desenhadas por baixo dos números.
+- **Tela cheia (19/11, sw v457; professor: "deixar a opção de poder clicar no gráfico e ele ampliar em tela cheia"):**
+  clicar ou tocar no gráfico (ou Enter/espaço com o foco nele; selo "⤢ tela cheia" no canto) abre uma camada fixa
+  (`.tp-cheia`, `abreCheia` dentro de `tpRender`) com o nome do paciente, a escala kg/IMC/% e o gráfico redesenhado na
+  largura **e na altura** da tela (`tpGraficoSVG(r,modo,baseT,larg,alto)`: com `alto`, a largura passa de 1200 até
+  2400 e a curva ocupa a altura toda; em tela de 1000 px ou mais, desenha 30% menor e amplia, para a letra crescer).
+  Onde o navegador deixa (computador, Android), pede também a tela cheia de verdade (`requestFullscreen`); no iPhone
+  fica a camada. Fecha no ×, no Esc, ao sair da tela cheia do navegador ou tocando fora; redesenha ao girar. Em pé no
+  celular, sugere "Gire o celular para ver o gráfico maior". ⚠️ Existe regra global `:fullscreen{background:#000}`
+  (vídeos): a camada repete o fundo em `.tp-cheia:fullscreen`.
 
 ## ⌨️ REGANHO PÓS-GLP-1: TECLADO NUMÉRICO NO APP DO IPHONE (2026-11-16; professor: "Deixar teclado numérico", "Pode fazer")
 
