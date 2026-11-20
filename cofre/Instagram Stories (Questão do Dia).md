@@ -1,9 +1,19 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-11-19
+atualizado: 2026-11-20
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 📲 STORY "REGANHO DE PESO APÓS GLP-1 — AGORA EM PORTUGUÊS" (AGENDADO PARA 20/11/2026, 12H10)
+
+Professor, 19/11, com o print da calculadora da Mayo em português dentro do Endodirect: "Adapta pra ser colocar no
+story" e, vendo a arte, "pode agendar no Metricool para amanhã mesmo". Arte 1080×1920 no padrão do story da App Store
+(navy #002142, amarelo #f1d972, Fraunces + Inter, logo do Endodirect): título, "A calculadora desenvolvida na Mayo
+Clinic, aberta dentro do Endodirect, em Calculadoras › Obesidade", recorte da tela (sem barra do Windows, menu e nome
+do usuário; **sem o logo da Mayo**, para não sugerir parceria oficial), três destaques e o aviso "ferramenta de pesquisa
+dos autores; não substitui o julgamento clínico". Hospedada em `img/instagram/2026-11-20-mayo-pt/story-mayo-pt.jpg`.
+12h10 porque às 18h sai o story automático da Questão do Dia (melhores horas de sexta no Metricool: 12h–19h).
 
 ## 🎯 FILTRO DE SUBESPECIALIDADES NO PERFIL DO ALUNO (19/11/2026, sw v464)
 
