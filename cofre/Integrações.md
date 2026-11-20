@@ -108,6 +108,11 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
   iPhone") aparece em Issues. Daqui o envio não sai: a rede do ambiente bloqueia os domínios do Sentry.
 - **Conferido no Chromium** com DSN de teste: erros provocados com e-mail, `?code=` e `#access_token=`
   na URL, nome de paciente no console e num `title` → nenhum vazamento no envelope; sem DSN, nada sai.
+- **Conferido em produção (20/11/2026, ENDODIRECT-SITE-1, "Teste do Sentry: navegador"):** `ipAddress`
+  nulo, usuário vazio (coluna Users = 0), endereço sem consulta, tag `plataforma` e ambiente `producao`.
+  O Sentry ainda deriva **cidade e país aproximados** da conexão (ex.: São Paulo, BR) sem guardar o IP.
+  Segunda trava opcional, na mão do professor: Project Settings → Security & Privacy → "Prevent Storing
+  of IP Addresses". Alerta por e-mail ativo: "Send a notification for high priority issues".
 - **O que ficou de fora:** tracing (desempenho), replay de sessão e as rotinas do servidor (`api/`): os
   erros do servidor seguem nos logs da Vercel e na checagem diária.
 
