@@ -82,7 +82,7 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
 - **Por quê:** o professor perguntou que conector enriqueceria a plataforma. Até aqui, só sabíamos de um
   erro quando ele ou um aluno avisava. O Sentry recolhe os erros de JavaScript do navegador e do app do
   iPhone (o app abre o próprio site, então um projeto só cobre os dois) e manda alerta por e-mail.
-- **Conta:** organização `endodirect`, criada pelo professor com o login do GitHub, **região UE**
+- **Conta:** organização `endodirect` (id 4512461440024576), criada pelo professor com o login do GitHub, **região UE**
   (`https://de.sentry.io`; não muda depois). Projeto **`endodirect-site`** (plataforma Browser JavaScript),
   equipe `endodirect`. O conector do Sentry está ligado no claude.ai: leio os erros por ele
   (`search_issues`, `get_issue_details`, `find_dsns`).
@@ -103,6 +103,9 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
   - Teto de 25 envios por carregamento de página; só inicia com DSN e em endodirect.com.br ou
     *.vercel.app (`environment` producao/previa; tag `plataforma` app-ios/web).
   - Política de Privacidade (item 5, operadores) cita o Sentry desde 20/11/2026.
+- **DSN** (público, fica no index.html): projeto 4512461505167440. **Teste de ponta a ponta:** abrir
+  `https://www.endodirect.com.br/?sentry-teste=1` → a mensagem "Teste do Sentry: navegador" (ou "app do
+  iPhone") aparece em Issues. Daqui o envio não sai: a rede do ambiente bloqueia os domínios do Sentry.
 - **Conferido no Chromium** com DSN de teste: erros provocados com e-mail, `?code=` e `#access_token=`
   na URL, nome de paciente no console e num `title` → nenhum vazamento no envelope; sem DSN, nada sai.
 - **O que ficou de fora:** tracing (desempenho), replay de sessão e as rotinas do servidor (`api/`): os

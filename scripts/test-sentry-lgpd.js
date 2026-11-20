@@ -36,8 +36,8 @@ function caixa(host, busca, ua, comDsn) {
   const ctx = { window: w, location: loc, navigator: { userAgent: ua }, URL, console };
   vm.createContext(ctx);
   vm.runInContext(comDsn ? codigo.replace("var DSN = '" + dsn + "';", "var DSN = 'https://abc@o1.ingest.de.sentry.io/2';") : codigo, ctx);
-  const chamadas = { init: null, capturados: [] };
-  w.Sentry = { init: (o) => { chamadas.init = o; }, captureException: (e) => chamadas.capturados.push(e) };
+  const chamadas = { init: null, capturados: [], mensagens: [] };
+  w.Sentry = { init: (o) => { chamadas.init = o; }, captureException: (e) => chamadas.capturados.push(e), captureMessage: (m) => chamadas.mensagens.push(m) };
   return { w, ouvintes, chamadas };
 }
 
@@ -86,6 +86,15 @@ function caixa(host, busca, ua, comDsn) {
   let enviados = 0;
   for (let i = 0; i < 40; i++) if (o.beforeSend({ message: 'laço' })) enviados++;
   ok('teto de 25 envios por carregamento', enviados === 24, enviados + ' (1 já foi acima)');
+}
+// 1b. Link de teste de ponta a ponta (?sentry-teste=1) manda uma mensagem; sem ele, nada.
+{
+  const c = caixa('www.endodirect.com.br', '?sentry-teste=1', 'Mozilla/5.0', true);
+  c.w.__endoSentryInit();
+  ok('?sentry-teste=1 manda a mensagem de teste', c.chamadas.mensagens.length === 1 && /navegador/.test(c.chamadas.mensagens[0]));
+  const d = caixa('www.endodirect.com.br', '?app=ios', 'Mozilla/5.0 EndodirectApp/1.2 (ios)', true);
+  d.w.__endoSentryInit();
+  ok('sem o parâmetro, nenhuma mensagem de teste', d.chamadas.mensagens.length === 0);
 }
 // 2. Sem DSN: não inicia, e a fila é descartada.
 {

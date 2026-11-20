@@ -137,10 +137,12 @@ function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'da
      scripts/gerar-sentry.sh) servido do nosso domínio: nenhum script de terceiro a mais.
      Erro anterior ao SDK (que carrega com defer) entra numa fila de até 20 e sai no init.
      Teto de 25 envios por carregamento de página: um laço de erro não gasta a cota do mês.
-     Sem DSN, ou fora de endodirect.com.br / *.vercel.app, nada é enviado. -->
+     Sem DSN, ou fora de endodirect.com.br / *.vercel.app, nada é enviado. O DSN não é segredo
+     (é o endereço público de envio; qualquer visitante o vê aqui). Teste de ponta a ponta:
+     abrir https://www.endodirect.com.br/?sentry-teste=1 e ver a mensagem chegar em Issues. -->
 <script>
 (function(){
-  var DSN = '';
+  var DSN = 'https://e7d4c6ea3c6b183dce1e67eebc490a14@o4512461440024576.ingest.de.sentry.io/4512461505167440';
   var fila = [], pronto = false;
   function guarda(x){ if (!pronto && x != null && fila.length < 20) fila.push(x); }
   window.addEventListener('error', function(ev){ guarda(ev.error || ev.message); });
@@ -203,6 +205,8 @@ function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'da
     pronto = true;
     var f = fila.splice(0, fila.length);
     for (var i = 0; i < f.length; i++) { try { S.captureException(f[i]); } catch (e) {} }
+    // Teste de ponta a ponta: abrir o site com ?sentry-teste=1 manda uma mensagem ao Sentry.
+    if (/[?&]sentry-teste=1(&|$)/.test(location.search)) { try { S.captureMessage('Teste do Sentry: ' + (ehApp() ? 'app do iPhone' : 'navegador')); } catch (e) {} }
   };
 })();
 </script>
