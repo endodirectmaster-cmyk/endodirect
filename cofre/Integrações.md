@@ -1,6 +1,6 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-08-03
+atualizado: 2026-11-20
 ---
 
 # Integrações
@@ -76,6 +76,40 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
 - **Como adicionar episódios manualmente (ainda disponível):** Painel do professor → Podcasts → **🔄 Atualizar episódios (RSS)** com esse feed. Traz os episódios novos no **modelo de áudio nativo** (`tipo:'rss'`, `<audio>`) e **no topo** da lista (#308). Útil para forçar a atualização fora da janela semanal.
 - **Modelo dos itens:** os episódios usam `{title, area, desc, audio, tipo:'rss', at}`. O player embute Spotify só quando `tipo:'spotify'` + `src` `open.spotify.com` válido; `spotify.link`/embed que falha cai em link "Abrir no Spotify". Por isso, **preferir RSS** (player nativo confiável). `at` controla a ordem (mais-novo-primeiro).
 - Anchor bloqueia bots (403) em fetch direto/WebFetch — para ler o feed fora do app, usar o endpoint `/api/podcast-feed?url=` da própria plataforma (tem User-Agent + guarda anti-SSRF).
+
+## Sentry (erros do site e do app) — 2026-11-20
+
+- **Por quê:** o professor perguntou que conector enriqueceria a plataforma. Até aqui, só sabíamos de um
+  erro quando ele ou um aluno avisava. O Sentry recolhe os erros de JavaScript do navegador e do app do
+  iPhone (o app abre o próprio site, então um projeto só cobre os dois) e manda alerta por e-mail.
+- **Conta:** organização `endodirect` (id 4512461440024576), criada pelo professor com o login do GitHub, **região UE**
+  (`https://de.sentry.io`; não muda depois). Projeto **`endodirect-site`** (plataforma Browser JavaScript),
+  equipe `endodirect`. O conector do Sentry está ligado no claude.ai: leio os erros por ele
+  (`search_issues`, `get_issue_details`, `find_dsns`).
+- **O SDK:** pacote mínimo próprio em `vendor/sentry-<versão>.min.js` (≈93 KB, 32 KB gzip; só erros:
+  init, captureException, captureMessage, setTag, withScope), gerado por `scripts/gerar-sentry.sh <versão>`
+  com esbuild a partir do npm. É servido do nosso domínio: nenhum script de terceiro a mais, e o CDN do
+  Sentry nem abre neste ambiente. Carrega com `defer`; o erro que acontece antes entra numa fila de até
+  20 e sai no init. Para trocar de versão: gerar o novo arquivo, mudar o `<script src>` e apagar o antigo.
+- **LGPD (bloco 🛰️ SENTRY no `<head>` do index.html; teste `scripts/test-sentry-lgpd.js` no CI):**
+  - `dataCollection.userInfo:false` → `infer_ip:"never"`: sem IP e sem usuário. Sem cookies e sem corpo
+    de requisição; dos cabeçalhos, só o User-Agent.
+  - Endereço sem `?consulta` e sem `#fragmento`, inclusive nos quadros da pilha e na trilha de
+    navegação/rede: o retorno do login traz `code`/`access_token` ali.
+  - E-mail no texto do erro vira `[e-mail]`; a trilha não leva o console; o clique leva só
+    tag/id/classe, sem valor de atributo (um `title` poderia ter nome de paciente).
+  - `enhanceFetchErrorMessages:'report-only'`: a mensagem real do erro de rede não muda (o código
+    compara textos como "Failed to fetch").
+  - Teto de 25 envios por carregamento de página; só inicia com DSN e em endodirect.com.br ou
+    *.vercel.app (`environment` producao/previa; tag `plataforma` app-ios/web).
+  - Política de Privacidade (item 5, operadores) cita o Sentry desde 20/11/2026.
+- **DSN** (público, fica no index.html): projeto 4512461505167440. **Teste de ponta a ponta:** abrir
+  `https://www.endodirect.com.br/?sentry-teste=1` → a mensagem "Teste do Sentry: navegador" (ou "app do
+  iPhone") aparece em Issues. Daqui o envio não sai: a rede do ambiente bloqueia os domínios do Sentry.
+- **Conferido no Chromium** com DSN de teste: erros provocados com e-mail, `?code=` e `#access_token=`
+  na URL, nome de paciente no console e num `title` → nenhum vazamento no envelope; sem DSN, nada sai.
+- **O que ficou de fora:** tracing (desempenho), replay de sessão e as rotinas do servidor (`api/`): os
+  erros do servidor seguem nos logs da Vercel e na checagem diária.
 
 ## Vídeo
 Hoje Vimeo/YouTube. Avaliados como alternativas (advisory): **Bunny Stream** (custo-benefício), Mevo, Panda Video. Sem mudança implementada.

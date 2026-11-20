@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-19
+atualizado: 2026-11-20
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-19
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🛰️ SENTRY: ERROS DOS ALUNOS COM ALERTA, SEM DADO PESSOAL (2026-11-20, sw v467; professor: "sugere algum plugin, algum conector?", e criou a conta).** Organização na região UE; SDK mínimo servido do nosso domínio; só o erro técnico sai do aparelho (sem IP, usuário, e-mail, token do login nem dado de paciente), teto de 25 envios por página. Política de Privacidade cita o Sentry. Também ligados: Arca (FDA), Wiley Scholar Gateway e o plugin SEO GSC Wizard (espera o Search Console). Detalhes em [[Integrações]].
 - **🇧🇷 CALCULADORA DA MAYO EM PORTUGUÊS (2026-11-19, sw v465; e-mail do autor ao professor: o site ganhou idiomas, português incluído).** A janela abre com `?lang=pt`; o guia deixou de traduzir os campos. Detalhes em [[Calculadoras]].
 - **⚖️ TRAJETÓRIA DO PESO: PARECER DO ADVOGADO E TERMO DO MÉDICO (2026-11-19).** Bruno: só no aparelho é tranquilo (sem consentimento do paciente; responsabilidade do médico); no servidor, precisa de contrato/termo com o médico. Rascunhos v1 (aparelho) e v2 (servidor) no documento do Claude Docs; aceite eletrônico com data/hora e versão. Tela de aceite só depois da aprovação do Bruno. Detalhes em [[Calculadoras]].
 - **🎯 QUESTÃO DO DIA: FILTRO DE SUBESPECIALIDADES NO PERFIL (2026-11-19, sw v464; professor: "deixar um filtro no perfil dele para ele escolher as subespecialidades que eles têm interesse em receber a questão do dia").** Guarda as de fora (`qotdSubsFora`); nos dias de uma desmarcada, nada aparece (janela, Comece por aqui, selo De hoje), o e-mail sai só com os artigos e a notificação não vai. Arquivo mostra só as acompanhadas, com "Ver todas". Detalhes em [[Instagram Stories (Questão do Dia)]].
