@@ -245,6 +245,10 @@ duas perguntas de pesquisa antes do resultado (para quem é a previsão; quando 
 (o resumo por e-mail sai em inglês). Novidades do site: gráfico "continuar ou interromper" e aviso de fora da faixa de
 treinamento (<3 ou >24 meses, perda >30%, IMC <25 ou >55, idade <25 ou >80).
 
+- **19/11, ~21h25 (professor, com o trecho marcado: "Retirar", sw v466):** saíram do cartão os blocos "Como preencher"
+  e "Como ler" (o site em português já explica campos e resultado). Ficam "O que prevê", "De onde vem" e "Limites", o
+  botão de outra aba e a nota.
+
 ## 🧪 REGANHO PÓS-GLP-1: A FERRAMENTA DA MAYO RODA DENTRO DO CARTÃO (2026-11-16)
 
 Professor: *"a ideia é deixar a calculadora dentro da plataforma apenas para os professores, de modo que a
