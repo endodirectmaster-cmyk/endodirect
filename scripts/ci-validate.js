@@ -728,6 +728,16 @@ try {
   fail('regressão do estado global falhou (verifique lib/estado-global.js e quem lê o payload):\n' + out);
 }
 
+// 🛰️ Sentry (20/11/2026): erros do site e do app vão ao Sentry SÓ como erro técnico — sem IP,
+//     usuário, e-mail, token do login nem dado de paciente. A limpeza é a garantia de LGPD.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-sentry-lgpd.js')], { stdio: 'pipe' });
+  ok('Sentry: só o erro técnico sai do aparelho (sem IP, e-mail, token nem dado de paciente)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('teste do Sentry falhou (verifique o bloco 🛰️ SENTRY no <head> do index.html):\n' + out);
+}
+
 // ⚠️ Hipogonadismo SBEM/SBU/ABEMSS 2026: dois erros de FATO estavam no bloco que
 //     ancora toda a geração de IA ("repetir em 2 dias" e "Ht >54%" como
 //     contraindicação), e metade dos geradores clínicos não recebia diretriz

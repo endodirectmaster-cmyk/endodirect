@@ -123,6 +123,90 @@ try{document.documentElement.setAttribute('data-theme',localStorage.getItem('end
 function setTheme(t){t=(t==='light')?'light':'dark';try{document.documentElement.setAttribute('data-theme',t);localStorage.setItem('endodirect_theme',t);}catch(e){}try{document.querySelectorAll('[data-theme-opt]').forEach(function(b){b.classList.toggle('on',b.dataset.themeOpt===t);});}catch(e){}}
 function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'dark';}catch(e){return 'dark';}}
 </script>
+<!-- 🛰️ SENTRY (20/11/2026). O professor perguntou que conector enriqueceria a plataforma; o Sentry
+     recolhe os erros de JavaScript do navegador e do app do iPhone (o app abre este mesmo site) e
+     avisa por e-mail, para consertar antes de o aluno reclamar. Organização "endodirect" na região
+     da UE (de.sentry.io), projeto endodirect-site. Leio os erros pelo conector do Sentry.
+     LGPD: vai só o erro técnico.
+       - Sem IP (dataCollection.userInfo:false → infer_ip "never"), sem usuário, sem cookies, sem
+         corpo de requisição, e dos cabeçalhos só o User-Agent (navegador/aparelho).
+       - O endereço vai sem ?consulta e sem #fragmento: o retorno do login traz código ou token ali.
+       - E-mail no texto do erro vira [e-mail]; a trilha não leva o console; clique leva só
+         tag/id/classe (sem valores de atributo, onde poderia haver nome de paciente).
+     O SDK é um pacote mínimo próprio (vendor/sentry-11.11.0.min.js, gerado por
+     scripts/gerar-sentry.sh) servido do nosso domínio: nenhum script de terceiro a mais.
+     Erro anterior ao SDK (que carrega com defer) entra numa fila de até 20 e sai no init.
+     Teto de 25 envios por carregamento de página: um laço de erro não gasta a cota do mês.
+     Sem DSN, ou fora de endodirect.com.br / *.vercel.app, nada é enviado. -->
+<script>
+(function(){
+  var DSN = '';
+  var fila = [], pronto = false;
+  function guarda(x){ if (!pronto && x != null && fila.length < 20) fila.push(x); }
+  window.addEventListener('error', function(ev){ guarda(ev.error || ev.message); });
+  window.addEventListener('unhandledrejection', function(ev){ guarda(ev.reason); });
+  var EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+  function limpa(s){ return typeof s === 'string' ? s.replace(EMAIL, '[e-mail]') : s; }
+  function semConsulta(u){
+    if (typeof u !== 'string' || !u) return u;
+    try { var x = new URL(u, location.href); return x.origin + x.pathname; } catch (e) { return String(u).split(/[?#]/)[0]; }
+  }
+  function ehApp(){ return /EndodirectApp/.test(navigator.userAgent || '') || /[?&]app=ios\b/.test(location.search); }
+  function hostOk(){ return /(^|\.)endodirect\.com\.br$/.test(location.hostname) || /\.vercel\.app$/.test(location.hostname); }
+  function limpaFrames(st){
+    if (!st || !st.frames) return;
+    for (var i = 0; i < st.frames.length; i++) {
+      var f = st.frames[i];
+      if (f.filename) f.filename = semConsulta(f.filename);
+      if (f.abs_path) f.abs_path = semConsulta(f.abs_path);
+    }
+  }
+  var enviados = 0;
+  function antesDeEnviar(ev){
+    if (++enviados > 25) return null;
+    delete ev.user;
+    var ua = ev.request && ev.request.headers && ev.request.headers['User-Agent'];
+    ev.request = { url: semConsulta((ev.request && ev.request.url) || location.href) };
+    if (ua) ev.request.headers = { 'User-Agent': ua };
+    if (ev.message) ev.message = limpa(ev.message);
+    var vs = (ev.exception && ev.exception.values) || [];
+    for (var i = 0; i < vs.length; i++) { vs[i].value = limpa(vs[i].value); limpaFrames(vs[i].stacktrace); }
+    if (ev.breadcrumbs) ev.breadcrumbs = ev.breadcrumbs.map(antesDaTrilha).filter(Boolean);
+    return ev;
+  }
+  function antesDaTrilha(b){
+    if (!b || b.category === 'console') return null;
+    if (b.data) { ['url', 'from', 'to'].forEach(function(k){ if (typeof b.data[k] === 'string') b.data[k] = semConsulta(b.data[k]); }); }
+    if (typeof b.message === 'string') {
+      if (b.category && b.category.indexOf('ui.') === 0) b.message = b.message.replace(/\[[^\]]*\]/g, '');
+      b.message = limpa(b.message);
+    }
+    return b;
+  }
+  window.__endoSentryLimpa = { antesDeEnviar: antesDeEnviar, antesDaTrilha: antesDaTrilha };
+  window.__endoSentryInit = function(){
+    var S = window.Sentry;
+    if (!S || !S.init || !DSN || !hostOk()) { fila.length = 0; pronto = true; return; }
+    S.init({
+      dsn: DSN,
+      environment: /(^|\.)endodirect\.com\.br$/.test(location.hostname) ? 'producao' : 'previa',
+      dataCollection: { userInfo: false, cookies: false, httpHeaders: { request: { allow: ['User-Agent'] }, response: false }, httpBodies: [], urlQueryParams: false, stackFrameVariables: false },
+      enhanceFetchErrorMessages: 'report-only',
+      sendClientReports: false,
+      maxBreadcrumbs: 30,
+      allowUrls: [/endodirect\.com\.br/, /\.vercel\.app/],
+      ignoreErrors: [/ResizeObserver loop/, /^Script error\.?$/],
+      initialScope: { tags: { plataforma: ehApp() ? 'app-ios' : 'web' } },
+      beforeBreadcrumb: antesDaTrilha,
+      beforeSend: antesDeEnviar
+    });
+    pronto = true;
+    var f = fila.splice(0, fila.length);
+    for (var i = 0; i < f.length; i++) { try { S.captureException(f[i]); } catch (e) {} }
+  };
+})();
+</script>
+<script src="/vendor/sentry-11.11.0.min.js" defer onload="window.__endoSentryInit&&window.__endoSentryInit()"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
 <script>
