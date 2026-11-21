@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-20
+atualizado: 2026-11-21
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-20
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📅 TRAJETÓRIA DO PESO: DATA DIGITÁVEL COM CALENDÁRIO E TELA CHEIA SEM O × DO IPHONE (2026-11-21, sw v468; professor: "o X ficou sobreposto" e "deixa ... a opção de digitar manualmente e um botão do calendáriozinho ao lado").** No iPhone/iPad a camada não pede mais a tela cheia do sistema (o iOS 26 desenhava o × dele por cima do título). Data do Peso em dd/mm/aaaa digitável + botão de calendário no mesmo campo, na linha de adicionar e na lista. Detalhes em [[Calculadoras]].
 - **🛰️ SENTRY: ERROS DOS ALUNOS COM ALERTA, SEM DADO PESSOAL (2026-11-20, sw v467; professor: "sugere algum plugin, algum conector?", e criou a conta).** Organização na região UE; SDK mínimo servido do nosso domínio; só o erro técnico sai do aparelho (sem IP, usuário, e-mail, token do login nem dado de paciente), teto de 25 envios por página. Política de Privacidade cita o Sentry. Também ligados: Arca (FDA), Wiley Scholar Gateway e o plugin SEO GSC Wizard (espera o Search Console). Detalhes em [[Integrações]].
 - **🇧🇷 CALCULADORA DA MAYO EM PORTUGUÊS (2026-11-19, sw v465; e-mail do autor ao professor: o site ganhou idiomas, português incluído).** A janela abre com `?lang=pt`; o guia deixou de traduzir os campos. Detalhes em [[Calculadoras]].
 - **⚖️ TRAJETÓRIA DO PESO: PARECER DO ADVOGADO E TERMO DO MÉDICO (2026-11-19).** Bruno: só no aparelho é tranquilo (sem consentimento do paciente; responsabilidade do médico); no servidor, precisa de contrato/termo com o médico. Rascunhos v1 (aparelho) e v2 (servidor) no documento do Claude Docs; aceite eletrônico com data/hora e versão. Tela de aceite só depois da aprovação do Bruno. Detalhes em [[Calculadoras]].
