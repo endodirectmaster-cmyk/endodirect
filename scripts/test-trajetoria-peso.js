@@ -232,11 +232,47 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   run("currentUser={id:'u3',role:'admin'};tpRender(document.getElementById('calc3'))");
   setv(r3.querySelector('[data-tp-np]'), '90'); setv(r3.querySelector('[data-tp-nd]'), '2026-02-10', 'change'); r3.querySelector('[data-tp-addp]').click();
   r3.querySelector('[data-tp-dt="2"]').click();
-  ok(r3.querySelector('[data-tp-nd]').value === '2026-04-10', 'atalho "+2 meses" (professor, 19/11/2026)');
+  ok(r3.querySelector('[data-tp-nd]').value === '10/04/2026' && r3.querySelector('.tp-add [data-tp-cal]').value === '2026-04-10', 'atalho "+2 meses" (professor, 19/11/2026), no campo e no calendário');
   r3.querySelector('[data-tp-dt="3"]').click();
-  ok(r3.querySelector('[data-tp-nd]').value === '2026-05-10', 'atalho "+3 meses" conta do último peso');
+  ok(r3.querySelector('[data-tp-nd]').value === '10/05/2026', 'atalho "+3 meses" conta do último peso');
   r3.querySelector('[data-tp-dt="0"]').click();
-  ok(r3.querySelector('[data-tp-nd]').value === run('tpHojeISO()'), 'atalho "hoje"');
+  ok(r3.querySelector('[data-tp-nd]').value === run('tpBR(tpHojeISO())'), 'atalho "hoje"');
+  // Data digitada ou no calendário (professor, 21/11/2026: "deixa dentro do canto a opção de digitar manualmente e um
+  // botão do calendáriozinho ao lado para inserir no calendário mesmo").
+  ok(J("[tpDeBR('21/11/2026'),tpDeBR('21/11/26'),tpDeBR('21112026'),tpDeBR('2026-11-21'),tpDeBR('1/2/2026'),tpDeBR('31/02/2026'),tpDeBR('2026-02-31'),tpDeBR('21/13/2026'),tpDeBR('abc'),tpDeBR('')]").join('|') === '2026-11-21|2026-11-21|2026-11-21|2026-11-21|2026-02-01|||||', 'lê dd/mm/aaaa, dd/mm/aa, só dígitos e aaaa-mm-dd; recusa dia que não existe');
+  ok(J("[tpMascaraData('2'),tpMascaraData('211'),tpMascaraData('21112'),tpMascaraData('21112026'),tpMascaraData('211120261')]").join('|') === '2|21/1|21/11/2|21/11/2026|21/11/2026', 'máscara: barras entram sozinhas, até 8 dígitos');
+  // contêiner e conta próprios: o resto do r3 (colar lista, escalonamento) conta com os pesos dele
+  const r9 = doc.createElement('div'); r9.id = 'calc9'; doc.body.appendChild(r9);
+  run("currentUser={id:'u9',role:'admin'};tpRender(document.getElementById('calc9'))");
+  setv(r9.querySelector('[data-tp-np]'), '90'); setv(r9.querySelector('[data-tp-nd]'), '10/02/2026', 'input'); r9.querySelector('[data-tp-addp]').click();
+  const nd3 = r9.querySelector('[data-tp-nd]');
+  ok(nd3.type === 'text' && nd3.getAttribute('inputmode') === 'numeric' && nd3.getAttribute('placeholder') === 'dd/mm/aaaa', 'campo de data digitável, com teclado numérico');
+  const cal3 = r9.querySelector('.tp-add .tp-data [data-tp-cal]');
+  ok(!!cal3 && cal3.type === 'date' && cal3.closest('.tp-cal') && /calendário/.test(cal3.getAttribute('aria-label')), 'botão de calendário ao lado, no mesmo campo');
+  nd3.value = ''; nd3.setSelectionRange(0, 0);
+  setv(nd3, '01032026');
+  ok(nd3.value === '01/03/2026' && cal3.value === '2026-03-01', 'digitar só os números põe as barras e leva o calendário ao dia');
+  setv(cal3, '2026-03-15', 'change');
+  ok(nd3.value === '15/03/2026', 'escolher no calendário preenche o campo');
+  setv(r9.querySelector('[data-tp-np]'), '87'); r9.querySelector('[data-tp-addp]').click();
+  ok(J("ls['trajpeso_u9']").pac[0].pesos.some((x) => x.d === '2026-03-15' && x.p === '87'), 'peso entra na data escolhida no calendário');
+  run('avisos.length=0');
+  setv(nd3, '31/02/2026'); setv(r9.querySelector('[data-tp-np]'), '86'); r9.querySelector('[data-tp-addp]').click();
+  ok(run('avisos.length') === 1 && /dd\/mm\/aaaa/.test(run('avisos[0][0]')) && !J("ls['trajpeso_u9']").pac[0].pesos.some((x) => x.p === '86'), 'data que não existe não entra (aviso)');
+  // na lista: mudar a data de um peso digitando ou pelo calendário; data ruim volta à anterior
+  const det3 = r9.querySelector('details[data-tp-det="pesos"]'); det3.open = true; det3.dispatchEvent(new dom.window.Event('toggle'));
+  const pd0 = r9.querySelector('[data-tp-pd="0"]');
+  ok(pd0 && pd0.type === 'text' && pd0.value === '10/02/26' && pd0.parentNode.querySelector('[data-tp-cal]').value === '2026-02-10', 'lista: data em dd/mm/aa (linha estreita), com o calendário ao lado');
+  setv(pd0, '12/02/2026', 'change');
+  ok(J("ls['trajpeso_u9']").pac[0].pesos[0].d === '2026-02-12', 'lista: data digitada grava');
+  setv(r9.querySelector('[data-tp-pd="0"]').parentNode.querySelector('[data-tp-cal]'), '2026-02-14', 'change');
+  ok(J("ls['trajpeso_u9']").pac[0].pesos[0].d === '2026-02-14' && r9.querySelector('[data-tp-pd="0"]').value === '14/02/26', 'lista: data do calendário grava');
+  run('avisos.length=0');
+  setv(r9.querySelector('[data-tp-pd="0"]'), '99/99', 'change');
+  ok(J("ls['trajpeso_u9']").pac[0].pesos[0].d === '2026-02-14' && r9.querySelector('[data-tp-pd="0"]').value === '14/02/26' && run('avisos.length') === 1, 'lista: data inválida volta à anterior, com aviso');
+  run("currentUser={id:'u3',role:'admin'}");
+  // tela cheia no iPhone/iPad: sem a tela cheia do sistema, que punha um × cinza por cima do título (21/11/2026)
+  ok(/iosFS=\/iPad\|iPhone\|iPod\|EndodirectApp\/\.test\(uaFS\)/.test(html) && /if\(!iosFS\)\{try\{if\(ov\.requestFullscreen\)/.test(html), 'tela cheia: no iPhone/iPad não pede a tela cheia do sistema');
   r3.querySelector('[data-tp-colar]').click();
   ok(r3.querySelector('[data-tp-colar-box]').hidden === false, 'colar lista abre a caixa');
   r3.querySelector('[data-tp-lista]').value = '10/03/26 88\n10/04/26 86,5\nxx';

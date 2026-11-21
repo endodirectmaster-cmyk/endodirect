@@ -1,11 +1,25 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-11-19
+atualizado: 2026-11-21
 ---
 
 # Calculadoras
 
 ## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
+
+> 📅 **DATA DO PESO DIGITÁVEL + CALENDÁRIO; TELA CHEIA SEM O × DO SISTEMA NO IPHONE (21/11, sw v468).** Professor, com
+> captura do app: "No grafo em tela cheia, o X ficou sobreposto. E na questão das datas, no peso, deixa dentro do canto a
+> opção de digitar manualmente e um botão do calendáriozinho ao lado para inserir no calendário mesmo."
+> - **O × cinza** era o botão do próprio iOS: o iOS 26 passou a aceitar a tela cheia de elemento (`requestFullscreen`),
+>   e o WebKit põe o × dele no canto de cima, por cima do título e das pílulas. No iPhone/iPad (e no app) a camada não
+>   pede mais a tela cheia do sistema; ela já cobre a tela e tem o nosso ×. Computador e Android seguem pedindo.
+> - **Data do Peso** (`tpCampoData`): texto dd/mm/aaaa com teclado numérico (as barras entram sozinhas; aceita também
+>   dd/mm/aa, só os 8 dígitos e aaaa-mm-dd) e, colado à direita no mesmo campo, o botão de calendário: um
+>   `<input type=date>` invisível por cima do ícone, que abre o seletor do aparelho. O valor guardado segue aaaa-mm-dd
+>   (`tpDeBR`/`tpBR`). Vale para a linha de adicionar e para a data de cada peso da lista (lá em dd/mm/aa, para caber
+>   no celular; data inválida volta à anterior com aviso). Peso e "Adicionar" ficam juntos na linha de baixo no
+>   celular. No celular estreito, "IMC" da linha vai pequeno em cima do número.
+> - As datas de **Medicações e doses** continuam no seletor nativo (o pedido foi do Peso); dá para estender igual.
 
 > 🧪 **PILOTO SÓ DO PROFESSOR (18/11, sw v451).** Professor, depois de ver no ar: "Essa calculadora ainda não
 > publica. Deixa apenas no painel do professor para a gente ir testando ao longo do tempo. Depois, quando
