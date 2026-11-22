@@ -22012,17 +22012,16 @@ function igQuestionSVG(it){
     p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fa+'" fill="'+IG_TX+'">'+igTspans(a.al,pad+m.tx,y+Math.round(a.h/2-(a.al.length-1)*m.alh/2+m.fa*0.35),m.alh)+'</text>');
     y+=a.h+(k<m.alts.length-1?m.gapAlt:0);
   });
-  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape1)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="36" fill="'+IG_GOLD+'">GABARITO HOJE ÀS 18H</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape2)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="600" font-size="32" fill="'+IG_TX+'">nos stories e em www.endodirect.com.br</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape1)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="36" fill="'+IG_GOLD+'">GABARITO NA PLATAFORMA</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape2)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="600" font-size="32" fill="'+IG_TX+'">Acesse www.endodirect.com.br</text>');
   return igDoc(p.join(''),T,lx);
 }
-// 🔑 GABARITO NOS STORIES, ÀS 18H (professor, 22/11/2026: "Deixa tudo automatizado mesmo, sem enquete. Você gera tudo
-// junto com o métrico mesmo, sem passar por mim"). A partir de 30/11 a Questão do Dia da plataforma vai ao story às
-// 11h e o gabarito comentado da MESMA questão às 18h. Mesmo desenho da arte da questão (V=4): margem de 60 px, logo ao
-// lado do título, tudo entre IG_SEGURO_TOPO e IG_SEGURO_BASE, sobra da faixa repartida em respiros. O comentário vai
-// justificado palavra a palavra; a letra começa em 40 px e desce até 30. Se nem a 30 couber, o comentário para no fim
-// da última frase que cabe, com "(…)", e o rodapé manda para o comentário completo na plataforma. Mudar este desenho
-// exige subir o V de igGabHash (nas duas cópias e no texto da tarefa diária).
+// 🔑 ARTE DO GABARITO (botão "⬇ Gabarito" do painel; redesenhada em 22/11/2026). Não há story automático do gabarito
+// (divisão com a conversa do Instagram, 22/11): a arte serve para o professor postar à mão, se quiser. Mesmo desenho
+// da arte da questão: margem de 60 px, logo ao lado do título, tudo entre IG_SEGURO_TOPO e IG_SEGURO_BASE, sobra da
+// faixa repartida em respiros. O comentário vai justificado palavra a palavra; a letra começa em 40 px e desce até
+// 30. Se nem a 30 couber, o comentário para no fim da última frase que cabe, com "(…)", e o rodapé manda para o
+// comentário completo na plataforma.
 function igFrases(txt){
   // corta depois de . ! ? seguidos de espaço e de letra maiúscula, número ou abre-parêntese
   // (sem lookbehind no regex: o Safari antigo do iPhone não entende e o script inteiro deixaria de rodar)
@@ -22165,23 +22164,16 @@ function igMostrarImagem(b,filename){
 // próximas IG_ARTES_ADIANTE (30: professor, "a cada 30 dias?", 16/11) questões da fila, o painel gera o JPG com o mesmo desenho do botão "⬇ Imagem"
 // e guarda no bucket público (endodirect-assets/stories/<id>-<hash>.jpg), anotando {url,hash} no item
 // (`storyArte`). O hash cobre tudo o que entra no desenho: editou a questão, a arte velha deixa de valer e é
-// refeita. Desde 22/11/2026 (professor: "Deixa tudo automatizado mesmo, sem enquete") o painel gera também a arte
-// do GABARITO (`storyGab`), e a tarefa diária do Claude Code (08:17) agenda no Metricool, a partir de 30/11, o story
-// da questão publicada no dia às 11h e o do gabarito às 18h, só se as artes baterem com os hashes. V=5 da questão:
-// rodapé "GABARITO HOJE ÀS 18H". `igArteHash` e `igGabHash` têm CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
+// refeita. O cron das 7h30 (lib/instagram.js) agenda no Metricool, às 18h, o story da questão publicada no
+// dia, só se a arte bater com o hash. `igArteHash` tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
+// Na prática quem agenda é a tarefa diária do Claude Code (08:17; o caminho do servidor está sem chave).
+// DIVISÃO COM A CONVERSA DO INSTAGRAM (22/11/2026): o story da Questão do Dia é SÓ este, às 18h; a outra conversa
+// agenda o resto (11h "Na prática clínica", 19h05 capa do post) e não faz mais questão nem gabarito. Não há story
+// automático do gabarito. Uma V=5 (rodapé "Gabarito hoje às 18h", para um gabarito às 18h) existiu por algumas
+// horas em 22/11 e foi desfeita: a próxima mudança de desenho vai para V=6, nunca 5.
 function igArteHash(it){
-  var V='5';it=it||{};var op=it.options||{};
+  var V='4';it=it||{};var op=it.options||{};
   var s=['v'+V,it.teem||'',it.stem||'',op.A||'',op.B||'',op.C||'',op.D||'',it.img||''].join('\u0001');
-  var h=0x811c9dc5;
-  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}
-  return ('0000000'+h.toString(16)).slice(-8);
-}
-// Arte do GABARITO (story das 18h, desde 30/11/2026), guardada em `storyGab` ({url,hash,em}), arquivo
-// stories/<id>-g-<hash>.jpg. O hash cobre o que entra no desenho do gabarito: subespecialidade, letra certa, texto
-// dela e comentário. `igGabHash` também tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
-function igGabHash(it){
-  var V='1';it=it||{};var op=it.options||{},L=String(it.answer||'');
-  var s=['g'+V,it.sub||'',L,op[L]||'',it.explanation||''].join('\u0001');
   var h=0x811c9dc5;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}
   return ('0000000'+h.toString(16)).slice(-8);
@@ -22192,11 +22184,9 @@ function igArtesAgenda(ms){
   clearTimeout(igArtesTimer);igArtesTimer=setTimeout(function(){igArtesSincroniza();},ms==null?4000:ms);
 }
 function igArteOk(it){var a=it&&it.storyArte;return !!(a&&a.url&&a.hash===igArteHash(it));}
-function igGabPossivel(it){var op=(it&&it.options)||{};return !!(it&&it.answer&&op[it.answer]&&String(it.explanation||'').trim());}
-function igGabOk(it){var a=it&&it.storyGab;return !!(a&&a.url&&a.hash===igGabHash(it));}
-function igArtesProximas(){return (igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE);}
 function igArtesPendentes(){
-  return igArtesProximas().filter(function(s){return !igArteOk(s)||(igGabPossivel(s)&&!igGabOk(s));});
+  return (igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE)
+    .filter(function(s){return !igArteOk(s);});
 }
 // Imagem do caso: o desenho só embute data: (URL externa "suja" o canvas). Imagem guardada no nosso
 // bucket vem por fetch (CORS liberado) e vira data: antes de desenhar; se não vier, a arte não sai (o
@@ -22207,9 +22197,13 @@ function igArteComImagem(it){
   return fetch(u,{mode:'cors'}).then(function(r){if(!r.ok)throw new Error('imagem '+r.status);return r.blob();})
     .then(function(b){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(Object.assign({},it,{img:fr.result}));};fr.onerror=function(){rej(new Error('imagem ilegível'));};fr.readAsDataURL(b);});});
 }
-// Canvas → JPG no bucket público (pasta stories). Devolve {url,hash,em}.
-function igArteSobe(client,c,path,hash){
-  return new Promise(function(res,rej){c.toBlob(function(b){if(b)res(b);else rej(new Error('Falha ao gerar a arte.'));},'image/jpeg',0.92);}).then(function(b){
+function igArteGerar(it){
+  var hash=igArteHash(it),client=getSupabaseClient();
+  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
+  return igArteComImagem(it).then(function(x){return igRenderCanvas(igQuestionSVG(x));}).then(function(c){
+    return new Promise(function(res,rej){c.toBlob(function(b){if(b)res(b);else rej(new Error('Falha ao gerar a arte.'));},'image/jpeg',0.92);});
+  }).then(function(b){
+    var path='stories/'+String(it.id).replace(/[^a-zA-Z0-9_-]/g,'')+'-'+hash+'.jpg';
     return client.storage.from(SUPABASE_ASSET_BUCKET).upload(path,b,{cacheControl:'31536000',upsert:true,contentType:'image/jpeg'}).then(function(r){
       if(r&&r.error)throw r.error;
       var pub=client.storage.from(SUPABASE_ASSET_BUCKET).getPublicUrl(path),url=pub&&pub.data&&pub.data.publicUrl;
@@ -22218,37 +22212,19 @@ function igArteSobe(client,c,path,hash){
     });
   });
 }
-function igArteId(it){return String(it.id).replace(/[^a-zA-Z0-9_-]/g,'');}
-function igArteGerar(it){
-  var hash=igArteHash(it),client=getSupabaseClient();
-  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
-  return igArteComImagem(it).then(function(x){return igRenderCanvas(igQuestionSVG(x));})
-    .then(function(c){return igArteSobe(client,c,'stories/'+igArteId(it)+'-'+hash+'.jpg',hash);});
-}
-function igGabGerar(it){
-  var hash=igGabHash(it),client=getSupabaseClient();
-  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
-  return igRenderCanvas(igAnswerSVG(it)).then(function(c){return igArteSobe(client,c,'stories/'+igArteId(it)+'-g-'+hash+'.jpg',hash);});
-}
 function igArtesSincroniza(){
   if(igArtesRodando||!currentUser||currentUser.role!=='admin')return Promise.resolve(0);
   var pend=igArtesPendentes();if(!pend.length)return Promise.resolve(0);
   igArtesRodando=true;var feitas=0;
-  // a questão pode ter mudado enquanto a arte subia: só anota se ainda for a mesma (mesmo hash)
-  var atualDe=function(it){var x=(igStories||[]).filter(function(s){return s&&s.id===it.id;})[0];return x&&x.status!=='posted'?x:null;};
-  var avisa=function(it,qual){return function(e){try{console.warn('[stories] arte',qual,'de',it.id,'não saiu:',e&&e.message);}catch(_){}};};
   var passo=function(i){
     if(i>=pend.length)return Promise.resolve();
     var it=pend[i];
-    var q=igArteOk(it)?Promise.resolve():igArteGerar(it).then(function(a){
-      var atual=atualDe(it);if(atual&&igArteHash(atual)===a.hash){atual.storyArte=a;feitas++;}
-    }).catch(avisa(it,'da questão'));
-    return q.then(function(){
-      if(!igGabPossivel(it)||igGabOk(it))return;
-      return igGabGerar(it).then(function(a){
-        var atual=atualDe(it);if(atual&&igGabHash(atual)===a.hash){atual.storyGab=a;feitas++;}
-      }).catch(avisa(it,'do gabarito'));
-    }).then(function(){return passo(i+1);});
+    return igArteGerar(it).then(function(a){
+      // a questão pode ter mudado enquanto a arte subia: só anota se ainda for a mesma
+      var atual=(igStories||[]).filter(function(s){return s&&s.id===it.id;})[0];
+      if(atual&&atual.status!=='posted'&&igArteHash(atual)===a.hash){atual.storyArte=a;feitas++;}
+    }).catch(function(e){try{console.warn('[stories] arte de',it.id,'não saiu:',e&&e.message);}catch(_){}})
+      .then(function(){return passo(i+1);});
   };
   return passo(0).then(function(){
     igArtesRodando=false;
@@ -22257,10 +22233,10 @@ function igArtesSincroniza(){
     return feitas;
   });
 }
-// Linha de situação na aba "Fila": artes prontas (questão e gabarito) e o último agendamento feito pelo servidor.
+// Linha de situação na aba "Fila": artes prontas e o último agendamento feito pelo servidor.
 function igAutoStatusHTML(){
-  var prox=igArtesProximas();
-  var prontas=prox.filter(function(s){return igArteOk(s)&&(!igGabPossivel(s)||igGabOk(s));}).length;
+  var prox=(igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE);
+  var prontas=prox.filter(igArteOk).length;
   var a=globalServerKeys&&globalServerKeys.ig_story_auto,ult='';
   if(a&&a.iso){
     var d=String(a.iso).split('-').reverse().slice(0,2).join('/');
@@ -22268,7 +22244,7 @@ function igAutoStatusHTML(){
       :a.ok==='incerto'?' · '+esc(d)+': o Metricool não confirmou o agendamento (confira no planejador)'
       :' · '+esc(d)+': story não agendado ('+esc(a.motivo==='sem_arte'?'arte da questão ainda não gerada':a.motivo==='sem_midia'?'o Metricool não recebeu a imagem':'erro no Metricool')+')';
   }
-  return '📲 <b>Stories automáticos</b> (Metricool): questão às 11h e gabarito às 18h · '+(prox.length?'artes prontas de <b>'+prontas+' de '+prox.length+'</b> próximas questões':'fila vazia')+ult;
+  return '📲 <b>Story automático às 18h</b> (Metricool): '+(prox.length?'arte pronta de <b>'+prontas+' de '+prox.length+'</b> próximas questões':'fila vazia')+ult;
 }
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
