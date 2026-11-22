@@ -1,9 +1,24 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-11-16
+atualizado: 2026-11-22
 ---
 
 # Convenções de Trabalho
+
+## 💳 VERCEL NO PLANO PRO DESDE 22/11/2026
+
+Em 21/11 a Vercel avisou: o time gratuito (Hobby) tinha usado **90% das 4 h de Fluid Active CPU** do mês; passando
+de 100%, o projeto seria **pausado** (site, app, crons). O professor fez o upgrade para o **Pro** (US$ 20/mês, com
+US$ 20 de crédito de uso; o painel mostra teto de gasto extra de US$ 200 em Spend Management).
+O que muda na prática:
+- As travas que vinham do Hobby deixam de ser limite da Vercel: 12 funções em `api/`, cron no máximo 1×/dia,
+  `maxDuration` cortado em 60 s (o `vercel.json` pede 120 s para `api/ai.js` e `refresh-radar`, e agora vale) e
+  log de execução de só 1 hora (Pro guarda 1 dia).
+- **As guardas do CI continuam** (`test-aula-ao-vivo.js` conta 12 funções; `test-radar-cadencia.js` reprova cron
+  sub-diário). Só subir o teto delas quando houver uma necessidade real, e anotar aqui.
+- Uso acima do crédito é cobrado: antes de algo que rode muito (cron frequente, função pesada), medir o custo.
+  O painel de observabilidade da API ainda respondia 404 logo após a troca de plano.
+
 
 ## 🚀 DEPOIS DO MERGE: ESPERAR O DEPLOY DE PRODUÇÃO ANTES DE REALINHAR A BRANCH (2026-11-16)
 
