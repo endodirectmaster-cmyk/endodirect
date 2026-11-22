@@ -21952,7 +21952,7 @@ var IG_SEGURO_TOPO=210,IG_SEGURO_BASE=IG_H-260,IG_TOPO_MIN=120;
 //    LETRAS ("i n t r a p e r i t o n e a l"), e a linha parecia espremida ou esgarçada;
 //  - letra das alternativas a 90% do enunciado (era 86%), círculo da letra proporcional e centrado na caixa.
 // Linha justificada palavra a palavra (professor, 22/11/2026: "Só lembrar de deixar o texto no formato justificado"):
-// todas as linhas vão de margem a margem; só a última do parágrafo (e a de uma palavra só) fica natural.
+// todas as linhas vão de margem a margem; só a última do parágrafo (e a de uma palavra só) fica natural. Arte V=4.
 function igTspansJW(lines,x,y,lh,w,font){
   return lines.map(function(l,i){
     var yy=y+i*lh,ws=String(l).split(' '),last=(i===lines.length-1);
@@ -22120,7 +22120,7 @@ function igMostrarImagem(b,filename){
 // refeita. O cron das 7h30 (lib/instagram.js) agenda no Metricool, às 18h, o story da questão publicada no
 // dia, só se a arte bater com o hash. `igArteHash` tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
 function igArteHash(it){
-  var V='3';it=it||{};var op=it.options||{};
+  var V='4';it=it||{};var op=it.options||{};
   var s=['v'+V,it.teem||'',it.stem||'',op.A||'',op.B||'',op.C||'',op.D||'',it.img||''].join('\u0001');
   var h=0x811c9dc5;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}

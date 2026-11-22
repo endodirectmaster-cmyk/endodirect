@@ -291,7 +291,7 @@ console.error = () => {};
     ok('🧨 questão longa: a letra diminui para caber, sem ficar miúda', fontes.media < 54 && fontes.longa < fontes.media && fontes.longa >= 28 && fontes.longaImg <= fontes.longa && fontes.longaImg >= 28 && fontes.enorme >= 22, JSON.stringify(fontes));
     const rc = corpo('igRenderCanvas');
     ok('🧨 o canvas desenha o logo onde a arte manda (data-logo-x/y), não fixo no alto', /data-logo-y=/.test(rc) && /data-logo-x=/.test(rc) && /ctx\.drawImage\(lg,lx,ly,68,68\)/.test(rc));
-    ok('🧨 mudou o desenho: versão da arte subiu (V=3) para refazer as guardadas', /var V='3';/.test(corpo('igArteHash')));
+    ok('🧨 mudou o desenho: versão da arte subiu (V=4, justificado em todas as linhas) para refazer as guardadas', /var V='4';/.test(corpo('igArteHash')));
   }
 
   if (bad) { console.log('✗ stories no Metricool: ' + bad + ' falha(s)'); process.exit(1); }
