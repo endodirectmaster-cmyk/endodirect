@@ -21939,31 +21939,60 @@ function igDoc(inner,logoY,logoX){return '<svg xmlns="http://www.w3.org/2000/svg
 // a barra de progresso e o perfil; embaixo, "Enviar mensagem" e as reações. Antes, o logo e o título ficavam
 // debaixo do perfil e o rodapé "GABARITO NA PLATAFORMA" debaixo da barra de mensagem. Agora tudo (logo, título,
 // enunciado, imagem, alternativas e rodapé) fica entre IG_SEGURO_TOPO e IG_SEGURO_BASE, centralizado na vertical;
-// se a questão não couber, a letra diminui um passo por vez (enunciado de 44 até 22 px; as da fila cabem em 32 ou mais). Mudar este desenho exige
+// se a questão não couber, a letra diminui um passo por vez (enunciado de 54 até 22 px desde a V=3). Mudar este desenho exige
 // subir o V de igArteHash (nas duas cópias e no texto da tarefa diária) para as artes guardadas serem refeitas.
 var IG_SEGURO_TOPO=210,IG_SEGURO_BASE=IG_H-260,IG_TOPO_MIN=120;
-function igQMedidas(it,fs){
-  var op=it.options||{},pad=90,cw=IG_W-2*pad;
-  var fa=Math.max(20,Math.round(fs*0.86)),lh=Math.round(fs*1.36),alh=Math.round(fa*1.32);
+// MAIS AMPLA E MAIS ESPAÇADA (professor, 21/11/2026: "está um pouco espremido, muito centralizado, muito espremido a
+// questão do dia nos stories"). Mudou (V=3):
+//  - margem lateral de 90 para 60 px: o texto ganha ~7% de largura e precisa de menos linhas;
+//  - a letra começa em 54 px (era 44) e só diminui se não couber;
+//  - a sobra da faixa livre vira respiro entre os blocos (enunciado, imagem, alternativas, rodapé), em vez de ficar
+//    toda em cima e embaixo;
+//  - parágrafo justificado só pelos ESPAÇOS entre as palavras (cada palavra no seu x). O textLength esticava as
+//    LETRAS ("i n t r a p e r i t o n e a l"), e a linha parecia espremida ou esgarçada;
+//  - letra das alternativas a 90% do enunciado (era 86%), círculo da letra proporcional e centrado na caixa.
+// Linha justificada palavra a palavra; a última, as curtas (menos de 72% da largura) e as que abririam buraco entre as
+// palavras (espaço mais de 3× o normal, linha de poucas palavras longas) ficam naturais.
+function igTspansJW(lines,x,y,lh,w,font){
+  return lines.map(function(l,i){
+    var yy=y+i*lh,ws=String(l).split(' '),last=(i===lines.length-1);
+    if(last||ws.length<2)return '<tspan x="'+x+'" y="'+yy+'">'+igXml(l)+'</tspan>';
+    var larg=ws.map(function(p){return igMeasure(p,font);}),soma=larg.reduce(function(a,b){return a+b;},0);
+    if(soma+igMeasure(' ',font)*(ws.length-1)<w*0.72)return '<tspan x="'+x+'" y="'+yy+'">'+igXml(l)+'</tspan>';
+    var esp=(w-soma)/(ws.length-1),cx=x;
+    if(esp>igMeasure(' ',font)*3)return '<tspan x="'+x+'" y="'+yy+'">'+igXml(l)+'</tspan>'; // buraco grande entre palavras: fica natural
+    return ws.map(function(p,k){var t='<tspan x="'+Math.round(cx*10)/10+'" y="'+yy+'">'+igXml(p)+'</tspan>';cx+=larg[k]+esp;return t;}).join('');
+  }).join('');
+}
+function igQMedidas(it,fs,extra){
+  var op=it.options||{},pad=60,cw=IG_W-2*pad,E=extra||0;
+  var fa=Math.max(20,Math.round(fs*0.9)),lh=Math.round(fs*1.4),alh=Math.round(fa*1.32);
   var stem=(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim();
   var sl=igWrap(stem,fs+'px Arial',cw);
-  var temImg=!!(it.img&&/^data:/.test(String(it.img))),imgH=temImg?Math.round(240*fs/44):0; // a imagem encolhe junto com a letra
+  var temImg=!!(it.img&&/^data:/.test(String(it.img))),imgH=temImg?Math.round(260*fs/44):0; // a imagem acompanha a letra
+  var r=Math.max(26,Math.round(fa*0.72)),tx=18+2*r+24;
   var alts=['A','B','C','D'].filter(function(L){return !!op[L];}).map(function(L){
-    var al=igWrap(String(op[L]).trim(),fa+'px Arial',cw-118);return {L:L,al:al,h:Math.max(86,al.length*alh+36)};
+    var al=igWrap(String(op[L]).trim(),fa+'px Arial',cw-tx-24);return {L:L,al:al,h:Math.max(Math.round(fa*2.3),al.length*alh+Math.round(fa*1.05))};
   });
   // posições relativas ao topo do bloco (0 = topo do logo). Cabeçalho numa linha: logo ao lado do título.
-  var m={fs:fs,fa:fa,lh:lh,alh:alh,sl:sl,alts:alts,temImg:temImg,imgH:imgH,pad:pad,cw:cw};
-  m.titulo=48;m.linha=92;m.enunciado=m.linha+fs+8;
-  var y=m.enunciado+sl.length*lh+Math.round(fs*0.8);
-  if(temImg){m.img=y;y+=imgH+24;}
-  m.caixas=y;alts.forEach(function(a){y+=a.h+20;});
-  m.rodape1=y-20+50+36;m.rodape2=m.rodape1+46;
+  var m={fs:fs,fa:fa,lh:lh,alh:alh,sl:sl,alts:alts,temImg:temImg,imgH:imgH,pad:pad,cw:cw,r:r,tx:tx,E:E};
+  m.titulo=48;m.linha=92;m.enunciado=m.linha+fs+18+Math.round(E*0.5);
+  var y=m.enunciado+(sl.length-1)*lh+Math.round(fs*0.3)+Math.round(fs*0.75)+E;
+  if(temImg){m.img=y;y+=imgH+Math.round(fs*0.6)+E;}
+  m.gapAlt=Math.round(fs*0.42)+Math.round(E*0.5);
+  m.caixas=y;alts.forEach(function(a,k){y+=a.h+(k<alts.length-1?m.gapAlt:0);});
+  m.rodape1=y+64+E+30;m.rodape2=m.rodape1+46;
   m.altura=m.rodape2+10;
+  m.respiros=1.5+(temImg?1:0)+1+Math.max(0,alts.length-1)*0.5; // quantos E cabem na altura (para repartir a sobra)
   return m;
 }
 function igQuestionSVG(it){
-  var passos=[44,42,40,38,36,34,32,30,28,26,24,22],livre=IG_SEGURO_BASE-IG_SEGURO_TOPO,m=null;
+  var passos=[54,52,50,48,46,44,42,40,38,36,34,32,30,28,26,24,22],livre=IG_SEGURO_BASE-IG_SEGURO_TOPO,m=null;
   for(var k=0;k<passos.length;k++){m=igQMedidas(it,passos[k]);if(m.altura<=livre)break;}
+  // Sobrou faixa: vira respiro entre os blocos (até ~0,9 da letra por respiro); o resto centraliza na vertical.
+  // (os arredondamentos de meio respiro podem passar 1–2 px: desce o respiro até caber)
+  if(m.altura<livre){var E=Math.min(Math.round(m.fs*0.9),Math.floor((livre-m.altura)/m.respiros)),m0=m;
+    while(E>0){m=igQMedidas(it,m0.fs,E);if(m.altura<=livre)break;E--;}if(E<=0)m=m0;}
   // Coube: centraliza na faixa livre. Não coube nem com a menor letra: o pé fica acima da barra de mensagem e
   // o cabeçalho sobe (o logo e o título podem passar por baixo do perfil; o conteúdo nunca vai para baixo).
   var T=m.altura<=livre?IG_SEGURO_TOPO+Math.floor((livre-m.altura)/2):Math.max(IG_TOPO_MIN,IG_SEGURO_BASE-m.altura);
@@ -21972,17 +22001,18 @@ function igQuestionSVG(it){
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
   p.push('<text x="'+(lx+86)+'" y="'+(T+m.titulo)+'" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">QUESTÃO DO DIA</text>');
   p.push('<line x1="'+pad+'" y1="'+(T+m.linha)+'" x2="'+(IG_W-pad)+'" y2="'+(T+m.linha)+'" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
-  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fs+'" font-weight="500" fill="'+IG_TX+'">'+igTspansJ(m.sl,pad,T+m.enunciado,m.lh,cw)+'</text>');
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fs+'" font-weight="500" fill="'+IG_TX+'">'+igTspansJW(m.sl,pad,T+m.enunciado,m.lh,cw,m.fs+'px Arial')+'</text>');
   // Só embute imagem base64 (data:) no PNG: URL externa (PubMed/Open-i) tornaria o canvas "tainted" e
   // quebraria o toBlob. A arte automática (igArteComImagem) converte a imagem do nosso bucket em data: antes.
   if(m.temImg)p.push('<image xlink:href="'+esc(it.img)+'" x="'+pad+'" y="'+(T+m.img)+'" width="'+cw+'" height="'+m.imgH+'" preserveAspectRatio="xMidYMid meet"/>');
-  var y=T+m.caixas;
-  m.alts.forEach(function(a){
-    p.push('<rect x="'+pad+'" y="'+y+'" rx="20" width="'+cw+'" height="'+a.h+'" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>');
-    p.push('<circle cx="'+(pad+46)+'" cy="'+(y+44)+'" r="28" fill="'+IG_GOLD+'"/>');
-    p.push('<text x="'+(pad+46)+'" y="'+(y+56)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="34" fill="'+IG_NAVY+'">'+a.L+'</text>');
-    p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fa+'" fill="'+IG_TX+'">'+igTspans(a.al,pad+96,y+Math.round(a.h/2-(a.al.length-1)*m.alh/2+m.fa*0.35),m.alh)+'</text>');
-    y+=a.h+20;
+  var y=T+m.caixas,r=m.r;
+  m.alts.forEach(function(a,k){
+    var cy=y+Math.round(a.h/2);
+    p.push('<rect x="'+pad+'" y="'+y+'" rx="22" width="'+cw+'" height="'+a.h+'" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>');
+    p.push('<circle cx="'+(pad+18+r)+'" cy="'+cy+'" r="'+r+'" fill="'+IG_GOLD+'"/>');
+    p.push('<text x="'+(pad+18+r)+'" y="'+(cy+Math.round(r*0.43))+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="'+Math.round(r*1.2)+'" fill="'+IG_NAVY+'">'+a.L+'</text>');
+    p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fa+'" fill="'+IG_TX+'">'+igTspans(a.al,pad+m.tx,y+Math.round(a.h/2-(a.al.length-1)*m.alh/2+m.fa*0.35),m.alh)+'</text>');
+    y+=a.h+(k<m.alts.length-1?m.gapAlt:0);
   });
   p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape1)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="36" fill="'+IG_GOLD+'">GABARITO NA PLATAFORMA</text>');
   p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape2)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="600" font-size="32" fill="'+IG_TX+'">Acesse www.endodirect.com.br</text>');
@@ -22092,7 +22122,7 @@ function igMostrarImagem(b,filename){
 // refeita. O cron das 7h30 (lib/instagram.js) agenda no Metricool, às 18h, o story da questão publicada no
 // dia, só se a arte bater com o hash. `igArteHash` tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
 function igArteHash(it){
-  var V='2';it=it||{};var op=it.options||{};
+  var V='3';it=it||{};var op=it.options||{};
   var s=['v'+V,it.teem||'',it.stem||'',op.A||'',op.B||'',op.C||'',op.D||'',it.img||''].join('\u0001');
   var h=0x811c9dc5;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}

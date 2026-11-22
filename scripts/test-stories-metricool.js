@@ -281,12 +281,12 @@ console.error = () => {};
       ok(nome + ': o logo vem com a posição para o canvas', logoY >= MIN && /data-logo-x="\d+"/.test(svg));
       if (nome !== 'enorme') ok('🧨 ' + nome + ': logo e título abaixo da faixa do perfil', logoY >= SEG_T, 'logo em ' + logoY);
     }
-    ok('questão curta mantém a letra grande (44) e fica centralizada', fontes.curta === 44);
+    ok('questão curta fica com a letra grande (54; professor, 21/11/2026: "está um pouco espremido")', fontes.curta === 54);
     // (medida simulada: no navegador, a questão real mais longa da fila saiu com 36–38 px; com imagem, 32 px)
-    ok('🧨 questão longa: a letra diminui para caber, sem ficar miúda', fontes.media < 44 && fontes.longa < fontes.media && fontes.longa >= 28 && fontes.longaImg <= fontes.longa && fontes.longaImg >= 28 && fontes.enorme >= 22, JSON.stringify(fontes));
+    ok('🧨 questão longa: a letra diminui para caber, sem ficar miúda', fontes.media < 54 && fontes.longa < fontes.media && fontes.longa >= 28 && fontes.longaImg <= fontes.longa && fontes.longaImg >= 28 && fontes.enorme >= 22, JSON.stringify(fontes));
     const rc = corpo('igRenderCanvas');
     ok('🧨 o canvas desenha o logo onde a arte manda (data-logo-x/y), não fixo no alto', /data-logo-y=/.test(rc) && /data-logo-x=/.test(rc) && /ctx\.drawImage\(lg,lx,ly,68,68\)/.test(rc));
-    ok('🧨 mudou o desenho: versão da arte subiu (V=2) para refazer as guardadas', /var V='2';/.test(corpo('igArteHash')));
+    ok('🧨 mudou o desenho: versão da arte subiu (V=3) para refazer as guardadas', /var V='3';/.test(corpo('igArteHash')));
   }
 
   if (bad) { console.log('✗ stories no Metricool: ' + bad + ' falha(s)'); process.exit(1); }

@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-21
+atualizado: 2026-11-22
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-21
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📐 STORY DA QUESTÃO DO DIA MAIS AMPLO E ESPAÇADO (2026-11-21, sw v469, arte V=3; professor: "está um pouco espremido, muito centralizado").** Margem 60 px, letra até 54 px, sobra vira respiro entre os blocos, justificado só pelos espaços (sem esticar letras). As 30 artes guardadas são refeitas quando o painel do professor abre; a tarefa diária aceita a arte V=2 da mesma questão enquanto isso. Detalhes em [[Instagram Stories (Questão do Dia)]].
 - **📅 TRAJETÓRIA DO PESO: DATA DIGITÁVEL COM CALENDÁRIO E TELA CHEIA SEM O × DO IPHONE (2026-11-21, sw v468; professor: "o X ficou sobreposto" e "deixa ... a opção de digitar manualmente e um botão do calendáriozinho ao lado").** No iPhone/iPad a camada não pede mais a tela cheia do sistema (o iOS 26 desenhava o × dele por cima do título). Data do Peso em dd/mm/aaaa digitável + botão de calendário no mesmo campo, na linha de adicionar e na lista. Detalhes em [[Calculadoras]].
 - **🛰️ SENTRY: ERROS DOS ALUNOS COM ALERTA, SEM DADO PESSOAL (2026-11-20, sw v467; professor: "sugere algum plugin, algum conector?", e criou a conta).** Organização na região UE; SDK mínimo servido do nosso domínio; só o erro técnico sai do aparelho (sem IP, usuário, e-mail, token do login nem dado de paciente), teto de 25 envios por página. Política de Privacidade cita o Sentry. Também ligados: Arca (FDA), Wiley Scholar Gateway e o plugin SEO GSC Wizard (espera o Search Console). Detalhes em [[Integrações]].
 - **🇧🇷 CALCULADORA DA MAYO EM PORTUGUÊS (2026-11-19, sw v465; e-mail do autor ao professor: o site ganhou idiomas, português incluído).** A janela abre com `?lang=pt`; o guia deixou de traduzir os campos. Detalhes em [[Calculadoras]].
