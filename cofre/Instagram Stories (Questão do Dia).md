@@ -5,34 +5,27 @@ atualizado: 2026-11-22
 
 # Instagram Stories — "Questão do Dia"
 
-## 🔑 QUESTÃO ÀS 11H E GABARITO ÀS 18H, AUTOMÁTICOS (DESDE 30/11/2026; FEITO EM 22/11, sw v471)
+## 🔑 DIVISÃO DOS STORIES COM A CONVERSA DO INSTAGRAM (22/11/2026, sw v472)
 
-Professor, 22/11: "Deixa tudo automatizado mesmo, sem enquete. Você gera tudo junto com o métrico mesmo, sem passar
-por mim." (resposta à proposta de unificar a Questão do Dia da plataforma com a dos stories; ver
-[[Instagram — Pauta e Stories (Claude Chat)]]).
-- **Arte do gabarito** (`igAnswerSVG`, desenho novo): mesmo padrão da arte da questão (margem 60, logo ao lado de
-  "GABARITO", tudo entre 210 e 1660 px, sobra repartida em respiros); "QUESTÃO DO DIA · <SUBESPECIALIDADE>"; caixa
-  dourada com a letra e o texto da alternativa certa (medido em negrito); "POR QUÊ?" e o comentário justificado palavra
-  a palavra, letra de 40 até 30 px. Medido no Chromium com a fila real: o comentário mais longo (1.396 caracteres)
-  coube inteiro a 30 px; um de 772 saiu a 38 px. Se um dia não couber nem a 30, o texto para no fim da última frase
-  que cabe, com "(…)", e o rodapé vira "COMENTÁRIO COMPLETO NA PLATAFORMA" (senão "MAIS QUESTÕES NA PLATAFORMA").
-  `igFrases` corta sem lookbehind no regex (o Safari antigo do iPhone pararia o site inteiro; o teste confere).
-- **Guardada como a da questão:** `storyGab {url,hash,em}`, arquivo `stories/<id>-g-<hash>.jpg`. `igGabHash` (V='1')
-  cobre subespecialidade, letra certa, texto dela e comentário, com cópia idêntica em `lib/instagram.js`
-  (`storyGabValida`). O painel gera as duas artes das próximas 30 da fila; questão sem gabarito ou sem comentário fica
-  só com a arte da questão. A linha "Fila" conta como pronta só a questão com as duas artes.
-- **Arte da questão V=5:** rodapé "GABARITO HOJE ÀS 18H / nos stories e em www.endodirect.com.br". As artes V=4
-  guardadas são refeitas quando o professor abre o painel (F5 depois do deploy).
-- **Tarefa diária (trig_0163g4DddpiXz8EPWyvmaZzN, 08:17):** a partir de 30/11 agenda a questão às 11h e o gabarito às
-  18h, se as artes baterem com os hashes (questão aceita V=5, 4, 3 ou 2; arte V=5 só vai se o gabarito também for,
-  para não prometer 18h em vão). Não agenda num horário com story (10h–12h; 17h–19h) nem depois de 10h40 / 17h40.
-  Antes de 30/11 não agenda nada (a semana de 23 a 29/11 é do kit do Claude Chat).
-- **Os hashes são calculados no próprio banco** (consulta SQL no texto da tarefa: FNV-1a em unidades UTF-16, como o
-  `charCodeAt` do JavaScript). Assim o agente da tarefa não precisa copiar o enunciado nem o comentário à mão (um
-  caractere trocado mudaria o hash). Conferido em 22/11: o SQL deu o mesmo hash do painel (V=4 guardado) e do
-  `lib/instagram.js` (gabarito) em 3 questões reais. Mudou `igArteHash` ou `igGabHash`? Mudar também essa consulta.
-- **Caminho do servidor** (`agendarStoryDoDia`, sem METRICOOL_USER_TOKEN) segue parado e ainda no esquema antigo
-  (questão às 18h): ajustar antes de pôr a chave.
+Final do dia 22/11 (resumo que o professor colou da conversa do Instagram, 18h10): **o story da Questão do Dia é SÓ
+da plataforma, às 18h, todo dia, já a partir de 23/11.** A conversa do Instagram agenda o resto (11h "Na prática
+clínica", 19h05 capa do post) e não faz mais questão, gabarito nem enquete. Ver [[Instagram — Pauta e Stories (Claude Chat)]].
+- **Não há story automático do gabarito.** Na mesma tarde eu tinha montado "questão às 11h + gabarito às 18h a partir
+  de 30/11" (PR #1140: arte do gabarito automática `storyGab` e arte da questão V=5 com "GABARITO HOJE ÀS 18H"). Com a
+  divisão, isso foi desfeito (sw v472): a arte da questão voltou ao desenho V=4 ("GABARITO NA PLATAFORMA") e o painel
+  voltou a gerar só ela. **O número 5 não volta**: o painel chegou a gerar 30 artes V=5 (arquivos
+  `stories/<id>-<hashV5>.jpg` no bucket); a próxima mudança de desenho vai para V=6 (o teste confere).
+- Ficou da tarde: a **arte do gabarito redesenhada** (`igAnswerSVG`, botão "⬇ Gabarito" do painel, para postar à mão),
+  no mesmo padrão da questão: faixa segura, logo ao lado de "GABARITO", alternativa certa em caixa dourada (medida em
+  negrito), comentário justificado de 40 a 30 px (o mais longo da fila, 1.396 caracteres, coube inteiro no
+  Chromium); se não couber, para numa frase inteira com "(…)". `igFrases` sem lookbehind (Safari antigo).
+- Os 30 itens da fila ficaram com um campo `storyGab` (arte do gabarito) que nada mais usa; inofensivo.
+- **Tarefa diária (trig_0163g4DddpiXz8EPWyvmaZzN, 08:17):** agenda às 18h o story da questão publicada no dia. Confere
+  a arte pelo hash calculado no próprio banco (consulta SQL no texto da tarefa: FNV-1a em unidades UTF-16, como o
+  `charCodeAt` do JavaScript; conferido em 22/11 contra o painel e o `lib/instagram.js` em questões reais), aceita
+  V=4, 3 ou 2 e recusa V=5. Se a arte guardada for V=5 (o painel ainda não refez), usa o arquivo V=4 da mesma questão,
+  que continua no bucket (mesma URL com o hash V=4), depois de conferir que ele abre. Ignora rascunhos (draft) ao ver
+  se as 18h estão livres: os gabaritos da conversa do Instagram de 23 a 29/11 viraram rascunho nesse horário.
 
 ## 📲 STORY "REGANHO DE PESO APÓS GLP-1 — AGORA EM PORTUGUÊS" (AGENDADO PARA 20/11/2026, 12H10)
 
