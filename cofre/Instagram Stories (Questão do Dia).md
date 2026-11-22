@@ -78,6 +78,9 @@ disponível no app store". Agendados primeiro para 19/11 (story 12h, carrossel 1
 
 ## 🤖 STORY AUTOMÁTICO NO METRICOOL, ÀS 18H (2026-11-16)
 
+**Metricool no plano Starter desde 22/11/2026** (o gratuito parava em 20 publicações/mês). Atenção: a tarefa
+diária não agenda se já houver story entre 17h e 19h; de 23 a 29/11 já havia stories das 18h agendados em 20/11.
+
 **Desenho V=3 (21/11/2026, sw v469; professor: "será que não dá para deixar um pouco mais ampliado, mais espaçado ...
 está um pouco espremido, muito centralizado"):** margem lateral 60 px (era 90); letra do enunciado começa em 54 px (era
 44) e desce de 2 em 2 até caber; a sobra da faixa livre vira respiro entre enunciado, imagem, alternativas e rodapé;
