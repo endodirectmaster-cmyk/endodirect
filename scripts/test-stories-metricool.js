@@ -276,6 +276,11 @@ console.error = () => {};
       const logoY = +(/data-logo-y="(\d+)"/.exec(svg) || [0, -1])[1];
       const rod = +(/y="(\d+)"[^>]*>Acesse www\.endodirect\.com\.br/.exec(svg) || [0, 99999])[1];
       fontes[nome] = +(/font-size="(\d+)" font-weight="500"/.exec(svg) || [0, 0])[1];
+      // enunciado justificado (professor, 22/11/2026): toda linha, menos a última, vai palavra a palavra até a margem
+      const enun = (/font-weight="500"[^>]*>([\s\S]*?)<\/text>/.exec(svg) || [0, ''])[1];
+      const porY = {}; for (const t of enun.matchAll(/<tspan x="[\d.]+" y="(\d+)">/g)) porY[t[1]] = (porY[t[1]] || 0) + 1;
+      const linhasY = Object.keys(porY).map(Number).sort((a, b) => a - b);
+      ok('🧨 ' + nome + ': enunciado justificado (só a última linha natural)', linhasY.length > 1 && linhasY.slice(0, -1).every((y) => porY[y] > 1) && porY[linhasY[linhasY.length - 1]] === 1, JSON.stringify(porY));
       ok('🧨 ' + nome + ': o pé ("Acesse www.endodirect.com.br") fica acima da barra de mensagem', rod <= SEG_B, 'pé em ' + rod);
       ok('🧨 ' + nome + ': nada desenhado abaixo da faixa livre', Math.max(...ys) <= SEG_B, 'máx ' + Math.max(...ys));
       ok(nome + ': o logo vem com a posição para o canvas', logoY >= MIN && /data-logo-x="\d+"/.test(svg));
@@ -286,7 +291,7 @@ console.error = () => {};
     ok('🧨 questão longa: a letra diminui para caber, sem ficar miúda', fontes.media < 54 && fontes.longa < fontes.media && fontes.longa >= 28 && fontes.longaImg <= fontes.longa && fontes.longaImg >= 28 && fontes.enorme >= 22, JSON.stringify(fontes));
     const rc = corpo('igRenderCanvas');
     ok('🧨 o canvas desenha o logo onde a arte manda (data-logo-x/y), não fixo no alto', /data-logo-y=/.test(rc) && /data-logo-x=/.test(rc) && /ctx\.drawImage\(lg,lx,ly,68,68\)/.test(rc));
-    ok('🧨 mudou o desenho: versão da arte subiu (V=3) para refazer as guardadas', /var V='3';/.test(corpo('igArteHash')));
+    ok('🧨 mudou o desenho: versão da arte subiu (V=4, justificado em todas as linhas) para refazer as guardadas', /var V='4';/.test(corpo('igArteHash')));
   }
 
   if (bad) { console.log('✗ stories no Metricool: ' + bad + ' falha(s)'); process.exit(1); }
