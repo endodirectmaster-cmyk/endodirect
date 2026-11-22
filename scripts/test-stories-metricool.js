@@ -276,6 +276,11 @@ console.error = () => {};
       const logoY = +(/data-logo-y="(\d+)"/.exec(svg) || [0, -1])[1];
       const rod = +(/y="(\d+)"[^>]*>Acesse www\.endodirect\.com\.br/.exec(svg) || [0, 99999])[1];
       fontes[nome] = +(/font-size="(\d+)" font-weight="500"/.exec(svg) || [0, 0])[1];
+      // enunciado justificado (professor, 22/11/2026): toda linha, menos a última, vai palavra a palavra até a margem
+      const enun = (/font-weight="500"[^>]*>([\s\S]*?)<\/text>/.exec(svg) || [0, ''])[1];
+      const porY = {}; for (const t of enun.matchAll(/<tspan x="[\d.]+" y="(\d+)">/g)) porY[t[1]] = (porY[t[1]] || 0) + 1;
+      const linhasY = Object.keys(porY).map(Number).sort((a, b) => a - b);
+      ok('🧨 ' + nome + ': enunciado justificado (só a última linha natural)', linhasY.length > 1 && linhasY.slice(0, -1).every((y) => porY[y] > 1) && porY[linhasY[linhasY.length - 1]] === 1, JSON.stringify(porY));
       ok('🧨 ' + nome + ': o pé ("Acesse www.endodirect.com.br") fica acima da barra de mensagem', rod <= SEG_B, 'pé em ' + rod);
       ok('🧨 ' + nome + ': nada desenhado abaixo da faixa livre', Math.max(...ys) <= SEG_B, 'máx ' + Math.max(...ys));
       ok(nome + ': o logo vem com a posição para o canvas', logoY >= MIN && /data-logo-x="\d+"/.test(svg));

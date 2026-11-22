@@ -21951,16 +21951,14 @@ var IG_SEGURO_TOPO=210,IG_SEGURO_BASE=IG_H-260,IG_TOPO_MIN=120;
 //  - parágrafo justificado só pelos ESPAÇOS entre as palavras (cada palavra no seu x). O textLength esticava as
 //    LETRAS ("i n t r a p e r i t o n e a l"), e a linha parecia espremida ou esgarçada;
 //  - letra das alternativas a 90% do enunciado (era 86%), círculo da letra proporcional e centrado na caixa.
-// Linha justificada palavra a palavra; a última, as curtas (menos de 72% da largura) e as que abririam buraco entre as
-// palavras (espaço mais de 3× o normal, linha de poucas palavras longas) ficam naturais.
+// Linha justificada palavra a palavra (professor, 22/11/2026: "Só lembrar de deixar o texto no formato justificado"):
+// todas as linhas vão de margem a margem; só a última do parágrafo (e a de uma palavra só) fica natural.
 function igTspansJW(lines,x,y,lh,w,font){
   return lines.map(function(l,i){
     var yy=y+i*lh,ws=String(l).split(' '),last=(i===lines.length-1);
     if(last||ws.length<2)return '<tspan x="'+x+'" y="'+yy+'">'+igXml(l)+'</tspan>';
     var larg=ws.map(function(p){return igMeasure(p,font);}),soma=larg.reduce(function(a,b){return a+b;},0);
-    if(soma+igMeasure(' ',font)*(ws.length-1)<w*0.72)return '<tspan x="'+x+'" y="'+yy+'">'+igXml(l)+'</tspan>';
     var esp=(w-soma)/(ws.length-1),cx=x;
-    if(esp>igMeasure(' ',font)*3)return '<tspan x="'+x+'" y="'+yy+'">'+igXml(l)+'</tspan>'; // buraco grande entre palavras: fica natural
     return ws.map(function(p,k){var t='<tspan x="'+Math.round(cx*10)/10+'" y="'+yy+'">'+igXml(p)+'</tspan>';cx+=larg[k]+esp;return t;}).join('');
   }).join('');
 }

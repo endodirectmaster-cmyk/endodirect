@@ -81,8 +81,9 @@ disponível no app store". Agendados primeiro para 19/11 (story 12h, carrossel 1
 **Desenho V=3 (21/11/2026, sw v469; professor: "será que não dá para deixar um pouco mais ampliado, mais espaçado ...
 está um pouco espremido, muito centralizado"):** margem lateral 60 px (era 90); letra do enunciado começa em 54 px (era
 44) e desce de 2 em 2 até caber; a sobra da faixa livre vira respiro entre enunciado, imagem, alternativas e rodapé;
-justificado palavra a palavra (o `textLength` antigo esticava as LETRAS: "i n t r a p e r i t o n e a l"), com a
-última linha e as de poucas palavras longas naturais; alternativas a 90% do enunciado, círculo proporcional e
+justificado palavra a palavra (o `textLength` antigo esticava as LETRAS: "i n t r a p e r i t o n e a l"); desde
+22/11 (professor: "Só lembrar de deixar o texto no formato justificado", sw v470) TODAS as linhas vão de margem a
+margem, só a última do parágrafo fica natural; alternativas a 90% do enunciado, círculo proporcional e
 centrado. Faixas do Instagram (210/1660) mantidas. Questão longa com imagem (21/11): 34 → 36 px; média (20/11): 44
 igual, mais espaçada; curta (19/11): 44 → 52 px. A tarefa diária aceita a arte do desenho anterior (V=2) da mesma
 questão enquanto o painel não refaz as 30 (assim nenhum dia fica sem story).
