@@ -26,7 +26,11 @@ por mim." (resposta à proposta de unificar a Questão do Dia da plataforma com 
 - **Tarefa diária (trig_0163g4DddpiXz8EPWyvmaZzN, 08:17):** a partir de 30/11 agenda a questão às 11h e o gabarito às
   18h, se as artes baterem com os hashes (questão aceita V=5, 4, 3 ou 2; arte V=5 só vai se o gabarito também for,
   para não prometer 18h em vão). Não agenda num horário com story (10h–12h; 17h–19h) nem depois de 10h40 / 17h40.
-  Antes de 30/11 mantém o esquema antigo (só às 18h, que nesta semana está ocupado pelo kit).
+  Antes de 30/11 não agenda nada (a semana de 23 a 29/11 é do kit do Claude Chat).
+- **Os hashes são calculados no próprio banco** (consulta SQL no texto da tarefa: FNV-1a em unidades UTF-16, como o
+  `charCodeAt` do JavaScript). Assim o agente da tarefa não precisa copiar o enunciado nem o comentário à mão (um
+  caractere trocado mudaria o hash). Conferido em 22/11: o SQL deu o mesmo hash do painel (V=4 guardado) e do
+  `lib/instagram.js` (gabarito) em 3 questões reais. Mudou `igArteHash` ou `igGabHash`? Mudar também essa consulta.
 - **Caminho do servidor** (`agendarStoryDoDia`, sem METRICOOL_USER_TOKEN) segue parado e ainda no esquema antigo
   (questão às 18h): ajustar antes de pôr a chave.
 
