@@ -1,9 +1,34 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-11-20
+atualizado: 2026-11-22
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 🔑 QUESTÃO ÀS 11H E GABARITO ÀS 18H, AUTOMÁTICOS (DESDE 30/11/2026; FEITO EM 22/11, sw v471)
+
+Professor, 22/11: "Deixa tudo automatizado mesmo, sem enquete. Você gera tudo junto com o métrico mesmo, sem passar
+por mim." (resposta à proposta de unificar a Questão do Dia da plataforma com a dos stories; ver
+[[Instagram — Pauta e Stories (Claude Chat)]]).
+- **Arte do gabarito** (`igAnswerSVG`, desenho novo): mesmo padrão da arte da questão (margem 60, logo ao lado de
+  "GABARITO", tudo entre 210 e 1660 px, sobra repartida em respiros); "QUESTÃO DO DIA · <SUBESPECIALIDADE>"; caixa
+  dourada com a letra e o texto da alternativa certa (medido em negrito); "POR QUÊ?" e o comentário justificado palavra
+  a palavra, letra de 40 até 30 px. Medido no Chromium com a fila real: o comentário mais longo (1.396 caracteres)
+  coube inteiro a 30 px; um de 772 saiu a 38 px. Se um dia não couber nem a 30, o texto para no fim da última frase
+  que cabe, com "(…)", e o rodapé vira "COMENTÁRIO COMPLETO NA PLATAFORMA" (senão "MAIS QUESTÕES NA PLATAFORMA").
+  `igFrases` corta sem lookbehind no regex (o Safari antigo do iPhone pararia o site inteiro; o teste confere).
+- **Guardada como a da questão:** `storyGab {url,hash,em}`, arquivo `stories/<id>-g-<hash>.jpg`. `igGabHash` (V='1')
+  cobre subespecialidade, letra certa, texto dela e comentário, com cópia idêntica em `lib/instagram.js`
+  (`storyGabValida`). O painel gera as duas artes das próximas 30 da fila; questão sem gabarito ou sem comentário fica
+  só com a arte da questão. A linha "Fila" conta como pronta só a questão com as duas artes.
+- **Arte da questão V=5:** rodapé "GABARITO HOJE ÀS 18H / nos stories e em www.endodirect.com.br". As artes V=4
+  guardadas são refeitas quando o professor abre o painel (F5 depois do deploy).
+- **Tarefa diária (trig_0163g4DddpiXz8EPWyvmaZzN, 08:17):** a partir de 30/11 agenda a questão às 11h e o gabarito às
+  18h, se as artes baterem com os hashes (questão aceita V=5, 4, 3 ou 2; arte V=5 só vai se o gabarito também for,
+  para não prometer 18h em vão). Não agenda num horário com story (10h–12h; 17h–19h) nem depois de 10h40 / 17h40.
+  Antes de 30/11 mantém o esquema antigo (só às 18h, que nesta semana está ocupado pelo kit).
+- **Caminho do servidor** (`agendarStoryDoDia`, sem METRICOOL_USER_TOKEN) segue parado e ainda no esquema antigo
+  (questão às 18h): ajustar antes de pôr a chave.
 
 ## 📲 STORY "REGANHO DE PESO APÓS GLP-1 — AGORA EM PORTUGUÊS" (AGENDADO PARA 20/11/2026, 12H10)
 

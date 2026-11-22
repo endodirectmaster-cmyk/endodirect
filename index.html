@@ -22012,29 +22012,77 @@ function igQuestionSVG(it){
     p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fa+'" fill="'+IG_TX+'">'+igTspans(a.al,pad+m.tx,y+Math.round(a.h/2-(a.al.length-1)*m.alh/2+m.fa*0.35),m.alh)+'</text>');
     y+=a.h+(k<m.alts.length-1?m.gapAlt:0);
   });
-  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape1)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="36" fill="'+IG_GOLD+'">GABARITO NA PLATAFORMA</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape2)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="600" font-size="32" fill="'+IG_TX+'">Acesse www.endodirect.com.br</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape1)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="36" fill="'+IG_GOLD+'">GABARITO HOJE ÀS 18H</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape2)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="600" font-size="32" fill="'+IG_TX+'">nos stories e em www.endodirect.com.br</text>');
   return igDoc(p.join(''),T,lx);
 }
+// 🔑 GABARITO NOS STORIES, ÀS 18H (professor, 22/11/2026: "Deixa tudo automatizado mesmo, sem enquete. Você gera tudo
+// junto com o métrico mesmo, sem passar por mim"). A partir de 30/11 a Questão do Dia da plataforma vai ao story às
+// 11h e o gabarito comentado da MESMA questão às 18h. Mesmo desenho da arte da questão (V=4): margem de 60 px, logo ao
+// lado do título, tudo entre IG_SEGURO_TOPO e IG_SEGURO_BASE, sobra da faixa repartida em respiros. O comentário vai
+// justificado palavra a palavra; a letra começa em 40 px e desce até 30. Se nem a 30 couber, o comentário para no fim
+// da última frase que cabe, com "(…)", e o rodapé manda para o comentário completo na plataforma. Mudar este desenho
+// exige subir o V de igGabHash (nas duas cópias e no texto da tarefa diária).
+function igFrases(txt){
+  // corta depois de . ! ? seguidos de espaço e de letra maiúscula, número ou abre-parêntese
+  // (sem lookbehind no regex: o Safari antigo do iPhone não entende e o script inteiro deixaria de rodar)
+  var s=String(txt||'').replace(/\s+/g,' ').trim(),out=[],re=/[.!?] (?=[A-ZÁÉÍÓÚÂÊÔÃÕÀÇ0-9(])/g,ini=0,mm;
+  while((mm=re.exec(s))){out.push(s.slice(ini,mm.index+1));ini=mm.index+2;}
+  out.push(s.slice(ini));return out.filter(Boolean);
+}
+function igAMedidas(it,fs,texto,extra){
+  var op=it.options||{},L=String(it.answer||''),pad=60,cw=IG_W-2*pad,E=extra||0;
+  var lh=Math.round(fs*1.42),fa=Math.max(32,Math.min(44,Math.round(fs*1.05))),alh=Math.round(fa*1.3);
+  var r=Math.max(30,Math.round(fa*0.78)),tx=18+2*r+24;
+  var al=igWrap(op[L]?String(op[L]).trim():'','700 '+fa+'px Arial',cw-tx-24); // medida em negrito, como é desenhada
+  var el=igWrap(texto,fs+'px Arial',cw);
+  var m={fs:fs,lh:lh,fa:fa,alh:alh,r:r,tx:tx,al:al,el:el,pad:pad,cw:cw,E:E,L:L};
+  m.titulo=48;m.linha=92;
+  m.area=m.linha+50+Math.round(E*0.5);
+  m.caixa=m.area+34+Math.round(E*0.5);
+  m.caixaH=Math.max(Math.round(fa*2.3),al.length*alh+Math.round(fa*1.05));
+  m.porque=m.caixa+m.caixaH+60+E;
+  m.texto=m.porque+fs+24+Math.round(E*0.5);
+  m.rodape1=m.texto+(el.length-1)*lh+Math.round(fs*0.3)+64+E+30;m.rodape2=m.rodape1+46;
+  m.altura=m.rodape2+10;
+  m.respiros=3.5;
+  return m;
+}
 function igAnswerSVG(it){
-  var op=it.options||{},L=it.answer||'',pad=90,cw=IG_W-2*pad,p=[];
+  it=it||{};
+  var livre=IG_SEGURO_BASE-IG_SEGURO_TOPO,passos=[40,38,36,34,32,30],m=null,cortado=false;
+  var expl=String(it.explanation||'').replace(/\s+/g,' ').trim();
+  for(var k=0;k<passos.length;k++){m=igAMedidas(it,passos[k],expl);if(m.altura<=livre)break;}
+  if(m.altura>livre){
+    // Nem a 30 px coube: fica com as frases do começo (a justificativa vem primeiro) e o resto na plataforma.
+    var fr=igFrases(expl),n=fr.length-1;cortado=true;
+    for(;n>=1;n--){m=igAMedidas(it,30,fr.slice(0,n).join(' ')+' (…)');if(m.altura<=livre)break;}
+    // frase única maior que a arte (não acontece na fila; só por garantia): letra menor, depois corte por palavras
+    if(n<1){
+      var um=fr[0]+(fr.length>1?' (…)':'');
+      for(var f=28;f>=24;f-=2){m=igAMedidas(it,f,um);if(m.altura<=livre)break;}
+      if(m.altura>livre){var ws=fr[0].split(' ');while(ws.length>1&&m.altura>livre){ws.pop();m=igAMedidas(it,24,ws.join(' ')+' (…)');}}
+    }
+  }
+  if(m.altura<livre){var E=Math.min(Math.round(m.fs*0.9),Math.floor((livre-m.altura)/m.respiros)),m0=m,tx0=m.el.join(' ');
+    while(E>0){m=igAMedidas(it,m0.fs,tx0,E);if(m.altura<=livre)break;E--;}if(E<=0)m=m0;}
+  var T=m.altura<=livre?IG_SEGURO_TOPO+Math.floor((livre-m.altura)/2):Math.max(IG_TOPO_MIN,IG_SEGURO_BASE-m.altura);
+  var pad=m.pad,cw=m.cw,r=m.r,p=[];
+  var tw=Math.round(igMeasure('GABARITO','800 40px Arial')+8*3),lx=Math.round((IG_W-(68+18+tw))/2);
   p.push('<rect width="'+IG_W+'" height="'+IG_H+'" fill="url(#g)"/>');
-  p.push('<text x="'+(IG_W/2)+'" y="300" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">GABARITO</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="350" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="30" fill="'+IG_TX+'">'+igXml(String(it.sub||'Endocrinologia').toUpperCase())+'</text>');
-  p.push('<line x1="'+pad+'" y1="392" x2="'+(IG_W-pad)+'" y2="392" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
-  var y=470;
-  p.push('<rect x="'+pad+'" y="'+y+'" rx="24" width="'+cw+'" height="120" fill="rgba(245,179,44,.16)" stroke="'+IG_GOLD+'" stroke-width="3"/>');
-  p.push('<circle cx="'+(pad+64)+'" cy="'+(y+60)+'" r="40" fill="'+IG_GOLD+'"/>');
-  p.push('<text x="'+(pad+64)+'" y="'+(y+76)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="48" fill="'+IG_NAVY+'">'+igXml(L)+'</text>');
-  var al=igWrap(op[L]?String(op[L]).trim():'','36px Arial',cw-170);
-  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="'+IG_TX+'">'+igTspans(al.slice(0,2),pad+128,y+54,44)+'</text>');
-  y+=170;
-  p.push('<text x="'+pad+'" y="'+y+'" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="30" fill="'+IG_GOLD+'" letter-spacing="2">POR QUÊ?</text>');
-  y+=52;
-  var el=igWrap(String(it.explanation||'').trim(),'38px Arial',cw);
-  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="400" fill="'+IG_TX+'">'+igTspans(el,pad,y,54)+'</text>');
-  p.push('<text x="'+(IG_W/2)+'" y="'+(IG_H-92)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="'+IG_GOLD+'">Mais questões no Endodirect</text>');
-  return igDoc(p.join(''));
+  p.push('<text x="'+(lx+86)+'" y="'+(T+m.titulo)+'" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="40" fill="'+IG_GOLD+'" letter-spacing="3">GABARITO</text>');
+  p.push('<line x1="'+pad+'" y1="'+(T+m.linha)+'" x2="'+(IG_W-pad)+'" y2="'+(T+m.linha)+'" stroke="rgba(245,179,44,.45)" stroke-width="3"/>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.area)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="28" fill="'+IG_T2+'" letter-spacing="2">'+igXml('QUESTÃO DO DIA · '+String(it.sub||'Endocrinologia').toUpperCase())+'</text>');
+  var y=T+m.caixa,cy=y+Math.round(m.caixaH/2);
+  p.push('<rect x="'+pad+'" y="'+y+'" rx="22" width="'+cw+'" height="'+m.caixaH+'" fill="rgba(245,179,44,.16)" stroke="'+IG_GOLD+'" stroke-width="3"/>');
+  p.push('<circle cx="'+(pad+18+r)+'" cy="'+cy+'" r="'+r+'" fill="'+IG_GOLD+'"/>');
+  p.push('<text x="'+(pad+18+r)+'" y="'+(cy+Math.round(r*0.43))+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="'+Math.round(r*1.2)+'" fill="'+IG_NAVY+'">'+igXml(m.L)+'</text>');
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fa+'" font-weight="700" fill="'+IG_TX+'">'+igTspans(m.al,pad+m.tx,y+Math.round(m.caixaH/2-(m.al.length-1)*m.alh/2+m.fa*0.35),m.alh)+'</text>');
+  p.push('<text x="'+pad+'" y="'+(T+m.porque)+'" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="30" fill="'+IG_GOLD+'" letter-spacing="2">POR QUÊ?</text>');
+  p.push('<text font-family="Arial,Helvetica,sans-serif" font-size="'+m.fs+'" font-weight="400" fill="'+IG_TX+'">'+igTspansJW(m.el,pad,T+m.texto,m.lh,cw,m.fs+'px Arial')+'</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape1)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="36" fill="'+IG_GOLD+'">'+(cortado?'COMENTÁRIO COMPLETO NA PLATAFORMA':'MAIS QUESTÕES NA PLATAFORMA')+'</text>');
+  p.push('<text x="'+(IG_W/2)+'" y="'+(T+m.rodape2)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="600" font-size="32" fill="'+IG_TX+'">Acesse www.endodirect.com.br</text>');
+  return igDoc(p.join(''),T,lx);
 }
 function igPromoSVG(t){
   var pad=90,cw=IG_W-2*pad,p=[];
@@ -22117,11 +22165,23 @@ function igMostrarImagem(b,filename){
 // próximas IG_ARTES_ADIANTE (30: professor, "a cada 30 dias?", 16/11) questões da fila, o painel gera o JPG com o mesmo desenho do botão "⬇ Imagem"
 // e guarda no bucket público (endodirect-assets/stories/<id>-<hash>.jpg), anotando {url,hash} no item
 // (`storyArte`). O hash cobre tudo o que entra no desenho: editou a questão, a arte velha deixa de valer e é
-// refeita. O cron das 7h30 (lib/instagram.js) agenda no Metricool, às 18h, o story da questão publicada no
-// dia, só se a arte bater com o hash. `igArteHash` tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
+// refeita. Desde 22/11/2026 (professor: "Deixa tudo automatizado mesmo, sem enquete") o painel gera também a arte
+// do GABARITO (`storyGab`), e a tarefa diária do Claude Code (08:17) agenda no Metricool, a partir de 30/11, o story
+// da questão publicada no dia às 11h e o do gabarito às 18h, só se as artes baterem com os hashes. V=5 da questão:
+// rodapé "GABARITO HOJE ÀS 18H". `igArteHash` e `igGabHash` têm CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
 function igArteHash(it){
-  var V='4';it=it||{};var op=it.options||{};
+  var V='5';it=it||{};var op=it.options||{};
   var s=['v'+V,it.teem||'',it.stem||'',op.A||'',op.B||'',op.C||'',op.D||'',it.img||''].join('\u0001');
+  var h=0x811c9dc5;
+  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}
+  return ('0000000'+h.toString(16)).slice(-8);
+}
+// Arte do GABARITO (story das 18h, desde 30/11/2026), guardada em `storyGab` ({url,hash,em}), arquivo
+// stories/<id>-g-<hash>.jpg. O hash cobre o que entra no desenho do gabarito: subespecialidade, letra certa, texto
+// dela e comentário. `igGabHash` também tem CÓPIA IDÊNTICA em lib/instagram.js (teste confere).
+function igGabHash(it){
+  var V='1';it=it||{};var op=it.options||{},L=String(it.answer||'');
+  var s=['g'+V,it.sub||'',L,op[L]||'',it.explanation||''].join('\u0001');
   var h=0x811c9dc5;
   for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}
   return ('0000000'+h.toString(16)).slice(-8);
@@ -22132,9 +22192,11 @@ function igArtesAgenda(ms){
   clearTimeout(igArtesTimer);igArtesTimer=setTimeout(function(){igArtesSincroniza();},ms==null?4000:ms);
 }
 function igArteOk(it){var a=it&&it.storyArte;return !!(a&&a.url&&a.hash===igArteHash(it));}
+function igGabPossivel(it){var op=(it&&it.options)||{};return !!(it&&it.answer&&op[it.answer]&&String(it.explanation||'').trim());}
+function igGabOk(it){var a=it&&it.storyGab;return !!(a&&a.url&&a.hash===igGabHash(it));}
+function igArtesProximas(){return (igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE);}
 function igArtesPendentes(){
-  return (igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE)
-    .filter(function(s){return !igArteOk(s);});
+  return igArtesProximas().filter(function(s){return !igArteOk(s)||(igGabPossivel(s)&&!igGabOk(s));});
 }
 // Imagem do caso: o desenho só embute data: (URL externa "suja" o canvas). Imagem guardada no nosso
 // bucket vem por fetch (CORS liberado) e vira data: antes de desenhar; se não vier, a arte não sai (o
@@ -22145,13 +22207,9 @@ function igArteComImagem(it){
   return fetch(u,{mode:'cors'}).then(function(r){if(!r.ok)throw new Error('imagem '+r.status);return r.blob();})
     .then(function(b){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(Object.assign({},it,{img:fr.result}));};fr.onerror=function(){rej(new Error('imagem ilegível'));};fr.readAsDataURL(b);});});
 }
-function igArteGerar(it){
-  var hash=igArteHash(it),client=getSupabaseClient();
-  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
-  return igArteComImagem(it).then(function(x){return igRenderCanvas(igQuestionSVG(x));}).then(function(c){
-    return new Promise(function(res,rej){c.toBlob(function(b){if(b)res(b);else rej(new Error('Falha ao gerar a arte.'));},'image/jpeg',0.92);});
-  }).then(function(b){
-    var path='stories/'+String(it.id).replace(/[^a-zA-Z0-9_-]/g,'')+'-'+hash+'.jpg';
+// Canvas → JPG no bucket público (pasta stories). Devolve {url,hash,em}.
+function igArteSobe(client,c,path,hash){
+  return new Promise(function(res,rej){c.toBlob(function(b){if(b)res(b);else rej(new Error('Falha ao gerar a arte.'));},'image/jpeg',0.92);}).then(function(b){
     return client.storage.from(SUPABASE_ASSET_BUCKET).upload(path,b,{cacheControl:'31536000',upsert:true,contentType:'image/jpeg'}).then(function(r){
       if(r&&r.error)throw r.error;
       var pub=client.storage.from(SUPABASE_ASSET_BUCKET).getPublicUrl(path),url=pub&&pub.data&&pub.data.publicUrl;
@@ -22160,19 +22218,37 @@ function igArteGerar(it){
     });
   });
 }
+function igArteId(it){return String(it.id).replace(/[^a-zA-Z0-9_-]/g,'');}
+function igArteGerar(it){
+  var hash=igArteHash(it),client=getSupabaseClient();
+  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
+  return igArteComImagem(it).then(function(x){return igRenderCanvas(igQuestionSVG(x));})
+    .then(function(c){return igArteSobe(client,c,'stories/'+igArteId(it)+'-'+hash+'.jpg',hash);});
+}
+function igGabGerar(it){
+  var hash=igGabHash(it),client=getSupabaseClient();
+  if(!client||!client.storage)return Promise.reject(new Error('Storage indisponível.'));
+  return igRenderCanvas(igAnswerSVG(it)).then(function(c){return igArteSobe(client,c,'stories/'+igArteId(it)+'-g-'+hash+'.jpg',hash);});
+}
 function igArtesSincroniza(){
   if(igArtesRodando||!currentUser||currentUser.role!=='admin')return Promise.resolve(0);
   var pend=igArtesPendentes();if(!pend.length)return Promise.resolve(0);
   igArtesRodando=true;var feitas=0;
+  // a questão pode ter mudado enquanto a arte subia: só anota se ainda for a mesma (mesmo hash)
+  var atualDe=function(it){var x=(igStories||[]).filter(function(s){return s&&s.id===it.id;})[0];return x&&x.status!=='posted'?x:null;};
+  var avisa=function(it,qual){return function(e){try{console.warn('[stories] arte',qual,'de',it.id,'não saiu:',e&&e.message);}catch(_){}};};
   var passo=function(i){
     if(i>=pend.length)return Promise.resolve();
     var it=pend[i];
-    return igArteGerar(it).then(function(a){
-      // a questão pode ter mudado enquanto a arte subia: só anota se ainda for a mesma
-      var atual=(igStories||[]).filter(function(s){return s&&s.id===it.id;})[0];
-      if(atual&&atual.status!=='posted'&&igArteHash(atual)===a.hash){atual.storyArte=a;feitas++;}
-    }).catch(function(e){try{console.warn('[stories] arte de',it.id,'não saiu:',e&&e.message);}catch(_){}})
-      .then(function(){return passo(i+1);});
+    var q=igArteOk(it)?Promise.resolve():igArteGerar(it).then(function(a){
+      var atual=atualDe(it);if(atual&&igArteHash(atual)===a.hash){atual.storyArte=a;feitas++;}
+    }).catch(avisa(it,'da questão'));
+    return q.then(function(){
+      if(!igGabPossivel(it)||igGabOk(it))return;
+      return igGabGerar(it).then(function(a){
+        var atual=atualDe(it);if(atual&&igGabHash(atual)===a.hash){atual.storyGab=a;feitas++;}
+      }).catch(avisa(it,'do gabarito'));
+    }).then(function(){return passo(i+1);});
   };
   return passo(0).then(function(){
     igArtesRodando=false;
@@ -22181,10 +22257,10 @@ function igArtesSincroniza(){
     return feitas;
   });
 }
-// Linha de situação na aba "Fila": artes prontas e o último agendamento feito pelo servidor.
+// Linha de situação na aba "Fila": artes prontas (questão e gabarito) e o último agendamento feito pelo servidor.
 function igAutoStatusHTML(){
-  var prox=(igStories||[]).filter(function(s){return s&&s.status!=='posted'&&s.id;}).slice(0,IG_ARTES_ADIANTE);
-  var prontas=prox.filter(igArteOk).length;
+  var prox=igArtesProximas();
+  var prontas=prox.filter(function(s){return igArteOk(s)&&(!igGabPossivel(s)||igGabOk(s));}).length;
   var a=globalServerKeys&&globalServerKeys.ig_story_auto,ult='';
   if(a&&a.iso){
     var d=String(a.iso).split('-').reverse().slice(0,2).join('/');
@@ -22192,7 +22268,7 @@ function igAutoStatusHTML(){
       :a.ok==='incerto'?' · '+esc(d)+': o Metricool não confirmou o agendamento (confira no planejador)'
       :' · '+esc(d)+': story não agendado ('+esc(a.motivo==='sem_arte'?'arte da questão ainda não gerada':a.motivo==='sem_midia'?'o Metricool não recebeu a imagem':'erro no Metricool')+')';
   }
-  return '📲 <b>Story automático às 18h</b> (Metricool): '+(prox.length?'arte pronta de <b>'+prontas+' de '+prox.length+'</b> próximas questões':'fila vazia')+ult;
+  return '📲 <b>Stories automáticos</b> (Metricool): questão às 11h e gabarito às 18h · '+(prox.length?'artes prontas de <b>'+prontas+' de '+prox.length+'</b> próximas questões':'fila vazia')+ult;
 }
 function igCaptionQ(it){
   var op=it.options||{},out=['🧠 QUESTÃO DO DIA','',(it.teem?String(it.teem).trim()+' ':'')+String(it.stem||'').trim(),''];
