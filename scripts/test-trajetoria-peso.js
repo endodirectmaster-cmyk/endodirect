@@ -385,6 +385,50 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   ok(/Nenhum paciente com "zz"/.test(r6.querySelector('[data-tp-busca-res]').textContent), 'busca sem resultado avisa');
 }
 
+// 3b) SE SUSPENDER: RISCO DE REGANHO (MAYO), 23/11/2026 ("Aproveitar os dados inseridos da trajetória do peso e usar
+// automaticamente na calculadora de reganho da Mayo. Deixa um botão que leva aos resultados já calculados")
+{
+  const P = (meds, extra) => JSON.stringify(Object.assign({ alt: '165', pesos: [{ d: '2025-01-05', p: '100' }, { d: '2025-04-05', p: '92' }, { d: '2025-07-05', p: '86' }, { d: '2025-10-05', p: '84,4' }], meds }, extra || {}));
+  const dados = (pac) => JSON.parse(run('JSON.stringify(tpMayoDados(' + pac + '))'));
+  const sema = [{ n: 'Semaglutida SC', dose: '0,25 mg/sem', ini: '2025-01-05', fim: '' }, { n: 'Semaglutida SC', dose: '2,4 mg/sem', ini: '2025-03-05', fim: '' }];
+  const d1 = dados(P(sema));
+  ok(d1 && d1.droga === 'semaglutide' && d1.wt === 100 && d1.ht === 165 && d1.dur === 9 && d1.nadir === 84.4 && d1.wt3 === 91.9, '🧨 Mayo: tira da trajetória medicação, peso no início, altura, meses de uso, peso atual e peso aos 3 meses', JSON.stringify(d1));
+  ok(JSON.stringify(d1.faltam) === '["idade","sexo","diabetes"]', 'Mayo: faltam só idade, sexo e diabetes', JSON.stringify(d1.faltam));
+  const d2 = dados(P(sema, { idade: '54', sexo: '0', dm: '1' }));
+  ok(!d2.faltam.length && d2.url === 'https://glp1regainrisk.com/?lang=pt&drug=semaglutide&wt=100&ht_cm=165&age=54&sex=0&dm=1&dur=9&nadir=84.4&wt3=91.9&calc=1', '🧨 Mayo: link com os campos do formulário deles (drug, wt, ht_cm, age, sex, dm, dur, nadir, wt3) e calc=1', d2.url);
+  ok(!/rot|AB|JMS/.test(d2.url), 'Mayo: o link não leva a identificação do paciente');
+  const d3 = dados(P([{ n: 'Semaglutida SC', dose: '2,4 mg/sem', ini: '2025-01-05', fim: '2025-07-05' }, { n: 'Tirzepatida', dose: '5 mg/sem', ini: '2025-08-05', fim: '' }]));
+  ok(d3.droga === 'tirzepatide' && d3.dur === 2 && d3.aberto, 'Mayo: usa a medicação EM USO (trocou semaglutida por tirzepatida)', JSON.stringify(d3));
+  const d4 = dados(P([{ n: 'Mounjaro', dose: '5 mg', ini: '2025-01-05', fim: '2025-10-05' }]));
+  ok(d4.droga === 'tirzepatide' && !d4.aberto && d4.dur === 9, 'Mayo: reconhece o nome comercial e usa a que terminou, se nenhuma estiver em uso');
+  ok(run('tpMayoDados(' + P([{ n: 'Liraglutida', dose: '3,0 mg/dia', ini: '2025-01-05', fim: '' }]) + ')') === null && run('tpMayoDados(' + P([{ n: 'Cirurgia bariátrica', dose: 'Sleeve', ini: '2025-01-05', fim: '' }]) + ')') === null && run('tpMayoDados(' + P([]) + ')') === null, 'Mayo: só semaglutida e tirzepatida (liraglutida, cirurgia e sem medicação: o quadro não aparece)');
+  ok(dados(P(sema, { idade: '12' })).faltam.includes('idade') && dados(P(sema, { idade: '54', sexo: 'x' })).faltam.includes('sexo'), 'Mayo: idade fora de 18 a 90 e sexo inválido contam como faltando');
+  // tela: quadro 4 escondido sem semaglutida/tirzepatida; com ela, mostra os valores e o botão só vale com tudo preenchido
+  const rm = doc.createElement('div'); rm.id = 'calcm'; doc.body.appendChild(rm);
+  run("currentUser={id:'um',role:'admin'};function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}var abriuMayo=null;function calcAbreEmbutida(id,src,quadro,volta){abriuMayo={id:id,src:src,quadro:quadro,volta:volta};}tpRender(document.getElementById('calcm'))");
+  const secM = () => rm.querySelector('[data-tp-mayo]');
+  ok(secM() && secM().hidden, 'tela: sem semaglutida/tirzepatida, o quadro da Mayo fica escondido');
+  run("(function(){var e=tpCarrega();var p=tpNovoPac('XY');p.alt='165';p.pesos=" + JSON.stringify(JSON.parse(P(sema)).pesos) + ";p.meds=" + JSON.stringify(sema) + ";e.pac.push(p);e.atual=p.id;tpGrava(e);document.getElementById('calcm').innerHTML='';tpRender(document.getElementById('calcm'));})()");
+  ok(!secM().hidden && /Se suspender: risco de reganho/.test(secM().textContent) && /100,0 kg/.test(secM().textContent) && /9 meses/.test(secM().textContent) && /84,4 kg/.test(secM().textContent), 'tela: com semaglutida, o quadro mostra os valores tirados da trajetória');
+  const btM = () => rm.querySelector('[data-tp-mayo-ir]');
+  ok(btM().disabled && /Falta: idade, sexo, diabetes/.test(secM().textContent), 'tela: botão desligado enquanto faltar idade, sexo e diabetes');
+  const idd = rm.querySelector('[data-tp-campo="idade"]'); idd.focus(); setv(idd, '54');
+  ok(doc.activeElement === idd, 'tela: digitar a idade não tira o foco do campo (o quadro redesenha só os valores)');
+  setv(rm.querySelector('[data-tp-campo="sexo"]'), '1'); setv(rm.querySelector('[data-tp-campo="dm"]'), '0');
+  ok(!btM().disabled, 'tela: com os três preenchidos, o botão vale');
+  btM().click();
+  const am = J('abriuMayo');
+  ok(am && am.id === 'reganhoglp1' && /&age=54&sex=1&dm=0&/.test(am.src) && am.volta === 'trajpeso' && /Valores da trajetória do peso · XY/.test(am.quadro) && /Digite estes valores/.test(am.quadro), '🧨 botão abre a calculadora da Mayo aqui dentro, com o link preenchido, o quadro de valores e a volta para a trajetória', JSON.stringify(am));
+  ok(J("tpCarrega().pac.filter(function(p){return p.rot==='XY';})[0].idade") === '54', 'idade, sexo e diabetes ficam no paciente (só no aparelho)');
+  ok(/Piloto · visível só para professores/.test(secM().textContent), 'Mayo: o quadro diz que é piloto do professor');
+  // PILOTO SÓ DO PROFESSOR (23/11/2026: "deixa por enquanto apenas no painel do professor"): o médico não vê o quadro 4
+  run("currentUser={id:'um',role:'aluno'};document.getElementById('calcm').innerHTML='';abriuMayo=null;tpRender(document.getElementById('calcm'))");
+  ok(secM().hidden && !secM().querySelector('[data-tp-mayo-ir]'), '🧨 médico (não professor): a trajetória abre, mas sem o quadro da Mayo');
+  run("currentUser={id:'um',role:'admin'};");
+}
+ok(/var calcEmbedProx=null;\nfunction calcAbreEmbutida\(id,src,quadro,volta\)/.test(html) && /var embSrc=emb&&\/\^https:\\\/\\\/\/\.test\(emb\.src\)&&emb\.src\.indexOf\(String\(c\.link\)\.split\('\?'\)\[0\]\)===0\?emb\.src:c\.link;/.test(html), '🧨 o cartão externo só aceita endereço do próprio site da ferramenta (nada de outro domínio)');
+ok(/<iframe src="'\+esc\(embSrc\)\+'"/.test(html) && /href="'\+esc\(embSrc\)\+'" target="_blank"/.test(html) && /data-calc-volta/.test(html), 'janela e botão de outra aba com o link preenchido; botão de voltar para a trajetória');
+
 // 4) fiação e privacidade
 ok(!/trajpeso|tpCarrega/.test(corpo('userStatePayload')), 'pacientes fora do app_state (não vão para o servidor)');
 const iCalc = html.indexOf("  {id:'trajpeso',"), iImc = html.indexOf("  {id:'imc',name:'IMC'"), iPep = html.indexOf("  {id:'pep',");

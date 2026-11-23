@@ -80,7 +80,8 @@ ok(/\.calc-piloto\{/.test(html), 'falta o CSS da marca de piloto');
 
 // ── 5. dentro do painel ──────────────────────────────────────────────────────
 ok(/embutir:true/.test(entrada), 'a calculadora tem de abrir DENTRO do cartão (embutir:true)');
-ok(/\(c\.embutir\?'<div class="calc-embed"><iframe src="'\+esc\(c\.link\)\+'"/.test(html), '🧨 o detalhe não desenha a ferramenta embutida');
+// embSrc = c.link, ou o link da mesma ferramenta já com os valores do paciente (vindo da Trajetória do peso, 23/11/2026)
+ok(/\(c\.embutir\?'<div class="calc-embed"><iframe src="'\+esc\(embSrc\)\+'"/.test(html) && /\?emb\.src:c\.link;/.test(html), '🧨 o detalhe não desenha a ferramenta embutida');
 ok(/sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"/.test(html), 'o iframe precisa de sandbox (sem navegar a página do painel)');
 ok(/btn '\+\(c\.embutir\?'btn-outline':'btn-primary'\)/.test(html), 'o link de outra aba tem de continuar, como reserva');
 ok(/não use nome nem dado que identifique o paciente/.test(entrada), 'falta o aviso de não digitar dado que identifique o paciente');
