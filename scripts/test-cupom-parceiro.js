@@ -64,6 +64,11 @@ function cenario(op) {
       const cod = decodeURIComponent(url.split('codigo=eq.')[1].split('&')[0]);
       return resp(200, CUPONS[cod] ? [CUPONS[cod]] : []);
     }
+    if (url.indexOf('/rest/v1/rpc/endodirect_ja_pagou') >= 0) {
+      st.jaPagou = (st.jaPagou || 0) + 1;
+      if (op.jaPagouCai) return resp(500, { message: 'down' });
+      return resp(200, !!op.jaPagou);
+    }
     if (url.indexOf('/rest/v1/endodirect_cupom_vendas') >= 0) {
       if (metodo === 'POST') { st.vendas.push({ url, prefer: (init.headers || {}).Prefer, linha: JSON.parse(init.body) }); return resp(201, {}); }
       if (metodo === 'PATCH') { st.patches.push({ url, corpo: JSON.parse(init.body) }); return resp(204, {}); }
@@ -122,6 +127,17 @@ const compra = (cupom, plano) => ({ plan: plano || 'gold', method: 'credit_card'
   }
   cenario({ bancoCai: true }); r = await chama(ORDER, compra('PARC15'));
   ok(r.status === 503 && st.pagarme.length === 0, 'banco fora na conferência do cupom: 503, sem cobrar');
+
+  // (3b) SÓ NA PRIMEIRA COMPRA (professor, 23/11/2026): quem já pagou não usa cupom de parceiro
+  cenario({ jaPagou: true }); r = await chama(ORDER, compra('PARC15'));
+  ok(r.status === 400 && r.dados.code === 'cupom_primeira_compra' && st.pagarme.length === 0 && st.vendas.length === 0, 'quem já pagou: 400 "primeira assinatura", sem cobrar e sem venda (veio ' + r.status + ' ' + JSON.stringify(r.dados) + ')');
+  cenario({ jaPagouCai: true }); r = await chama(ORDER, compra('PARC15'));
+  ok(r.status === 503 && st.pagarme.length === 0, 'sem conseguir conferir se já pagou: 503, sem cobrar');
+  cenario(); r = await chama(ORDER, compra('PARC15'));
+  ok(r.status === 200 && st.jaPagou === 1, 'primeira compra: confere uma vez e cobra com desconto');
+  cenario({ jaPagou: true }); r = await chama(ORDER, compra('FUNDADOR'));
+  ok(r.status === 200 && !st.jaPagou, 'FUNDADOR não passa pela regra da primeira compra (renovação do fundador continua)');
+  ok(/client\.rpc\('endodirect_ja_assinei'\)/.test(HTML) && /Este cupom vale só para a primeira assinatura da plataforma\./.test(HTML), 'tela do pagamento avisa quem já assinou');
 
   // (4) FUNDADOR intacto
   cenario(); r = await chama(ORDER, compra('FUNDADOR'));

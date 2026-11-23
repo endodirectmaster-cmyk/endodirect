@@ -54,6 +54,11 @@ cupom próprio + comissão sobre os alunos novos). Combinado de comissão sugeri
   confere o cupom ao digitar e mostra "de R$ X por R$ Y". O **servidor** recalcula sempre
   (`lib/cupom-parceiro.js`: `precoComCupom` arredonda ao centavo; desconto máximo 50%); cupom fora do ar = 503 sem
   cobrar. Não acumula com FUNDADOR.
+- **Só na PRIMEIRA compra (v485, 23/11/2026; professor: "Pode sim").** Quem já pagou a plataforma alguma vez
+  (acesso pago em qualquer situação, ou assinatura recorrente) recebe 400 `cupom_primeira_compra` ("Este cupom vale
+  só para a primeira assinatura da plataforma"), sem cobrar. Assim a renovação nunca usa o cupom nem vira comissão.
+  `endodirect_ja_pagou(email)` (só o servidor) no `order.js`; `endodirect_ja_assinei()` avisa na tela do
+  pagamento antes. Sem conseguir conferir: 503, sem cobrar. Cortesia (manual) não conta como compra.
 - **Registro da venda:** cartão aprovado na hora → `registrarVenda` no `order.js`; PIX/boleto → no webhook quando
   paga (`meta.coupon` + `valor_cheio`); estorno no webhook → `estornarVenda` (a venda sai da comissão). Idempotente
   por `order_id`.

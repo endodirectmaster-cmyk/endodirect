@@ -142,6 +142,11 @@ module.exports = async function handler(req, res) {
       // Banco fora: não cobra sem o desconto prometido; pede para tentar de novo.
       if (lido.erro) return json(res, 503, { ok: false, error: 'Não foi possível conferir o cupom agora. Tente de novo em instantes.' });
       if (!CUPOM.cupomVale(lido.cupom, planKey)) return json(res, 400, { ok: false, error: 'Cupom inválido, vencido ou não aplicável a este plano.' });
+      // Só na PRIMEIRA compra (professor, 23/11/2026): quem já pagou a plataforma não usa cupom de parceiro, e a
+      // renovação não vira comissão. Sem conseguir conferir, não cobra (nem com nem sem o desconto).
+      const pagou = await CUPOM.jaPagou(email);
+      if (pagou === null) return json(res, 503, { ok: false, error: 'Não foi possível conferir o cupom agora. Tente de novo em instantes.' });
+      if (pagou) return json(res, 400, { ok: false, code: 'cupom_primeira_compra', error: 'Este cupom vale só para a primeira assinatura da plataforma.' });
       parceiro = lido.cupom;
       amount = CUPOM.precoComCupom(cfg.amount, parceiro.desconto_pct);
     } else {
