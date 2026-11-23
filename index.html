@@ -7184,11 +7184,11 @@ var CALCS=[
   // o que as sociedades passaram a preferir. Mostrar só um dos dois é o que gera
   // a conversa errada no consultório.
   {id:'trajpeso',name:'Trajetória do peso no tratamento',area:'Obesidade',
-   // PILOTO SÓ DO PROFESSOR (18/11/2026: "Essa calculadora ainda não publica. Deixa apenas no painel do professor
-   // para a gente ir testando ao longo do tempo. Depois, quando amadurecermos ... publicando também para os
-   // alunos"). Para publicar: tirar o `soProfessor` (e ajustar test-trajetoria-peso.js).
-   soProfessor:true,
-   // Mesmo depois de publicada: só profissionais de saúde (perfil médico com CRM); estudantes não (professor, 19/11/2026).
+   // PUBLICADA PARA OS MÉDICOS (23/11/2026; professor: "pode liberar também para o painel dos alunos, tendo a atenção
+   // especial de deixar apenas liberado para médicos, que são os prescritores, não liberar para alunos"). Foi piloto
+   // só do professor de 18/11 a 23/11 (`soProfessor`). Só profissionais de saúde: perfil Residente, Endocrinologista
+   // ou Outros, os três com CRM obrigatório no cadastro (o mesmo critério do Consultório); estudante e conta sem
+   // perfil não veem (grade, busca e abrir por id passam por `calcVisivel`).
    soMedico:true,
    desc:'Curva do peso e do IMC do paciente ao longo do tempo, com o início e as doses de cada medicação: perda desde o início, resposta aos 3 meses, menor peso e reganho',
    render:function(root){tpRender(root);},
