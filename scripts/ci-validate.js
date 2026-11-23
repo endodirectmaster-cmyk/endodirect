@@ -2445,6 +2445,13 @@ try {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão do cupom de parceiro (lib/cupom-parceiro.js, order.js, webhook, index.html) falhou:\n' + out);
 }
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-embaixador.js')], { stdio: 'pipe' });
+  ok('embaixador: degustação de 14 dias pelo link, congressos no mural, selo e item só para o embaixador');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do embaixador (index.html, lib/trial-emails.js) falhou:\n' + out);
+}
 
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

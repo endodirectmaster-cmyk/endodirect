@@ -497,6 +497,9 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .dav-novo{font-size:.6rem;font-weight:800;color:#fff;background:var(--blue);border-radius:999px;padding:.05rem .45rem}
 .dav-tit{font-size:.86rem;font-weight:700;color:var(--tx);line-height:1.4;overflow-wrap:anywhere}
 .dav-txt{font-size:.78rem;color:var(--t2);line-height:1.55;margin-top:.2rem;overflow-wrap:anywhere;text-align:justify;text-align-last:left}
+.dav-cred{font-size:.68rem;color:var(--t3);margin-top:.25rem}
+.tb-selo{color:#eab308;font-weight:700;white-space:nowrap}
+@media (max-width:560px){.tb-usub.com-selo #tb-usub{display:none}.tb-usub.com-selo .tb-selo-sep{display:none}}
 .dav-abrir{flex:0 0 auto;align-self:center;white-space:nowrap}
 .dav-videos{display:flex;flex-direction:column;gap:.3rem;margin-top:.45rem}
 .dav-video{display:flex;gap:.45rem;align-items:baseline;text-align:left;width:100%;background:var(--surface);border:1px solid var(--bd);border-radius:8px;padding:.4rem .6rem;font-family:var(--font);font-size:.78rem;color:var(--t2);line-height:1.4;cursor:pointer;overflow-wrap:anywhere}
@@ -3453,7 +3456,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <button class="btn-cta" id="btn-chat-cta">🤖 Chat IA</button>
       <span id="tb-plan" title="Seu plano" style="display:none;font-size:.66rem;font-weight:800;padding:.3rem .7rem;border-radius:999px;white-space:nowrap;letter-spacing:.02em"></span>
       <div class="tb-user" id="tb-user-btn">
-        <div style="text-align:right"><div class="tb-uname" id="tb-uname">—</div><div class="tb-usub" id="tb-usub">—</div></div>
+        <div style="text-align:right"><div class="tb-uname" id="tb-uname">—</div><div class="tb-usub" id="tb-usub-linha"><span id="tb-usub">—</span><span class="tb-selo" id="tb-selo" style="display:none" title="Embaixador Endodirect"><span class="tb-selo-sep"> · </span>🏅 Embaixador</span></div></div>
         <div class="tb-avatar" id="tb-avatar">?</div>
         <div class="user-menu" id="user-menu">
           <div class="user-menu-hd"><div class="um-name" id="um-name">—</div><div class="um-email" id="um-email">—</div></div>
@@ -3500,6 +3503,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
         <!-- Só aparece na conta do parceiro com o quadro liberado no painel (ver carregaMinhaParceria). -->
         <button class="sb-item" data-p="parceria" id="sb-parceria" style="display:none">🤝 Minha parceria</button>
+        <!-- Só na conta de um embaixador ligado no painel (ver carregaEmbaixador). -->
+        <button class="sb-item" data-p="congressos" id="sb-congressos" style="display:none">📅 Congressos</button>
       </div>
       <div id="sb-admin" style="display:none">
         <div class="sb-sec">Admin</div>
@@ -3954,6 +3959,12 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       </div>
     </div>
 
+    <div class="panel" id="panel-congressos">
+      <div class="breadcrumb">Dashboard <b>/ Congressos</b></div>
+      <div class="ph"><h1>📅 Congressos</h1><p>Divulgue congressos e eventos científicos no mural de avisos dos alunos.</p></div>
+      <div class="pc" id="congressos-pc"></div>
+    </div>
+
     <div class="panel" id="panel-parceria">
       <div class="breadcrumb">Dashboard <b>/ Minha parceria</b></div>
       <div class="ph"><h1>🤝 Minha parceria</h1><p>Inscrições feitas com o seu cupom e a sua comissão.</p></div>
@@ -4058,7 +4069,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="qotdarq" style="display:none">🧠 Questão do Dia</button>
           <button class="adm-nav" data-asec="pendencias">📥 Pendências <span id="adm-pend-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
           <button class="adm-nav" data-asec="mural">📣 Mural de artigos</button>
-          <button class="adm-nav" data-asec="avisos">📌 Avisos aos alunos</button>
+          <button class="adm-nav" data-asec="avisos">📌 Avisos aos alunos <span id="adm-congr-badge" style="display:none;margin-left:.2rem;font-weight:700"></span></button>
           <button class="adm-nav" data-asec="ref">📋 Diretrizes</button>
           <button class="adm-nav" data-asec="resumos">📄 Resumos</button>
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
@@ -8880,7 +8891,7 @@ function renderDegustacaoBar(){
     var msg=bar.querySelector('#degustacao-msg');
     if(msg){
       if(degExpired()){
-        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+DEG_DIAS+' dias gratuitos terminaram'+textoCompra(' — assine para manter o acesso aos benefícios','')+'</span>';
+        msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">⏳ Degustação encerrada</span> <span style="opacity:.92">seus '+degDias()+' dias gratuitos terminaram'+textoCompra(' — assine para manter o acesso aos benefícios','')+'</span>';
       }else{
         var dd=degDiasRestantes();
         msg.innerHTML='<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(255,255,255,.5);border:1px solid rgba(120,80,0,.25);border-radius:999px;padding:.1rem .6rem;font-weight:800">🎁 Modo degustação</span> <span style="opacity:.92">acesso gratuito por mais <b>'+dd+' dia'+(dd===1?'':'s')+'</b> — 50 questões do banco, 10 diretrizes, podcasts, flashcards, mapas mentais e o mural</span>';
@@ -8916,7 +8927,7 @@ function maybeTrialModal(){
   var title,lead;
   if(expired){
     title='⏳ Sua degustação terminou';
-    lead='Seus <b>'+DEG_DIAS+' dias gratuitos</b> chegaram ao fim. Assine um plano para voltar a usar tudo: flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural de atualizações.';
+    lead='Seus <b>'+degDias()+' dias gratuitos</b> chegaram ao fim. Assine um plano para voltar a usar tudo: flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural de atualizações.';
   }else{
     title='⏳ Sua degustação termina em '+dd+' dia'+(dd===1?'':'s');
     lead='Você está no <b>modo degustação</b> — faltam <b>'+dd+' dia'+(dd===1?'':'s')+'</b> para o acesso encerrar. Assine um plano e continue com flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural.';
@@ -9263,6 +9274,7 @@ function definirAcessos(lista){
   try{updatePlanBadge();}catch(e){}
   try{markLockedNavItems();}catch(e){}
   try{renderDegustacaoBar();}catch(e){}
+  try{aplicaDegustacaoDoLink();}catch(e){} // link de embaixador: degustação de 14 dias
   try{reavaliarPainelAtual();}catch(e){}
   // A janela de "degustação encerrada" foi adiada enquanto a lista não vinha;
   // agora que veio, quem está mesmo com a degustação vencida a recebe.
@@ -11078,6 +11090,7 @@ function startApp(){
     // sobra para o próximo login da aba.
     abrirLinkNoPainelDoProfessor(consumirLinkPainel());
     try{loadAdmSupport();}catch(e){} // popula o badge "(N)" do Suporte já no login
+    try{carregaCongressosAdmin();}catch(e){} // aviso de congresso novo publicado por embaixador
     pendAlertShown=false; // re-arma o alerta de pendências a cada login (dispara após o hydrate)
     try{applyQotdNav();}catch(e){} // esconde o gerador "Questão do Dia" p/ não-donos + badge das Pendências
   }else{
@@ -11089,6 +11102,8 @@ function startApp(){
     try{markLockedNavItems();}catch(e){}
     try{loadMyTickets({});}catch(e){} // popula o badge "nova resposta" do Suporte já no login
     try{carregaMinhaParceria();}catch(e){} // conta de parceiro: mostra o item "Minha parceria"
+    try{carregaEmbaixador();}catch(e){} // embaixador: selo e item "Congressos"
+    try{carregaCongressosMural();}catch(e){} // congressos dos embaixadores no mural de avisos
     try{maybeShowWhatsNew();}catch(e){} // janela de novidades (1x por versão), exceto durante o onboarding
     try{maybeAskFeedback();}catch(e){} // convite de feedback p/ assinante de +30 dias (a RPC decide se pede)
   }
@@ -11959,7 +11974,10 @@ function ckCupomLinkAviso(){
     Promise.resolve(client.rpc('endodirect_cupom_publico',{p_codigo:c})).then(function(r){
       var i=r&&!r.error&&r.data;if(!i){el.style.display='none';return;}
       var pl=(i.planos||[]).map(function(p){return p==='gold'?'Gold':'Standard';}).join(' e ');
-      el.innerHTML='🎟️ Cupom <b>'+esc(i.codigo)+'</b> ativo: <b>'+esc(String(Number(i.desconto_pct)).replace('.',','))+'% de desconto</b> no plano anual ('+esc(pl)+'). O desconto entra sozinho no pagamento.';
+      var pct=esc(String(Number(i.desconto_pct)).replace('.',','));
+      el.innerHTML=(+i.degustacao_dias>DEG_DIAS)
+        ?'🎁 Convite <b>'+esc(i.codigo)+'</b>: teste grátis por <b>'+(+i.degustacao_dias)+' dias</b> e <b>'+pct+'% de desconto</b> no plano anual ('+esc(pl)+'). O desconto entra sozinho no pagamento.'
+        :'🎟️ Cupom <b>'+esc(i.codigo)+'</b> ativo: <b>'+pct+'% de desconto</b> no plano anual ('+esc(pl)+'). O desconto entra sozinho no pagamento.';
       el.style.display='';
     }).catch(function(){});
   })();
@@ -12617,7 +12635,7 @@ function startAppleSignIn(){
   }).then(function(){appleEmAndamento=false;});
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',parceria:'Minha parceria',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',parceria:'Minha parceria',congressos:'Congressos',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -12768,12 +12786,15 @@ function degStart(){
   if(!degTrials.__start){degTrials.__start=Date.now();try{lsSet('deg_trials',degTrials);queueRemoteStateSave();}catch(e){}}
   return degTrials.__start;
 }
-function muralDegDiasRestantes(){return Math.max(0,Math.ceil((DEG_MURAL_DIAS*86400000-(Date.now()-degStart()))/86400000));}
-function muralTrialActive(){return isDegustacao()&&(Date.now()-degStart())<DEG_MURAL_DIAS*86400000;}
+function muralDegDiasRestantes(){return Math.max(0,Math.ceil((degDias()*86400000-(Date.now()-degStart()))/86400000));}
+function muralTrialActive(){return isDegustacao()&&(Date.now()-degStart())<degDias()*86400000;}
 // Degustação COMPLETA: 7 dias de acesso; depois bloqueia TODAS as funcionalidades.
 var DEG_DIAS=7;
-function degDiasRestantes(){return Math.max(0,Math.ceil((DEG_DIAS*86400000-(Date.now()-degStart()))/86400000));}
-function degExpired(){return !acessosPendentes()&&isDegustacao()&&(Date.now()-degStart())>=DEG_DIAS*86400000;}
+// DEGUSTAÇÃO ESTENDIDA (23/11/2026): quem entra pelo link de um EMBAIXADOR testa por 14 dias. O número fica em
+// deg_trials.__dias (gravado uma vez, ao conferir o cupom do link) e vale sempre entre 7 e 14.
+function degDias(){var d=parseInt(degTrials&&degTrials.__dias,10);return (d>=DEG_DIAS&&d<=14)?d:DEG_DIAS;}
+function degDiasRestantes(){return Math.max(0,Math.ceil((degDias()*86400000-(Date.now()-degStart()))/86400000));}
+function degExpired(){return !acessosPendentes()&&isDegustacao()&&(Date.now()-degStart())>=degDias()*86400000;}
 function trialLeft(id){return Math.max(0,TRIAL_LIMIT-trialUsed(id));}
 // Consome 1 uso da cota de degustação. Fora da degustação não há limite.
 // Retorna false (e mostra upsell) quando a cota acabou.
@@ -12814,6 +12835,8 @@ function canSeePanel(id){
   // Minha parceria: o parceiro acompanha as comissões mesmo depois que a cortesia acaba. Quem não é
   // parceiro não vê o item, e a RPC endodirect_minhas_parcerias só devolve os cupons da própria conta.
   if(id==='parceria')return true;
+  // Congressos: só o embaixador vê o item; o banco recusa a publicação de quem não é.
+  if(id==='congressos')return true;
   // Lista de acessos ainda não chegou: o painel abre (ver acessosPendentes).
   if(acessosPendentes())return true;
   if(isDegustacao()){
@@ -12890,9 +12913,9 @@ function showLockedPanel(id){
     : (scope==='plano'?(hasPlan?'fazendo upgrade do seu plano':'adquirindo um pacote (Standard ou Gold)'):(hasPlan?'fazendo upgrade do seu plano':'adquirindo o '+nome));
   // App das lojas: o bloqueio diz o que aconteceu, sem preço e sem botão de compra.
   if(isAppLoja()){
-    var motivoApp=(isDegustacao()&&degExpired())?('Sua degustação gratuita de '+DEG_DIAS+' dias terminou.')
+    var motivoApp=(isDegustacao()&&degExpired())?('Sua degustação gratuita de '+degDias()+' dias terminou.')
       :(trialEsgotado?('Você usou suas '+TRIAL_LIMIT+' degustações de '+label+'.')
-      :((isDegustacao()&&id==='mural')?('A degustação do Mural de artigos ('+DEG_MURAL_DIAS+' dias) terminou.')
+      :((isDegustacao()&&id==='mural')?('A degustação do Mural de artigos ('+degDias()+' dias) terminou.')
       :'Este recurso não está liberado na sua conta.'));
     p.innerHTML='<div class="breadcrumb">'+esc(label)+' <b>/ Bloqueado</b></div>'
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
@@ -12909,8 +12932,8 @@ function showLockedPanel(id){
       +'<div class="ph"><h1>🔒 '+esc(label)+'</h1></div>'
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
-      +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação de '+DEG_DIAS+' dias encerrada</div>'
-      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seus <b>'+DEG_DIAS+' dias de degustação gratuita</b> terminaram. Para continuar com acesso a <b>flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural</b>, assine um pacote (Standard ou Gold) e garanta todos os benefícios.</p>'
+      +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação de '+degDias()+' dias encerrada</div>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seus <b>'+degDias()+' dias de degustação gratuita</b> terminaram. Para continuar com acesso a <b>flashcards, mapas mentais, banco de questões, ferramentas de IA e o mural</b>, assine um pacote (Standard ou Gold) e garanta todos os benefícios.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Assinar e desbloquear tudo</button>'
       +'</div></div>';
     var bex=document.getElementById('locked-cta');
@@ -12938,7 +12961,7 @@ function showLockedPanel(id){
       +'<div class="pc"><div class="card" style="max-width:520px;margin:1.2rem auto;text-align:center;padding:1.9rem 1.5rem">'
       +'<div style="font-size:2.3rem;margin-bottom:.5rem">🎁</div>'
       +'<div style="font-size:1.02rem;font-weight:800;color:var(--tx);margin-bottom:.4rem">Degustação do mural encerrada</div>'
-      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural de artigos</b> na degustação durava <b>'+DEG_MURAL_DIAS+' dias</b> e já terminou. Adquira um pacote (Standard ou Gold) para continuar acompanhando as atualizações.</p>'
+      +'<p style="font-size:.84rem;color:var(--t2);line-height:1.6;margin:.3rem 0 1.2rem">Seu acesso ao <b>Mural de artigos</b> na degustação durava <b>'+degDias()+' dias</b> e já terminou. Adquira um pacote (Standard ou Gold) para continuar acompanhando as atualizações.</p>'
       +'<button class="btn btn-primary" id="locked-cta" style="justify-content:center">Ver planos e cursos</button>'
       +'</div></div>';
     var bme=document.getElementById('locked-cta');
@@ -13256,6 +13279,7 @@ function goPanel(id){
   if(id==='cursos')renderCursosAluno();
   if(id==='aovivo'){renderAoVivo();aoVivoIniciarPoll();}
   if(id==='parceria')abrirMinhaParceria();
+  if(id==='congressos')abrirMeusCongressos();
   if(id==='desemp')renderDesempenho(); // painel legado: sem item de menu, mas ainda montável
   if(id==='plano')renderPlano();
   if(id==='erros')renderErros();
@@ -13413,7 +13437,8 @@ function acervoNovosHTML(){
 var AVISOS_AUTO_DIAS=30,AVISOS_VISIVEIS=4,dashAvisosTodos=false,dashAvisosItens=[];
 var AVISO_TIPOS={
   aviso:{ico:'📢',nome:'Aviso'},edital:{ico:'📄',nome:'Edital'},prova:{ico:'📝',nome:'Prova'},
-  video:{ico:'🎬',nome:'Videoaula nova'},emc:{ico:'🎓',nome:'Aula nova · Educação Médica Continuada'}
+  video:{ico:'🎬',nome:'Videoaula nova'},emc:{ico:'🎓',nome:'Aula nova · Educação Médica Continuada'},
+  congresso:{ico:'📅',nome:'Congresso'}
 };
 function avisoLinkSeguro(u){u=String(u||'').trim();return /^https?:\/\/[^\s"'<>]+$/i.test(u)?u:'';}
 function avisosDoMural(agora){
@@ -13454,8 +13479,11 @@ function avisosDoMural(agora){
     var at=+c.at||0;if(at<limite||at>agora+60000)return;
     autos.push({tipo:'emc',titulo:String(c.title||'Aula nova'),texto:String(c.modulo||'').trim(),at:at,emcAt:at});
   });
+  // Congressos dos embaixadores (23/11/2026): depois dos avisos do professor, pela data do evento.
+  var congs=(typeof congressosMural!=='undefined'&&Array.isArray(congressosMural)?congressosMural:[]).map(function(c){return congressoParaMural(c,agora);}).filter(Boolean)
+    .sort(function(a,b){return String(a.inicio).localeCompare(String(b.inicio));});
   var porData=function(a,b){return b.at-a.at;};
-  return manuais.sort(porData).concat(autos.sort(porData));
+  return manuais.sort(porData).concat(congs,autos.sort(porData));
 }
 // ── DESTAQUES NEJM E LANCET NO DASHBOARD (18/11/2026) ───────────────────────────────────────────
 // Professor: "principais artigos publicados no dashboard do painel do aluno/professor (NEJM / Lancet)".
@@ -13545,12 +13573,13 @@ function renderDashAvisos(){
     +'<div class="dav-lista">'+mostra.map(function(a,k){
       var t=AVISO_TIPOS[a.tipo]||AVISO_TIPOS.aviso,novo=ref&&a.at>ref;
       var abre=!a.grupo&&(a.tipo==='video'||a.tipo==='emc'||!!a.link);
-      var data=a.at?new Date(a.at).toLocaleDateString('pt-BR'):'';
+      var data=a.quando||(a.at?new Date(a.at).toLocaleDateString('pt-BR'):'');
       return '<div class="dav-item'+(a.manual?' dav-manual':'')+'">'
         +'<span class="dav-ico" aria-hidden="true">'+t.ico+'</span>'
         +'<div class="dav-corpo"><div class="dav-meta"><span class="dav-tipo">'+esc(t.nome)+'</span>'+(data?'<span class="dav-data">'+esc(data)+'</span>':'')+(novo?'<span class="dav-novo">Novo</span>':'')+'</div>'
         +'<div class="dav-tit">'+esc(a.titulo)+'</div>'
         +(a.texto?'<div class="dav-txt">'+esc(a.texto).replace(/\n/g,'<br>')+'</div>':'')
+        +(a.credito?'<div class="dav-cred">Divulgação: '+esc(a.credito)+'</div>':'')
         +(a.grupo?'<div class="dav-videos">'+a.grupo.map(function(v,j){var ti=String(v.titulo).toLowerCase(),te=String(v.tema||'').toLowerCase(),comTema=te&&te.indexOf(ti)<0&&ti.indexOf(te)<0;return '<button type="button" class="dav-video" data-aviso-abrir="'+k+':'+j+'"><span class="dav-video-play" aria-hidden="true">▶</span><span><b>'+esc(v.titulo)+'</b>'+(comTema?' · '+esc(v.tema):'')+'</span></button>';}).join('')+'</div>':'')
         +'</div>'
         +(abre?'<button type="button" class="btn btn-outline btn-sm dav-abrir" data-aviso-abrir="'+k+'">'+(a.link?'Abrir ↗':'Ver →')+'</button>':'')
@@ -23854,7 +23883,7 @@ function renderAdmSec(sec){
   try{restorePrescPanel();}catch(e){}
   try{restoreRxPanel();}catch(e){}
   try{restoreMMLive();}catch(e){}
-  if(sec==='avisos'){m.innerHTML=admAvisosAlunosHTML();bindAdmAvisosAlunos();bindAdmSec(sec);return;}
+  if(sec==='avisos'){admCongrAbriu();m.innerHTML=admAvisosAlunosHTML();bindAdmAvisosAlunos();bindAdmCongr();bindAdmSec(sec);if(!admCongr.carregando&&(Date.now()-admCongr.at)>60000)carregaCongressosAdmin();return;}
   if(sec==='parcerias'){m.innerHTML=admParceriasHTML();bindAdmParcerias();if(!admParc.dados&&!admParc.carregando)carregaParcerias();bindAdmSec(sec);return;}
   if(sec==='cme'){
     m.innerHTML='<div class="adm-ph"><h1>🎓 Enquete — Educação Médica Continuada</h1></div>'
@@ -25499,6 +25528,8 @@ function admParcFormHTML(f){
     +'<label style="display:flex;gap:.45rem;align-items:center;font-size:.82rem;margin:.1rem 0 .7rem;cursor:pointer"><input type="checkbox" id="parc-ativo" style="width:auto"'+(f.ativo===false?'':' checked')+'> Ativo (o cupom funciona no checkout)</label>'
     +'<div class="fld2" style="margin-bottom:.45rem"><label>Login do parceiro na plataforma (e-mail, opcional)</label><input type="email" id="parc-email" maxlength="160" autocomplete="off" placeholder="parceiro@exemplo.com" value="'+esc(f.parceiro_email||'')+'"></div>'
     +'<label style="display:flex;gap:.45rem;align-items:flex-start;font-size:.82rem;cursor:pointer;margin:0 0 .8rem"><input type="checkbox" id="parc-painel" style="width:auto;margin-top:.15rem"'+(f.painel_parceiro?' checked':'')+'> <span>Mostrar o quadro na conta do parceiro (menu "Minha parceria": inscrições, meta e comissão, sem dados dos alunos)</span></label>'
+    +'<label style="display:flex;gap:.45rem;align-items:flex-start;font-size:.82rem;cursor:pointer;margin:0 0 .45rem"><input type="checkbox" id="parc-emb" style="width:auto;margin-top:.15rem"'+(f.embaixador?' checked':'')+'> <span>🏅 <b>Embaixador Endodirect</b>: selo no perfil dele, menu "Congressos" para divulgar eventos científicos no mural de avisos (até 2 por semana; o senhor pode retirar) e degustação de <b>14 dias</b> para quem entra pelo link do cupom</span></label>'
+    +'<div class="fld2" style="margin-bottom:.8rem"><label>Crédito nos congressos (opcional)</label><input type="text" id="parc-cred" maxlength="60" placeholder="Ex.: Embaixador EndoNews" value="'+esc(f.embaixador_credito||'')+'"><div style="font-size:.68rem;color:var(--t3);margin-top:.2rem">Aparece no mural como "Divulgação: …". Em branco: "Embaixador Endodirect".</div></div>'
     +'<div class="fld2"><label>Notas (só para os professores)</label><textarea id="parc-notas" rows="2" maxlength="600" placeholder="Combinado, contato, forma de pagamento da comissão…">'+esc(f.notas||'')+'</textarea></div>'
     +'<div class="upload-status" id="parc-status"></div>'
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-parc-salvar">💾 Salvar cupom</button><button class="btn btn-ghost" id="btn-parc-cancelar">Cancelar</button></div></div>';
@@ -25518,7 +25549,8 @@ function admParcCupomHTML(c,vendas){
       +'<span style="font-family:ui-monospace,monospace;font-weight:800;font-size:.95rem;letter-spacing:.04em">'+esc(c.codigo)+'</span>'
       +'<span style="font-size:.82rem;color:var(--t2)">'+esc(c.parceiro||'')+'</span>'
       +'<span style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;'+(on?'background:rgba(74,222,128,.15);color:#4ade80':'background:rgba(148,163,184,.15);color:var(--t3)')+'">'+(on?'Ativo':(venceu?'Vencido':'Inativo'))+'</span>'
-      +(c.painel_parceiro&&c.parceiro_email?'<span title="'+esc(c.parceiro_email)+'" style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;background:rgba(96,165,250,.15);color:#60a5fa">👁️ Parceiro acompanha</span>':'')+'</div>'
+      +(c.painel_parceiro&&c.parceiro_email?'<span title="'+esc(c.parceiro_email)+'" style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;background:rgba(96,165,250,.15);color:#60a5fa">👁️ Parceiro acompanha</span>':'')
+      +(c.embaixador?'<span title="Selo, congressos no mural e degustação de 14 dias pelo link" style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;background:rgba(234,179,8,.15);color:#eab308">🏅 Embaixador</span>':'')+'</div>'
       +'<button class="btn btn-outline btn-sm" data-parc-edit="'+esc(c.codigo)+'">✏️ Editar</button></div>'
     +'<div style="font-size:.78rem;color:var(--t2);margin:.45rem 0 .55rem;line-height:1.5">Desconto de <b>'+parcPct(c.desconto_pct)+'</b> no anual ('+esc(pl)+') · '+esc(regra)+(c.valido_ate?' · válido até '+esc(parcData(c.valido_ate)):'')+'</div>'
     +'<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><input type="text" readonly value="'+esc(parcLink(c.codigo))+'" style="flex:1 1 16rem;min-width:0;font-size:.78rem" aria-label="Link do cupom"><button class="btn btn-outline btn-sm" data-parc-copia="'+esc(c.codigo)+'">📋 Copiar link</button></div>'
@@ -25575,7 +25607,10 @@ function bindAdmParcerias(){
       var ate=val('parc-ate'),pemail=val('parc-email').toLowerCase(),ppainel=!!(document.getElementById('parc-painel')||{}).checked;
       if(pemail&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pemail)){diga('O login do parceiro precisa ser um e-mail válido.');return;}
       if(ppainel&&!pemail){diga('Para mostrar o quadro ao parceiro, escreva o e-mail de login dele.');return;}
-      var p={codigo:cod,parceiro:nome,parceiro_email:pemail,painel_parceiro:ppainel,desconto_pct:desc,comissao_pct:com,comissao_pct_meta:comm==null?'':comm,meta_semestre:meta==null?'':meta,planos:planos,
+      var pemb=!!(document.getElementById('parc-emb')||{}).checked,pcred=val('parc-cred');
+      if(pemb&&!pemail){diga('Para o parceiro ser embaixador, escreva o e-mail de login dele.');return;}
+      if(pcred&&(pcred.length<3||pcred.length>60)){diga('O crédito precisa ter de 3 a 60 caracteres.');return;}
+      var p={codigo:cod,parceiro:nome,parceiro_email:pemail,painel_parceiro:ppainel,embaixador:pemb,embaixador_credito:pcred,desconto_pct:desc,comissao_pct:com,comissao_pct_meta:comm==null?'':comm,meta_semestre:meta==null?'':meta,planos:planos,
         ativo:!!(document.getElementById('parc-ativo')||{}).checked,valido_ate:ate?ate+'T23:59:59-03:00':'',notas:val('parc-notas')};
       var client=getSupabaseClient();if(!client){diga('Sem conexão com o servidor.');return;}
       b.disabled=true;diga('Salvando…');
@@ -25655,6 +25690,215 @@ function renderMinhaParceria(){
   pc.innerHTML=(d.cupons||[]).map(function(c){return minhaParceriaCupomHTML(c,d.vendas||[]);}).join('')
     +'<div style="font-size:.74rem;color:var(--t3);line-height:1.6;margin-top:.2rem">Como funciona: cada inscrição paga com o seu cupom entra aqui. Inscrição com menos de 7 dias ainda está no prazo de arrependimento do aluno; a comissão dela fica valendo depois disso. Inscrição estornada sai da conta. A comissão é paga mês a mês, conforme o combinado com a Endodirect. Por privacidade, nome e e-mail dos alunos não aparecem.</div>';
 }
+// ── EMBAIXADOR ENDODIRECT (23/11/2026) ── Professor: "como embaixador ... ter algum tipo de acesso na plataforma
+// ... fazer propagandas de congressos ... no mural de avisos"; "Esse selo de embaixador Endodirect no perfil dele seria
+// na nossa plataforma, certo?". Liga pela chave `embaixador` do cupom (Parcerias). O embaixador ganha o selo, o
+// menu "Congressos" (só congressos; o banco confere quem publica, limita a 2 por semana, exige https e tira o
+// evento do mural no dia seguinte ao fim) e quem entra pelo link dele ganha degustação de 14 dias.
+var meuEmbaixador=null,congressosMural=[];
+function hojeBR(agora){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(agora||Date.now()));}catch(e){return new Date(agora||Date.now()).toISOString().slice(0,10);}}
+// "10/03/2027", "10 a 12/03/2027", "28/02 a 02/03/2027", "30/12/2027 a 02/01/2028"
+function congressoPeriodo(ini,fim){
+  var a=String(ini||'').slice(0,10).split('-'),b=String(fim||ini||'').slice(0,10).split('-');
+  if(a.length<3)return '';if(b.length<3)b=a;
+  var da=a[2]+'/'+a[1],db=b[2]+'/'+b[1];
+  if(a.join('-')===b.join('-'))return da+'/'+a[0];
+  if(a[0]!==b[0])return da+'/'+a[0]+' a '+db+'/'+b[0];
+  if(a[1]!==b[1])return da+' a '+db+'/'+b[0];
+  return a[2]+' a '+db+'/'+b[0];
+}
+function linkCurto(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return String(u||'').slice(0,40);}}
+function congressoParaMural(c,agora){
+  if(!c||String(c.titulo||'').trim().length<3||!c.inicio)return null;
+  var fim=String(c.fim||c.inicio).slice(0,10);if(fim<hojeBR(agora))return null; // já acabou
+  var local=String(c.local||'').trim(),txt=String(c.texto||'').trim();
+  return {tipo:'congresso',titulo:String(c.titulo).trim(),texto:(local?'📍 '+local:'')+(local&&txt?'\n':'')+txt,link:avisoLinkSeguro(c.link),
+    at:Date.parse(c.criado_em)||0,quando:congressoPeriodo(c.inicio,c.fim),inicio:String(c.inicio).slice(0,10),credito:String(c.credito||'').trim(),congresso:true};
+}
+function carregaCongressosMural(){
+  var client=getSupabaseClient();if(!client||!currentUser)return Promise.resolve([]);
+  return Promise.resolve(client.rpc('endodirect_congressos_mural')).then(function(r){
+    if(r&&!r.error&&Array.isArray(r.data)){congressosMural=r.data;try{renderDashAvisos();}catch(e){}}
+    return congressosMural;
+  }).catch(function(){return congressosMural;});
+}
+function aplicaSeloEmbaixador(){
+  var s=document.getElementById('tb-selo'),l=document.getElementById('tb-usub-linha');
+  if(s)s.style.display=meuEmbaixador?'':'none';
+  if(l)l.classList.toggle('com-selo',!!meuEmbaixador);
+}
+function carregaEmbaixador(){
+  var b=document.getElementById('sb-congressos'),client=getSupabaseClient();
+  if(!client||!currentUser){meuEmbaixador=null;if(b)b.style.display='none';aplicaSeloEmbaixador();return Promise.resolve(null);}
+  return Promise.resolve(client.rpc('endodirect_meu_embaixador')).then(function(r){
+    if(r&&r.error)return meuEmbaixador;
+    meuEmbaixador=(r&&r.data&&r.data.codigo)?r.data:null;
+    if(b)b.style.display=meuEmbaixador?'':'none';
+    aplicaSeloEmbaixador();
+    var pn=document.getElementById('panel-congressos');if(pn&&pn.classList.contains('on'))renderMeusCongressos();
+    var pp=document.getElementById('panel-perfil');if(pp&&pp.classList.contains('on'))try{renderPerfil();}catch(e){}
+    return meuEmbaixador;
+  }).catch(function(){return meuEmbaixador;});
+}
+// Conta em degustação que entrou pelo link de um embaixador: 14 dias. Só enquanto os 7 dias normais ainda não
+// acabaram (não reabre degustação vencida) e uma vez só.
+function aplicaDegustacaoDoLink(){
+  if(!isDegustacao()||acessosPendentes())return;
+  var c=ckCupomLink();if(!c||(degTrials&&degTrials.__dias))return;
+  if(Date.now()-degStart()>=DEG_DIAS*86400000)return;
+  var client=getSupabaseClient();if(!client)return;
+  Promise.resolve(client.rpc('endodirect_cupom_publico',{p_codigo:c})).then(function(r){
+    var i=r&&!r.error&&r.data,d=i?parseInt(i.degustacao_dias,10):0;
+    if(!(d>DEG_DIAS&&d<=14)||!isDegustacao())return;
+    if(!degTrials||typeof degTrials!=='object')degTrials={};
+    if(degTrials.__dias)return;
+    degTrials.__dias=d;degTrials.__cupom=String(i.codigo||c);
+    try{lsSet('deg_trials',degTrials);queueRemoteStateSave();}catch(e){}
+    try{renderDegustacaoBar();}catch(e){}
+    try{markLockedNavItems();}catch(e){}
+    try{notify('🎁 Convite de embaixador: a sua degustação gratuita vai até '+d+' dias.','ok');}catch(e){}
+  }).catch(function(){});
+}
+// Painel "Congressos" do embaixador
+var meusCongr={lista:null,erro:'',editando:null};
+function abrirMeusCongressos(){renderMeusCongressos();ligaMeusCongressos();carregaEmbaixador();carregaMeusCongressos();}
+function carregaMeusCongressos(){
+  var client=getSupabaseClient();if(!client)return;
+  Promise.resolve(client.rpc('endodirect_meus_congressos')).then(function(r){
+    if(r&&r.error){meusCongr.erro='Não foi possível carregar os seus congressos agora.';}
+    else{meusCongr.erro='';meusCongr.lista=Array.isArray(r&&r.data)?r.data:[];}
+    var pn=document.getElementById('panel-congressos');if(pn&&pn.classList.contains('on'))renderMeusCongressos();
+  }).catch(function(){meusCongr.erro='Não foi possível carregar os seus congressos agora.';});
+}
+function congressoSituacao(c,hoje){
+  if(c.oculto)return {t:'Retirado do mural',cor:'var(--t3)',bg:'rgba(148,163,184,.15)'};
+  if(String(c.fim).slice(0,10)<hoje)return {t:'Encerrado',cor:'var(--t3)',bg:'rgba(148,163,184,.15)'};
+  return {t:'No mural',cor:'#4ade80',bg:'rgba(74,222,128,.15)'};
+}
+function renderMeusCongressos(){
+  var pc=document.getElementById('congressos-pc');if(!pc)return;
+  if(!meuEmbaixador){pc.innerHTML='<div class="empty">Esta área é dos embaixadores do Endodirect.</div>';return;}
+  var ed=meusCongr.editando,hoje=hojeBR();
+  var v=function(k){return esc(ed&&ed[k]!=null?String(ed[k]).slice(0,k==='inicio'||k==='fim'?10:600):'');};
+  var regras='<div class="card" style="margin-bottom:1rem;font-size:.8rem;color:var(--t2);line-height:1.6"><div style="font-weight:800;color:var(--tx);margin-bottom:.3rem">🏅 '+esc(meuEmbaixador.credito)+'</div>'
+    +'O congresso aparece no <b>mural de avisos</b> de todos os alunos, com o crédito "Divulgação: '+esc(meuEmbaixador.credito)+'", e sai sozinho no dia seguinte ao fim do evento. '
+    +'Só eventos científicos (congressos, jornadas, simpósios, cursos), sem divulgação de produto ou medicamento. Até 2 publicações por semana. O Endodirect pode editar ou retirar qualquer publicação.</div>';
+  var form='<div class="card" style="margin-bottom:1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">'+(ed&&ed.id?'✏️ Editar congresso':'📅 Novo congresso')+'</div>'
+    +'<div class="fld2"><label>Nome do evento</label><input type="text" id="cg-titulo" maxlength="140" placeholder="Ex.: Congresso Brasileiro de Endocrinologia 2027" value="'+v('titulo')+'"></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Início</label><input type="date" id="cg-ini" value="'+v('inicio')+'" min="'+hoje+'"></div>'
+    +'<div class="fld2" style="margin:0"><label>Fim</label><input type="date" id="cg-fim" value="'+v('fim')+'" min="'+hoje+'"></div></div>'
+    +'<div class="fld2"><label>Local (opcional)</label><input type="text" id="cg-local" maxlength="120" placeholder="Ex.: São Paulo (SP) ou Online" value="'+v('local')+'"></div>'
+    +'<div class="fld2"><label>Link de inscrição ou do site (opcional)</label><input type="url" id="cg-link" maxlength="500" placeholder="https://…" value="'+v('link')+'"></div>'
+    +'<div class="fld2"><label>Descrição curta (opcional)</label><textarea id="cg-texto" rows="3" maxlength="600" placeholder="Temas, palestrantes, prazo de inscrição com desconto…">'+v('texto')+'</textarea></div>'
+    +'<div class="upload-status" id="cg-status"></div>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-cg-salvar">'+(ed&&ed.id?'💾 Salvar':'📌 Publicar no mural')+'</button>'
+    +(ed&&ed.id?'<button class="btn btn-ghost" id="btn-cg-cancelar">Cancelar</button>':'')+'</div></div>';
+  var l=meusCongr.lista;
+  var lista=l==null?'<div class="empty">'+(meusCongr.erro?esc(meusCongr.erro):'Carregando…')+'</div>'
+    :(!l.length?'<div class="empty">Nenhum congresso publicado ainda.</div>':l.map(function(c){
+      var s=congressoSituacao(c,hoje),ativo=!c.oculto&&String(c.fim).slice(0,10)>=hoje;
+      return '<div class="card" style="margin-bottom:.55rem;display:flex;gap:.75rem;align-items:flex-start">'
+        +'<div style="font-size:1.2rem">📅</div><div style="flex:1;min-width:0">'
+        +'<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><span style="font-size:.66rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em">'+esc(congressoPeriodo(c.inicio,c.fim))+'</span>'
+        +'<span style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .45rem;border-radius:999px;background:'+s.bg+';color:'+s.cor+'">'+esc(s.t)+'</span></div>'
+        +'<div style="font-size:.9rem;font-weight:700;color:var(--tx);margin:.15rem 0">'+esc(c.titulo)+'</div>'
+        +(c.local?'<div style="font-size:.76rem;color:var(--t2)">📍 '+esc(c.local)+'</div>':'')
+        +(c.link?'<div style="font-size:.76rem;margin-top:.15rem;overflow-wrap:anywhere"><a href="'+esc(avisoLinkSeguro(c.link)||'#')+'" target="_blank" rel="noopener" style="color:#60a5fa">🔗 '+esc(linkCurto(c.link))+'</a></div>':'')
+        +'</div>'+(ativo?'<div style="display:flex;gap:.35rem;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end"><button class="btn btn-outline btn-sm" data-cg-edit="'+esc(c.id)+'">✏️ Editar</button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" data-cg-tirar="'+esc(c.id)+'">Retirar</button></div>':'')+'</div>';
+    }).join(''));
+  pc.innerHTML=regras+form+'<div class="sec-h"><span class="sec-title">Seus congressos</span></div>'+lista;
+}
+function ligaMeusCongressos(){
+  var pc=document.getElementById('congressos-pc');if(!pc||pc.__ligado)return;pc.__ligado=true;
+  var val=function(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';};
+  pc.addEventListener('click',function(ev){
+    var b=ev.target.closest('button');if(!b||!pc.contains(b))return;
+    var client=getSupabaseClient();
+    if(b.id==='btn-cg-cancelar'){meusCongr.editando=null;renderMeusCongressos();return;}
+    if(b.hasAttribute('data-cg-edit')){var id=b.getAttribute('data-cg-edit');meusCongr.editando=((meusCongr.lista||[]).filter(function(x){return x.id===id;})[0])||null;renderMeusCongressos();try{window.scrollTo(0,0);}catch(e){}return;}
+    if(b.hasAttribute('data-cg-tirar')){
+      if(!client||!window.confirm('Retirar este congresso do mural?'))return;
+      b.disabled=true;
+      Promise.resolve(client.rpc('endodirect_congresso_ocultar',{p_id:b.getAttribute('data-cg-tirar'),p_oculto:true})).then(function(r){
+        if(r&&r.error){b.disabled=false;notify('Não foi possível retirar: '+(r.error.message||'erro')+'.','err');return;}
+        notify('Congresso retirado do mural. ✓','ok');carregaMeusCongressos();carregaCongressosMural();
+      }).catch(function(){b.disabled=false;});
+      return;
+    }
+    if(b.id==='btn-cg-salvar'){
+      var st=document.getElementById('cg-status'),diga=function(t){if(st)st.textContent=t;};
+      var titulo=val('cg-titulo'),ini=val('cg-ini'),fim=val('cg-fim')||ini,link=val('cg-link'),hoje=hojeBR();
+      if(titulo.length<3){diga('Escreva o nome do evento.');return;}
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(ini)||!/^\d{4}-\d{2}-\d{2}$/.test(fim)){diga('Informe as datas de início e de fim.');return;}
+      if(fim<ini){diga('O fim não pode ser antes do início.');return;}
+      if(fim<hoje){diga('Este evento já terminou.');return;}
+      if(link&&!/^https:\/\/[^\s"'<>]+$/i.test(link)){diga('O link precisa começar com https://');return;}
+      if(!client){diga('Sem conexão com o servidor.');return;}
+      var p={titulo:titulo,inicio:ini,fim:fim,local:val('cg-local'),link:link,texto:val('cg-texto')};
+      if(meusCongr.editando&&meusCongr.editando.id)p.id=meusCongr.editando.id;
+      b.disabled=true;diga('Publicando…');
+      Promise.resolve(client.rpc('endodirect_congresso_salvar',{p:p})).then(function(r){
+        b.disabled=false;
+        if(r&&r.error){diga(String(r.error.message||'Não foi possível publicar.'));return;}
+        meusCongr.editando=null;notify(p.id?'Congresso atualizado. ✓':'Congresso publicado no mural. ✓','ok');
+        renderMeusCongressos();carregaMeusCongressos();carregaCongressosMural();
+      }).catch(function(e){b.disabled=false;diga('Não foi possível publicar: '+((e&&e.message)||'erro')+'.');});
+    }
+  });
+}
+// Professor: congressos dos embaixadores no "Avisos aos alunos", com aviso de publicação nova no menu.
+var admCongr={dados:null,carregando:false,at:0,vistoAntes:0};
+function admCongrVisto(){var v=+lsGet('adm_congr_visto')||0;return v;}
+function admCongrNovos(){var v=admCongrVisto();return (admCongr.dados||[]).filter(function(c){return !c.oculto&&(Date.parse(c.criado_em)||0)>v;}).length;}
+function admCongrBadge(){
+  var el=document.getElementById('adm-congr-badge');if(!el)return;
+  var n=admCurrentSec==='avisos'?0:admCongrNovos();
+  el.style.display=n?'':'none';el.textContent=n?'('+n+' novo'+(n>1?'s':'')+')':'';
+}
+function admCongrAbriu(){admCongr.vistoAntes=admCongrVisto();try{lsSet('adm_congr_visto',Date.now());}catch(e){}admCongrBadge();}
+function carregaCongressosAdmin(){
+  var client=getSupabaseClient();if(!client||!isAdminUser())return;
+  admCongr.carregando=true;
+  Promise.resolve(client.rpc('endodirect_congressos_admin')).then(function(r){
+    admCongr.carregando=false;admCongr.at=Date.now();
+    if(r&&!r.error&&Array.isArray(r.data))admCongr.dados=r.data;
+    admCongrBadge();
+    if(admCurrentSec==='avisos')renderAdmSec('avisos');
+  }).catch(function(){admCongr.carregando=false;admCongr.at=Date.now();});
+}
+function admCongrHTML(){
+  var l=admCongr.dados;if(!l||!l.length)return '';
+  var hoje=hojeBR();
+  return '<div class="card" style="margin-bottom:1.1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.3rem">📅 Congressos dos embaixadores</div>'
+    +'<div style="font-size:.74rem;color:var(--t3);margin-bottom:.7rem;line-height:1.5">Publicados pelos embaixadores no menu "Congressos". Entram no mural na hora e saem sozinhos no dia seguinte ao fim do evento. O senhor pode retirar ou recolocar.</div>'
+    +l.map(function(c){
+      var s=congressoSituacao(c,hoje),novo=(Date.parse(c.criado_em)||0)>admCongr.vistoAntes&&!c.oculto;
+      var podeVoltar=c.oculto&&String(c.fim).slice(0,10)>=hoje;
+      return '<div style="display:flex;gap:.6rem;align-items:flex-start;padding:.55rem 0;border-top:1px solid var(--bd)">'
+        +'<div style="flex:1;min-width:0"><div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;font-size:.66rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em">'
+        +'<span>'+esc(congressoPeriodo(c.inicio,c.fim))+'</span><span style="padding:.1rem .45rem;border-radius:999px;background:'+s.bg+';color:'+s.cor+'">'+esc(s.t)+'</span>'+(novo?'<span class="dav-novo">Novo</span>':'')+'</div>'
+        +'<div style="font-size:.88rem;font-weight:700;color:var(--tx);margin:.12rem 0">'+esc(c.titulo)+'</div>'
+        +'<div style="font-size:.74rem;color:var(--t2)">'+esc([c.local,c.credito+' ('+(c.autor_email||'')+')'].filter(Boolean).join(' · '))+'</div>'
+        +(c.texto?'<div style="font-size:.74rem;color:var(--t2);white-space:pre-wrap;margin-top:.15rem">'+esc(c.texto)+'</div>':'')
+        +(c.link?'<div style="font-size:.76rem;margin-top:.15rem;overflow-wrap:anywhere"><a href="'+esc(avisoLinkSeguro(c.link)||'#')+'" target="_blank" rel="noopener" style="color:#60a5fa">🔗 '+esc(linkCurto(c.link))+'</a></div>':'')
+        +'</div>'
+        +(!c.oculto&&s.t==='No mural'?'<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red);flex-shrink:0" data-congr-tirar="'+esc(c.id)+'">Retirar</button>'
+          :(podeVoltar?'<button class="btn btn-outline btn-sm" style="flex-shrink:0" data-congr-voltar="'+esc(c.id)+'">Recolocar</button>':''))
+        +'</div>';
+    }).join('')+'</div>';
+}
+function bindAdmCongr(){
+  var client=getSupabaseClient();
+  document.querySelectorAll('[data-congr-tirar],[data-congr-voltar]').forEach(function(b){b.addEventListener('click',function(){
+    var tirar=b.hasAttribute('data-congr-tirar'),id=b.getAttribute(tirar?'data-congr-tirar':'data-congr-voltar');
+    if(!client||(tirar&&!window.confirm('Retirar este congresso do mural?')))return;
+    b.disabled=true;
+    Promise.resolve(client.rpc('endodirect_congresso_ocultar',{p_id:id,p_oculto:tirar})).then(function(r){
+      if(r&&r.error){b.disabled=false;notify('Não foi possível: '+(r.error.message||'erro')+'.','err');return;}
+      notify(tirar?'Congresso retirado do mural. ✓':'Congresso de volta ao mural. ✓','ok');carregaCongressosAdmin();
+    }).catch(function(){b.disabled=false;});
+  });});
+}
 function admAvisosAlunosHTML(){
   var ed=admAvisoEditId?(avisosAlunos||[]).filter(function(a){return a&&a.id===admAvisoEditId;})[0]:null;
   var hoje0=new Date();hoje0.setHours(0,0,0,0);
@@ -25682,11 +25926,11 @@ function admAvisosAlunosHTML(){
       +'</div><div style="display:flex;gap:.35rem;flex-shrink:0"><button class="btn btn-outline btn-sm" data-adm-aviso-edit="'+esc(a.id)+'">✏️ Editar</button>'
       +'<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" data-adm-aviso-del="'+esc(a.id)+'">🗑 Excluir</button></div></div>';
   }).join(''):'<div class="empty">Nenhum aviso publicado. Escreva o primeiro acima.</div>';
-  var autos=avisosDoMural().filter(function(x){return !x.manual;});
+  var autos=avisosDoMural().filter(function(x){return !x.manual&&!x.congresso;});
   var nota='<div style="font-size:.74rem;color:var(--t3);margin:.2rem 0 .9rem;line-height:1.5">Além destes avisos, o mural do Dashboard mostra <b>sozinho</b> as videoaulas e as aulas da Educação Médica Continuada dos últimos '+AVISOS_AUTO_DIAS+' dias'
     +(autos.length?' (hoje: '+autos.length+' — '+esc(autos.slice(0,3).map(function(x){return x.titulo;}).join('; '))+(autos.length>3?'…':'')+')':' (hoje: nenhuma)')+'.</div>';
   return '<div class="adm-ph"><h1>📌 Avisos aos alunos</h1></div>'
-    +'<div class="adm-pc">'+form+nota+'<div class="sec-h"><span class="sec-title">Publicados ('+lista.length+')</span></div>'+rows+'</div>';
+    +'<div class="adm-pc">'+admCongrHTML()+form+nota+'<div class="sec-h"><span class="sec-title">Publicados ('+lista.length+')</span></div>'+rows+'</div>';
 }
 function persistAvisosAlunos(){try{lsSet('avisos_alunos',avisosAlunos);}catch(e){}try{renderDashAvisos();}catch(e){}return queueRemoteStateSave(true);}
 function bindAdmAvisosAlunos(){
@@ -27982,7 +28226,7 @@ function renderPerfil(){
     +(_planK?'<button class="btn btn-outline" id="btn-pf-cancel-sub">Cancelar assinatura</button>':'')
     +'</div>'+(podeExcluirConta()?excluirContaCardHTML():'')+'</div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
-    +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div><div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
+    +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div>'+(meuEmbaixador?'<div style="margin-top:.35rem"><span class="tag" style="background:rgba(234,179,8,.15);color:#eab308;font-weight:700">🏅 Embaixador Endodirect</span></div>':'')+'<div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
     +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"></div>'+assinaturaCard+qdCard+nlCard
       // Feedback espontâneo também no Perfil (17/11/2026; saiu do topo). O convite automático (+30 dias) segue.
       +'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sua opinião</span></div><p style="font-size:.78rem;color:var(--t2);margin:0 0 .7rem">Elogios, sugestões e críticas sobre a plataforma vão direto ao professor.</p><button type="button" class="btn btn-outline btn-sm" id="perfil-feedback">Enviar feedback</button></div>');

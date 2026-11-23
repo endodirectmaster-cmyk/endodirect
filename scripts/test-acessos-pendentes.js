@@ -104,7 +104,7 @@ function caixa(extra) {
     corpo('acessosPendentes'), corpo('planoAindaNaoConfirmado'), corpo('acessosRetentarSePendente'), corpo('telaDeCompraAberta'),
     corpo('reavaliarPainelAtual'), corpo('definirAcessos'), corpo('acessosGuardados'), corpo('blockIfDegustacao'),
     corpo('isAdminUser'), corpo('hasScope'), corpo('isDegustacao'), corpo('currentPlanKey'), corpo('planRank'),
-    corpo('trialUsed'), corpo('trialLeft'), corpo('degStart'), corpo('degDiasRestantes'), corpo('degExpired'),
+    corpo('trialUsed'), corpo('trialLeft'), corpo('degStart'), corpo('degDias'), corpo('degDiasRestantes'), corpo('degExpired'),
     corpo('muralDegDiasRestantes'), corpo('muralTrialActive'), corpo('consumeTrial'), corpo('canSeePanel'),
     corpo('homePanel'), corpo('maybeTrialModal'), corpo('degHash'), corpo('provasPool'),
   ].join('\n'), c);
