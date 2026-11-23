@@ -2414,5 +2414,17 @@ try {
   fail('regressão do login com Google no app do iPhone falhou (index.html, app-ios/):\n' + out);
 }
 
+// 🧨 NOME DO PRESCRITOR NA MEMED (23/11/2026). Em produção, o POST de um
+//     prescritor já cadastrado falha e o backend só buscava o token: um nome
+//     corrigido depois do 1º cadastro nunca chegava à Memed (e é ele que sai na
+//     receita). Agora o backend manda PATCH de nome/sobrenome quando mudou.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-memed-prescritor-nome.js')], { stdio: 'pipe' });
+  ok('Memed: nome do prescritor atualizado quando muda (PATCH só do nome, sem travar a prescrição, log sem dado do médico)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do nome do prescritor na Memed (api/memed/token.js, prescSig no index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

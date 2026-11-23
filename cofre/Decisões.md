@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-22
+atualizado: 2026-11-23
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-22
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **✏️ SUPORTE: NOME DO ALUNO E NOME DO PRESCRITOR NA MEMED (2026-11-23, v476).** Um médico pediu, pelo Suporte, a correção do nome (veio do Google escrito errado) e não achou os protocolos da conta Memed dele ao prescrever pela plataforma. Nome corrigido em `raw_user_meta_data.nome` (o Google regrava `name` a cada login) e as 4 funções do painel/e-mails passaram a preferir `nome`. O backend da Memed agora atualiza nome/sobrenome do prescritor já cadastrado (PATCH) quando o nome muda. Protocolos: o médico sincroniza a conta Memed dele pelo ícone da Memed no módulo (e-mail e senha da Memed). Ver [[Dados e Supabase]] e [[Integrações]].
 - **🔗 TRAJETÓRIA DO PESO → CALCULADORA DA MAYO, PILOTO DO PROFESSOR (2026-11-23).** Professor: "Aproveitar os dados inseridos da trajetória do peso e usar automaticamente na calculadora de reganho da Mayo. Deixa um botão que leva aos resultados já calculados"; "deixa por enquanto apenas no painel do professor". Seção 4 da trajetória monta o link com os valores do paciente; o site dos autores ainda não lê os valores pelo link (pedido ao Dr. Romanos em rascunho de e-mail). Ver [[Calculadoras]].
 - **📈 TRAJETÓRIA DO PESO PUBLICADA SÓ PARA MÉDICOS (2026-11-23).** Professor: "pode liberar também para o painel dos alunos, tendo a atenção especial de deixar apenas liberado para médicos, que são os prescritores, não liberar para alunos". Sai o piloto (`soProfessor`); fica `soMedico` (perfis com CRM). Ver [[Calculadoras]].
 - **🔁 METRICOOL: SINCRONIA COM A CONVERSA DO INSTAGRAM POR ARQUIVO NO DRIVE (2026-11-22, noite).** Professor: "vamos nos comunicar por um arquivo no Google Drive", sem ele repassar recados. Regras em [[Convenções de Trabalho]]: ler o arquivo e rodar getScheduledPosts antes de qualquer mudança no Metricool; registrar cada mudança no REGISTRO; o Claude Code só cuida do story das 18h; pedidos com "PEDIDO PARA O COWORK:". O arquivo virou o Google Docs "SYNC Metricool endodirect" (o .md não é editável pelos conectores daqui). O professor incluiu Google Drive e Google Docs nos conectores da tarefa diária na mesma noite.

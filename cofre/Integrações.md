@@ -1,6 +1,6 @@
 ---
 tags: [cofre, integracoes]
-atualizado: 2026-11-20
+atualizado: 2026-11-23
 ---
 
 # Integrações
@@ -69,6 +69,22 @@ Chat IA, simulador de casos, prescrição (treino) e o radar (`summarizeWithAI`)
   - No código: `api/memed/token.js` **deriva** o SDK do ambiente do `MEMED_API_BASE` (se não for `integrations.api.memed`, usa o de produção), então **não precisa** setar `MEMED_SCRIPT` na Vercel — mas ele sobrescreve se definido. O loader de produção (`integration.js`) injeta o `MdSinapsePrescricao` de forma **assíncrona** (o front faz poll por ele).
 - **Dados/LGPD (#394):** dados do **paciente** (CPF/e‑mail/telefone) vão **direto p/ a Memed** (client-side `setPaciente`) — não passam pelo nosso backend nem ficam no banco. O `presc_emitidas` (histórico de emissões, sincronizado por usuário com RLS) guarda **só `{ts, rxId}`** (sem PII do paciente; `prescScrubLog` limpa legados no boot). `privacidade.html` cita a Memed como operador e descreve esse fluxo. **Pendência: DPA com a Memed** (lado do usuário). Ver [[Decisões]].
 - Doc: https://doc.memed.com.br/docs/primeiros-passos · URLs por ambiente: doc.memed.com.br → Front-end → Configurações → URLs
+- **Nome do prescritor (23/11/2026, v476):** em produção o POST de um prescritor já cadastrado falha ("já
+  cadastrado") e o backend só buscava o token pelo GET. Um nome corrigido depois do 1º cadastro nunca chegava à
+  Memed, e é ele que sai impresso na receita (caso real: o nome do Google de um aluno veio escrito errado). Agora
+  `api/memed/token.js` compara o nome do GET com o enviado e, se mudou, manda **PATCH** `/v1/sinapse-prescricao/
+  usuarios/<external_id>` só com `nome`/`sobrenome` (CPF e CRM ficam como a Memed validou). Falha no PATCH não
+  impede abrir a prescrição; o log `[memed-patch]` leva só status e título do erro. O formato do PATCH saiu do
+  padrão JSON:API da Memed (a doc não abre daqui: o DNS de doc.memed.com.br é bloqueado), então **confira nos logs
+  da Vercel** o primeiro `[memed-patch] status=` em produção. No front, o nome entra na assinatura do token
+  pré-aquecido (`prescSig`), senão o nome corrigido reaproveitava o token antigo. Teste:
+  `scripts/test-memed-prescritor-nome.js`.
+- **Protocolos da conta Memed do próprio médico (23/11/2026):** o prescritor que a plataforma cadastra é outro
+  usuário Memed (external_id = id do Supabase), então os protocolos da conta Memed pessoal não aparecem sozinhos.
+  Segundo a central de ajuda da Memed ("Posso sincronizar a minha conta Memed ao prontuário?"), o médico sincroniza
+  pelo **ícone da Memed no cabeçalho do módulo de prescrição**, entrando com o e-mail e a senha da conta Memed dele:
+  passam **protocolos e posologias**; não passam histórico de receitas, personalização do receituário nem pacientes.
+  Não conferido na tela (o módulo não abre daqui); se o ícone não aparecer, o caminho é o suporte da Memed.
 
 ## Podcasts (Anchor / Spotify for Podcasters)
 - **Feed RSS do podcast:** `https://anchor.fm/s/6e257fc4/podcast/rss` (show "EndoDirect — Endocrinologia e Metabologia"). Áudio servido pelo Anchor/CloudFront. O campo "Feed RSS" no painel já vem pré-preenchido com ele (#310).
