@@ -171,6 +171,35 @@ const compra = (cupom, plano) => ({ plan: plano || 'gold', method: 'credit_card'
   ok(/data-asec="parcerias"/.test(HTML) && /client\.rpc\('endodirect_cupons_admin'\)/.test(HTML) && /client\.rpc\('endodirect_cupom_admin_salvar',\{p:p\}\)/.test(HTML), 'painel: Parcerias lista e salva pelos RPCs de professor');
   ok(/m\.__parcLigado=true/.test(HTML), 'painel: ouvinte de clique ligado uma vez só');
 
+  // (7) MINHA PARCERIA na conta do parceiro (professor, 23/11/2026: "na conta do [parceiro] também aparecer essa
+  // ferramenta de parceria para que ele possa acompanhar quantos alunos se inscreveram ... e ... a sua monetização")
+  ok(/<button class="sb-item" data-p="parceria" id="sb-parceria" style="display:none">/.test(HTML), 'parceiro: item "Minha parceria" nasce escondido');
+  ok(/client\.rpc\('endodirect_minhas_parcerias'\)/.test(HTML) && /b\.style\.display=minhaParc\.dados\?'':'none'/.test(HTML), 'parceiro: o item só aparece quando a RPC devolve cupom da própria conta');
+  ok(/try\{carregaMinhaParceria\(\);\}catch\(e\)\{\}/.test(HTML) && /if\(id==='parceria'\)abrirMinhaParceria\(\);/.test(HTML), 'parceiro: carrega no login e abre o painel');
+  ok(/if\(id==='parceria'\)return true;/.test(HTML), 'parceiro: acompanha as comissões mesmo sem plano ativo');
+  ok(/parceiro_email:pemail,painel_parceiro:ppainel/.test(HTML), 'professor: liga o login do parceiro e libera o quadro no formulário');
+  const fnsP = ['parcMes', 'parcMesNome', 'parcSemestre', 'parcPct', 'parcData', 'parcComissao', 'parcLink', 'ckBrl', 'minhaParceriaCupomHTML'].map((n) => { const mm = new RegExp('function ' + n + '\\([^)]*\\)\\{[\\s\\S]*?\\n\\}|function ' + n + '\\([^)]*\\)\\{[^\\n]*\\}').exec(HTML); return mm ? mm[0] : ''; });
+  ok(fnsP.every(Boolean), 'parceiro: funções do quadro encontradas (' + fnsP.map((x) => x ? 1 : 0).join('') + ')');
+  if (fnsP.every(Boolean)) {
+    const ctx = { esc: (s) => String(s).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch])) }; vm.createContext(ctx); vm.runInContext(fnsP.join('\n'), ctx);
+    const agora = Date.parse('2026-12-20T12:00:00-03:00');
+    const vendas = [
+      { codigo: 'ENDONEWS26', plano: 'gold', metodo: 'pix', valor_pago: 70380, valor_cheio: 82800, status: 'pago', pago_em: '2026-12-02T10:00:00-03:00' },
+      { codigo: 'ENDONEWS26', plano: 'gold', metodo: 'credit_card', valor_pago: 70380, valor_cheio: 82800, status: 'estornado', pago_em: '2026-12-03T10:00:00-03:00' },
+      { codigo: 'ENDONEWS26', plano: 'standard', metodo: 'boleto', valor_pago: 45900, valor_cheio: 54000, status: 'pago', pago_em: '2026-12-18T10:00:00-03:00' }
+    ];
+    const ativo = ctx.minhaParceriaCupomHTML({ codigo: 'ENDONEWS26', desconto_pct: 15, comissao_pct: 20, planos: ['gold', 'standard'], ativo: true }, vendas, agora);
+    ok(/ENDONEWS26/.test(ativo) && /\?cupom=ENDONEWS26/.test(ativo) && /data-mp-copia="ENDONEWS26"/.test(ativo), 'parceiro: vê o cupom e o link para copiar');
+    ok(/Inscrições confirmadas<\/div><div[^>]*>2</.test(ativo), 'parceiro: conta 2 inscrições confirmadas (o estorno fica fora)');
+    ok(ativo.indexOf('R$') >= 0 && ativo.indexOf('232,56') >= 0, 'parceiro: comissão total de R$ 232,56 (20% de 703,80 + 459,00)');
+    ok(!/Meta do semestre/.test(ativo) && !/Cupom ainda não ativado/.test(ativo), 'parceiro: sem meta configurada, sem barra; cupom ativo, sem aviso');
+    const inativo = ctx.minhaParceriaCupomHTML({ codigo: 'ENDONEWS26', desconto_pct: 15, comissao_pct: 20, planos: ['gold'], ativo: false }, [], agora);
+    ok(/Cupom ainda não ativado/.test(inativo) && /Nenhuma inscrição com o seu cupom ainda/.test(inativo), 'parceiro: cupom inativo avisa e mostra que não há inscrição');
+    const meta = ctx.minhaParceriaCupomHTML({ codigo: 'X26', desconto_pct: 10, comissao_pct: 20, comissao_pct_meta: 25, meta_semestre: 1, planos: ['gold'], ativo: true }, vendas.map((v) => Object.assign({}, v, { codigo: 'X26' })), agora);
+    ok(/Meta do semestre/.test(meta) && /2 de 1/.test(meta) && /Meta batida/.test(meta), 'parceiro: com meta, mostra o progresso do semestre');
+    ok(!/aluno@|e-mail do aluno|order_id|or_/.test(ativo + inativo + meta), 'parceiro: nada de dado de aluno nem id de pedido no quadro');
+  }
+
   console.log = consoleOriginal.log; console.error = consoleOriginal.error;
   if (falhas.length) { console.error('test-cupom-parceiro: ' + falhas.length + ' falha(s):\n- ' + falhas.join('\n- ')); process.exit(1); }
   console.log('ok: cupom de parceiro (desconto igual na tela e no servidor, venda registrada sem dado de aluno, recusas sem cobrar, webhook e estorno, comissão com meta)');

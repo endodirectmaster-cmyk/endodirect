@@ -59,8 +59,19 @@ cupom próprio + comissão sobre os alunos novos). Combinado de comissão sugeri
   por `order_id`.
 - **Painel → 🤝 Parcerias** (todos os admins): criar/editar cupom, link pronto para copiar, vendas do mês, semestre,
   meta, comissão a pagar (carência de 7 dias depois do pagamento, para cobrir o direito de arrependimento).
-- **Primeiro parceiro:** cupom `ENDONEWS` sugerido (15% de desconto, 20%/25%, meta 20/semestre), **criado inativo até o
-  professor fechar os números** com o parceiro. Teste: `scripts/test-cupom-parceiro.js`.
+- **Minha parceria (conta do parceiro, v482):** professor, 23/11: "na conta do [parceiro] também aparecer essa ferramenta
+  de parceria para que ele possa acompanhar quantos alunos se inscreveram através da indicação dele e ... a sua
+  monetização"; "Pode ligar pra ele também". No formulário do cupom: **login do parceiro** (`parceiro_email`) e
+  **"Mostrar o quadro na conta do parceiro"** (`painel_parceiro`). A conta dele ganha o item de menu
+  "🤝 Minha parceria" (escondido para todos os outros): cupom, link para copiar, inscrições confirmadas, mês, comissão
+  total, meta (se houver), tabela por mês e inscrições uma a uma. RPC `endodirect_minhas_parcerias()` (só
+  `authenticated`; acha o e-mail pela própria sessão; devolve só cupons ligados a ele e liberados; sem notas internas,
+  sem id de pedido, sem aluno). O painel abre mesmo sem plano ativo (comissão continua visível depois da cortesia).
+- **Primeiro parceiro (23/11/2026):** cupom **`ENDONEWS26`** (professor: "Deixa o nome do cupom ENDONEWS26, pois pode
+  ser que surjam outros nos próximos anos; deixa comissão de 20%"): 15% de desconto ao aluno (proposto), **comissão
+  fixa de 20%** (sem faixa de meta), quadro liberado na conta do parceiro (login institucional no domínio da
+  Endodirect, Gold de cortesia por 90 dias, `provider=manual`). **O cupom só passa a dar desconto quando o professor
+  ativar** (ação financeira). Teste: `scripts/test-cupom-parceiro.js`.
 
 ## Valores em env (centavos)
 - Mensais: `PAGARME_TIER_STANDARD_AMOUNT=6900`, `..._GOLD_AMOUNT=9900`, `..._PREMIUM_AMOUNT=13900`.
