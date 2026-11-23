@@ -390,17 +390,19 @@ ok(!/trajpeso|tpCarrega/.test(corpo('userStatePayload')), 'pacientes fora do app
 const iCalc = html.indexOf("  {id:'trajpeso',"), iImc = html.indexOf("  {id:'imc',name:'IMC'"), iPep = html.indexOf("  {id:'pep',");
 ok(iImc > 0 && iImc < iCalc && iCalc < iPep, 'na lista, logo depois do IMC (Obesidade)');
 ok(/\{id:'trajpeso',name:'Trajetória do peso no tratamento',area:'Obesidade',[\s\S]{0,800}render:function\(root\)\{tpRender\(root\);\}/.test(html), 'calculadora de tela própria em Obesidade');
-// Piloto só do professor (18/11/2026: "Essa calculadora ainda não publica. Deixa apenas no painel do professor").
-// Para publicar aos alunos: tirar o soProfessor e trocar esta verificação.
-ok(/soProfessor:true,/.test(html.slice(iCalc, iPep)), 'ainda é piloto: só o professor vê (soProfessor)');
+// Publicada para os médicos (23/11/2026: "pode liberar também para o painel dos alunos, tendo a atenção especial de
+// deixar apenas liberado para médicos, que são os prescritores, não liberar para alunos"). Foi piloto só do professor.
+const entTxt = html.slice(iCalc, iPep);
+ok(!/soProfessor:/.test(entTxt), 'publicada: não é mais piloto só do professor (sem soProfessor)');
 {
-  const ctx2 = vm.createContext({ admin: false, APP_LOJA: '' });
-  vm.runInContext('function isAdminUser(){return admin;}\n' + corpo('calcVisivel'), ctx2);
-  const ent = { id: 'trajpeso', soProfessor: /soProfessor:true,/.test(html.slice(iCalc, iPep)) };
-  ctx2.ent = ent;
-  ok(vm.runInContext('calcVisivel(ent)', ctx2) === false, 'o aluno não vê a calculadora (grade, busca e abrir por id passam por calcVisivel)');
-  ctx2.admin = true;
-  ok(vm.runInContext('calcVisivel(ent)', ctx2) === true, 'o professor vê a calculadora');
+  // as marcas reais da entrada, lidas do index.html
+  const ent = { id: 'trajpeso', soProfessor: /soProfessor:true,/.test(entTxt), soMedico: /soMedico:true,/.test(entTxt), foraDoAppIos: /foraDoAppIos:true,/.test(entTxt) };
+  const ctx2 = vm.createContext({ admin: false, perfil: '', APP_LOJA: '', ent });
+  vm.runInContext('function isAdminUser(){return admin;}\n' + corpo('prescProfileOk').replace('userPerfil()', 'perfil') + '\n' + corpo('calcVisivel'), ctx2);
+  const ve = (p, a, loja) => { ctx2.perfil = p; ctx2.admin = !!a; ctx2.APP_LOJA = loja || ''; return vm.runInContext('calcVisivel(ent)', ctx2); };
+  ok(!ve('Estudante') && !ve('') && !ve('Estudante', false, 'ios'), '🧨 estudante e conta sem perfil NÃO veem (site e app do iPhone)');
+  ok(ve('Residente') && ve('Endocrinologista') && ve('Outros') && ve('Endocrinologista', false, 'ios'), 'médicos (residente, endocrinologista, outros com CRM) veem, no site e no app');
+  ok(ve('', true), 'o professor vê');
 }
 // Só profissionais de saúde (professor, 19/11/2026: "a calculadora deve ser liberada apenas para os profissionais de
 // saúde. Usuários e estudantes não devem utilizar"): vale mesmo depois de tirar o soProfessor

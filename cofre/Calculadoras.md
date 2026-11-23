@@ -7,6 +7,12 @@ atualizado: 2026-11-21
 
 ## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
 
+> ✅ **PUBLICADA PARA OS MÉDICOS (23/11/2026, sw v473).** Professor: "pode liberar também para o painel dos alunos,
+> tendo a atenção especial de deixar apenas liberado para médicos, que são os prescritores, não liberar para
+> alunos". Saiu o `soProfessor`; fica o `soMedico` (perfis Residente, Endocrinologista e Outros, todos com CRM
+> obrigatório no cadastro; estudante e conta sem perfil não veem em lugar nenhum, no site e no app). A tela de
+> aceite do termo segue esperando o Bruno aprovar o texto (o parecer dele: dados só no aparelho = "muito sossegado").
+
 > 📅 **DATA DO PESO DIGITÁVEL + CALENDÁRIO; TELA CHEIA SEM O × DO SISTEMA NO IPHONE (21/11, sw v468).** Professor, com
 > captura do app: "No grafo em tela cheia, o X ficou sobreposto. E na questão das datas, no peso, deixa dentro do canto a
 > opção de digitar manualmente e um botão do calendáriozinho ao lado para inserir no calendário mesmo."
