@@ -14,8 +14,10 @@ Os IDs de pastas do Drive e de posts ficam na outra conversa: este repositório 
   semanais de stories, roteiros e montagem dos Reels.
 - **Claude Code (aqui):** a plataforma; a arte automática da Questão do Dia (gerada pelo painel do professor) e a
   tarefa diária que agenda no Metricool o story da Questão do Dia da plataforma às 18h, todo dia.
-- **Regra de sincronia (professor, 22/11):** toda vez que algo for agendado, alterado ou excluído no Metricool,
-  entregar ao professor um resumo em Markdown (data, hora, tipo, conteúdo, ID) para ele colar na outra conversa.
+- **Sincronia desde a noite de 22/11:** pelo Google Docs "SYNC Metricool endodirect" no Drive (regras em
+  [[Convenções de Trabalho]]): ler antes de mexer no Metricool, registrar depois, pedidos com
+  "PEDIDO PARA O COWORK:". O resumo em Markdown para o professor colar (regra anterior, de 22/11) só se o arquivo
+  não puder ser usado.
 
 ## Stories: divisão combinada em 22/11/2026 (vale desde 23/11)
 Resumo da conversa do Instagram que o professor colou às 18h10 de 22/11 (substitui o "modelo misto" de 20/11 e a

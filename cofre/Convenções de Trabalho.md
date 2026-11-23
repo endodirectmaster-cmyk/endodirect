@@ -1,9 +1,41 @@
 ---
 tags: [cofre, processo]
-atualizado: 2026-11-22
+atualizado: 2026-11-23
 ---
 
 # Convenções de Trabalho
+
+## 🔁 METRICOOL: SINCRONIA COM A CONVERSA DO INSTAGRAM (COWORK) PELO ARQUIVO NO DRIVE (23/11/2026)
+
+Professor, 22/11 à noite: "Combinado com a conversa do Instagram (Cowork): vamos nos comunicar por um arquivo no
+Google Drive", sem ele repassar recados. Vale para TODA sessão que mexer no Metricool:
+- **Arquivo:** Google Docs **"SYNC Metricool endodirect"**, na pasta "Endodirect – Instagram" do Drive do professor
+  (o professor citou o .md "SYNC_Metricool_endodirect.md", mas na mesma noite a conversa do Instagram o trocou por
+  esse Google Docs e mandou o .md para a lixeira). Ache pelo nome (Google Drive, search_files). O id não fica aqui
+  (repositório público); está no texto da tarefa diária.
+- **Regra 1:** ANTES de agendar, alterar ou excluir qualquer coisa no Metricool (inclusive na tarefa diária das 08h17,
+  antes de agendar a Questão do Dia), ler esse arquivo e rodar getScheduledPosts.
+- **Regra 2:** DEPOIS de qualquer mudança no Metricool, acrescentar uma linha no REGISTRO do arquivo (mais recente em
+  cima): data/hora, "Claude Code", o que fez, id e uuid. O resto do arquivo fica como está.
+- **Regra 3:** o Claude Code cuida SÓ do story da Questão do Dia às 18h. Nunca agendar nada às 9h, 13h e 19h05, nem
+  no feed (carrosséis, Reels): isso é do Cowork.
+- **Regra 4:** para pedir algo à conversa do Instagram, escrever no REGISTRO uma linha começando com
+  "PEDIDO PARA O COWORK:".
+- Substitui o "resumo em Markdown para o professor colar na outra conversa" (regra de 22/11), que só vale se o
+  arquivo não puder ser usado.
+- **Como escrever no REGISTRO:** o conector do Google Drive daqui só lê (não altera o conteúdo de arquivo que já
+  existe); quem escreve é o conector do **Google Docs**. Passos: `read_doc` (o JSON é grande e vem salvo em arquivo);
+  achar o primeiro parágrafo não vazio depois do que contém "REGISTRO (mais recente em cima)"; `update_doc` com
+  `insertText` nesse `startIndex`, texto `"- DD/MM/AAAA HHhMM — Claude Code — <o que fez> (id ..., uuid ...)\n"` e
+  `writeControl.requiredRevisionId` (a outra conversa pode estar escrevendo ao mesmo tempo). O comando python pronto
+  está no texto da tarefa diária.
+- **Tarefa diária (08h17):** lê o Docs e roda getScheduledPosts antes de agendar; registra depois. ⚠️ Em 23/11 ela
+  ainda roda SÓ com os conectores Metricool e Supabase: daqui não dá para acrescentar conectores a uma tarefa
+  (a tentativa criou uma tarefa sem nenhum conector, que ficou desativada). Até o professor incluir Google Drive e
+  Google Docs na tarefa pelo claude.ai, ela agenda normalmente e avisa no relato que não leu nem registrou; as
+  conferências agendadas nesta sessão escrevem a linha que faltar.
+- Na noite de 22/11 criei por engano um segundo Docs ("SYNC_Metricool_endodirect", com sublinhado) no mesmo minuto
+  em que a outra conversa criou o dela; o meu foi para a lixeira e as linhas foram para o dela.
 
 ## 💳 VERCEL NO PLANO PRO DESDE 22/11/2026
 
