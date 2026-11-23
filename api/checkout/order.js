@@ -32,6 +32,8 @@ const ANNUAL_DIAS = 365;
 // promocional (padrão R$540 = "Gold pelo preço do Standard"). As regras +
 // o limite de vagas (auto-desativa ao esgotar) ficam em lib/founder.js.
 const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, FOUNDER_PLAN, founderNoPrazo, ehFundador, countFounderAccesses } = require('../../lib/founder');
+// Cupons de PARCEIRO (desconto no anual + venda registrada para a comissão): lib/cupom-parceiro.js.
+const CUPOM = require('../../lib/cupom-parceiro');
 // Quem já tem o plano ativo não é cobrado de novo — ver lib/acesso-vigente.js.
 const { acessoVigente, mensagemJaAtivo } = require('../../lib/acesso-vigente');
 
@@ -113,8 +115,10 @@ module.exports = async function handler(req, res) {
   if (!cfg || !(cfg.amount > 0)) return json(res, 400, { ok: false, error: 'Plano invalido ou preco anual nao configurado.' });
 
   // Cupom Sócio-fundador: só vale para o Gold anual, e enquanto houver vaga.
+  // Cupom de parceiro: desconto % cadastrado no painel (lib/cupom-parceiro.js).
   let amount = cfg.amount;
   let founderApplied = false;
+  let parceiro = null;
   if (coupon) {
     if (coupon === FOUNDER_COUPON && planKey === FOUNDER_PLAN && FOUNDER_AMOUNT > 0) {
       // RENOVAÇÃO de quem já é fundador: "preço travado para sempre" vale fora do prazo, das
@@ -133,6 +137,13 @@ module.exports = async function handler(req, res) {
       amount = FOUNDER_AMOUNT; founderApplied = true;
     } else if (coupon === FOUNDER_COUPON && !founderNoPrazo()) {
       return json(res, 400, { ok: false, code: 'fundador_encerrado', error: 'A oferta de Sócio-fundador foi encerrada. Garanta o Gold no valor normal.' });
+    } else if (coupon !== FOUNDER_COUPON && CUPOM.codigoValido(coupon)) {
+      const lido = await CUPOM.buscarCupom(coupon);
+      // Banco fora: não cobra sem o desconto prometido; pede para tentar de novo.
+      if (lido.erro) return json(res, 503, { ok: false, error: 'Não foi possível conferir o cupom agora. Tente de novo em instantes.' });
+      if (!CUPOM.cupomVale(lido.cupom, planKey)) return json(res, 400, { ok: false, error: 'Cupom inválido, vencido ou não aplicável a este plano.' });
+      parceiro = lido.cupom;
+      amount = CUPOM.precoComCupom(cfg.amount, parceiro.desconto_pct);
     } else {
       return json(res, 400, { ok: false, error: 'Cupom inválido ou não aplicável a este plano.' });
     }
@@ -179,9 +190,10 @@ module.exports = async function handler(req, res) {
 
     const order = await pagarme('/orders', {
       customer_id: customer.id,
-      items: [{ code: 'endo-' + planKey + '-anual', amount: amount, description: 'Endodirect — ' + cfg.label + (founderApplied ? ' (Sócio-fundador)' : ''), quantity: 1 }],
+      items: [{ code: 'endo-' + planKey + '-anual', amount: amount, description: 'Endodirect — ' + cfg.label + (founderApplied ? ' (Sócio-fundador)' : (parceiro ? ' (cupom ' + parceiro.codigo + ')' : '')), quantity: 1 }],
       payments: [payment],
-      metadata: { scope: cfg.scope, plan: planKey, cycle: 'anual', coupon: founderApplied ? FOUNDER_COUPON : '' }
+      // valor_cheio: o webhook registra a venda do cupom com o preço sem desconto.
+      metadata: { scope: cfg.scope, plan: planKey, cycle: 'anual', coupon: founderApplied ? FOUNDER_COUPON : (parceiro ? parceiro.codigo : ''), valor_cheio: String(cfg.amount) }
     });
 
     const charge = (Array.isArray(order.charges) && order.charges[0]) || {};
@@ -216,11 +228,13 @@ module.exports = async function handler(req, res) {
       await upsertAcesso({ user_id: user.id, email: email, scope: cfg.scope, status: 'active', tipo: 'avulso',
         expires_at: new Date(Date.now() + ANNUAL_DIAS * 86400000).toISOString(),
         provider: 'pagarme', provider_customer_id: customer.id || null, provider_order_id: order.id || null,
-        notes: planKey + ':anual' + (founderApplied ? ':fundador' : ''), updated_at: new Date().toISOString() });
+        notes: planKey + ':anual' + (founderApplied ? ':fundador' : '') + (parceiro ? ':cupom:' + parceiro.codigo : ''), updated_at: new Date().toISOString() });
     } catch (e) {
       acesso = 'pendente';
       console.error('[order] cobranca aprovada e acesso nao gravado (o webhook libera) order=' + (order.id || '') + ' erro=' + ((e && e.message) || e));
     }
+    // Venda do cupom de parceiro (o webhook também grava; o pedido repetido é ignorado).
+    if (parceiro) await CUPOM.registrarVenda({ codigo: parceiro.codigo, plano: planKey, metodo: 'credit_card', valor_cheio: cfg.amount, valor_pago: amount, order_id: order.id });
     try { await sendSetPasswordEmail(email); } catch (e) {}
     return json(res, 200, { ok: true, method: 'credit_card', status: 'paid', order_id: order.id, acesso: acesso });
   } catch (e) {
