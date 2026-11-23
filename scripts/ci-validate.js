@@ -2426,5 +2426,15 @@ try {
   fail('regressão do nome do prescritor na Memed (api/memed/token.js, prescSig no index.html) falhou:\n' + out);
 }
 
+// 🧨 SÓCIO-FUNDADOR ENCERRA NA BLACK FRIDAY (30/11/2026 23h59). O cupom desliga sozinho
+//     na hora (FOUNDER_ATE em lib/founder.js), recusa sem cobrar e as faixas do site somem.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-fundador-prazo.js')], { stdio: 'pipe' });
+  ok('Sócio-fundador: encerra sozinho em 30/11 23h59, recusa sem cobrar, faixas com o prazo');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do prazo do Sócio-fundador (lib/founder.js, api/checkout/order.js, index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

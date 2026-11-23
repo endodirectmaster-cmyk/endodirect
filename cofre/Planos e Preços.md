@@ -1,6 +1,6 @@
 ---
 tags: [cofre, produto, precos]
-atualizado: 2026-10-05
+atualizado: 2026-11-23
 ---
 
 # Planos e Preços
@@ -16,6 +16,23 @@ atualizado: 2026-10-05
 - **Premium removido** (2026-06-11): não existe mais como pacote. Tirado de `config.js`, `subscribe.js`, `order.js`, do webhook (`TIERS`/heurística) e do sistema de tiers do `index.html` (`RANK`/`planRank`/labels). Gold é o tier máximo (rank 2); nenhum recurso exige tier 3. `PANEL_MIN_TIER={rx:2, presc:2}` (Prescrição exige Gold).
 
 ## Oferta de Sócio-fundador
+
+> ⏰ **ENCERRA NA BLACK FRIDAY: SEGUNDA, 30/11/2026, ÀS 23h59 (v480).** Professor, 23/11: "fechar o sócio fundador na
+> segunda, dia 30/11, e já anunciar isso no nosso site". Em 23/11 eram 44 fundadores (56 vagas sobrando). Motivo: cada
+> fundador novo trava R$ 540 para sempre; com a tabela de 2027 em estudo (Gold anual ~R$ 958,80), fechar antes poupa
+> dezembro. `lib/founder.js`: `FOUNDER_ATE` (padrão `2026-11-30T23:59:59-03:00`; env vazia = sem prazo) desliga o cupom
+> sozinho, mesmo com vaga; `founderStatus` devolve `ate` e `encerrada`; `order.js` responde 400
+> `fundador_encerrado` sem chamar o pagar.me. Avisos: barra roxa no topo da landing (`#lp-bf`, "Ver oferta" leva aos
+> planos), faixa "🔥 BLACK FRIDAY · Últimas vagas" nos planos da landing e na tela de planos dentro da plataforma (prazo
+> vindo do servidor; no último dia, "encerra hoje, às 23h59"). Tudo some sozinho depois do prazo; o selo do Gold na
+> tela de planos agora também depende da oferta aberta. Quem já é fundador mantém o preço (o acesso não passa por
+> aqui). Pedido de posts e stories da campanha à conversa do Instagram pelo Docs de sincronia. Teste:
+> `scripts/test-fundador-prazo.js`.
+> **Renovação do fundador garantida:** o prazo, as vagas e o desligamento valem só para quem ainda não é fundador. Quem
+> já tem o Gold marcado ":fundador" (ativo, inadimplente ou vencido; estornado não) renova a R$ 540 para sempre:
+> `ehFundador(email)` no `order.js` e, na tela, a RPC `endodirect_sou_fundador()` (só da própria conta) mostra o campo
+> com o cupom já preenchido e "Preço de Sócio-fundador garantido na sua renovação". As primeiras renovações são em
+> junho de 2027.
 - **"Gold pelo preço do Standard"**: Gold anual por **12× R$ 45 (R$ 540)**.
 - Cupom **`FUNDADOR`**, **100 vagas**, preço travado.
 - **Só no ciclo anual** (some no mensal); faixa/selo somem quando esgota.
