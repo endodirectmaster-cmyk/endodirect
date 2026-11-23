@@ -11990,13 +11990,17 @@ function ckEhFundadorCod(c){var f=ckFounder();return c==='FUNDADOR'||!!(f&&c===S
 function ckParcConfere(){
   var c=ckCouponVal();
   if(!c||ckEhFundadorCod(c)||!/^[A-Z0-9_-]{3,30}$/.test(c)){_ckParc={cod:c,info:null,estado:''};return;}
-  if(_ckParc.cod===c&&(_ckParc.estado==='ok'||_ckParc.estado==='invalido'||_ckParc.estado==='conferindo'))return;
+  if(_ckParc.cod===c&&(_ckParc.estado==='ok'||_ckParc.estado==='invalido'||_ckParc.estado==='primeira'||_ckParc.estado==='conferindo'))return;
   _ckParc={cod:c,info:null,estado:'conferindo'};clearTimeout(_ckParcT);
   _ckParcT=setTimeout(function(){
     var client=getSupabaseClient();if(!client){_ckParc.estado='erro';ckUpdateView();return;}
-    Promise.resolve(client.rpc('endodirect_cupom_publico',{p_codigo:c})).then(function(r){
+    // Cupom de parceiro só na PRIMEIRA compra (23/11/2026): a conta que já pagou vê o aviso antes de tentar pagar
+    // (o servidor confere de novo no pagamento).
+    Promise.all([client.rpc('endodirect_cupom_publico',{p_codigo:c}),client.rpc('endodirect_ja_assinei')]).then(function(rs){
+      var r=rs[0],ja=rs[1];
       if(_ckParc.cod!==c)return;
-      if(r&&r.error){_ckParc.estado='erro';}else{_ckParc.info=(r&&r.data)||null;_ckParc.estado=_ckParc.info?'ok':'invalido';}
+      if(r&&r.error){_ckParc.estado='erro';}
+      else{_ckParc.info=(r&&r.data)||null;_ckParc.estado=!_ckParc.info?'invalido':((ja&&!ja.error&&ja.data===true)?'primeira':'ok');}
       ckUpdateView();
     }).catch(function(){if(_ckParc.cod===c){_ckParc.estado='erro';ckUpdateView();}});
   },350);
@@ -12030,6 +12034,7 @@ function ckUpdateView(){
       else if(_ckParc.cod===cv&&_ckParc.estado==='ok')txt='Este cupom não vale para este plano.';
       else if(_ckParc.cod===cv&&_ckParc.estado==='erro')txt='Não foi possível conferir o cupom agora. Tente de novo em instantes.';
       else if(_ckParc.cod===cv&&_ckParc.estado==='invalido')txt='Cupom inválido ou vencido.';
+      else if(_ckParc.cod===cv&&_ckParc.estado==='primeira')txt='Este cupom vale só para a primeira assinatura da plataforma.';
       cpMsg.textContent=txt;cpMsg.style.color=cor;}else{cpMsg.textContent='';}}
   if(anual&&method==='credit_card')ckFillInstallments();
   var rs=document.getElementById('ck-result');if(rs){rs.style.display='none';rs.innerHTML='';}
@@ -24028,6 +24033,8 @@ function admEstFmtDate(s){if(!s)return '—';var d=new Date(s);return isNaN(d.ge
 function admEstPlanoTag(p){
   if(p==='Gold')return '<span class="tag" style="background:linear-gradient(135deg,#fde68a,#f5b32c);color:#5a3e00;border:1px solid #e0a92a;font-weight:700">Gold</span>';
   if(p==='Standard')return '<span class="tag tag-blue">Standard</span>';
+  // Cortesia (acesso liberado à mão, provider=manual): a RPC já manda "Cortesia"; caía em "Degustação" (23/11/2026).
+  if(p==='Cortesia')return '<span class="tag" style="background:rgba(167,139,250,.16);color:#a78bfa;font-weight:700">Cortesia</span>';
   return '<span class="tag" style="background:var(--bd);color:var(--t2)">Degustação</span>';
 }
 // Ciclo de cobrança ao lado do plano. Vem da RPC (`ciclo`), que traduz o `tipo`
