@@ -107,8 +107,8 @@ ok('link do professor abre em aba nova, sem acesso à janela de origem', /window
 
 // ── 5. Painel do professor ──────────────────────────────────────────────────────────────
 ok('🧨 item "📌 Avisos aos alunos" no menu do professor, logo depois do Mural de artigos',
-  /data-asec="mural">📣 Mural de artigos<\/button>\s*<button class="adm-nav" data-asec="avisos">📌 Avisos aos alunos<\/button>/.test(html)
-  && /if\(sec==='avisos'\)\{m\.innerHTML=admAvisosAlunosHTML\(\);bindAdmAvisosAlunos\(\);bindAdmSec\(sec\);return;\}/.test(corpo('renderAdmSec')));
+  /data-asec="mural">📣 Mural de artigos<\/button>\s*<button class="adm-nav" data-asec="avisos">📌 Avisos aos alunos( <span id="adm-congr-badge"[^>]*><\/span>)?<\/button>/.test(html)
+  && /if\(sec==='avisos'\)\{(admCongrAbriu\(\);)?m\.innerHTML=admAvisosAlunosHTML\(\);bindAdmAvisosAlunos\(\);(bindAdmCongr\(\);)?bindAdmSec\(sec\);/.test(corpo('renderAdmSec')));
 const bind = corpo('bindAdmAvisosAlunos');
 ok('formulário: tipo, título, texto, link, "mostrar até" e notificação opcional',
   ['adm-aviso-tipo', 'adm-aviso-titulo', 'adm-aviso-texto', 'adm-aviso-link', 'adm-aviso-ate', 'adm-aviso-push'].every((id) => corpo('admAvisosAlunosHTML').includes('id="' + id + '"')));

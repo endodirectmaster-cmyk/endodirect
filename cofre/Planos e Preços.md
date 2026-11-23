@@ -76,6 +76,33 @@ cupom próprio + comissão sobre os alunos novos). Combinado de comissão sugeri
   ainda não tinha os números; religar marcando "Mostrar o quadro na conta do parceiro" no cupom quando ele topar. Link: `https://www.endodirect.com.br/?cupom=ENDONEWS26`.
   Teste: `scripts/test-cupom-parceiro.js`.
 
+## 🏅 Embaixador Endodirect — v484, 23/11/2026 (DESLIGADO até o professor ligar)
+
+Professor: "como embaixador ... ter algum tipo de acesso na plataforma ... para fazer propagandas de congressos ...
+no mural de avisos"; "a ideia de degustação estendida pelo link dele para 14 dias foi muito boa"; o selo é "na nossa
+plataforma". Liga pela chave **🏅 Embaixador Endodirect** no cupom (Parcerias), que exige o login do parceiro, e pelo
+campo **crédito nos congressos** (ex.: "Embaixador EndoNews"; em branco, "Embaixador Endodirect").
+- **Selo:** "· 🏅 Embaixador" no topo (no celular, só o selo) e "🏅 Embaixador Endodirect" no Perfil.
+- **Menu "📅 Congressos"** (só na conta dele): publica SÓ congressos (nome, início, fim, local, link https,
+  descrição curta). Regras no banco (`endodirect_congresso_salvar`): só embaixador ativo ou professor; até 2 novos
+  por 7 dias; evento dos próximos 18 meses, até 30 dias de duração, fim não pode ter passado; link só `https://`.
+  Ele edita e retira os dele; o professor retira e recoloca qualquer um.
+- **Mural de avisos:** congressos entram depois dos avisos do professor, pela data do evento, com "Divulgação: …"
+  e o período ("10 a 12/03/2027"); saem sozinhos no dia seguinte ao fim. Se a chave de embaixador for desligada, os
+  congressos dele saem do mural. Tabela `endodirect_congressos` (RLS, sem acesso direto; tudo por RPC:
+  `endodirect_congressos_mural`, `endodirect_meus_congressos`, `endodirect_congressos_admin`,
+  `endodirect_congresso_ocultar`, `endodirect_meu_embaixador`).
+- **Professor:** em "Avisos aos alunos", o bloco "📅 Congressos dos embaixadores" (com quem publicou) e, no menu,
+  "(N novo)" quando entra congresso novo.
+- **Degustação de 14 dias pelo link:** `endodirect_cupom_publico` devolve `degustacao_dias:14` para cupom de
+  embaixador; a conta em degustação que entrou pelo link (cupom guardado 60 dias) grava `deg_trials.__dias=14`
+  uma vez, só se os 7 dias normais ainda não acabaram (não reabre degustação vencida). `degDias()` (7..14) vale
+  para prazos, textos e o Mural; os e-mails da degustação usam o mesmo número (`endodirect_trial_email_targets`)
+  e não falam mais "7 dias". A barra verde da landing vira "🎁 Convite …: teste grátis por 14 dias e 15% de
+  desconto". Teste: `scripts/test-embaixador.js`.
+- **Divulgação paga por organizador de congresso:** a combinar com o parceiro (sugestão: começar como agenda
+  informativa gratuita; destaque pago só com acordo à parte).
+
 ## Valores em env (centavos)
 - Mensais: `PAGARME_TIER_STANDARD_AMOUNT=6900`, `..._GOLD_AMOUNT=9900`, `..._PREMIUM_AMOUNT=13900`.
 - Anuais: `PAGARME_ANNUAL_STANDARD_AMOUNT=54000`, `..._GOLD_AMOUNT=82800`, `..._PREMIUM_AMOUNT=116400`.
