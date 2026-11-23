@@ -19,6 +19,13 @@ atualizado: 2026-11-21
 >   cartão da Mayo aqui dentro com o link `?lang=pt&drug=&wt=&ht_cm=&age=&sex=&dm=&dur=&nadir=&wt3=&calc=1` (os ids dos
 >   campos do formulário deles), um quadro com os valores acima da janela e "← Voltar para a trajetória do peso".
 >   O cartão externo só aceita endereço do próprio site da ferramenta.
+> - **Idade, sexo e diabetes no item 1, Paciente (23/11, sw v475;** professor, depois de testar: "deixar lá nos dados
+>   iniciais, no paciente ... a idade do paciente ... se tem diabetes ou não. Porque aí esses dados lá de baixo não
+>   precisariam ser preenchidos"). O item 4 ficou só com os valores e o botão. A idade digitada é a de hoje (guarda
+>   `idadeEm`); a Mayo recebe a idade no início da medicação (idade − tempo desde o início). Os três campos aparecem
+>   para quem vê o item 4 (piloto). No celular: idade numa linha, sexo e diabetes lado a lado.
+> - **Teste do professor (22/11, 23h):** o botão abriu a Mayo em português com os campos em branco, como esperado: o
+>   site ainda não lê os valores pelo link.
 > - **Limite em 23/11:** o site dos autores lia só `?lang=` e `?assistant=`; o modelo não foi publicado, então não
 >   há cálculo nosso. Por enquanto o médico digita os valores lá (o quadro avisa). Rascunho de e-mail ao Dr. Romanos
 >   (no Gmail do professor) pedindo que o site leia esses parâmetros e já mostre o resultado. Quando ler: trocar
