@@ -7,6 +7,11 @@ atualizado: 2026-11-23
 
 ## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
 
+> ✂️ **Rodapé sem a frase da bariátrica e das faixas de IMC (2026-11-23, v483).** Professor, com print do rodapé e a
+> frase marcada: "Retirar". Saiu "Não se aplica à cirurgia bariátrica. Faixas de IMC da OMS: 25 sobrepeso; 30, 35 e 40,
+> obesidade graus I, II e III." Fica o aviso de privacidade, o critério dos 3 meses e a referência. Guarda em
+> `test-trajetoria-peso.js`.
+
 > ➕ **MEDICAÇÕES: LINHA DE ADICIONAR COMO A DO PESO (23/11/2026, sw v477).** Professor: "Ao invés do botão de mais
 > medicação ou nova dose, deixar o botão de adicionar como existe no peso. E aí deixar só o botão de escalonamento
 > padrão mesmo." Saiu o "+ Medicação ou nova dose" (que criava uma linha vazia na lista). Agora, no topo da seção 3:

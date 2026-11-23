@@ -439,6 +439,10 @@ ok(/@container \(min-width:1050px\)\{\s*\.tp\{display:grid;grid-template-columns
 ok(/\.tp-kpis\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(9rem,1fr\)\)/.test(html), 'quadros do resumo ocupam a largura toda (auto-fit), sem ficar espremidos à esquerda');
 ok(/Math\.min\(1200,Math\.round\(larg\)\)/.test(html) && /y1=208\+faixa\+Math\.max\(0,Math\.min\(120,/.test(html), 'gráfico desenhado na largura real (até 1200 px) e mais alto quando largo: a letra não estica');
 
+// Professor, 23/11/2026 (print do rodapé com a frase marcada): "Retirar". Sai do rodapé a frase da cirurgia
+// bariátrica e das faixas de IMC da OMS; o critério dos 3 meses e a referência ficam.
+ok(!/Não se aplica à cirurgia bariátrica\. Faixas de IMC da OMS/.test(html) && /J Clin Endocrinol Metab 2015;100:342-62\)\.'\},/.test(html), 'rodapé sem a frase da bariátrica e das faixas de IMC (pedido do professor)');
+
 if (falhas.length) {
   console.error('✗ Trajetória do peso:');
   falhas.forEach((f) => console.error('  - ' + f));
