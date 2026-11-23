@@ -29,11 +29,11 @@ Google Drive", sem ele repassar recados. Vale para TODA sessão que mexer no Met
   `insertText` nesse `startIndex`, texto `"- DD/MM/AAAA HHhMM — Claude Code — <o que fez> (id ..., uuid ...)\n"` e
   `writeControl.requiredRevisionId` (a outra conversa pode estar escrevendo ao mesmo tempo). O comando python pronto
   está no texto da tarefa diária.
-- **Tarefa diária (08h17):** lê o Docs e roda getScheduledPosts antes de agendar; registra depois. ⚠️ Em 23/11 ela
-  ainda roda SÓ com os conectores Metricool e Supabase: daqui não dá para acrescentar conectores a uma tarefa
-  (a tentativa criou uma tarefa sem nenhum conector, que ficou desativada). Até o professor incluir Google Drive e
-  Google Docs na tarefa pelo claude.ai, ela agenda normalmente e avisa no relato que não leu nem registrou; as
-  conferências agendadas nesta sessão escrevem a linha que faltar.
+- **Tarefa diária (08h17):** lê o Docs e roda getScheduledPosts antes de agendar; registra depois. Conectores:
+  Metricool, Supabase, Google Drive e Google Docs (os dois do Google o professor incluiu pelo claude.ai na noite de
+  22/11). Lição: uma sessão daqui NÃO consegue acrescentar conectores a uma tarefa agendada (o parâmetro não existe
+  para a organização, e uma tarefa criada daqui sai sem nenhum conector); isso se faz pelo claude.ai. A tentativa
+  deixou uma tarefa desativada "(desativada: criada sem conectores)", que pode ser apagada.
 - Na noite de 22/11 criei por engano um segundo Docs ("SYNC_Metricool_endodirect", com sublinhado) no mesmo minuto
   em que a outra conversa criou o dela; o meu foi para a lixeira e as linhas foram para o dela.
 
