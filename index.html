@@ -682,6 +682,9 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-sec-acoes{display:flex;flex-wrap:wrap;gap:.35rem}
 .tp-num{display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--blue-l);color:var(--blue2);border:1px solid var(--blue2);font-size:.68rem;font-weight:800;letter-spacing:0;margin-right:.5rem;flex:none}
 .tp-campos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tp-campos.tp-campos3{grid-template-columns:minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr)}
+.tp-campos.tp-campos3>label:first-child{grid-column:auto}
+@media (max-width:520px){.tp-campos.tp-campos3{grid-template-columns:repeat(2,minmax(0,1fr))}.tp-campos.tp-campos3>label:first-child{grid-column:1/-1}}
 .tp-campos>label:first-child{grid-column:1/-1}
 .tp-kpi-bom .tp-kpi-v{color:var(--grn)}
 .tp-kpi-alerta .tp-kpi-v{color:var(--gold)}
@@ -6881,7 +6884,12 @@ function tpMayoDados(pac){
   var d={droga:tpMayoDroga(g.nome),nome:g.nome,ini:g.ini,aberto:g.aberto,fim:g.fim,
     wt:g.pIni?um(g.pIni.p):NaN,ht:isFinite(r.alt)?Math.round(r.alt*1000)/10:NaN,
     dur:Math.max(0,Math.round((g.tAte-g.ini)/TP_MES)),nadir:g.pFim?um(g.pFim.p):NaN,wt3:g.p3?um(g.p3.p):NaN};
-  var id=parseInt(String(pac.idade||'').replace(/\D/g,''),10);d.idade=id>=18&&id<=90?id:NaN;
+  // A idade é digitada no item 1 (a de hoje, com a data em `idadeEm`); a Mayo pede a idade no início da medicação.
+  // Sem `idadeEm` (digitada no item 4 na 1ª versão, como "idade no início"), vale como está.
+  var id=parseInt(String(pac.idade||'').replace(/\D/g,''),10),tEm=tpDia(pac.idadeEm);
+  d.idadeHoje=id>0?id:NaN;
+  if(id>0&&isFinite(tEm)&&tEm>g.ini)id=Math.round(id-(tEm-g.ini)/(365.25*TP_DIA));
+  d.idade=id>=18&&id<=90?id:NaN;
   d.sexo=(pac.sexo==='0'||pac.sexo==='1')?pac.sexo:'';d.dm=(pac.dm==='0'||pac.dm==='1')?pac.dm:'';
   d.faltam=[];
   if(!isFinite(d.wt))d.faltam.push('peso no início da medicação');
@@ -6900,7 +6908,7 @@ function tpMayoItens(d){
     ['Peso no início',isFinite(d.wt)?tpFmt(d.wt,1)+' kg':'—'],['Altura',isFinite(d.ht)?tpFmt(d.ht,d.ht%1?1:0)+' cm':'—'],
     ['Duração do tratamento',d.dur+(d.dur===1?' mês':' meses')],['Peso atual',isFinite(d.nadir)?tpFmt(d.nadir,1)+' kg':'—'],
     ['Peso aos 3 meses',isFinite(d.wt3)?tpFmt(d.wt3,1)+' kg':'— (opcional)']];
-  if(isFinite(d.idade))it.push(['Idade no início',d.idade+' anos']);
+  if(isFinite(d.idade))it.push(['Idade no início',d.idade+' anos'+(isFinite(d.idadeHoje)&&d.idadeHoje!==d.idade?' ('+d.idadeHoje+' hoje)':'')]);
   if(d.sexo)it.push(['Sexo',d.sexo==='1'?'masculino':'feminino']);
   if(d.dm)it.push(['Diabetes',d.dm==='1'?'sim':'não']);
   return it;
@@ -6908,10 +6916,10 @@ function tpMayoItens(d){
 function tpMayoDinHTML(d){
   return '<dl class="tp-mayo-val">'+tpMayoItens(d).map(function(x){return '<div><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>';}).join('')+'</dl>'
     +'<div class="tp-linha" style="margin:.5rem 0 .2rem"><button type="button" class="btn btn-primary btn-sm" data-tp-mayo-ir'+(d.faltam.length?' disabled':'')+'>Ver o risco de reganho se suspender</button></div>'
-    +(d.faltam.length?'<div class="rcv-nota" style="margin:0">Falta: '+esc(d.faltam.join(', '))+'.</div>':'')
+    +(d.faltam.length?'<div class="rcv-nota" style="margin:0">Falta: '+esc(d.faltam.join(', '))+(d.faltam.some(function(f){return f==='idade'||f==='sexo'||f==='diabetes';})?' (no item 1, Paciente)':'')+'.</div>':'')
     +'<div class="rcv-nota" style="margin:.35rem 0 0">'+(TP_MAYO_LE_LINK
       ?'Abre a calculadora da Mayo aqui dentro, já com o resultado e o gráfico de continuar ou suspender.'
-      :'Abre a calculadora da Mayo aqui dentro, com estes valores num quadro acima dela: por enquanto o site dos autores ainda não os recebe sozinho, então é preciso digitá-los lá.')
+      :'Abre a calculadora da Mayo aqui dentro, com estes valores num quadro acima dela. O site dos autores ainda não recebe os valores sozinho (o preenchimento automático foi pedido a eles): por enquanto, é preciso digitá-los lá.')
     +' Vão para o site dos autores só os números, sem a identificação do paciente. Modelo validado em coorte americana; os autores indicam uso em pesquisa, não para decisão clínica.</div>';
 }
 function tpRender(root){
@@ -6954,6 +6962,12 @@ function tpRender(root){
         +'<div class="rcv-campos tp-campos"><label class="rcv-num"><span>Identificação (iniciais ou nº do prontuário)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" placeholder="ex.: JMS 4821" value="'+esc(pac.rot||'')+'"></label>'
         +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
         +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
+        // Idade, sexo e diabetes no item 1 (professor, 23/11/2026: "deixar lá nos dados iniciais, no paciente ... a
+        // idade do paciente ... se tem diabetes ou não. Porque aí esses dados lá de baixo não precisariam ser
+        // preenchidos"). Servem ao item 4 (Mayo): aparecem para quem vê o item 4 (piloto do professor por enquanto).
+        +(tpMayoPiloto()?'<div class="rcv-campos tp-campos tp-campos3"><label class="rcv-num"><span>Idade (anos)</span><input type="text" inputmode="numeric" maxlength="3" autocomplete="off" data-tp-campo="idade" value="'+esc(pac.idade||'')+'"></label>'
+          +'<label class="rcv-num"><span>Sexo</span><select data-tp-campo="sexo"><option value="">—</option><option value="0"'+(pac.sexo==='0'?' selected':'')+'>Feminino</option><option value="1"'+(pac.sexo==='1'?' selected':'')+'>Masculino</option></select></label>'
+          +'<label class="rcv-num"><span>Diabetes</span><select data-tp-campo="dm"><option value="">—</option><option value="0"'+(pac.dm==='0'?' selected':'')+'>Não</option><option value="1"'+(pac.dm==='1'?' selected':'')+'>Sim</option></select></label></div>':'')
         +'<div class="tp-dup" data-tp-dup role="status" hidden></div>'
         +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">🔒 Só você vê estes pacientes: ficam neste aparelho, na sua conta, e não vão para o servidor. Professores e outros usuários não têm acesso. Não use o nome do paciente.</div></section>'
       +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">2</span>Peso</div>'
@@ -6980,10 +6994,7 @@ function tpRender(root){
         +'<div class="rcv-nota" style="margin-bottom:.5rem">Uma linha por dose: no escalonamento, cada dose nova é uma linha da mesma medicação, e a anterior termina sozinha. Fim em branco = em uso. Cirurgia bariátrica entra aqui, na data da cirurgia.</div></section>'
       +'<section class="rcv-sec" data-tp-mayo hidden><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">4</span>Se suspender: risco de reganho</div></div>'
         +'<div class="calc-piloto" style="margin:0 0 .45rem">Piloto · visível só para professores</div>'
-        +'<div class="rcv-nota" style="margin:0 0 .45rem">Calculadora da Mayo Clinic (semaglutida e tirzepatida): em quanto tempo o paciente recuperaria metade do peso perdido se a medicação fosse suspensa. Os dados vêm da trajetória; faltam só estes três.</div>'
-        +'<div class="rcv-campos tp-campos"><label class="rcv-num"><span>Idade no início (anos)</span><input type="text" inputmode="numeric" maxlength="3" autocomplete="off" data-tp-campo="idade" value="'+esc(pac.idade||'')+'"></label>'
-        +'<label class="rcv-num"><span>Sexo</span><select data-tp-campo="sexo"><option value="">—</option><option value="0"'+(pac.sexo==='0'?' selected':'')+'>Feminino</option><option value="1"'+(pac.sexo==='1'?' selected':'')+'>Masculino</option></select></label>'
-        +'<label class="rcv-num"><span>Diabetes</span><select data-tp-campo="dm"><option value="">—</option><option value="0"'+(pac.dm==='0'?' selected':'')+'>Não</option><option value="1"'+(pac.dm==='1'?' selected':'')+'>Sim</option></select></label></div>'
+        +'<div class="rcv-nota" style="margin:0 0 .45rem">Calculadora da Mayo Clinic (semaglutida e tirzepatida): em quanto tempo o paciente recuperaria metade do peso perdido se a medicação fosse suspensa. Os dados vêm da trajetória e do item 1 (idade, sexo e diabetes).</div>'
         +'<div data-tp-mayo-din></div></section>'
       +'</div><div class="tp-col-res" data-tp-res aria-live="polite"></div>'
       +'<div class="tp-acoes"><span class="tp-linha" style="margin:0"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button><button type="button" class="btn btn-outline btn-sm" data-tp-imprimir>Imprimir / PDF</button></span>'
@@ -7117,7 +7128,7 @@ function tpRender(root){
       return;
     }
     if(t.hasAttribute('data-tp-campo')){
-      var k=t.getAttribute('data-tp-campo');pac[k]=t.value;salva();
+      var k=t.getAttribute('data-tp-campo');pac[k]=t.value;if(k==='idade')pac.idadeEm=tpHojeISO();salva();
       if(k==='rot'){var s=q('[data-tp-pac]');if(s&&s.options[s.selectedIndex])s.options[s.selectedIndex].text=nomePac(pac,s.selectedIndex);dupAviso();}
       if(k==='alt')pesosImc();
       resultado();return;
