@@ -28,6 +28,11 @@ atualizado: 2026-11-23
 > tela de planos agora também depende da oferta aberta. Quem já é fundador mantém o preço (o acesso não passa por
 > aqui). Pedido de posts e stories da campanha à conversa do Instagram pelo Docs de sincronia. Teste:
 > `scripts/test-fundador-prazo.js`.
+> **Renovação do fundador garantida:** o prazo, as vagas e o desligamento valem só para quem ainda não é fundador. Quem
+> já tem o Gold marcado ":fundador" (ativo, inadimplente ou vencido; estornado não) renova a R$ 540 para sempre:
+> `ehFundador(email)` no `order.js` e, na tela, a RPC `endodirect_sou_fundador()` (só da própria conta) mostra o campo
+> com o cupom já preenchido e "Preço de Sócio-fundador garantido na sua renovação". As primeiras renovações são em
+> junho de 2027.
 - **"Gold pelo preço do Standard"**: Gold anual por **12× R$ 45 (R$ 540)**.
 - Cupom **`FUNDADOR`**, **100 vagas**, preço travado.
 - **Só no ciclo anual** (some no mensal); faixa/selo somem quando esgota.

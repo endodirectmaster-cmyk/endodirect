@@ -26,6 +26,7 @@ if (process.argv[2] === 'cenario') {
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'srv_teste';
   process.env.SUPABASE_URL = 'https://sb.teste';
   process.env.FOUNDER_ATE = process.argv[3];
+  const JA_FUNDADOR = process.argv[4] === 'fundador';
   const st = { pedidos: [] };
   const resp = (status, body) => ({ ok: status >= 200 && status < 300, status, headers: { get: () => '' }, json: async () => body, text: async () => JSON.stringify(body) });
   global.fetch = async function (url, init) {
@@ -38,6 +39,8 @@ if (process.argv[2] === 'cenario') {
       if (rota === '/orders') { st.pedidos.push(JSON.parse(init.body)); return resp(200, { id: 'or_1', status: 'paid', charges: [{ status: 'paid', last_transaction: {} }] }); }
       return resp(404, {});
     }
+    // ehFundador (e-mail + notas "fundador"): a conta já é fundadora?
+    if (url.indexOf('/rest/v1/endodirect_acessos?email=ilike.') >= 0 && url.indexOf('notes=') >= 0) return resp(200, JA_FUNDADOR ? [{ id: 'f1' }] : []);
     if (url.indexOf('/rest/v1/endodirect_acessos') >= 0 && url.indexOf('notes=') >= 0) return resp(200, []);
     if (url.indexOf('/rest/v1/endodirect_acessos?email=') >= 0) return resp(200, []);
     if (url.indexOf('/auth/v1/admin/users') >= 0) return metodo === 'POST' ? resp(200, { id: 'U1' }) : resp(200, { users: [] });
@@ -60,7 +63,7 @@ if (process.argv[2] === 'cenario') {
 
 const falhas = [];
 const ok = (c, m) => { if (!c) falhas.push(m); };
-const roda = (ate) => JSON.parse(execFileSync(process.execPath, [__filename, 'cenario', ate], { encoding: 'utf8' }).trim().split('\n').pop());
+const roda = (ate, quem) => JSON.parse(execFileSync(process.execPath, [__filename, 'cenario', ate, quem || ''], { encoding: 'utf8' }).trim().split('\n').pop());
 
 // (1) antes do prazo
 const antes = roda(new Date(Date.now() + 86400000).toISOString());
@@ -72,6 +75,12 @@ const depois = roda(new Date(Date.now() - 60000).toISOString());
 ok(depois.http === 400 && depois.corpo.code === 'fundador_encerrado' && /encerrada/.test(depois.corpo.error || ''), 'depois do prazo: 400 fundador_encerrado (veio ' + depois.http + ' ' + JSON.stringify(depois.corpo) + ')');
 ok(depois.pedidos.length === 0, 'depois do prazo: o pagar.me NÃO é chamado');
 ok(depois.status.enabled === false && depois.status.encerrada === true, 'depois do prazo: config pública desliga a oferta (faixas somem do site)');
+
+// (2b) RENOVAÇÃO de quem já é fundador: "preço travado para sempre" vale depois do prazo
+const renova = roda(new Date(Date.now() - 60000).toISOString(), 'fundador');
+ok(renova.http === 200 && renova.corpo.ok === true && renova.pedidos.length === 1 && renova.pedidos[0] === 54000, 'depois do prazo, quem JÁ é fundador renova a R$ 540 (veio ' + renova.http + ' ' + JSON.stringify(renova.corpo) + ' ' + JSON.stringify(renova.pedidos) + ')');
+const src0 = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+ok(/client\.rpc\('endodirect_sou_fundador'\)/.test(src0) && /function ckFounderAberto\(\)\{var f=ckFounder\(\);return !!\(f&&\(f\.enabled\|\|_ckSouFundador===true\)\);\}/.test(src0), 'checkout: o fundador vê o campo e o preço de R$ 540 na renovação');
 
 // (3) prazo padrão
 const src = fs.readFileSync(path.join(RAIZ, 'lib', 'founder.js'), 'utf8');

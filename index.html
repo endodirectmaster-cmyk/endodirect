@@ -11914,7 +11914,25 @@ function ckTier(){return (ENDO_TIERS||[]).filter(function(x){return x&&x.key===_
 function ckMonthlyCents(){var a=_pmCfg&&_pmCfg.amounts;if(a&&a[_ckPlan])return a[_ckPlan];var t=ckTier();return t?Math.round(t.preco*100):0;}
 function ckFounder(){return (_pmCfg&&_pmCfg.founder)||null;}
 function ckCouponVal(){var e=document.getElementById('ck-coupon');return e?(e.value||'').trim().toUpperCase():'';}
-function ckFounderActive(){var f=ckFounder();return !!(f&&f.enabled&&_ckCycle==='anual'&&_ckPlan===(f.plan||'gold')&&ckCouponVal()&&ckCouponVal()===String(f.coupon||'').toUpperCase());}
+// Quem JÁ É fundador renova a R$ 540 para sempre, mesmo com a oferta encerrada (30/11/2026): o servidor
+// confere (lib/founder.js ehFundador) e a tela pergunta à RPC endodirect_sou_fundador (só da própria conta).
+var _ckSouFundador=null,_ckSouFundadorDe='';
+function ckFounderAberto(){var f=ckFounder();return !!(f&&(f.enabled||_ckSouFundador===true));}
+function ckChecaFundador(){
+  var client=getSupabaseClient();if(!client||!currentUser||!currentUser.email)return;
+  var em=String(currentUser.email).toLowerCase();
+  if(_ckSouFundadorDe!==em){_ckSouFundador=null;_ckSouFundadorDe=em;} // outra conta no mesmo aparelho
+  if(_ckSouFundador!==null)return;
+  Promise.resolve(client.rpc('endodirect_sou_fundador')).then(function(r){
+    if(_ckSouFundadorDe!==em)return;
+    _ckSouFundador=!!(r&&!r.error&&r.data===true);
+    // renovação do fundador: o cupom já vem preenchido no Gold anual
+    var cp=document.getElementById('ck-coupon'),f=ckFounder();
+    if(_ckSouFundador&&cp&&!cp.value&&_ckPlan===((f&&f.plan)||'gold'))cp.value=String((f&&f.coupon)||'FUNDADOR');
+    ckUpdateView();
+  }).catch(function(){});
+}
+function ckFounderActive(){var f=ckFounder();return !!(f&&ckFounderAberto()&&_ckCycle==='anual'&&_ckPlan===(f.plan||'gold')&&ckCouponVal()&&ckCouponVal()===String(f.coupon||'').toUpperCase());}
 function ckAnnualCents(){if(ckFounderActive())return ckFounder().annual_amount;var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
 function ckMaxInst(){return (_pmCfg&&_pmCfg.max_installments)||12;}
 function ckSeg(rowId,attr,val){var r=document.getElementById(rowId);if(!r)return;r.querySelectorAll('['+attr+']').forEach(function(b){b.classList.toggle('on',b.getAttribute(attr)===val);});}
@@ -11931,9 +11949,9 @@ function ckUpdateView(){
   var instFld=document.getElementById('ck-inst-fld');if(instFld)instFld.style.display=(anual&&method==='credit_card')?'block':'none';
   // Cupom: só no anual; mostra dica de Sócio-fundador para o Gold.
   var cpFld=document.getElementById('ck-coupon-fld');
-  if(cpFld){var f=ckFounder();var showCp=anual&&!!(f&&f.enabled);cpFld.style.display=showCp?'block':'none';}
+  if(cpFld){var showCp=anual&&ckFounderAberto();cpFld.style.display=showCp?'block':'none';}
   var cpMsg=document.getElementById('ck-coupon-msg');
-  if(cpMsg){if(ckFounderActive()){cpMsg.textContent='🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){var fz=ckFounder();cpMsg.textContent=(fz&&fz.encerrada&&ckCouponVal()===String(fz.coupon||'').toUpperCase())?'A oferta de Sócio-fundador foi encerrada.':'Cupom não aplicável a este plano.';cpMsg.style.color='#f0a0a0';}else{cpMsg.textContent='';}}
+  if(cpMsg){if(ckFounderActive()){var fa=ckFounder();cpMsg.textContent=(fa&&!fa.enabled&&_ckSouFundador)?'🎟️ Preço de Sócio-fundador garantido na sua renovação.':'🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){var fz=ckFounder();cpMsg.textContent=(fz&&fz.encerrada&&ckCouponVal()===String(fz.coupon||'').toUpperCase())?'A oferta de Sócio-fundador foi encerrada.':'Cupom não aplicável a este plano.';cpMsg.style.color='#f0a0a0';}else{cpMsg.textContent='';}}
   if(anual&&method==='credit_card')ckFillInstallments();
   var rs=document.getElementById('ck-result');if(rs){rs.style.display='none';rs.innerHTML='';}
   var pr=document.getElementById('ck-price');
@@ -11963,6 +11981,7 @@ function openCheckout(key){
   ckSeg('ck-cycle-row','data-cycle',startCycle);ckSeg('ck-method-row','data-method','credit_card');
   var pay=document.getElementById('ck-pay');if(pay)pay.disabled=false;
   loadPmConfig(function(){ckUpdateView();});
+  ckChecaFundador();
   ckUpdateView();
   var m=document.getElementById('checkout-modal');if(m)m.style.display='flex';
 }
