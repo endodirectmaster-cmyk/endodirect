@@ -414,9 +414,6 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   ok(d4.droga === 'tirzepatide' && !d4.aberto && d4.dur === 9, 'Mayo: reconhece o nome comercial e usa a que terminou, se nenhuma estiver em uso');
   ok(run('tpMayoDados(' + P([{ n: 'Liraglutida', dose: '3,0 mg/dia', ini: '2025-01-05', fim: '' }]) + ')') === null && run('tpMayoDados(' + P([{ n: 'Cirurgia bariátrica', dose: 'Sleeve', ini: '2025-01-05', fim: '' }]) + ')') === null && run('tpMayoDados(' + P([]) + ')') === null, 'Mayo: só semaglutida e tirzepatida (liraglutida, cirurgia e sem medicação: o quadro não aparece)');
   ok(dados(P(sema, { idade: '12' })).faltam.includes('idade') && dados(P(sema, { idade: '54', sexo: 'x' })).faltam.includes('sexo'), 'Mayo: idade fora de 18 a 90 e sexo inválido contam como faltando');
-  // idade digitada no item 1 é a de hoje (idadeEm): a Mayo recebe a idade no INÍCIO da medicação
-  const d5 = dados(P(sema, { idade: '54', idadeEm: '2026-01-05', sexo: '0', dm: '0' }));
-  ok(d5.idade === 53 && d5.idadeHoje === 54 && /&age=53&/.test(d5.url), 'Mayo: idade de hoje (digitada um ano depois do início) vira a idade no início da medicação', JSON.stringify(d5));
   // tela: quadro 4 escondido sem semaglutida/tirzepatida; com ela, mostra os valores e o botão só vale com tudo preenchido
   const rm = doc.createElement('div'); rm.id = 'calcm'; doc.body.appendChild(rm);
   run("currentUser={id:'um',role:'admin'};function isAdminUser(){return !!(currentUser&&currentUser.role==='admin');}var abriuMayo=null;function calcAbreEmbutida(id,src,quadro,volta){abriuMayo={id:id,src:src,quadro:quadro,volta:volta};}tpRender(document.getElementById('calcm'))");
@@ -425,21 +422,19 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   run("(function(){var e=tpCarrega();var p=tpNovoPac('XY');p.alt='165';p.pesos=" + JSON.stringify(JSON.parse(P(sema)).pesos) + ";p.meds=" + JSON.stringify(sema) + ";e.pac.push(p);e.atual=p.id;tpGrava(e);document.getElementById('calcm').innerHTML='';tpRender(document.getElementById('calcm'));})()");
   ok(!secM().hidden && /Se suspender: risco de reganho/.test(secM().textContent) && /100,0 kg/.test(secM().textContent) && /9 meses/.test(secM().textContent) && /84,4 kg/.test(secM().textContent), 'tela: com semaglutida, o quadro mostra os valores tirados da trajetória');
   const btM = () => rm.querySelector('[data-tp-mayo-ir]');
-  ok(btM().disabled && /Falta: idade, sexo, diabetes \(no item 1, Paciente\)/.test(secM().textContent), 'tela: botão desligado enquanto faltar idade, sexo e diabetes, apontando o item 1');
-  // professor, 23/11/2026: idade, sexo e diabetes ficam no item 1 (Paciente), não no item 4
-  ok(!secM().querySelector('[data-tp-campo]') && !!rm.querySelector('section [data-tp-campo="rot"]').closest('section').querySelector('[data-tp-campo="idade"]') && !!rm.querySelector('section [data-tp-campo="rot"]').closest('section').querySelector('[data-tp-campo="dm"]'), '🧨 idade, sexo e diabetes no item 1 (Paciente); o item 4 só mostra os valores e o botão');
+  ok(btM().disabled && /Falta: idade, sexo, diabetes/.test(secM().textContent), 'tela: botão desligado enquanto faltar idade, sexo e diabetes');
   const idd = rm.querySelector('[data-tp-campo="idade"]'); idd.focus(); setv(idd, '54');
   ok(doc.activeElement === idd, 'tela: digitar a idade não tira o foco do campo (o quadro redesenha só os valores)');
   setv(rm.querySelector('[data-tp-campo="sexo"]'), '1'); setv(rm.querySelector('[data-tp-campo="dm"]'), '0');
   ok(!btM().disabled, 'tela: com os três preenchidos, o botão vale');
   btM().click();
   const am = J('abriuMayo');
-  ok(am && am.id === 'reganhoglp1' && /&age=5[0-3]&sex=1&dm=0&/.test(am.src) && am.volta === 'trajpeso' && /Valores da trajetória do peso · XY/.test(am.quadro) && /Digite estes valores/.test(am.quadro), '🧨 botão abre a calculadora da Mayo aqui dentro, com o link preenchido, o quadro de valores e a volta para a trajetória', JSON.stringify(am));
-  ok(J("tpCarrega().pac.filter(function(p){return p.rot==='XY';})[0].idade") === '54' && /^\d{4}-\d{2}-\d{2}$/.test(J("tpCarrega().pac.filter(function(p){return p.rot==='XY';})[0].idadeEm")), 'idade, sexo e diabetes ficam no paciente (só no aparelho), com a data em que a idade foi digitada');
+  ok(am && am.id === 'reganhoglp1' && /&age=54&sex=1&dm=0&/.test(am.src) && am.volta === 'trajpeso' && /Valores da trajetória do peso · XY/.test(am.quadro) && /Digite estes valores/.test(am.quadro), '🧨 botão abre a calculadora da Mayo aqui dentro, com o link preenchido, o quadro de valores e a volta para a trajetória', JSON.stringify(am));
+  ok(J("tpCarrega().pac.filter(function(p){return p.rot==='XY';})[0].idade") === '54', 'idade, sexo e diabetes ficam no paciente (só no aparelho)');
   ok(/Piloto · visível só para professores/.test(secM().textContent), 'Mayo: o quadro diz que é piloto do professor');
   // PILOTO SÓ DO PROFESSOR (23/11/2026: "deixa por enquanto apenas no painel do professor"): o médico não vê o quadro 4
   run("currentUser={id:'um',role:'aluno'};document.getElementById('calcm').innerHTML='';abriuMayo=null;tpRender(document.getElementById('calcm'))");
-  ok(secM().hidden && !secM().querySelector('[data-tp-mayo-ir]') && !rm.querySelector('[data-tp-campo="idade"]'), '🧨 médico (não professor): a trajetória abre, mas sem o quadro da Mayo nem os campos dele no item 1');
+  ok(secM().hidden && !secM().querySelector('[data-tp-mayo-ir]'), '🧨 médico (não professor): a trajetória abre, mas sem o quadro da Mayo');
   run("currentUser={id:'um',role:'admin'};");
 }
 ok(/var calcEmbedProx=null;\nfunction calcAbreEmbutida\(id,src,quadro,volta\)/.test(html) && /var embSrc=emb&&\/\^https:\\\/\\\/\/\.test\(emb\.src\)&&emb\.src\.indexOf\(String\(c\.link\)\.split\('\?'\)\[0\]\)===0\?emb\.src:c\.link;/.test(html), '🧨 o cartão externo só aceita endereço do próprio site da ferramenta (nada de outro domínio)');
