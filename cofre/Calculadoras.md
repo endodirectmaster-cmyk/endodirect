@@ -20,7 +20,22 @@ atualizado: 2026-11-23
 > **v478:** "um botão ficou maior que o outro": as duas linhas de adicionar (peso e dose) passaram a ter campos e
 > botão "Adicionar" na mesma altura (2,375rem, `.tp-add`).
 
-> 🔗 **"SE SUSPENDER": PONTE COM A CALCULADORA DA MAYO (23/11/2026, sw v474) — PILOTO SÓ DO PROFESSOR.** Professor:
+> ⛔ **ITEM 4 RETIRADO (23/11/2026, sw v479): A TRAJETÓRIA E A CALCULADORA DA MAYO VOLTARAM A SER FERRAMENTAS
+> SEPARADAS.** O professor testou e a calculadora da Mayo abria em branco (o site dos autores só lê `?lang=` e
+> `?assistant=` do endereço; não há outra porta de entrada, nem `postMessage`). Ele perguntou por um botão "copiar" que
+> preenchesse tudo: não dá (a calculadora é outro site num iframe, e colar põe o texto inteiro num campo só). Decisão
+> dele: "a gente deixa como ferramentas separadas e retira o item 4 da trajetória de perda de peso. E aí, no futuro,
+> quando eles liberarem o artigo, a gente tenta implementar na nossa ferramenta". Saíram (revert de #1147 e #1148): o
+> item 4, os campos idade/sexo/diabetes do item 1, `tpMayo*`, `calcAbreEmbutida` e o "← Voltar para a trajetória" do
+> `openCalc`. A calculadora da Mayo (`reganhoglp1`) segue como antes, no cartão próprio. Valores já digitados de
+> idade/sexo/diabetes ficam guardados no aparelho, sem uso. **Para o futuro:** o código da ponte está nos commits
+> 2ba42ba (#1147) e 1ae5af1 (#1148): `tpMayoDados` tira da trajetória medicação em uso, peso no início, altura, meses
+> de uso, peso atual, peso aos 3 meses e a idade no início. O modelo da Mayo é próprio (Cox de 6 variáveis + ajuste
+> pelo peso aos 3 meses; curvas continuar × parar por regressão ridge; coortes reais da Mayo, dezenas de milhares de
+> pacientes): só implementar aqui com o artigo publicado ou com autorização dos autores (os coeficientes estão no
+> código da página deles, mas não foram publicados nem cedidos).
+>
+> 🔗 **"SE SUSPENDER": PONTE COM A CALCULADORA DA MAYO (23/11/2026, sw v474) — PILOTO SÓ DO PROFESSOR (RETIRADA, ver acima).** Professor:
 > "É possível deixar essa ferramenta também sincronizada com a de cálculo de reganho ... da Mayo Clinic?" e, na
 > escolha: "Aproveitar os dados inseridos da trajetória do peso e usar automaticamente na calculadora de reganho da
 > Mayo. Deixa um botão que leva aos resultados já calculados". Depois: "Essa nova ferramenta de sincronização ... deixa

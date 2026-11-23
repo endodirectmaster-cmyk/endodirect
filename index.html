@@ -425,12 +425,6 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .calc-card-ft{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding-top:.45rem}
 .calc-unit{font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);background:var(--s3,rgba(127,127,127,.12));border-radius:999px;padding:.12rem .5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72%}
 .calc-unit.calc-ext{color:var(--blue2)}
-.tp-mayo-val{display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:.3rem .8rem;margin:.2rem 0 0}
-.tp-mayo-val div{display:flex;flex-direction:column;min-width:0}
-.tp-mayo-val dt{font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.03em}
-.tp-mayo-val dd{margin:0;font-size:.82rem;color:var(--tx);font-weight:600;font-variant-numeric:tabular-nums}
-.tp-mayo-quadro{margin:.6rem 0 0;padding:.6rem .75rem;border:1px solid var(--bd);border-left:3px solid var(--blue);border-radius:10px;background:var(--bg2,transparent)}
-.tp-mayo-quadro-t{font-size:.78rem;font-weight:700;color:var(--tx);margin-bottom:.25rem}
 .calc-embed{margin:.7rem 0 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#fff}
 .calc-embed iframe{display:block;width:100%;height:min(1150px,calc(100vh - 140px));min-height:620px;border:0}
 .calc-piloto{align-self:flex-start;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold,#b7791f);border:1px solid currentColor;border-radius:999px;padding:.08rem .45rem;line-height:1.4}
@@ -682,9 +676,6 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-sec-acoes{display:flex;flex-wrap:wrap;gap:.35rem}
 .tp-num{display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--blue-l);color:var(--blue2);border:1px solid var(--blue2);font-size:.68rem;font-weight:800;letter-spacing:0;margin-right:.5rem;flex:none}
 .tp-campos{grid-template-columns:repeat(2,minmax(0,1fr))}
-.tp-campos.tp-campos3{grid-template-columns:minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr)}
-.tp-campos.tp-campos3>label:first-child{grid-column:auto}
-@media (max-width:520px){.tp-campos.tp-campos3{grid-template-columns:repeat(2,minmax(0,1fr))}.tp-campos.tp-campos3>label:first-child{grid-column:1/-1}}
 .tp-campos>label:first-child{grid-column:1/-1}
 .tp-kpi-bom .tp-kpi-v{color:var(--grn)}
 .tp-kpi-alerta .tp-kpi-v{color:var(--gold)}
@@ -6906,70 +6897,6 @@ function tpAddMedHTML(sug){
 }
 var TP_CROT={gp:'% gordura',mg:'M. gorda',mm:'M. magra'},TP_CROT_L={gp:'Percentual de gordura',mg:'Massa gorda em kg',mm:'Massa magra em kg'};
 function tpNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s.\-_\/]+/g,'');}
-// ── SE SUSPENDER: RISCO DE REGANHO (MAYO CLINIC) (23/11/2026) ──
-// Professor: "É possível deixar essa ferramenta também sincronizada com a de cálculo de reganho de peso após
-// suspender ... da Mayo Clinic? ... uma vez que o usuário preenche todos os requisitos, quando gera o gráfico, tem a
-// opção também de visualizar o gráfico se ocorrer uma suspensão da medicação" e, escolhendo: "Aproveitar os dados
-// inseridos da trajetória do peso e usar automaticamente na calculadora de reganho da Mayo. Deixa um botão que leva
-// aos resultados já calculados". O modelo da Mayo não foi publicado: a conta continua no site dos autores (aberto
-// aqui dentro, no cartão `reganhoglp1`). Daqui saem os valores que o formulário deles pede (ids dos campos de lá:
-// drug, wt, ht_cm, age, sex 0/1, dm 0/1, dur, nadir = peso atual, wt3), tirados da trajetória; o médico só completa
-// idade, sexo e diabetes. Vão no link (+ calc=1). Em 23/11 o site lia só ?lang=: o pedido para ele ler os valores e
-// já mostrar o resultado foi para os autores; quando ler, virar TP_MAYO_LE_LINK para true.
-// PILOTO SÓ DO PROFESSOR (professor, 23/11/2026: "Essa nova ferramenta de sincronização com o da Mayo Clinic deixa por
-// enquanto apenas no painel do professor, para irmos testando e aprimorando"): o quadro 4 só aparece para admin
-// (`tpMayoPiloto`). A trajetória em si segue liberada para os médicos. Para publicar: `tpMayoPiloto` devolver true.
-function tpMayoPiloto(){return typeof isAdminUser==='function'&&isAdminUser();}
-var TP_MAYO_URL='https://glp1regainrisk.com/?lang=pt',TP_MAYO_LE_LINK=false;
-function tpMayoDroga(nome){var k=tpNorm(nome);return /semaglut|wegovy|ozempic|rybelsus/.test(k)?'semaglutide':/tirzepat|mounjaro|zepbound/.test(k)?'tirzepatide':'';}
-// Medicação usada: a semaglutida ou tirzepatida EM USO; sem nenhuma em uso, a que terminou por último.
-function tpMayoDados(pac){
-  var r=tpAnalisa(pac);if(!r.pts.length)return null;
-  var gs=r.grupos.filter(function(g){return !g.cirurgia&&!!tpMayoDroga(g.nome);});if(!gs.length)return null;
-  var emUso=gs.filter(function(g){return g.aberto;});
-  var g=(emUso.length?emUso:gs).slice().sort(function(a,b){return b.ini-a.ini;})[0];
-  var um=function(v){return Math.round(v*10)/10;};
-  var d={droga:tpMayoDroga(g.nome),nome:g.nome,ini:g.ini,aberto:g.aberto,fim:g.fim,
-    wt:g.pIni?um(g.pIni.p):NaN,ht:isFinite(r.alt)?Math.round(r.alt*1000)/10:NaN,
-    dur:Math.max(0,Math.round((g.tAte-g.ini)/TP_MES)),nadir:g.pFim?um(g.pFim.p):NaN,wt3:g.p3?um(g.p3.p):NaN};
-  // A idade é digitada no item 1 (a de hoje, com a data em `idadeEm`); a Mayo pede a idade no início da medicação.
-  // Sem `idadeEm` (digitada no item 4 na 1ª versão, como "idade no início"), vale como está.
-  var id=parseInt(String(pac.idade||'').replace(/\D/g,''),10),tEm=tpDia(pac.idadeEm);
-  d.idadeHoje=id>0?id:NaN;
-  if(id>0&&isFinite(tEm)&&tEm>g.ini)id=Math.round(id-(tEm-g.ini)/(365.25*TP_DIA));
-  d.idade=id>=18&&id<=90?id:NaN;
-  d.sexo=(pac.sexo==='0'||pac.sexo==='1')?pac.sexo:'';d.dm=(pac.dm==='0'||pac.dm==='1')?pac.dm:'';
-  d.faltam=[];
-  if(!isFinite(d.wt))d.faltam.push('peso no início da medicação');
-  if(!isFinite(d.ht))d.faltam.push('altura');
-  if(!isFinite(d.nadir))d.faltam.push('peso atual');
-  if(!isFinite(d.idade))d.faltam.push('idade');
-  if(!d.sexo)d.faltam.push('sexo');
-  if(!d.dm)d.faltam.push('diabetes');
-  d.url=TP_MAYO_URL+'&'+[['drug',d.droga],['wt',d.wt],['ht_cm',d.ht],['age',d.idade],['sex',d.sexo],['dm',d.dm],['dur',d.dur],['nadir',d.nadir],['wt3',d.wt3]]
-    .filter(function(x){return typeof x[1]==='number'?isFinite(x[1]):!!x[1];})
-    .map(function(x){return x[0]+'='+encodeURIComponent(String(x[1]));}).join('&')+'&calc=1';
-  return d;
-}
-function tpMayoItens(d){
-  var it=[['Medicação',d.nome+(d.aberto?' (em uso desde '+tpData(d.ini)+')':' ('+tpData(d.ini)+' a '+tpData(d.fim)+')')],
-    ['Peso no início',isFinite(d.wt)?tpFmt(d.wt,1)+' kg':'—'],['Altura',isFinite(d.ht)?tpFmt(d.ht,d.ht%1?1:0)+' cm':'—'],
-    ['Duração do tratamento',d.dur+(d.dur===1?' mês':' meses')],['Peso atual',isFinite(d.nadir)?tpFmt(d.nadir,1)+' kg':'—'],
-    ['Peso aos 3 meses',isFinite(d.wt3)?tpFmt(d.wt3,1)+' kg':'— (opcional)']];
-  if(isFinite(d.idade))it.push(['Idade no início',d.idade+' anos'+(isFinite(d.idadeHoje)&&d.idadeHoje!==d.idade?' ('+d.idadeHoje+' hoje)':'')]);
-  if(d.sexo)it.push(['Sexo',d.sexo==='1'?'masculino':'feminino']);
-  if(d.dm)it.push(['Diabetes',d.dm==='1'?'sim':'não']);
-  return it;
-}
-function tpMayoDinHTML(d){
-  return '<dl class="tp-mayo-val">'+tpMayoItens(d).map(function(x){return '<div><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>';}).join('')+'</dl>'
-    +'<div class="tp-linha" style="margin:.5rem 0 .2rem"><button type="button" class="btn btn-primary btn-sm" data-tp-mayo-ir'+(d.faltam.length?' disabled':'')+'>Ver o risco de reganho se suspender</button></div>'
-    +(d.faltam.length?'<div class="rcv-nota" style="margin:0">Falta: '+esc(d.faltam.join(', '))+(d.faltam.some(function(f){return f==='idade'||f==='sexo'||f==='diabetes';})?' (no item 1, Paciente)':'')+'.</div>':'')
-    +'<div class="rcv-nota" style="margin:.35rem 0 0">'+(TP_MAYO_LE_LINK
-      ?'Abre a calculadora da Mayo aqui dentro, já com o resultado e o gráfico de continuar ou suspender.'
-      :'Abre a calculadora da Mayo aqui dentro, com estes valores num quadro acima dela. O site dos autores ainda não recebe os valores sozinho (o preenchimento automático foi pedido a eles): por enquanto, é preciso digitá-los lá.')
-    +' Vão para o site dos autores só os números, sem a identificação do paciente. Modelo validado em coorte americana; os autores indicam uso em pesquisa, não para decisão clínica.</div>';
-}
 function tpRender(root){
   var est=tpCarrega(),pac=null;
   est.pac.forEach(function(p){if(p.id===est.atual)pac=p;});
@@ -7010,12 +6937,6 @@ function tpRender(root){
         +'<div class="rcv-campos tp-campos"><label class="rcv-num"><span>Identificação (iniciais ou nº do prontuário)</span><input type="text" maxlength="24" autocomplete="off" data-tp-campo="rot" placeholder="ex.: JMS 4821" value="'+esc(pac.rot||'')+'"></label>'
         +'<label class="rcv-num"><span>Altura (cm)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="alt" value="'+esc(pac.alt||'')+'"></label>'
         +'<label class="rcv-num"><span>Peso-meta (kg, opcional)</span><input type="text" inputmode="decimal" autocomplete="off" data-tp-campo="meta" value="'+esc(pac.meta||'')+'"></label></div>'
-        // Idade, sexo e diabetes no item 1 (professor, 23/11/2026: "deixar lá nos dados iniciais, no paciente ... a
-        // idade do paciente ... se tem diabetes ou não. Porque aí esses dados lá de baixo não precisariam ser
-        // preenchidos"). Servem ao item 4 (Mayo): aparecem para quem vê o item 4 (piloto do professor por enquanto).
-        +(tpMayoPiloto()?'<div class="rcv-campos tp-campos tp-campos3"><label class="rcv-num"><span>Idade (anos)</span><input type="text" inputmode="numeric" maxlength="3" autocomplete="off" data-tp-campo="idade" value="'+esc(pac.idade||'')+'"></label>'
-          +'<label class="rcv-num"><span>Sexo</span><select data-tp-campo="sexo"><option value="">—</option><option value="0"'+(pac.sexo==='0'?' selected':'')+'>Feminino</option><option value="1"'+(pac.sexo==='1'?' selected':'')+'>Masculino</option></select></label>'
-          +'<label class="rcv-num"><span>Diabetes</span><select data-tp-campo="dm"><option value="">—</option><option value="0"'+(pac.dm==='0'?' selected':'')+'>Não</option><option value="1"'+(pac.dm==='1'?' selected':'')+'>Sim</option></select></label></div>':'')
         +'<div class="tp-dup" data-tp-dup role="status" hidden></div>'
         +'<div class="rcv-nota" style="margin:-.2rem 0 .5rem">🔒 Só você vê estes pacientes: ficam neste aparelho, na sua conta, e não vão para o servidor. Professores e outros usuários não têm acesso. Não use o nome do paciente.</div></section>'
       +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">2</span>Peso</div>'
@@ -7043,10 +6964,6 @@ function tpRender(root){
           +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-esc-ok>Criar as doses</button><span class="rcv-nota">Nas pesagens: cada dose nova cai na data do peso seguinte (a consulta). Intervalo de bula: semaglutida e tirzepatida a cada 4 semanas; liraglutida e naltrexona/bupropiona a cada semana. Depois, ajuste o que mudou.</span></div></div>'
         +'<div data-tp-meds></div>'
         +'<div class="rcv-nota" style="margin-bottom:.5rem">Uma linha por dose: no escalonamento, cada dose nova é uma linha da mesma medicação, e a anterior termina sozinha. Fim em branco = em uso. Cirurgia bariátrica entra aqui, na data da cirurgia.</div></section>'
-      +'<section class="rcv-sec" data-tp-mayo hidden><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">4</span>Se suspender: risco de reganho</div></div>'
-        +'<div class="calc-piloto" style="margin:0 0 .45rem">Piloto · visível só para professores</div>'
-        +'<div class="rcv-nota" style="margin:0 0 .45rem">Calculadora da Mayo Clinic (semaglutida e tirzepatida): em quanto tempo o paciente recuperaria metade do peso perdido se a medicação fosse suspensa. Os dados vêm da trajetória e do item 1 (idade, sexo e diabetes).</div>'
-        +'<div data-tp-mayo-din></div></section>'
       +'</div><div class="tp-col-res" data-tp-res aria-live="polite"></div>'
       +'<div class="tp-acoes"><span class="tp-linha" style="margin:0"><button type="button" class="btn btn-outline btn-sm" data-tp-copiar>Copiar resumo</button><button type="button" class="btn btn-outline btn-sm" data-tp-imprimir>Imprimir / PDF</button></span>'
         +'<button type="button" class="btn btn-outline btn-sm tp-excluir" data-tp-excluir>Excluir este paciente</button></div>'
@@ -7173,8 +7090,7 @@ function tpRender(root){
     try{ov.querySelector('[data-tp-fecha]').focus();}catch(e){}
   }
   // largura útil do gráfico: a do cartão menos o recuo da seção (rcv-sec)
-  function resultado(){var box=q('[data-tp-res]');if(box)box.innerHTML=tpResultadoHTML(pac,((box&&box.clientWidth)||root.clientWidth||0)-30);mayo();}
-  function mayo(){var sec=q('[data-tp-mayo]');if(!sec)return;var d=tpMayoPiloto()?tpMayoDados(pac):null;sec.hidden=!d;var din=q('[data-tp-mayo-din]');if(din)din.innerHTML=d?tpMayoDinHTML(d):'';}
+  function resultado(){var box=q('[data-tp-res]');if(box)box.innerHTML=tpResultadoHTML(pac,((box&&box.clientWidth)||root.clientWidth||0)-30);}
   var tpRs=null,tpLarg=0;
   function aoRedimensionar(){
     if(!root.isConnected){window.removeEventListener('resize',aoRedimensionar);return;}
@@ -7200,7 +7116,7 @@ function tpRender(root){
       return;
     }
     if(t.hasAttribute('data-tp-campo')){
-      var k=t.getAttribute('data-tp-campo');pac[k]=t.value;if(k==='idade')pac.idadeEm=tpHojeISO();salva();
+      var k=t.getAttribute('data-tp-campo');pac[k]=t.value;salva();
       if(k==='rot'){var s=q('[data-tp-pac]');if(s&&s.options[s.selectedIndex])s.options[s.selectedIndex].text=nomePac(pac,s.selectedIndex);dupAviso();}
       if(k==='alt')pesosImc();
       resultado();return;
@@ -7289,13 +7205,6 @@ function tpRender(root){
     var gc=ev.target.closest('[data-tp-cheia]');if(gc&&root.contains(gc)){abreCheia();return;}
     var b=ev.target.closest('button');if(!b||!root.contains(b))return;
     if(b.hasAttribute('data-tp-addp')){adicionaPeso();return;}
-    if(b.hasAttribute('data-tp-mayo-ir')){
-      var dm=tpMayoPiloto()?tpMayoDados(pac):null;if(!dm||dm.faltam.length)return;
-      var quadro='<div class="tp-mayo-quadro"><div class="tp-mayo-quadro-t">Valores da trajetória do peso'+(pac.rot?' · '+esc(pac.rot):'')+'</div>'
-        +'<dl class="tp-mayo-val">'+tpMayoItens(dm).map(function(x){return '<div><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>';}).join('')+'</dl>'
-        +(TP_MAYO_LE_LINK?'':'<div class="rcv-nota" style="margin:.3rem 0 0">Digite estes valores na calculadora abaixo e toque em Calcular.</div>')+'</div>';
-      if(typeof calcAbreEmbutida==='function')calcAbreEmbutida('reganhoglp1',dm.url,quadro,'trajpeso');return;
-    }
     if(b.hasAttribute('data-tp-ir')){var id=b.getAttribute('data-tp-ir');est.pac.forEach(function(p){if(p.id===id)pac=p;});tpBase='';tpAbertos={pesos:false,meds:false};salva();form();return;}
     if(b.hasAttribute('data-tp-dt')){
       var n=+b.getAttribute('data-tp-dt'),l=pac.pesos||[],ult=l.length?l[l.length-1].d:'';
@@ -17083,15 +16992,9 @@ function closeCalc(){
   var cartao=anterior&&grid.querySelector('[data-calc="'+anterior+'"]');
   (cartao||grid).scrollIntoView({behavior:'smooth',block:cartao?'center':'start'});
 }
-// Abre uma calculadora externa embutida com um endereço próprio (ex.: a da Mayo já com os valores do paciente, vindos
-// da Trajetória do peso, 23/11/2026), um quadro acima da janela e o botão de voltar para a calculadora de origem.
-var calcEmbedProx=null;
-function calcAbreEmbutida(id,src,quadro,volta){calcEmbedProx={id:id,src:String(src||''),quadro:quadro||'',volta:volta||''};openCalc(id);}
 function openCalc(id){
   activeCalc=id;
-  var emb=calcEmbedProx&&calcEmbedProx.id===id?calcEmbedProx:null;calcEmbedProx=null;
   var c=CALCS.find(function(x){return x.id===id&&calcVisivel(x);});if(!c)return;
-  var embSrc=emb&&/^https:\/\//.test(emb.src)&&emb.src.indexOf(String(c.link).split('?')[0])===0?emb.src:c.link;
   var det=calcEl('#calc-detail');if(!det)return;
   var grid=calcEl('#calc-grid');if(grid)grid.style.display='none';
   // Fora do cartão e à esquerda: é navegação de tela, não ação do cartão. Dentro
@@ -17102,16 +17005,13 @@ function openCalc(id){
       +(c.soProfessor?'<div class="calc-piloto" style="margin-top:.45rem">Piloto · visível só para professores</div>':'')
       // `embutir` (reganhoglp1, 16/11/2026): a ferramenta dos autores roda AQUI DENTRO, num
       // iframe; o guia em português vem logo abaixo e o link de outra aba fica como reserva.
-      +(emb&&emb.volta?'<button type="button" class="btn btn-outline btn-sm" data-calc-volta="'+esc(emb.volta)+'" style="margin:.55rem 0 0">← Voltar para a trajetória do peso</button>':'')
-      +(emb&&emb.quadro&&c.embutir?emb.quadro:'')
-      +(c.embutir?'<div class="calc-embed"><iframe src="'+esc(embSrc)+'" title="'+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe></div>'
+      +(c.embutir?'<div class="calc-embed"><iframe src="'+esc(c.link)+'" title="'+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe></div>'
         +'<div style="font-size:.7rem;color:var(--t3);margin:.35rem 0 .2rem">Janela em branco? Use o botão “'+esc(c.cta||'Abrir')+'”, no fim do cartão.</div>':'')
       +(c.desc2?'<div style="font-size:.78rem;color:var(--t2);line-height:1.6;margin:.5rem 0 .8rem">'+c.desc2+'</div>':'')
-      +'<a class="btn '+(c.embutir?'btn-outline':'btn-primary')+'" href="'+esc(embSrc)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
+      +'<a class="btn '+(c.embutir?'btn-outline':'btn-primary')+'" href="'+esc(c.link)+'" target="_blank" rel="noopener" style="justify-content:center;text-decoration:none">'+esc(c.cta||'Abrir ferramenta oficial')+' ↗</a>'
       +(c.note?'<div style="font-size:.68rem;color:var(--t3);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--bd);padding-top:.5rem">ℹ️ '+esc(c.note)+'</div>':'')
       +'</div>';
     var cbx=det.querySelector('#calc-close');if(cbx)cbx.addEventListener('click',closeCalc);
-    var cvx=det.querySelector('[data-calc-volta]');if(cvx)cvx.addEventListener('click',function(){openCalc(cvx.getAttribute('data-calc-volta'));});
     // `start`, não `nearest`: agora a calculadora é a tela inteira, e o botão de
     // voltar tem de nascer visível. Com `nearest` a página não rolava, e quem
     // abria um cartão lá embaixo continuava vendo o meio do formulário.
