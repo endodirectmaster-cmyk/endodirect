@@ -1,6 +1,6 @@
 ---
 tags: [cofre, instagram]
-atualizado: 2026-11-22
+atualizado: 2026-11-23
 ---
 
 # Instagram: pauta do feed e stories (combinado na conversa do Claude Chat)
@@ -23,6 +23,9 @@ proposta de questão às 11h + gabarito às 18h, que montei na mesma tarde e des
 - **11h:** "Na prática clínica" (conversa do Instagram);
 - **18h:** Questão do Dia da PLATAFORMA (Claude Code, tarefa diária), arte com "Gabarito na plataforma";
 - **19h05:** story da capa nos dias de post (conversa do Instagram).
+- **19h05 de segunda e quinta:** story "O que diz a diretriz" (antes "Diretriz em 1 frase"), arte com o logo do
+  Endodirect e frase justificada (conversa do Instagram; atualização colada pelo professor em 22/11, 21h55).
+  Fica fora da janela de 17h a 19h que a tarefa daqui olha antes de agendar as 18h: não atrapalha a Questão do Dia.
 - Tudo automático, sem enquete. A conversa do Instagram não agenda mais questão nem gabarito.
 - Semana de 23 a 29/11 (feito lá): as Questões do Dia das 11h viraram "Na prática clínica"; os gabaritos das 18h e as
   enquetes das 13h (23, 25 e 26/11) viraram rascunho. Rascunho não conta como horário ocupado para a tarefa daqui.
