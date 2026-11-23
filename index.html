@@ -717,6 +717,28 @@ html[data-theme="light"] #login-screen{box-shadow:inset 0 env(safe-area-inset-to
 .tp-chk input:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.tp-chk input,.tp-chk input::after{transition:none}}
 .tp-add-comp{margin-top:-.25rem}
+/* Linha de adicionar dose (23/11/2026). Pela largura da própria linha (container query): estreita, medicação em cima,
+   dose e início lado a lado e o "Adicionar" embaixo; média, dose, início e botão na 2ª linha; larga, tudo numa faixa. */
+[data-tp-am]{container-type:inline-size}
+.tp-add-med{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.45rem .5rem;align-items:end}
+.tp-add-med .tp-am-n{grid-column:1/-1}
+.tp-add-med [data-tp-addm]{grid-column:1/-1;justify-self:end;min-width:7rem}
+.tp-add-med .rcv-num{min-width:0}
+.tp-add-med select{width:100%;min-width:0;padding-left:.5rem;padding-right:1.4rem}
+.tp-add-med input[hidden]{display:none}
+.tp-am-n,.tp-am-dcel{display:flex;flex-direction:row;flex-wrap:wrap;gap:.3rem;align-items:center}
+.tp-add-med .tp-am-n>span:first-child{flex:0 0 100%}
+.tp-am-n select,.tp-am-n input,.tp-am-dcel select,.tp-am-dcel input{flex:1 1 8rem;min-width:0}
+.tp-add-med .tp-data{flex:none}
+.tp-add-med select,.tp-add-med input[type=text],.tp-add-med [data-tp-addm]{min-height:2.375rem}
+@container (min-width:30rem){
+  .tp-add-med{grid-template-columns:minmax(0,1fr) minmax(0,10.5rem) auto}
+  .tp-add-med [data-tp-addm]{grid-column:auto;min-width:0}
+}
+@container (min-width:46rem){
+  .tp-add-med{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,10.5rem) auto}
+  .tp-add-med .tp-am-n{grid-column:auto}
+}
 .tp-add-comp input{flex:1 1 0;width:auto;min-width:0}
 .tp-lpc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:-.05rem 2.4rem .35rem 0;padding:0 0 .45rem .55rem;border-left:2px solid var(--bd2);border-bottom:1px dashed var(--bd)}
 .tp-vazio{font-size:.78rem;color:var(--t3);padding:.7rem 0}
@@ -6318,7 +6340,7 @@ function tpLerLista(txt){
 }
 // `datas` (opcional): as datas das pesagens a partir do início; cada dose nova cai numa pesagem (a consulta em que se
 // sobe a dose). Sem `datas`, o intervalo de bula. Com datas, para na última pesagem (as próximas doses entram quando
-// houver peso novo, pelo "+ Medicação ou nova dose").
+// houver peso novo, pela linha de adicionar dose).
 function tpEscalaLinhas(nome,iniISO,alvo,datas){
   var e=null;TP_ESCALA.forEach(function(x){if(x.n===nome)e=x;});
   var t0=tpDia(iniISO);if(!e||!isFinite(t0))return [];
@@ -6856,6 +6878,29 @@ function tpCelDose(i,m){
   return k?tpCampoEscolha('dose',i,m.dose,k.d,'Outra dose…')
     :'<input type="text" autocomplete="off" placeholder="Dose" value="'+esc(m.dose||'')+'" data-tp-m="dose" data-tp-mi="'+i+'">';
 }
+// Linha de adicionar dose (23/11/2026), no lugar do antigo "+ Medicação ou nova dose": medicação, dose e início já
+// sugeridos (a mesma medicação, a dose seguinte da titulação e a pesagem seguinte ao início da última dose) e o
+// "Adicionar", como na linha do peso. Listas com todas as opções e "Outra…" para digitar, como nas linhas da lista.
+function tpAddDoseHTML(nome,dose){
+  var k=tpMedConhecida(nome),v=String(dose||'');
+  if(!k)return '<input type="text" autocomplete="off" placeholder="Dose" data-tp-am-dt value="'+esc(v)+'" aria-label="Dose">';
+  var outra=!!v.trim()&&k.d.indexOf(v)<0;
+  return '<select data-tp-am-d aria-label="Dose"><option value=""'+(v.trim()?'':' selected')+'>Escolha…</option>'
+    +k.d.map(function(o){return '<option'+(o===v?' selected':'')+'>'+esc(o)+'</option>';}).join('')
+    +'<option value="__outra"'+(outra?' selected':'')+'>Outra dose…</option></select>'
+    +'<input type="text" autocomplete="off" placeholder="Dose" data-tp-am-dt value="'+esc(outra?v:'')+'" aria-label="Dose"'+(outra?'':' hidden')+'>';
+}
+function tpAddMedHTML(sug){
+  var k=tpMedConhecida(sug.n),outra=!!String(sug.n||'').trim()&&!k;
+  return '<div class="tp-add tp-add-med">'
+    +'<div class="rcv-num tp-am-n"><span>Medicação</span><select data-tp-am-n aria-label="Medicação"><option value=""'+(sug.n?'':' selected')+'>Escolha…</option>'
+      +TP_MEDS.map(function(x){return '<option'+(k&&k.n===x.n?' selected':'')+'>'+esc(x.n)+'</option>';}).join('')
+      +'<option value="__outra"'+(outra?' selected':'')+'>Outra medicação…</option></select>'
+      +'<input type="text" autocomplete="off" placeholder="Nome da medicação" data-tp-am-nt value="'+esc(outra?sug.n:'')+'" aria-label="Nome da medicação"'+(outra?'':' hidden')+'></div>'
+    +'<div class="rcv-num tp-am-d"><span>Dose</span><div class="tp-am-dcel" data-tp-am-dcel>'+tpAddDoseHTML(sug.n,sug.dose)+'</div></div>'
+    +'<div class="rcv-num tp-am-i"><span>Início</span>'+tpCampoData('data-tp-am-i',sug.ini,'Início da dose')+'</div>'
+    +'<button type="button" class="btn btn-primary btn-sm" data-tp-addm>Adicionar</button></div>';
+}
 var TP_CROT={gp:'% gordura',mg:'M. gorda',mm:'M. magra'},TP_CROT_L={gp:'Percentual de gordura',mg:'Massa gorda em kg',mm:'Massa magra em kg'};
 function tpNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s.\-_\/]+/g,'');}
 // ── SE SUSPENDER: RISCO DE REGANHO (MAYO CLINIC) (23/11/2026) ──
@@ -6982,15 +7027,18 @@ function tpRender(root){
           +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-colar-ok>Adicionar estes pesos</button><span class="rcv-nota">Data em dd/mm/aa ou dd/mm/aaaa; o mesmo dia troca o peso.</span></div></div>'
         +'<label class="tp-chk"><input type="checkbox" role="switch" data-tp-comp'+(pac.comp?' checked':'')+'><span><b>Composição corporal</b> (bioimpedância, opcional)'+(pac.comp?'<small>% de gordura, massa gorda ou massa magra: preencha o que tiver; com o peso, o resto é calculado.</small>':'')+'</span></label>'
         +'<div data-tp-pesos></div></section>'
-      +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">3</span>Medicações e doses</div></div><div data-tp-meds></div>'
-        +'<div class="tp-linha" style="margin:.15rem 0 .3rem"><button type="button" class="btn btn-outline btn-sm" data-tp-addm>+ Medicação ou nova dose</button>'
-          +'<button type="button" class="btn btn-outline btn-sm" data-tp-esc>Escalonamento padrão</button></div>'
+      // Linha de adicionar como a do peso (professor, 23/11/2026: "ao invés do botão de mais medicação ou nova dose,
+      // deixar o botão de adicionar como existe no peso. E aí deixar só o botão de escalonamento padrão").
+      +'<section class="rcv-sec"><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">3</span>Medicações e doses</div>'
+        +'<div class="tp-sec-acoes"><button type="button" class="btn btn-outline btn-sm" data-tp-esc>Escalonamento padrão</button></div></div>'
+        +'<div data-tp-am></div>'
         +'<div class="tp-caixa" data-tp-esc-box hidden><div class="rcv-campos">'
           +'<label class="rcv-num"><span>Medicação</span><select data-tp-esc-med>'+TP_ESCALA.map(function(e){return '<option>'+esc(e.n)+'</option>';}).join('')+'</select></label>'
           +'<label class="rcv-num"><span>Início</span><input type="date" data-tp-esc-ini value="'+tpHojeISO()+'"></label>'
           +'<label class="rcv-num"><span>Até a dose</span><select data-tp-esc-alvo>'+tpEscalaAlvos(TP_ESCALA[0].n)+'</select></label>'
           +'<label class="rcv-num"><span>Datas das doses</span><select data-tp-esc-datas><option value="pesos">nas datas das pesagens</option><option value="bula">intervalo de bula</option></select></label></div>'
           +'<div class="tp-caixa-acoes"><button type="button" class="btn btn-primary btn-sm" data-tp-esc-ok>Criar as doses</button><span class="rcv-nota">Nas pesagens: cada dose nova cai na data do peso seguinte (a consulta). Intervalo de bula: semaglutida e tirzepatida a cada 4 semanas; liraglutida e naltrexona/bupropiona a cada semana. Depois, ajuste o que mudou.</span></div></div>'
+        +'<div data-tp-meds></div>'
         +'<div class="rcv-nota" style="margin-bottom:.5rem">Uma linha por dose: no escalonamento, cada dose nova é uma linha da mesma medicação, e a anterior termina sozinha. Fim em branco = em uso. Cirurgia bariátrica entra aqui, na data da cirurgia.</div></section>'
       +'<section class="rcv-sec" data-tp-mayo hidden><div class="tp-sec-cab"><div class="rcv-sec-t"><span class="tp-num" aria-hidden="true">4</span>Se suspender: risco de reganho</div></div>'
         +'<div class="calc-piloto" style="margin:0 0 .45rem">Piloto · visível só para professores</div>'
@@ -7021,6 +7069,7 @@ function tpRender(root){
         +'<button type="button" class="tp-x" data-tp-delp="'+i+'" aria-label="Remover este peso">×</button></div>'
         +(pac.comp?'<div class="tp-lpc">'+['gp','mg','mm'].map(function(c){return '<input type="text" inputmode="decimal" autocomplete="off" value="'+esc(x[c]||'')+'" data-tp-pc="'+c+'" data-tp-pci="'+i+'" placeholder="'+esc(compPh(x,c))+'" aria-label="'+TP_CROT_L[c]+'">';}).join('')+'</div>':'');
     }).join('')+'</div></details>':'<div class="rcv-nota" style="margin:0 0 .5rem">Nenhum peso ainda. Comece pelo peso do início do acompanhamento.</div>';
+    addMedSugere();
   }
   function compPh(x,c){var v=String(x[c]||'').trim();if(v)return TP_CROT[c];var k=tpComp(x,cliqLe(x.p));return k?'≈ '+tpFmt(k[c],1)+(c==='gp'?'%':' kg'):TP_CROT[c];}
   function compPhLinha(i){var x=pac.pesos[i];if(x)root.querySelectorAll('[data-tp-pci="'+i+'"]').forEach(function(f){f.placeholder=compPh(x,f.getAttribute('data-tp-pc'));});}
@@ -7039,6 +7088,25 @@ function tpRender(root){
         +'<label class="rcv-num"><span>Fim (vazio = em uso)</span><input type="date" value="'+esc(m.fim||'')+'" data-tp-m="fim" data-tp-mi="'+i+'"></label>'
         +'<button type="button" class="tp-x" data-tp-delm="'+i+'" aria-label="Remover esta linha">×</button></div>';
     }).join('')+'</details>';
+    addMedSugere();
+  }
+  // Sugestão da linha de adicionar dose: refeita quando a lista de doses ou de pesos muda, a não ser que o médico já
+  // tenha mexido nela (aí fica o que ele escolheu, até adicionar).
+  var amMexido=false;
+  function addMedSug(){
+    var ant=null;(pac.meds||[]).forEach(function(m){if(m&&(!ant||String(m.ini||'')>=String(ant.ini||'')))ant=m;});
+    if(!ant)return {n:'',dose:'',ini:proxPesagem('')||tpHojeISO()};
+    return {n:ant.n||'',dose:tpProxDose(ant.n,ant.dose),ini:proxPesagem(ant.ini)||tpHojeISO()};
+  }
+  function addMedSugere(forca){var box=q('[data-tp-am]');if(!box||(amMexido&&!forca))return;amMexido=false;box.innerHTML=tpAddMedHTML(addMedSug());}
+  function adicionaMed(){
+    var sn=q('[data-tp-am-n]'),nt=q('[data-tp-am-nt]'),sd=q('[data-tp-am-d]'),dt=q('[data-tp-am-dt]');
+    var n=sn&&sn.value==='__outra'?String(nt&&nt.value||'').trim():(sn?sn.value:'');
+    var dose=sd&&sd.value!=='__outra'?sd.value:String(dt&&dt.value||'').trim();
+    var ini=tpDeBR(q('[data-tp-am-i]').value);
+    if(!n||!isFinite(tpDia(ini))){try{notify('Escolha a medicação e preencha o início (dd/mm/aaaa).','err');}catch(e){}return;}
+    pac.meds.push({n:n,dose:dose,ini:ini,fim:''});salva();amMexido=false;meds();resultado();
+    try{q('[data-tp-addm]').focus();}catch(e){}
   }
   // TELA CHEIA (professor, 19/11/2026: "deixar a opção de poder clicar no gráfico e ele ampliar em tela cheia"):
   // camada fixa sobre a página, com o gráfico redesenhado no tamanho da tela (letra ~30% maior em tela grande) e a
@@ -7122,7 +7190,8 @@ function tpRender(root){
     var t=ev.target;
     // Data digitada: as barras entram sozinhas (só digitando no fim; apagar e colar com hífen ficam como estão),
     // e o calendário ao lado acompanha, para abrir já no dia digitado.
-    if(t.hasAttribute('data-tp-nd')||t.hasAttribute('data-tp-pd')){
+    if(t.closest&&t.closest('.tp-add-med'))amMexido=true;
+    if(t.hasAttribute('data-tp-nd')||t.hasAttribute('data-tp-pd')||t.hasAttribute('data-tp-am-i')){
       if(/^[\d\/]*$/.test(t.value)&&t.selectionStart===t.value.length&&!/^delete/.test(ev.inputType||'')){var mv=tpMascaraData(t.value);if(mv!==t.value)t.value=mv;}
       var isoI=tpDeBR(t.value),cI=t.parentNode&&t.parentNode.querySelector('[data-tp-cal]');if(cI&&isoI)cI.value=isoI;
       return;
@@ -7138,7 +7207,7 @@ function tpRender(root){
     if(t.hasAttribute('data-tp-pp')){var x=pac.pesos[+t.getAttribute('data-tp-pp')];if(x){x.p=t.value;salva();pesosImc();compPhLinha(+t.getAttribute('data-tp-pp'));var pr=q('[data-tp-pres]');if(pr)pr.textContent=pesosResumo();resultado();}return;}
     if(t.hasAttribute('data-tp-m')){
       var m=pac.meds[+t.getAttribute('data-tp-mi')],c=t.getAttribute('data-tp-m');if(!m)return;
-      m[c]=t.value;salva();
+      m[c]=t.value;salva();addMedSugere();
       if(c==='n'){var cel=q('[data-tp-dcel="'+t.getAttribute('data-tp-mi')+'"]');if(cel)cel.innerHTML=tpCelDose(+t.getAttribute('data-tp-mi'),m);var mr=q('[data-tp-mres]');if(mr)mr.textContent=medsResumo();}
       resultado();
     }
@@ -7159,7 +7228,7 @@ function tpRender(root){
     var l=tpEscalaLinhas(nome,ini,alvo,datas);
     if(!l.length){try{notify('Escolha a medicação e a data de início.','err');}catch(e){}return;}
     pac.meds=(pac.meds||[]).concat(l);tpAbertos.meds=true;q('[data-tp-esc-box]').hidden=true;salva();meds();resultado();
-    if(pelasPesagens&&l.length<alvo+1){try{notify(l.length+' dose'+(l.length===1?'':'s')+' criada'+(l.length===1?'':'s')+', uma por pesagem. As próximas entram com o peso novo, em "+ Medicação ou nova dose".','ok');}catch(e){}}
+    if(pelasPesagens&&l.length<alvo+1){try{notify(l.length+' dose'+(l.length===1?'':'s')+' criada'+(l.length===1?'':'s')+', uma por pesagem. As próximas entram com o peso novo, na linha de adicionar dose.','ok');}catch(e){}}
   }
   // datas das pesagens: a primeira depois de `apos` (ou a primeira de todas)
   function proxPesagem(apos){var l=pac.pesos||[];for(var i=0;i<l.length;i++){if(!apos||l[i].d>apos)return l[i].d;}return '';}
@@ -7178,10 +7247,23 @@ function tpRender(root){
     if(t.hasAttribute('data-tp-pac')){est.pac.forEach(function(p){if(p.id===t.value)pac=p;});tpBase='';tpAbertos={pesos:false,meds:false};salva();form();return;}
     if(t.hasAttribute('data-tp-cal')){
       var tx=t.parentNode&&t.parentNode.parentNode&&t.parentNode.parentNode.querySelector('input[type=text]');
-      if(tx&&isFinite(tpDia(t.value))){tx.value=tpBR(t.value,tx.hasAttribute('data-tp-pd'));if(tx.hasAttribute('data-tp-pd'))mudaDataLinha(tx);else try{q('[data-tp-np]').focus();}catch(e){}}
+      if(tx&&isFinite(tpDia(t.value))){tx.value=tpBR(t.value,tx.hasAttribute('data-tp-pd'));if(tx.hasAttribute('data-tp-pd'))mudaDataLinha(tx);else if(tx.hasAttribute('data-tp-am-i')){amMexido=true;try{q('[data-tp-addm]').focus();}catch(e){}}else try{q('[data-tp-np]').focus();}catch(e){}}
       return;
     }
     if(t.hasAttribute('data-tp-pd')){mudaDataLinha(t);return;}
+    if(t.hasAttribute('data-tp-am-n')){
+      amMexido=true;var ntx=q('[data-tp-am-nt]'),dc=q('[data-tp-am-dcel]'),outraN=t.value==='__outra';
+      if(ntx){ntx.hidden=!outraN;if(outraN){ntx.value='';try{ntx.focus();}catch(e){}}}
+      // medicação trocada: a dose começa na inicial dela (a mesma da última dose dessa medicação, se houver, segue a titulação)
+      var kk=tpMedConhecida(t.value),ult=null;(pac.meds||[]).forEach(function(m){if(m&&kk&&String(m.n||'').trim().toLowerCase()===kk.n.toLowerCase()&&(!ult||String(m.ini||'')>=String(ult.ini||'')))ult=m;});
+      if(dc)dc.innerHTML=tpAddDoseHTML(outraN?'':t.value,kk?(ult?tpProxDose(ult.n,ult.dose):kk.d[0]):'');
+      return;
+    }
+    if(t.hasAttribute('data-tp-am-d')){
+      amMexido=true;var dtx=q('[data-tp-am-dt]'),outraD=t.value==='__outra';
+      if(dtx){dtx.hidden=!outraD;if(outraD){dtx.value='';try{dtx.focus();}catch(e){}}}
+      return;
+    }
     if(t.hasAttribute('data-tp-base')){tpBase=t.value;resultado();return;}
     if(t.hasAttribute('data-tp-msel')){
       var mm=pac.meds[+t.getAttribute('data-tp-mi')],cc=t.getAttribute('data-tp-msel');if(!mm)return;
@@ -7196,6 +7278,7 @@ function tpRender(root){
   });
   root.addEventListener('keydown',function(ev){
     if(ev.key==='Enter'&&(ev.target.hasAttribute('data-tp-np')||ev.target.hasAttribute('data-tp-nc'))){ev.preventDefault();adicionaPeso();return;}
+    if(ev.key==='Enter'&&(ev.target.hasAttribute('data-tp-am-i')||ev.target.hasAttribute('data-tp-am-nt')||ev.target.hasAttribute('data-tp-am-dt'))){ev.preventDefault();adicionaMed();return;}
     if((ev.key==='Enter'||ev.key===' ')&&ev.target.hasAttribute('data-tp-cheia')){ev.preventDefault();abreCheia();}
   });
   root.addEventListener('toggle',function(ev){var d=ev.target;if(d&&d.getAttribute&&d.getAttribute('data-tp-det'))tpAbertos[d.getAttribute('data-tp-det')]=!!d.open;},true);
@@ -7221,15 +7304,7 @@ function tpRender(root){
     if(b.hasAttribute('data-tp-esc-ok')){criaEscala();return;}
     if(b.hasAttribute('data-tp-imprimir')){tpImprimir(pac);return;}
     if(b.hasAttribute('data-tp-delp')){pac.pesos.splice(+b.getAttribute('data-tp-delp'),1);salva();pesos();resultado();return;}
-    if(b.hasAttribute('data-tp-addm')){
-      // Pré-preenchido (professor, 18/11/2026: "já podia vir mais ou menos preenchido as datas ... conforme a pesagem
-      // dele ... a próxima dose já ser cadastrada para essa data ... conforme até a titulação da dose"): a 1ª linha
-      // começa no 1º peso; cada nova dose, na pesagem seguinte à anterior, com a dose seguinte da titulação.
-      var ant=pac.meds[pac.meds.length-1];
-      pac.meds.push({n:ant?ant.n:'',dose:ant?tpProxDose(ant.n,ant.dose):'',ini:(ant?proxPesagem(ant.ini):proxPesagem(''))||tpHojeISO(),fim:''});tpAbertos.meds=true;salva();meds();resultado();
-      var ins=root.querySelectorAll('.tp-lm');ins=ins[ins.length-1];if(ins){var f=ins.querySelector(ant?'[data-tp-msel="dose"],[data-tp-m="dose"]':'[data-tp-msel="n"]');try{f.focus();}catch(e){}}
-      return;
-    }
+    if(b.hasAttribute('data-tp-addm')){adicionaMed();return;}
     if(b.hasAttribute('data-tp-delm')){pac.meds.splice(+b.getAttribute('data-tp-delm'),1);salva();meds();resultado();return;}
     if(b.hasAttribute('data-tp-modo')){tpModo=b.getAttribute('data-tp-modo');resultado();return;}
     if(b.hasAttribute('data-tp-novo')){pac=tpNovoPac('');est.pac.push(pac);tpBase='';tpAbertos={pesos:false,meds:false};salva();form();try{q('[data-tp-campo="rot"]').focus();}catch(e){}return;}

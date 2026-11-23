@@ -1,11 +1,22 @@
 ---
 tags: [cofre, calculadoras]
-atualizado: 2026-11-21
+atualizado: 2026-11-23
 ---
 
 # Calculadoras
 
 ## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
+
+> ➕ **MEDICAÇÕES: LINHA DE ADICIONAR COMO A DO PESO (23/11/2026, sw v477).** Professor: "Ao invés do botão de mais
+> medicação ou nova dose, deixar o botão de adicionar como existe no peso. E aí deixar só o botão de escalonamento
+> padrão mesmo." Saiu o "+ Medicação ou nova dose" (que criava uma linha vazia na lista). Agora, no topo da seção 3:
+> Medicação, Dose e Início (dd/mm/aaaa com calendário) e "Adicionar" (Enter no início também adiciona), já sugeridos
+> como o botão antigo fazia: a mesma medicação da última dose, a dose seguinte da titulação e a pesagem seguinte ao
+> início dela (`addMedSug`; sem medicação, o 1º peso). Trocar a medicação na linha põe a dose inicial dela (ou a
+> seguinte, se ela já foi usada). A sugestão se refaz quando a lista de doses ou de pesos muda, a não ser que o médico
+> já tenha mexido na linha (`amMexido`). "Escalonamento padrão" subiu para o cabeçalho da seção, no lugar em que o
+> "Colar lista" fica no peso. Disposição pela largura da própria linha (container query em `[data-tp-am]`): estreita,
+> medicação em cima, dose e início lado a lado e o botão embaixo; larga, tudo numa faixa.
 
 > 🔗 **"SE SUSPENDER": PONTE COM A CALCULADORA DA MAYO (23/11/2026, sw v474) — PILOTO SÓ DO PROFESSOR.** Professor:
 > "É possível deixar essa ferramenta também sincronizada com a de cálculo de reganho ... da Mayo Clinic?" e, na
