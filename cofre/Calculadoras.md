@@ -7,6 +7,23 @@ atualizado: 2026-11-21
 
 ## 📈 TRAJETÓRIA DO PESO NO TRATAMENTO (2026-11-18, sw v450)
 
+> 🔗 **"SE SUSPENDER": PONTE COM A CALCULADORA DA MAYO (23/11/2026, sw v474) — PILOTO SÓ DO PROFESSOR.** Professor:
+> "É possível deixar essa ferramenta também sincronizada com a de cálculo de reganho ... da Mayo Clinic?" e, na
+> escolha: "Aproveitar os dados inseridos da trajetória do peso e usar automaticamente na calculadora de reganho da
+> Mayo. Deixa um botão que leva aos resultados já calculados". Depois: "Essa nova ferramenta de sincronização ... deixa
+> por enquanto apenas no painel do professor, para irmos testando e aprimorando" (`tpMayoPiloto()` = admin).
+> - Seção 4 da trajetória (só com semaglutida ou tirzepatida; vale a EM USO, senão a que terminou por último): tira da
+>   trajetória medicação, peso no início, altura, meses de uso, peso atual e peso aos 3 meses (`tpMayoDados`); o
+>   médico completa idade no início, sexo e diabetes (guardados no paciente, só no aparelho).
+> - Botão "Ver o risco de reganho se suspender" → `calcAbreEmbutida('reganhoglp1', url, quadro, 'trajpeso')`: abre o
+>   cartão da Mayo aqui dentro com o link `?lang=pt&drug=&wt=&ht_cm=&age=&sex=&dm=&dur=&nadir=&wt3=&calc=1` (os ids dos
+>   campos do formulário deles), um quadro com os valores acima da janela e "← Voltar para a trajetória do peso".
+>   O cartão externo só aceita endereço do próprio site da ferramenta.
+> - **Limite em 23/11:** o site dos autores lia só `?lang=` e `?assistant=`; o modelo não foi publicado, então não
+>   há cálculo nosso. Por enquanto o médico digita os valores lá (o quadro avisa). Rascunho de e-mail ao Dr. Romanos
+>   (no Gmail do professor) pedindo que o site leia esses parâmetros e já mostre o resultado. Quando ler: trocar
+>   `TP_MAYO_LE_LINK` para true (o quadro deixa de pedir para digitar). Para publicar aos médicos: `tpMayoPiloto`.
+
 > ✅ **PUBLICADA PARA OS MÉDICOS (23/11/2026, sw v473).** Professor: "pode liberar também para o painel dos alunos,
 > tendo a atenção especial de deixar apenas liberado para médicos, que são os prescritores, não liberar para
 > alunos". Saiu o `soProfessor`; fica o `soMedico` (perfis Residente, Endocrinologista e Outros, todos com CRM
