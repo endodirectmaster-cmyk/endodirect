@@ -1,9 +1,23 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-11-19
+atualizado: 2026-11-23
 ---
 
 # Dados e Supabase
+
+## ✏️ NOME DO ALUNO CORRIGIDO PELO SUPORTE: `raw_user_meta_data->>'nome'` (23/11/2026)
+
+- O Perfil não deixa o aluno mudar o nome ("Nome, tipo de perfil e CRM só são alterados pelo suporte").
+- Quem entra pelo Google tem `name`/`full_name` **regravados pelo Google a cada login**: corrigir só esses dois volta
+  ao nome errado no próximo login. O nome corrigido vai em **`nome`** (chave que o checkout já usa e que o app lê
+  primeiro: `user_metadata.nome || .name`). Grave também `name`/`full_name` para valer já, e anote
+  `nome_anterior`/`nome_corrigido_em`. Use `raw_user_meta_data || jsonb_build_object(...)`, com o `where` conferindo
+  id, e-mail e o nome antigo.
+- As funções `endodirect_admin_students`, `endodirect_admin_pagantes_risco`, `endodirect_renovacao_alvos` e
+  `endodirect_reengajamento_alvos` passaram a preferir `nome` (migração `nome_corrigido_pelo_suporte_tem_prioridade`);
+  antes liam só `name`/`full_name`, e nem o nome dado no checkout aparecia no painel e nos e-mails.
+- O nome que a Memed imprime na receita é outro cadastro (ver [[Integrações]], Memed): o aluno corrige no campo
+  "Prescritor" do Consultório e o backend atualiza a Memed.
 
 ## 🚨 INCIDENTE DE 19/11/2026: CONTEÚDO ESVAZIADO POR LEITURA QUE FALHOU
 

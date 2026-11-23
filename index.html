@@ -17714,8 +17714,11 @@ function renderPrescMemed(){
   setTimeout(prescPrewarm,300);
 }
 // Cache do token "pré-aquecido" + assinatura do prescritor (invalida se mudar).
+// O nome entra na assinatura: corrigido o nome, o token sai de novo do backend, que
+// atualiza o prescritor na Memed (o nome que vai impresso na receita).
+function normNomePresc(s){return String(s||'').trim().replace(/\s+/g,' ');}
 var _prescWarm=null;
-function prescSig(){return [prescVal('memed-crm'),(prescVal('memed-uf')||'').toUpperCase(),(prescVal('memed-cpf')||'').replace(/\D/g,''),prescVal('memed-esp'),prescVal('memed-nasc')].join('|');}
+function prescSig(){return [normNomePresc(prescVal('memed-nome')),prescVal('memed-crm'),(prescVal('memed-uf')||'').toUpperCase(),(prescVal('memed-cpf')||'').replace(/\D/g,''),prescVal('memed-esp'),prescVal('memed-nasc')].join('|');}
 function prescPrewarmLinks(scriptUrl){
   try{
     if(!scriptUrl||document.getElementById('memed-preload'))return;

@@ -120,8 +120,15 @@ async function getMemedToken(p) {
   const errText = String(raw || '').toLowerCase();
   const isDuplicate = !!externalId && (r.status === 409 || r.status === 422 || /j[áa]\s*cadastrad|already\s*(registered|exists)|id\s*externo/.test(errText));
   if (isDuplicate) {
-    const tok = await getExistingMemedToken(externalId, qs);
-    if (tok) return tok;
+    const ex = await getExistingMemedPrescriber(externalId, qs);
+    if (ex && ex.token) {
+      // O POST não mexe no prescritor já cadastrado: um nome corrigido depois do
+      // 1º cadastro nunca chegava à Memed, e é esse nome que sai na receita
+      // (23/11/2026: o nome do Google de um aluno veio errado e ficou gravado lá).
+      // Atualiza só quando mudou; falha aqui não impede abrir a prescrição.
+      if (prescritorMudou(ex.attrs, attributes)) await updateMemedPrescriber(externalId, qs, attributes);
+      return ex.token;
+    }
   }
   // Diagnóstico: status HTTP + corpo cru da Memed (revela a causa real).
   console.log('[memed-resp] status=' + r.status + ' body=' + String(raw).slice(0, 500));
@@ -131,8 +138,9 @@ async function getMemedToken(p) {
   throw new Error(msg);
 }
 
-// Busca o token de um prescritor JÁ cadastrado, pelo external_id (GET).
-async function getExistingMemedToken(externalId, qs) {
+// Busca um prescritor JÁ cadastrado, pelo external_id (GET): o token e os
+// atributos que a Memed tem dele (para saber se o nome mudou).
+async function getExistingMemedPrescriber(externalId, qs) {
   const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios/${encodeURIComponent(externalId)}?${qs}`;
   try {
     const r = await fetch(url, { headers: { Accept: 'application/vnd.api+json' } });
@@ -142,14 +150,46 @@ async function getExistingMemedToken(externalId, qs) {
     if (r.ok) {
       const d = data && data.data;
       const node = Array.isArray(d) ? d[0] : d;
-      const token = node && node.attributes && node.attributes.token;
-      if (token) return token;
+      const attrs = (node && node.attributes) || null;
+      const token = attrs && attrs.token;
+      if (token) return { token, attrs };
     }
     console.log('[memed-getexist] status=' + r.status + ' body=' + String(raw).slice(0, 400));
   } catch (e) {
     console.log('[memed-getexist] erro:', (e && e.message) || e);
   }
   return null;
+}
+
+function normNome(s) { return String(s == null ? '' : s).trim().replace(/\s+/g, ' '); }
+// Sem os atributos (formato inesperado), tenta atualizar: o PATCH é inofensivo.
+function prescritorMudou(atual, novo) {
+  if (!atual || atual.nome == null) return true;
+  return normNome(atual.nome) !== normNome(novo.nome) || normNome(atual.sobrenome) !== normNome(novo.sobrenome);
+}
+
+// Atualiza nome e sobrenome do prescritor já cadastrado (PATCH, JSON:API).
+// Só o nome: CPF e CRM ficam como a Memed validou no cadastro. O log leva só o
+// status e o título do erro, sem os dados do médico.
+async function updateMemedPrescriber(externalId, qs, attributes) {
+  const url = `${MEMED_API_BASE}/v1/sinapse-prescricao/usuarios/${encodeURIComponent(externalId)}?${qs}`;
+  const body = { data: { type: 'usuarios', attributes: { nome: attributes.nome, sobrenome: attributes.sobrenome } } };
+  try {
+    const r = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/vnd.api+json' },
+      body: JSON.stringify(body)
+    });
+    if (r.ok) { console.log('[memed-patch] status=' + r.status); return true; }
+    const raw = await r.text().catch(() => '');
+    let data = {};
+    try { data = JSON.parse(raw); } catch (e) {}
+    const e0 = data && data.errors && data.errors[0];
+    console.log('[memed-patch] status=' + r.status + ' erro=' + String((e0 && (e0.title || e0.code)) || '').slice(0, 120));
+  } catch (e) {
+    console.log('[memed-patch] erro:', (e && e.message) || e);
+  }
+  return false;
 }
 
 module.exports = async function handler(req, res) {
