@@ -31,7 +31,7 @@ const ANNUAL_DIAS = 365;
 // Oferta de Sócio-fundador: cupom que libera o Gold anual por um valor
 // promocional (padrão R$540 = "Gold pelo preço do Standard"). As regras +
 // o limite de vagas (auto-desativa ao esgotar) ficam em lib/founder.js.
-const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, FOUNDER_PLAN, countFounderAccesses } = require('../../lib/founder');
+const { FOUNDER_COUPON, FOUNDER_AMOUNT, FOUNDER_ENABLED_ENV, FOUNDER_LIMIT, FOUNDER_PLAN, founderNoPrazo, countFounderAccesses } = require('../../lib/founder');
 // Quem já tem o plano ativo não é cobrado de novo — ver lib/acesso-vigente.js.
 const { acessoVigente, mensagemJaAtivo } = require('../../lib/acesso-vigente');
 
@@ -116,6 +116,10 @@ module.exports = async function handler(req, res) {
   let amount = cfg.amount;
   let founderApplied = false;
   if (coupon) {
+    // Oferta encerrada no prazo (30/11/2026, Black Friday): aviso claro, sem cobrar.
+    if (coupon === FOUNDER_COUPON && FOUNDER_ENABLED_ENV && !founderNoPrazo()) {
+      return json(res, 400, { ok: false, code: 'fundador_encerrado', error: 'A oferta de Sócio-fundador foi encerrada. Garanta o Gold no valor normal.' });
+    }
     if (FOUNDER_ENABLED_ENV && coupon === FOUNDER_COUPON && planKey === FOUNDER_PLAN && FOUNDER_AMOUNT > 0) {
       const used = await countFounderAccesses();
       if (used != null && used >= FOUNDER_LIMIT) {

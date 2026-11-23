@@ -3039,6 +3039,12 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     <b id="lp-aovivo-txt"></b>
     <button id="lp-aovivo-cta" data-modo="cadastro" style="margin-left:.7rem;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:.35rem .9rem;font-weight:700;font-size:.8rem;cursor:pointer">Criar conta e assistir</button>
   </div>
+  <!-- Black Friday (23/11/2026): últimas vagas de Sócio-fundador até 30/11 23h59. Aparece só com a oferta
+       aberta (config.founder.enabled) e some sozinha depois do prazo. -->
+  <div id="lp-bf" style="display:none;background:linear-gradient(90deg,#3b1d6e,#6d28d9);color:#fff;padding:.6rem 1rem;text-align:center;font-size:.84rem;line-height:1.5">
+    🔥 <b>Black Friday:</b> últimas vagas de Sócio-fundador — Gold por <b>12× R$ 45</b>, preço travado para sempre. <b data-founder-prazo>A oferta encerra na segunda, 30/11, às 23h59</b>.
+    <button type="button" id="lp-bf-ver" style="margin-left:.6rem;background:#fff;color:#5b21b6;border:0;border-radius:8px;padding:.3rem .85rem;font-weight:800;font-size:.78rem;cursor:pointer">Ver oferta</button>
+  </div>
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
     <div class="lp-brand"><img src="logo.png.png" alt="Endodirect">Endodirect</div>
     <button class="lp-cta">Acessar a plataforma</button>
@@ -3260,7 +3266,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button type="button" class="lp-cyc" data-lpcycle="mensal">Mensal</button>
       </div>
       <div class="lp-founder">
-        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 LANÇAMENTO</span><b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45,00</b>, com preço travado para sempre. Válido para os primeiros 100 assinantes.</div>
+        <div class="lp-founder-txt"><span class="lp-founder-tag">🔥 BLACK FRIDAY</span><b>Últimas vagas de Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45,00</b>, com preço travado para sempre. <b data-founder-prazo>A oferta encerra na segunda, 30/11, às 23h59</b>, ou antes, se as vagas acabarem.</div>
         <button class="lp-cta lp-founder-btn" data-checkout="gold" data-cycle="anual" data-coupon="FUNDADOR">Quero ser fundador</button>
       </div>
       <div class="lp-plans show-anual" id="lp-plans">
@@ -3274,7 +3280,12 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       function set(an){if(wrap)wrap.classList.toggle('show-anual',an);window.__lpCycle=an?'anual':'mensal';btns.forEach(function(x){x.classList.toggle('on',(x.getAttribute('data-lpcycle')==='anual')===an);});applyFounder();}
       btns.forEach(function(b){b.addEventListener('click',function(){set(b.getAttribute('data-lpcycle')==='anual');});});
       applyFounder();
-      fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){var f=d&&d.founder;founderOn=!!(f&&f.enabled);applyFounder();}).catch(function(){});})();</script>
+      // Encerramento na Black Friday (30/11/2026): o texto do prazo vem do servidor (founder.ate).
+      function prazoTxt(iso){var t=Date.parse(iso||'');if(!isFinite(t))return '';try{var tz={timeZone:'America/Sao_Paulo'};var dia=new Date(t).toLocaleDateString('pt-BR',Object.assign({weekday:'long',day:'2-digit',month:'2-digit'},tz)).split(',');var h=new Date(t).toLocaleTimeString('pt-BR',Object.assign({hour:'2-digit',minute:'2-digit'},tz)).replace(':','h');var hoje=new Date().toLocaleDateString('pt-BR',tz)===new Date(t).toLocaleDateString('pt-BR',tz);return hoje?'A oferta encerra hoje, às '+h:'A oferta encerra '+(/^s[áa]b|^dom/i.test(dia[0])?'no ':'na ')+dia[0].replace('-feira','').trim()+', '+String(dia[1]||'').trim()+', às '+h;}catch(e){return '';}}
+      fetch('/api/checkout/config').then(function(r){return r.json();}).then(function(d){var f=d&&d.founder;founderOn=!!(f&&f.enabled);var pz=f&&prazoTxt(f.ate);if(pz)document.querySelectorAll('#landing-screen [data-founder-prazo]').forEach(function(e){e.textContent=pz;});
+        var bf=document.getElementById('lp-bf');if(bf)bf.style.display=founderOn?'':'none';
+        var bv=document.getElementById('lp-bf-ver');if(bv&&!bv.__ok){bv.__ok=1;bv.addEventListener('click',function(){set(true);var pl=document.getElementById('planos');if(pl)pl.scrollIntoView({behavior:'smooth',block:'start'});});}
+        applyFounder();}).catch(function(){});})();</script>
     </section>
     <section class="lp-section">
       <h2 class="lp-sec-title">Perguntas frequentes</h2>
@@ -11762,14 +11773,27 @@ function renderAssineFounder(){
     if(!f||!f.enabled){hide();return;}
     box.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:linear-gradient(90deg,#1a1430,#241a3d);border:1px solid #5b3aa6;border-radius:14px;padding:.85rem 1.2rem">'
       +'<div style="color:#e8e3f5;font-size:.9rem;line-height:1.55;flex:1 1 300px">'
-        +'<span style="display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;letter-spacing:.02em">🔥 LANÇAMENTO</span>'
-        +'<b>Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45,00</b>, preço travado para sempre. Válido para os primeiros 100 assinantes.</div>'
+        +'<span style="display:inline-block;background:#7c3aed;color:#fff;font-size:.64rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;margin-right:.5rem;letter-spacing:.02em">🔥 BLACK FRIDAY</span>'
+        +'<b>Últimas vagas de Sócio-fundador:</b> Gold pelo preço do Standard — <b>12× R$ 45,00</b>, preço travado para sempre. <b>'+esc(fundadorPrazoTxt(f.ate))+'</b>, ou antes, se as vagas acabarem.</div>'
       +'<button type="button" class="btn" id="assine-founder-btn" style="background:#7c3aed;color:#fff;border:0;font-weight:800;width:auto;border-radius:999px;padding:.62rem 1.1rem;white-space:nowrap">Quero ser fundador</button>'
     +'</div>';
     box.style.display='block';
     var b=document.getElementById('assine-founder-btn');
     if(b)b.addEventListener('click',function(){window.__lpCycle='anual';window.__lpCoupon=String(f.coupon||'FUNDADOR');openCheckout('gold');});
+    // o selo "Sócio-fundador" do cartão Gold depende da oferta aberta (encerra em 30/11/2026)
+    try{renderAssinePlans();}catch(e){}
   });
+}
+// "A oferta encerra na segunda, 30/11, às 23h59" (ou "hoje, às 23h59" no último dia), no fuso de Brasília.
+function fundadorPrazoTxt(iso){
+  var t=Date.parse(iso||'');if(!isFinite(t))return 'Até 30/11, às 23h59';
+  try{
+    var tz={timeZone:'America/Sao_Paulo'},d=new Date(t);
+    var dia=d.toLocaleDateString('pt-BR',Object.assign({weekday:'long',day:'2-digit',month:'2-digit'},tz)).split(',');
+    var h=d.toLocaleTimeString('pt-BR',Object.assign({hour:'2-digit',minute:'2-digit'},tz)).replace(':','h');
+    if(new Date().toLocaleDateString('pt-BR',tz)===d.toLocaleDateString('pt-BR',tz))return 'A oferta encerra hoje, às '+h;
+    return 'A oferta encerra '+(/^s[áa]b|^dom/i.test(dia[0])?'no ':'na ')+dia[0].replace('-feira','').trim()+', '+String(dia[1]||'').trim()+', às '+h;
+  }catch(e){return 'Até 30/11, às 23h59';}
 }
 function renderAssinePlans(){
   var wrap=document.getElementById('assine-plans');if(!wrap)return;
@@ -11801,7 +11825,7 @@ function renderAssinePlans(){
           +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">R$ '+(ANUAL_TOTAL[t.key]||(t.preco*12))+'/ano · ou R$ '+t.preco+'/mês no mensal</div>'
         : '<div><span style="font-size:1.6rem;font-weight:800;color:'+acc+'">R$ '+t.preco+'</span><span style="font-size:.72rem;color:#8a93a3">/mês</span></div>'
           +'<div style="font-size:.7rem;color:#8a93a3;margin-top:-.1rem">no plano mensal · ou 12× R$ '+(ANUAL_MES[t.key]||t.preco)+'/mês no anual</div>')
-      +((assineAnnual&&t.key==='gold')?'<div style="font-size:.66rem;font-weight:700;color:#c4b5fd;background:rgba(124,58,237,.16);border:1px solid #5b3aa6;border-radius:8px;padding:.32rem .5rem;text-align:center;line-height:1.4;margin-top:.1rem">🎟️ <b style="color:#ddd6fe">Sócio-fundador</b> · 12× R$ 45,00<span style="display:block;font-size:.6rem;font-weight:800;color:#a78bfa">cupom FUNDADOR</span></div>':'')
+      +((assineAnnual&&t.key==='gold'&&!!(ckFounder()&&ckFounder().enabled))?'<div style="font-size:.66rem;font-weight:700;color:#c4b5fd;background:rgba(124,58,237,.16);border:1px solid #5b3aa6;border-radius:8px;padding:.32rem .5rem;text-align:center;line-height:1.4;margin-top:.1rem">🎟️ <b style="color:#ddd6fe">Sócio-fundador</b> · 12× R$ 45,00<span style="display:block;font-size:.6rem;font-weight:800;color:#a78bfa">cupom FUNDADOR</span></div>':'')
       +'<div style="font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9aa6ba;border-top:1px solid #2a3a5c;padding-top:.6rem">Inclui</div>'
       +'<div style="display:flex;flex-direction:column;gap:.32rem">'+bens+excl+'</div>'
       +cta
@@ -11909,7 +11933,7 @@ function ckUpdateView(){
   var cpFld=document.getElementById('ck-coupon-fld');
   if(cpFld){var f=ckFounder();var showCp=anual&&!!(f&&f.enabled);cpFld.style.display=showCp?'block':'none';}
   var cpMsg=document.getElementById('ck-coupon-msg');
-  if(cpMsg){if(ckFounderActive()){cpMsg.textContent='🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){cpMsg.textContent='Cupom não aplicável a este plano.';cpMsg.style.color='#f0a0a0';}else{cpMsg.textContent='';}}
+  if(cpMsg){if(ckFounderActive()){cpMsg.textContent='🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){var fz=ckFounder();cpMsg.textContent=(fz&&fz.encerrada&&ckCouponVal()===String(fz.coupon||'').toUpperCase())?'A oferta de Sócio-fundador foi encerrada.':'Cupom não aplicável a este plano.';cpMsg.style.color='#f0a0a0';}else{cpMsg.textContent='';}}
   if(anual&&method==='credit_card')ckFillInstallments();
   var rs=document.getElementById('ck-result');if(rs){rs.style.display='none';rs.innerHTML='';}
   var pr=document.getElementById('ck-price');
