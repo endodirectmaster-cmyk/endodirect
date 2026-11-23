@@ -17,6 +17,8 @@ atualizado: 2026-11-23
 > já tenha mexido na linha (`amMexido`). "Escalonamento padrão" subiu para o cabeçalho da seção, no lugar em que o
 > "Colar lista" fica no peso. Disposição pela largura da própria linha (container query em `[data-tp-am]`): estreita,
 > medicação em cima, dose e início lado a lado e o botão embaixo; larga, tudo numa faixa.
+> **v478:** "um botão ficou maior que o outro": as duas linhas de adicionar (peso e dose) passaram a ter campos e
+> botão "Adicionar" na mesma altura (2,375rem, `.tp-add`).
 
 > 🔗 **"SE SUSPENDER": PONTE COM A CALCULADORA DA MAYO (23/11/2026, sw v474) — PILOTO SÓ DO PROFESSOR.** Professor:
 > "É possível deixar essa ferramenta também sincronizada com a de cálculo de reganho ... da Mayo Clinic?" e, na
