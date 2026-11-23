@@ -3498,6 +3498,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
         <button class="sb-item" data-p="aovivo" id="sb-aovivo" style="display:none">🔴 Aula ao vivo</button>
         <button class="sb-item" data-p="chat">💬 Chat IA</button>
         <button class="sb-item" data-p="perfil">👤 Perfil</button>
+        <!-- Só aparece na conta do parceiro com o quadro liberado no painel (ver carregaMinhaParceria). -->
+        <button class="sb-item" data-p="parceria" id="sb-parceria" style="display:none">🤝 Minha parceria</button>
       </div>
       <div id="sb-admin" style="display:none">
         <div class="sb-sec">Admin</div>
@@ -3950,6 +3952,12 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
       <div class="pc">
         <div id="panel-qotd-body"></div>
       </div>
+    </div>
+
+    <div class="panel" id="panel-parceria">
+      <div class="breadcrumb">Dashboard <b>/ Minha parceria</b></div>
+      <div class="ph"><h1>🤝 Minha parceria</h1><p>Inscrições feitas com o seu cupom e a sua comissão.</p></div>
+      <div class="pc" id="parceria-pc"></div>
     </div>
 
     <div class="panel" id="panel-aovivo">
@@ -11080,6 +11088,7 @@ function startApp(){
     initAll();
     try{markLockedNavItems();}catch(e){}
     try{loadMyTickets({});}catch(e){} // popula o badge "nova resposta" do Suporte já no login
+    try{carregaMinhaParceria();}catch(e){} // conta de parceiro: mostra o item "Minha parceria"
     try{maybeShowWhatsNew();}catch(e){} // janela de novidades (1x por versão), exceto durante o onboarding
     try{maybeAskFeedback();}catch(e){} // convite de feedback p/ assinante de +30 dias (a RPC decide se pede)
   }
@@ -12608,7 +12617,7 @@ function startAppleSignIn(){
   }).then(function(){appleEmAndamento=false;});
 }
 
-var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
+var PANEL_LABELS={dash:'Dashboard',desemp:'Desempenho',plano:'Plano de estudo',quest:'Banco de questões',qotd:'Questão do Dia',flash:'Flashcards',mmap:'Mapas Mentais',podcast:'Podcasts',cursos:'Cursos',crono:'Cronograma',sr:'Revisão',erros:'Caderno de erros',sim:'OSCE',simfull:'Simulado',calc:'Calculadoras',rx:'Prescrição Simulada',presc:'Consultório',art:'Resumidor',notas:'Caderno',favs:'Favoritos',mural:'Mural de artigos',aovivo:'Aula ao vivo',parceria:'Minha parceria',ref:'Diretrizes',resu:'Resumos',chat:'Chat IA',perfil:'Perfil',support:'Suporte',adm:'Painel Admin'};
 function closeMobileNav(){
   document.body.classList.remove('mobile-nav-open');
   var b=document.getElementById('btn-mobile-nav');
@@ -12802,6 +12811,9 @@ function canSeePanel(id){
   // `aulaLiberada()`, que só entrega a marcada como amostra (`free`) a quem não
   // tem o curso. O não-assinante vê a aula-amostra e mais nada.
   if(id==='cursos')return true;
+  // Minha parceria: o parceiro acompanha as comissões mesmo depois que a cortesia acaba. Quem não é
+  // parceiro não vê o item, e a RPC endodirect_minhas_parcerias só devolve os cupons da própria conta.
+  if(id==='parceria')return true;
   // Lista de acessos ainda não chegou: o painel abre (ver acessosPendentes).
   if(acessosPendentes())return true;
   if(isDegustacao()){
@@ -13243,6 +13255,7 @@ function goPanel(id){
   if(id==='podcast')renderPodcasts();
   if(id==='cursos')renderCursosAluno();
   if(id==='aovivo'){renderAoVivo();aoVivoIniciarPoll();}
+  if(id==='parceria')abrirMinhaParceria();
   if(id==='desemp')renderDesempenho(); // painel legado: sem item de menu, mas ainda montável
   if(id==='plano')renderPlano();
   if(id==='erros')renderErros();
@@ -25484,6 +25497,8 @@ function admParcFormHTML(f){
       +'<label style="display:flex;gap:.35rem;align-items:center;font-size:.82rem;cursor:pointer"><input type="checkbox" id="parc-std" style="width:auto"'+(pl.indexOf('standard')>=0?' checked':'')+'> Standard anual</label></div></div>'
       +'<div class="fld2" style="margin:0"><label>Válido até (opcional)</label><input type="date" id="parc-ate" value="'+esc(dt)+'"></div></div>'
     +'<label style="display:flex;gap:.45rem;align-items:center;font-size:.82rem;margin:.1rem 0 .7rem;cursor:pointer"><input type="checkbox" id="parc-ativo" style="width:auto"'+(f.ativo===false?'':' checked')+'> Ativo (o cupom funciona no checkout)</label>'
+    +'<div class="fld2" style="margin-bottom:.45rem"><label>Login do parceiro na plataforma (e-mail, opcional)</label><input type="email" id="parc-email" maxlength="160" autocomplete="off" placeholder="parceiro@exemplo.com" value="'+esc(f.parceiro_email||'')+'"></div>'
+    +'<label style="display:flex;gap:.45rem;align-items:flex-start;font-size:.82rem;cursor:pointer;margin:0 0 .8rem"><input type="checkbox" id="parc-painel" style="width:auto;margin-top:.15rem"'+(f.painel_parceiro?' checked':'')+'> <span>Mostrar o quadro na conta do parceiro (menu "Minha parceria": inscrições, meta e comissão, sem dados dos alunos)</span></label>'
     +'<div class="fld2"><label>Notas (só para os professores)</label><textarea id="parc-notas" rows="2" maxlength="600" placeholder="Combinado, contato, forma de pagamento da comissão…">'+esc(f.notas||'')+'</textarea></div>'
     +'<div class="upload-status" id="parc-status"></div>'
     +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-parc-salvar">💾 Salvar cupom</button><button class="btn btn-ghost" id="btn-parc-cancelar">Cancelar</button></div></div>';
@@ -25493,7 +25508,7 @@ function admParcCupomHTML(c,vendas){
   var pl=(c.planos||[]).map(function(p){return p==='gold'?'Gold':'Standard';}).join(' e ');
   var regra='Comissão '+parcPct(c.comissao_pct)+(c.comissao_pct_meta!=null&&c.meta_semestre?' ('+parcPct(c.comissao_pct_meta)+' a partir da '+(+c.meta_semestre+1)+'ª venda do semestre)':'');
   var meses=r.porMes.length?'<div style="overflow-x:auto;margin-top:.6rem"><table class="adm-table" style="width:100%;font-size:.78rem;font-variant-numeric:tabular-nums"><thead><tr><th style="text-align:left">Mês</th><th>Vendas</th><th>Recebido</th><th>Comissão</th><th>Estornos</th></tr></thead><tbody>'
-      +r.porMes.map(function(m){return '<tr><td>'+esc(parcMesNome(m.mes))+'</td><td style="text-align:center">'+m.vendas+'</td><td style="text-align:right">'+ckBrl(m.valor)+'</td><td style="text-align:right"><b>'+ckBrl(m.comissao)+'</b>'+(m.carencia?'<div style="font-size:.66rem;color:var(--t3)">'+ckBrl(m.carencia)+' no prazo de 7 dias</div>':'')+'</td><td style="text-align:center">'+(m.estornos||'—')+'</td></tr>';}).join('')
+      +r.porMes.map(function(m){return '<tr><td>'+esc(parcMesNome(m.mes))+'</td><td style="text-align:center">'+m.vendas+'</td><td style="text-align:right;white-space:nowrap">'+ckBrl(m.valor)+'</td><td style="text-align:right;white-space:nowrap"><b>'+ckBrl(m.comissao)+'</b>'+(m.carencia?'<div style="font-size:.66rem;color:var(--t3)">'+ckBrl(m.carencia)+' no prazo de 7 dias</div>':'')+'</td><td style="text-align:center">'+(m.estornos||'—')+'</td></tr>';}).join('')
       +'</tbody></table></div>':'<div class="empty" style="margin-top:.6rem">Nenhuma venda com este cupom ainda.</div>';
   var lista=r.linhas.length?'<details style="margin-top:.5rem"><summary style="cursor:pointer;font-size:.78rem;color:var(--t2)">Vendas uma a uma ('+r.linhas.length+')</summary><div style="overflow-x:auto"><table class="adm-table" style="width:100%;font-size:.74rem;font-variant-numeric:tabular-nums;margin-top:.4rem"><thead><tr><th style="text-align:left">Data</th><th>Plano</th><th>Forma</th><th>Preço cheio</th><th>Pago</th><th>Comissão</th><th>Situação</th></tr></thead><tbody>'
       +r.linhas.slice().reverse().map(function(l){var forma={credit_card:'Cartão',pix:'PIX',boleto:'Boleto'}[l.metodo]||'—';return '<tr><td>'+esc(parcData(l.pago_em))+'</td><td>'+esc(l.plano==='gold'?'Gold':'Standard')+'</td><td>'+esc(forma)+'</td><td style="text-align:right">'+ckBrl(l.valor_cheio)+'</td><td style="text-align:right">'+ckBrl(l.valor_pago)+'</td><td style="text-align:right">'+(l.status==='pago'?ckBrl(l.comissao)+' <span style="color:var(--t3)">('+parcPct(l.taxa)+')</span>':'—')+'</td><td>'+(l.status==='pago'?(l.carencia?'paga · no prazo de 7 dias':'paga'):'<span style="color:var(--red)">estornada</span>')+'</td></tr>';}).join('')
@@ -25502,7 +25517,8 @@ function admParcCupomHTML(c,vendas){
     +'<div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;justify-content:space-between"><div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">'
       +'<span style="font-family:ui-monospace,monospace;font-weight:800;font-size:.95rem;letter-spacing:.04em">'+esc(c.codigo)+'</span>'
       +'<span style="font-size:.82rem;color:var(--t2)">'+esc(c.parceiro||'')+'</span>'
-      +'<span style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;'+(on?'background:rgba(74,222,128,.15);color:#4ade80':'background:rgba(148,163,184,.15);color:var(--t3)')+'">'+(on?'Ativo':(venceu?'Vencido':'Inativo'))+'</span></div>'
+      +'<span style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;'+(on?'background:rgba(74,222,128,.15);color:#4ade80':'background:rgba(148,163,184,.15);color:var(--t3)')+'">'+(on?'Ativo':(venceu?'Vencido':'Inativo'))+'</span>'
+      +(c.painel_parceiro&&c.parceiro_email?'<span title="'+esc(c.parceiro_email)+'" style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;background:rgba(96,165,250,.15);color:#60a5fa">👁️ Parceiro acompanha</span>':'')+'</div>'
       +'<button class="btn btn-outline btn-sm" data-parc-edit="'+esc(c.codigo)+'">✏️ Editar</button></div>'
     +'<div style="font-size:.78rem;color:var(--t2);margin:.45rem 0 .55rem;line-height:1.5">Desconto de <b>'+parcPct(c.desconto_pct)+'</b> no anual ('+esc(pl)+') · '+esc(regra)+(c.valido_ate?' · válido até '+esc(parcData(c.valido_ate)):'')+'</div>'
     +'<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><input type="text" readonly value="'+esc(parcLink(c.codigo))+'" style="flex:1 1 16rem;min-width:0;font-size:.78rem" aria-label="Link do cupom"><button class="btn btn-outline btn-sm" data-parc-copia="'+esc(c.codigo)+'">📋 Copiar link</button></div>'
@@ -25514,7 +25530,7 @@ function admParcCupomHTML(c,vendas){
 }
 function admParceriasHTML(){
   var d=admParc.dados,cab='<div class="adm-ph"><h1>🤝 Parcerias</h1></div>';
-  var nota='<div style="font-size:.76rem;color:var(--t3);margin:0 0 .9rem;line-height:1.55">Cupom de parceiro: o aluno ganha o desconto no <b>plano anual</b> (cartão, PIX ou boleto) digitando o código no pagamento ou entrando pelo link do cupom, que deixa o código pronto por 60 dias naquele aparelho. Cada venda paga com o cupom entra aqui. A comissão é sobre o valor que o aluno pagou; venda com menos de 7 dias ainda está no prazo de arrependimento, e venda estornada sai da conta (se a comissão dela já tiver sido paga, desconte no mês seguinte). No cartão parcelado, a Endodirect recebe em parcelas: a comissão pode ser paga no mesmo ritmo. O relatório não mostra nome nem e-mail de aluno, então pode ser enviado ao parceiro.</div>';
+  var nota='<div style="font-size:.76rem;color:var(--t3);margin:0 0 .9rem;line-height:1.55">Cupom de parceiro: o aluno ganha o desconto no <b>plano anual</b> (cartão, PIX ou boleto) digitando o código no pagamento ou entrando pelo link do cupom, que deixa o código pronto por 60 dias naquele aparelho. Cada venda paga com o cupom entra aqui. A comissão é sobre o valor que o aluno pagou; venda com menos de 7 dias ainda está no prazo de arrependimento, e venda estornada sai da conta (se a comissão dela já tiver sido paga, desconte no mês seguinte). No cartão parcelado, a Endodirect recebe em parcelas: a comissão pode ser paga no mesmo ritmo. O relatório não mostra nome nem e-mail de aluno. Com o login do parceiro e a opção marcada, ele acompanha tudo na conta dele, no menu <b>Minha parceria</b>.</div>';
   if(!d)return cab+'<div class="adm-pc">'+nota+'<div class="empty">'+(admParc.erro?esc(admParc.erro):'Carregando…')+'</div></div>';
   var form=admParc.form?admParcFormHTML(admParc.form):'<div style="margin-bottom:.9rem"><button class="btn btn-primary" id="btn-parc-novo">🎟️ Novo cupom</button></div>';
   var cups=(d.cupons||[]).slice().sort(function(a,b){return (b.ativo?1:0)-(a.ativo?1:0)||String(b.criado_em).localeCompare(String(a.criado_em));});
@@ -25556,8 +25572,10 @@ function bindAdmParcerias(){
       if(meta!=null&&!(meta>=1&&Math.floor(meta)===meta)){diga('A meta é um número inteiro de vendas.');return;}
       var planos=[];if((document.getElementById('parc-gold')||{}).checked)planos.push('gold');if((document.getElementById('parc-std')||{}).checked)planos.push('standard');
       if(!planos.length){diga('Escolha ao menos um plano.');return;}
-      var ate=val('parc-ate');
-      var p={codigo:cod,parceiro:nome,desconto_pct:desc,comissao_pct:com,comissao_pct_meta:comm==null?'':comm,meta_semestre:meta==null?'':meta,planos:planos,
+      var ate=val('parc-ate'),pemail=val('parc-email').toLowerCase(),ppainel=!!(document.getElementById('parc-painel')||{}).checked;
+      if(pemail&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pemail)){diga('O login do parceiro precisa ser um e-mail válido.');return;}
+      if(ppainel&&!pemail){diga('Para mostrar o quadro ao parceiro, escreva o e-mail de login dele.');return;}
+      var p={codigo:cod,parceiro:nome,parceiro_email:pemail,painel_parceiro:ppainel,desconto_pct:desc,comissao_pct:com,comissao_pct_meta:comm==null?'':comm,meta_semestre:meta==null?'':meta,planos:planos,
         ativo:!!(document.getElementById('parc-ativo')||{}).checked,valido_ate:ate?ate+'T23:59:59-03:00':'',notas:val('parc-notas')};
       var client=getSupabaseClient();if(!client){diga('Sem conexão com o servidor.');return;}
       b.disabled=true;diga('Salvando…');
@@ -25568,6 +25586,74 @@ function bindAdmParcerias(){
       }).catch(function(e){b.disabled=false;diga('Não salvou: '+((e&&e.message)||'erro')+'.');});
     }
   });
+}
+// ── MINHA PARCERIA (conta do parceiro) ── professor, 23/11/2026: "na conta do [parceiro] também aparecer essa
+// ferramenta de parceria para que ele possa acompanhar quantos alunos se inscreveram através da indicação dele e
+// ele, obviamente, consiga acompanhar a sua monetização". A RPC endodirect_minhas_parcerias só devolve os cupons
+// ligados ao e-mail da conta E liberados no painel (painel_parceiro); sem notas internas, sem dado de aluno.
+var minhaParc={dados:null,erro:'',carregou:false};
+function carregaMinhaParceria(){
+  var b=document.getElementById('sb-parceria');
+  var client=getSupabaseClient();
+  if(!client||!currentUser){minhaParc.dados=null;if(b)b.style.display='none';return Promise.resolve(null);}
+  return Promise.resolve(client.rpc('endodirect_minhas_parcerias')).then(function(r){
+    minhaParc.carregou=true;
+    if(r&&r.error){minhaParc.erro='Não foi possível carregar a sua parceria agora.';}
+    else{minhaParc.erro='';minhaParc.dados=(r&&r.data&&r.data.cupons&&r.data.cupons.length)?r.data:null;}
+    if(b)b.style.display=minhaParc.dados?'':'none';
+    var pn=document.getElementById('panel-parceria');if(pn&&pn.classList.contains('on'))renderMinhaParceria();
+    return minhaParc.dados;
+  }).catch(function(){minhaParc.carregou=true;minhaParc.erro='Não foi possível carregar a sua parceria agora.';});
+}
+function abrirMinhaParceria(){renderMinhaParceria();carregaMinhaParceria();ligaMinhaParceria();}
+function ligaMinhaParceria(){
+  var pc=document.getElementById('parceria-pc');if(!pc||pc.__ligado)return;pc.__ligado=true;
+  pc.addEventListener('click',function(ev){
+    var b=ev.target.closest('[data-mp-copia]');if(!b||!pc.contains(b))return;
+    var link=parcLink(b.getAttribute('data-mp-copia'));
+    try{navigator.clipboard.writeText(link).then(function(){notify('Link copiado. ✓','ok');},function(){notify(link,'ok');});}catch(e){notify(link,'ok');}
+  });
+}
+function minhaParceriaCupomHTML(c,vendas,agora){
+  agora=agora||Date.now();
+  var r=parcComissao(c,vendas,agora),t=r.total,venceu=c.valido_ate&&Date.parse(c.valido_ate)<=agora,on=c.ativo&&!venceu;
+  var semAgora=parcSemestre(new Date(agora).toISOString()),mesAgora=parcMes(new Date(agora).toISOString());
+  var nSem=r.linhas.filter(function(l){return l.status==='pago'&&parcSemestre(l.pago_em)===semAgora;}).length;
+  var mesM=r.porMes.filter(function(x){return x.mes===mesAgora;})[0]||{vendas:0,comissao:0,carencia:0};
+  var meta=+c.meta_semestre||0,temMeta=meta>0&&c.comissao_pct_meta!=null&&c.comissao_pct_meta!=='';
+  var pl=(c.planos||[]).map(function(p){return p==='gold'?'Gold':'Standard';}).join(' e ');
+  var semNome=(semAgora.slice(-1)==='1'?'jan–jun/':'jul–dez/')+semAgora.slice(0,4);
+  var aviso=on?'':'<div style="border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.08);color:var(--t1);border-radius:10px;padding:.55rem .7rem;font-size:.8rem;margin-bottom:.7rem">'+(venceu?'⏳ Este cupom venceu em '+esc(parcData(c.valido_ate))+'. As comissões das inscrições já feitas continuam aqui.':'⏳ Cupom ainda não ativado: o link e o código passam a dar o desconto assim que a Endodirect ativar.')+'</div>';
+  var tile=function(rot,val,sub){return '<div style="border:1px solid var(--bd);border-radius:10px;padding:.55rem .7rem"><div style="font-size:.64rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">'+rot+'</div><div style="font-size:1.12rem;font-weight:800;font-variant-numeric:tabular-nums;margin-top:.1rem">'+val+'</div>'+(sub?'<div style="font-size:.68rem;color:var(--t3);margin-top:.1rem">'+sub+'</div>':'')+'</div>';};
+  var barra='';
+  if(temMeta){var pct=Math.min(100,Math.round(nSem*100/meta));
+    barra='<div style="margin-top:.8rem"><div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--t2);margin-bottom:.3rem"><span>Meta do semestre ('+esc(semNome)+')</span><b style="font-variant-numeric:tabular-nums">'+nSem+' de '+meta+'</b></div>'
+      +'<div style="height:.55rem;border-radius:999px;background:rgba(148,163,184,.18);overflow:hidden" role="progressbar" aria-valuemin="0" aria-valuemax="'+meta+'" aria-valuenow="'+Math.min(nSem,meta)+'"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#3b6fd4,#4ade80)"></div></div>'
+      +'<div style="font-size:.72rem;color:var(--t3);margin-top:.3rem">'+(nSem>meta?'🎯 Meta batida: a sua comissão já está em '+parcPct(c.comissao_pct_meta)+' neste semestre.':'Da '+(meta+1)+'ª inscrição do semestre em diante, a sua comissão passa de '+parcPct(c.comissao_pct)+' para '+parcPct(c.comissao_pct_meta)+'.')+'</div></div>';}
+  var meses=r.porMes.length?'<div style="overflow-x:auto;margin-top:.8rem"><table class="adm-table" style="width:100%;font-size:.8rem;font-variant-numeric:tabular-nums"><thead><tr><th style="text-align:left">Mês</th><th>Inscrições</th><th>Pago pelos alunos</th><th>Sua comissão</th><th>Estornos</th></tr></thead><tbody>'
+      +r.porMes.map(function(x){return '<tr><td>'+esc(parcMesNome(x.mes))+'</td><td style="text-align:center">'+x.vendas+'</td><td style="text-align:right;white-space:nowrap">'+ckBrl(x.valor)+'</td><td style="text-align:right;white-space:nowrap"><b>'+ckBrl(x.comissao)+'</b>'+(x.carencia?'<div style="font-size:.66rem;color:var(--t3)">'+ckBrl(x.carencia)+' no prazo de 7 dias</div>':'')+'</td><td style="text-align:center">'+(x.estornos||'—')+'</td></tr>';}).join('')
+      +'</tbody></table></div>':'<div class="empty" style="margin-top:.8rem">Nenhuma inscrição com o seu cupom ainda. Compartilhe o link acima.</div>';
+  var lista=r.linhas.length?'<details style="margin-top:.6rem"><summary style="cursor:pointer;font-size:.78rem;color:var(--t2)">Inscrições uma a uma ('+r.linhas.length+')</summary><div style="overflow-x:auto"><table class="adm-table" style="width:100%;font-size:.76rem;font-variant-numeric:tabular-nums;margin-top:.4rem"><thead><tr><th style="text-align:left">Data</th><th>Plano</th><th>Pago</th><th>Sua comissão</th><th>Situação</th></tr></thead><tbody>'
+      +r.linhas.slice().reverse().map(function(l){return '<tr><td>'+esc(parcData(l.pago_em))+'</td><td>'+esc(l.plano==='gold'?'Gold anual':'Standard anual')+'</td><td style="text-align:right">'+ckBrl(l.valor_pago)+'</td><td style="text-align:right">'+(l.status==='pago'?ckBrl(l.comissao)+' <span style="color:var(--t3)">('+parcPct(l.taxa)+')</span>':'—')+'</td><td>'+(l.status==='pago'?(l.carencia?'no prazo de 7 dias':'confirmada'):'<span style="color:var(--red)">estornada</span>')+'</td></tr>';}).join('')
+      +'</tbody></table></div></details>':'';
+  return '<div class="card" style="margin-bottom:.9rem" data-mp-card="'+esc(c.codigo)+'">'+aviso
+    +'<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.35rem"><span style="font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Seu cupom</span><span style="font-family:ui-monospace,monospace;font-weight:800;font-size:1.05rem;letter-spacing:.05em">'+esc(c.codigo)+'</span></div>'
+    +'<div style="font-size:.8rem;color:var(--t2);margin-bottom:.6rem;line-height:1.5">O aluno ganha <b>'+parcPct(c.desconto_pct)+' de desconto</b> no plano anual ('+esc(pl)+'). A sua comissão é de <b>'+parcPct(c.comissao_pct)+'</b> do valor pago'+(temMeta?' (<b>'+parcPct(c.comissao_pct_meta)+'</b> depois da '+meta+'ª inscrição do semestre)':'')+'.'+(c.valido_ate&&!venceu?' Válido até '+esc(parcData(c.valido_ate))+'.':'')+'</div>'
+    +'<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><input type="text" readonly value="'+esc(parcLink(c.codigo))+'" style="flex:1 1 15rem;min-width:0;font-size:.8rem" aria-label="Seu link de indicação"><button class="btn btn-primary btn-sm" data-mp-copia="'+esc(c.codigo)+'">📋 Copiar link</button></div>'
+    +'<div style="font-size:.7rem;color:var(--t3);margin-top:.3rem">Quem entra pelo link fica com o cupom guardado por 60 dias naquele aparelho. O código também pode ser digitado no pagamento.</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.5rem;margin-top:.8rem">'
+      +tile('Inscrições confirmadas',String(t.vendas),t.estornos?t.estornos+' estornada'+(t.estornos>1?'s':''):'')
+      +tile('Neste mês',String(mesM.vendas),ckBrl(mesM.comissao)+' de comissão')
+      +tile('Sua comissão (total)',ckBrl(t.comissao),t.carencia?ckBrl(t.carencia)+' ainda no prazo de 7 dias':'')
+      +(temMeta?tile('Semestre',nSem+' / '+meta,esc(semNome)):'')
+    +'</div>'+barra+meses+lista+'</div>';
+}
+function renderMinhaParceria(){
+  var pc=document.getElementById('parceria-pc');if(!pc)return;
+  var d=minhaParc.dados;
+  if(!d){pc.innerHTML='<div class="empty">'+(minhaParc.erro?esc(minhaParc.erro):(minhaParc.carregou?'Nenhuma parceria ligada a esta conta.':'Carregando…'))+'</div>';return;}
+  pc.innerHTML=(d.cupons||[]).map(function(c){return minhaParceriaCupomHTML(c,d.vendas||[]);}).join('')
+    +'<div style="font-size:.74rem;color:var(--t3);line-height:1.6;margin-top:.2rem">Como funciona: cada inscrição paga com o seu cupom entra aqui. Inscrição com menos de 7 dias ainda está no prazo de arrependimento do aluno; a comissão dela fica valendo depois disso. Inscrição estornada sai da conta. A comissão é paga mês a mês, conforme o combinado com a Endodirect. Por privacidade, nome e e-mail dos alunos não aparecem.</div>';
 }
 function admAvisosAlunosHTML(){
   var ed=admAvisoEditId?(avisosAlunos||[]).filter(function(a){return a&&a.id===admAvisoEditId;})[0]:null;
