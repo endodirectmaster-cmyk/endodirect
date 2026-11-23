@@ -2436,5 +2436,15 @@ try {
   fail('regressão do prazo do Sócio-fundador (lib/founder.js, api/checkout/order.js, index.html) falhou:\n' + out);
 }
 
+// 🧨 CUPOM DE PARCEIRO (23/11/2026). Desconto no anual igual na tela e no servidor, venda
+//     registrada sem dado de aluno, recusa sem cobrar, webhook/estorno e a conta da comissão.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-cupom-parceiro.js')], { stdio: 'pipe' });
+  ok('cupom de parceiro: desconto igual na tela e no servidor, venda registrada, recusa sem cobrar, comissão com meta');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do cupom de parceiro (lib/cupom-parceiro.js, order.js, webhook, index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

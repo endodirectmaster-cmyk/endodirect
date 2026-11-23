@@ -38,6 +38,30 @@ atualizado: 2026-11-23
 - **Só no ciclo anual** (some no mensal); faixa/selo somem quando esgota.
 - Regras e contagem de vagas em `lib/founder.js` (`FOUNDER_PLAN=gold`, `FOUNDER_AMOUNT` default 54000, `FOUNDER_LIMIT=100`, `FOUNDER_COUPON=FUNDADOR`). Auto-desativa ao esgotar via `endodirect_admin_overview`.
 
+## 🤝 Cupom de parceiro (divulgadores) — v481, 23/11/2026
+
+Professor, 23/11: "Vamos desenvolver isso" (parceria com divulgador de grupos de endocrinologia: cortesia Gold +
+cupom próprio + comissão sobre os alunos novos). Combinado de comissão sugerido e aceito: **20% do valor pago no 1º ano**,
+**25% depois da meta do semestre**, pago mês a mês conforme o dinheiro entra, nada sobre estorno.
+- **Tabelas:** `endodirect_cupons` (codigo, parceiro, `desconto_pct` 0–50, `comissao_pct`, `comissao_pct_meta`,
+  `meta_semestre`, `planos`, `ativo`, `valido_ate`, notas) e `endodirect_cupom_vendas` (uma linha por pedido pago:
+  codigo, plano, ciclo, método, valor cheio, valor pago, `order_id` único, `pago|estornado`). RLS ligado, sem acesso
+  de anon/auth; tudo por RPC. Sem dado de aluno nas vendas (nem e-mail, nem nome).
+- **RPCs:** `endodirect_cupom_publico(codigo)` (anon: só código, % e planos de cupom ativo e no prazo),
+  `endodirect_cupons_admin()` e `endodirect_cupom_admin_salvar(jsonb)` (só admin), `endodirect_sou_fundador()`.
+- **Checkout:** só no **anual** (cartão, PIX, boleto). Link `?cupom=CODIGO` fica guardado 60 dias no aparelho
+  (`endo_cupom_link`), mostra a barra verde na landing e abre o checkout no anual com o cupom preenchido. O campo
+  confere o cupom ao digitar e mostra "de R$ X por R$ Y". O **servidor** recalcula sempre
+  (`lib/cupom-parceiro.js`: `precoComCupom` arredonda ao centavo; desconto máximo 50%); cupom fora do ar = 503 sem
+  cobrar. Não acumula com FUNDADOR.
+- **Registro da venda:** cartão aprovado na hora → `registrarVenda` no `order.js`; PIX/boleto → no webhook quando
+  paga (`meta.coupon` + `valor_cheio`); estorno no webhook → `estornarVenda` (a venda sai da comissão). Idempotente
+  por `order_id`.
+- **Painel → 🤝 Parcerias** (todos os admins): criar/editar cupom, link pronto para copiar, vendas do mês, semestre,
+  meta, comissão a pagar (carência de 7 dias depois do pagamento, para cobrir o direito de arrependimento).
+- **Primeiro parceiro:** cupom `ENDONEWS` sugerido (15% de desconto, 20%/25%, meta 20/semestre), **criado inativo até o
+  professor fechar os números** com o parceiro. Teste: `scripts/test-cupom-parceiro.js`.
+
 ## Valores em env (centavos)
 - Mensais: `PAGARME_TIER_STANDARD_AMOUNT=6900`, `..._GOLD_AMOUNT=9900`, `..._PREMIUM_AMOUNT=13900`.
 - Anuais: `PAGARME_ANNUAL_STANDARD_AMOUNT=54000`, `..._GOLD_AMOUNT=82800`, `..._PREMIUM_AMOUNT=116400`.

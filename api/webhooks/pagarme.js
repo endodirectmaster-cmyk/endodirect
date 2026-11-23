@@ -44,6 +44,9 @@ const crypto = require('crypto');
 // marcar ":fundador" no acesso liberado por PIX/boleto (o cartão já marca em
 // api/checkout/order.js). Sem isso, lib/founder.js não contaria essas vagas.
 const { FOUNDER_COUPON, FOUNDER_PLAN } = require('../../lib/founder');
+// Cupom de parceiro: a venda paga (inclusive PIX/boleto) entra na conta da
+// comissão; estorno/contestação tira. Ver lib/cupom-parceiro.js.
+const CUPOM = require('../../lib/cupom-parceiro');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -262,6 +265,11 @@ function extractInfo(body, type) {
       || (cycle && (cycle.end_at || cycle.billing_at)) || (inv && inv.due_at) || '',
     scopeHint: String(meta.scope || meta.escopo || meta.curso || '').toLowerCase().trim(),
     coupon: String(meta.coupon || meta.cupom || '').trim().toUpperCase(),
+    // Para a venda do cupom de parceiro: valor pago (centavos), preço cheio e plano do pedido.
+    amount: Number((order && order.amount) || (charge && (charge.paid_amount || charge.amount)) || d.amount || 0) || 0,
+    valorCheio: Number(meta.valor_cheio || 0) || 0,
+    plan: String(meta.plan || '').toLowerCase(),
+    method: String((charge && charge.payment_method) || '').toLowerCase(),
     itemText: itemText.toLowerCase()
   };
 }
@@ -386,6 +394,12 @@ module.exports = async function handler(req, res) {
         }
         await upsertAcesso(row);
       }
+      // Venda com cupom de parceiro (anual, com pedido): entra na conta da comissão.
+      // Idempotente pelo pedido; falha aqui não muda a liberação acima.
+      if (info.coupon && info.coupon !== FOUNDER_COUPON && info.orderId && !info.subscriptionId && CUPOM.codigoValido(info.coupon) && info.amount > 0) {
+        await CUPOM.registrarVenda({ codigo: info.coupon, plano: info.plan || (scopes[0] || '').replace('plano:', ''), metodo: info.method || null,
+          valor_cheio: info.valorCheio || info.amount, valor_pago: info.amount, order_id: info.orderId });
+      }
       await sendSetPasswordEmail(info.email);
       return json(res, 200, { ok: true, action: 'activated', email: info.email, scopes: scopes, authConfigured: auth !== null });
     }
@@ -394,6 +408,8 @@ module.exports = async function handler(req, res) {
       // Só o acesso deste pedido/assinatura (ver acessosDoEvento).
       const status = REVOKE_EVENTS.indexOf(type) >= 0 ? 'canceled' : 'past_due';
       const linhas = await setStatusDoEvento(info, status);
+      // Estorno/contestação: a venda do cupom (se houver) sai da comissão.
+      if (status === 'canceled' && info.orderId) await CUPOM.estornarVenda(info.orderId);
       return json(res, 200, {
         ok: true,
         action: linhas.length ? (status === 'canceled' ? 'revoked' : 'past_due') : 'nenhum_acesso_do_pedido',

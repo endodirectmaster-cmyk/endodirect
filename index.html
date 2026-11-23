@@ -3045,6 +3045,8 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
     🔥 <b>Black Friday:</b> últimas vagas de Sócio-fundador — Gold por <b>12× R$ 45</b>, preço travado para sempre. <b data-founder-prazo>A oferta encerra na segunda, 30/11, às 23h59</b>.
     <button type="button" id="lp-bf-ver" style="margin-left:.6rem;background:#fff;color:#5b21b6;border:0;border-radius:8px;padding:.3rem .85rem;font-weight:800;font-size:.78rem;cursor:pointer">Ver oferta</button>
   </div>
+  <!-- Cupom de parceiro pelo link (?cupom=CODIGO): confirma o desconto a quem chega pela divulgação. -->
+  <div id="lp-cupom" style="display:none;background:linear-gradient(90deg,#064e3b,#047857);color:#ecfdf5;padding:.55rem 1rem;text-align:center;font-size:.84rem;line-height:1.5"></div>
   <div class="lp-nav"><div class="lp-wrap lp-nav-in">
     <div class="lp-brand"><img src="logo.png.png" alt="Endodirect">Endodirect</div>
     <button class="lp-cta">Acessar a plataforma</button>
@@ -4054,6 +4056,7 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
           <button class="adm-nav" data-asec="provas">📝 Provas &amp; Questões</button>
           <button class="adm-nav" data-asec="cursos">🎬 Cursos</button>
           <button class="adm-nav" data-asec="estudantes">👥 Estudantes</button>
+          <button class="adm-nav" data-asec="parcerias">🤝 Parcerias</button>
           <button class="adm-nav" data-asec="cme">🎓 Enquete EMC</button>
           <button class="adm-nav" data-asec="conteudo">🎧 Podcasts</button>
           <button class="adm-nav" data-asec="mapas">✦ Mapas Mentais</button>
@@ -11933,7 +11936,47 @@ function ckChecaFundador(){
   }).catch(function(){});
 }
 function ckFounderActive(){var f=ckFounder();return !!(f&&ckFounderAberto()&&_ckCycle==='anual'&&_ckPlan===(f.plan||'gold')&&ckCouponVal()&&ckCouponVal()===String(f.coupon||'').toUpperCase());}
-function ckAnnualCents(){if(ckFounderActive())return ckFounder().annual_amount;var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
+// ── CUPOM DE PARCEIRO (23/11/2026) ── desconto % no plano ANUAL, cadastrado no painel (Parcerias).
+// O link https://www.endodirect.com.br/?cupom=CODIGO guarda o cupom 60 dias neste aparelho e ele entra
+// sozinho no checkout anual. A conta do preço é a mesma do servidor (lib/cupom-parceiro.js precoComCupom).
+var CK_CUPOM_LINK='endo_cupom_link',CK_CUPOM_DIAS=60;
+(function(){try{var m=/[?&]cupom=([A-Za-z0-9_-]{3,30})(?:&|$)/.exec(location.search||'');if(m&&window.localStorage)localStorage.setItem(CK_CUPOM_LINK,JSON.stringify({c:m[1].toUpperCase(),t:Date.now()}));}catch(e){}})();
+// Landing: quem chega pelo link do cupom vê o desconto confirmado (barra verde no topo).
+function ckCupomLinkAviso(){
+  var c=ckCupomLink(),el=document.getElementById('lp-cupom');if(!c||!el)return;
+  var tenta=0;(function vai(){
+    var client=null;try{client=getSupabaseClient();}catch(e){}
+    if(!client){if(++tenta<25)setTimeout(vai,400);return;}
+    Promise.resolve(client.rpc('endodirect_cupom_publico',{p_codigo:c})).then(function(r){
+      var i=r&&!r.error&&r.data;if(!i){el.style.display='none';return;}
+      var pl=(i.planos||[]).map(function(p){return p==='gold'?'Gold':'Standard';}).join(' e ');
+      el.innerHTML='🎟️ Cupom <b>'+esc(i.codigo)+'</b> ativo: <b>'+esc(String(Number(i.desconto_pct)).replace('.',','))+'% de desconto</b> no plano anual ('+esc(pl)+'). O desconto entra sozinho no pagamento.';
+      el.style.display='';
+    }).catch(function(){});
+  })();
+}
+try{setTimeout(ckCupomLinkAviso,0);}catch(e){}
+function ckCupomLink(){try{var o=JSON.parse(localStorage.getItem(CK_CUPOM_LINK)||'null');if(o&&o.c&&Date.now()-(+o.t||0)<CK_CUPOM_DIAS*86400000)return String(o.c);}catch(e){}return '';}
+function ckPrecoCupom(c,pct){var d=Math.max(0,Math.min(50,Number(pct)||0));return Math.round((Number(c)||0)*(100-d)/100);}
+var _ckParc={cod:'',info:null,estado:''},_ckParcT=null; // estado: '' | conferindo | ok | invalido | erro
+function ckEhFundadorCod(c){var f=ckFounder();return c==='FUNDADOR'||!!(f&&c===String(f.coupon||'').toUpperCase());}
+function ckParcConfere(){
+  var c=ckCouponVal();
+  if(!c||ckEhFundadorCod(c)||!/^[A-Z0-9_-]{3,30}$/.test(c)){_ckParc={cod:c,info:null,estado:''};return;}
+  if(_ckParc.cod===c&&(_ckParc.estado==='ok'||_ckParc.estado==='invalido'||_ckParc.estado==='conferindo'))return;
+  _ckParc={cod:c,info:null,estado:'conferindo'};clearTimeout(_ckParcT);
+  _ckParcT=setTimeout(function(){
+    var client=getSupabaseClient();if(!client){_ckParc.estado='erro';ckUpdateView();return;}
+    Promise.resolve(client.rpc('endodirect_cupom_publico',{p_codigo:c})).then(function(r){
+      if(_ckParc.cod!==c)return;
+      if(r&&r.error){_ckParc.estado='erro';}else{_ckParc.info=(r&&r.data)||null;_ckParc.estado=_ckParc.info?'ok':'invalido';}
+      ckUpdateView();
+    }).catch(function(){if(_ckParc.cod===c){_ckParc.estado='erro';ckUpdateView();}});
+  },350);
+}
+function ckParcAtivo(){var i=_ckParc.info;return !!(_ckCycle==='anual'&&_ckParc.estado==='ok'&&i&&_ckParc.cod===ckCouponVal()&&Array.isArray(i.planos)&&i.planos.indexOf(_ckPlan)>=0);}
+function ckAnnualBase(){var a=_pmCfg&&_pmCfg.annual;return (a&&a[_ckPlan])||(ckMonthlyCents()*10);}
+function ckAnnualCents(){if(ckFounderActive())return ckFounder().annual_amount;var b=ckAnnualBase();return ckParcAtivo()?ckPrecoCupom(b,_ckParc.info.desconto_pct):b;}
 function ckMaxInst(){return (_pmCfg&&_pmCfg.max_installments)||12;}
 function ckSeg(rowId,attr,val){var r=document.getElementById(rowId);if(!r)return;r.querySelectorAll('['+attr+']').forEach(function(b){b.classList.toggle('on',b.getAttribute(attr)===val);});}
 function ckFillInstallments(){
@@ -11949,15 +11992,24 @@ function ckUpdateView(){
   var instFld=document.getElementById('ck-inst-fld');if(instFld)instFld.style.display=(anual&&method==='credit_card')?'block':'none';
   // Cupom: só no anual; mostra dica de Sócio-fundador para o Gold.
   var cpFld=document.getElementById('ck-coupon-fld');
-  if(cpFld){var showCp=anual&&ckFounderAberto();cpFld.style.display=showCp?'block':'none';}
+  // Cupom: só no anual (fundador ou parceiro).
+  if(cpFld){cpFld.style.display=anual?'block':'none';var cpIn=document.getElementById('ck-coupon');if(cpIn)cpIn.placeholder=ckFounderAberto()?'Ex.: FUNDADOR':'Código do cupom';}
   var cpMsg=document.getElementById('ck-coupon-msg');
-  if(cpMsg){if(ckFounderActive()){var fa=ckFounder();cpMsg.textContent=(fa&&!fa.enabled&&_ckSouFundador)?'🎟️ Preço de Sócio-fundador garantido na sua renovação.':'🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){var fz=ckFounder();cpMsg.textContent=(fz&&fz.encerrada&&ckCouponVal()===String(fz.coupon||'').toUpperCase())?'A oferta de Sócio-fundador foi encerrada.':'Cupom não aplicável a este plano.';cpMsg.style.color='#f0a0a0';}else{cpMsg.textContent='';}}
+  if(cpMsg){if(ckFounderActive()){var fa=ckFounder();cpMsg.textContent=(fa&&!fa.enabled&&_ckSouFundador)?'🎟️ Preço de Sócio-fundador garantido na sua renovação.':'🎟️ Cupom Sócio-fundador aplicado!';cpMsg.style.color='#4ade80';}else if(anual&&ckCouponVal()){
+      var cv=ckCouponVal(),fz=ckFounder(),txt='Cupom não aplicável a este plano.',cor='#f0a0a0';
+      if(ckEhFundadorCod(cv)){if(fz&&fz.encerrada)txt='A oferta de Sócio-fundador foi encerrada.';}
+      else if(_ckParc.cod===cv&&_ckParc.estado==='conferindo'){txt='Conferindo o cupom…';cor='#8a93a3';}
+      else if(ckParcAtivo()){txt='🎟️ Cupom '+cv+' aplicado: '+String(Number(_ckParc.info.desconto_pct)).replace('.',',')+'% de desconto no plano anual.';cor='#4ade80';}
+      else if(_ckParc.cod===cv&&_ckParc.estado==='ok')txt='Este cupom não vale para este plano.';
+      else if(_ckParc.cod===cv&&_ckParc.estado==='erro')txt='Não foi possível conferir o cupom agora. Tente de novo em instantes.';
+      else if(_ckParc.cod===cv&&_ckParc.estado==='invalido')txt='Cupom inválido ou vencido.';
+      cpMsg.textContent=txt;cpMsg.style.color=cor;}else{cpMsg.textContent='';}}
   if(anual&&method==='credit_card')ckFillInstallments();
   var rs=document.getElementById('ck-result');if(rs){rs.style.display='none';rs.innerHTML='';}
   var pr=document.getElementById('ck-price');
   if(pr){
     if(!anual){pr.textContent=ckBrl(ckMonthlyCents())+'/mês · assinatura mensal, cancele quando quiser';}
-    else{var a=ckAnnualCents();var fnd=ckFounderActive();pr.textContent=(fnd?'🎟️ Sócio-fundador — ':'')+ckBrl(a)+'/ano (~ '+ckBrl(Math.round(a/12))+'/mês) · pagamento único, 12 meses de acesso';}
+    else{var a=ckAnnualCents();var fnd=ckFounderActive(),prc=!fnd&&ckParcAtivo();pr.textContent=(fnd?'🎟️ Sócio-fundador — ':(prc?'🎟️ Cupom '+_ckParc.cod+' — ':''))+ckBrl(a)+'/ano (~ '+ckBrl(Math.round(a/12))+'/mês)'+(prc?' (de '+ckBrl(ckAnnualBase())+')':'')+' · pagamento único, 12 meses de acesso';}
   }
   var pay=document.getElementById('ck-pay');
   if(pay)pay.textContent=!anual?'Assinar agora':(method==='pix'?'Gerar PIX':(method==='boleto'?'Gerar boleto':'Pagar agora'));
@@ -11968,7 +12020,8 @@ function openCheckout(key){
   var t=(ENDO_TIERS||[]).filter(function(x){return x&&x.key===key;})[0];
   if(!t)return;
   if(!currentUser||!currentUser.email){try{sessionStorage.setItem('endo_plan_intent',key);}catch(e){}showLoginScreen();return;}
-  var startCycle=(window.__lpCycle==='anual')?'anual':'mensal';window.__lpCycle='';
+  var cupomLink=window.__lpCoupon?'':ckCupomLink();
+  var startCycle=(window.__lpCycle==='anual'||cupomLink)?'anual':'mensal';window.__lpCycle='';
   _ckPlan=key;_ckCycle=startCycle;_ckMethod='credit_card';
   setText('ck-plan-nome',t.nome);
   var em=document.getElementById('ck-email');if(em)em.value=currentUser.email;
@@ -11977,7 +12030,8 @@ function openCheckout(key){
   // Pré-preenche os dados de cobrança salvos (nunca o cartão), agilizando próximas compras.
   (function(){var b=lsGet('ck_billing')||{};function pf(id,v){var e=document.getElementById(id);if(e)e.value=v||'';}
     pf('ck-name',b.name||(currentUser&&currentUser.name)||'');pf('ck-doc',b.doc);pf('ck-phone',b.phone);pf('ck-cep',b.cep);pf('ck-uf',b.uf);pf('ck-addr',b.addr);pf('ck-numero',b.numero);pf('ck-city',b.city);})();
-  var cpEl=document.getElementById('ck-coupon');if(cpEl)cpEl.value=(window.__lpCoupon||'');window.__lpCoupon='';
+  var cpEl=document.getElementById('ck-coupon');if(cpEl)cpEl.value=(window.__lpCoupon||cupomLink||'');window.__lpCoupon='';
+  ckParcConfere();
   ckSeg('ck-cycle-row','data-cycle',startCycle);ckSeg('ck-method-row','data-method','credit_card');
   var pay=document.getElementById('ck-pay');if(pay)pay.disabled=false;
   loadPmConfig(function(){ckUpdateView();});
@@ -23777,7 +23831,7 @@ function renderAdmSec(sec){
   admCurrentSec=sec;
   try{lsSet('adm_sec',sec);}catch(e){}
   document.querySelectorAll('.adm-nav[data-asec]').forEach(function(b){b.classList.toggle('on',b.dataset.asec===sec);});
-  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',avisos:'Avisos aos alunos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
+  var titles={provas:'Provas & Questões',cursos:'Cursos',estudantes:'Estudantes',analytics:'Analytics',mural:'Mural de artigos',avisos:'Avisos aos alunos',ref:'Diretrizes',resumos:'Resumos',conteudo:'Podcasts',mapas:'Mapas Mentais',flashcards:'Flashcards',stories:'Questão do Dia (Stories)',parcerias:'Parcerias',qotdarq:'Questão do Dia',pendencias:'Pendências',favs:'Favoritos',calc:'Calculadoras',consultorio:'Consultório',rx:'Prescrição Comentada',chat:'Chat',perfil:'Perfil',suporte:'Suporte',cme:'Enquete — Educação Médica Continuada'};
   setText('adm-sec-title',titles[sec]||sec);
   var m=document.getElementById('adm-main');if(!m)return;
   // SEMPRE devolve os painéis movidos (#panel-presc / #mm-live) para o lugar de
@@ -23788,6 +23842,7 @@ function renderAdmSec(sec){
   try{restoreRxPanel();}catch(e){}
   try{restoreMMLive();}catch(e){}
   if(sec==='avisos'){m.innerHTML=admAvisosAlunosHTML();bindAdmAvisosAlunos();bindAdmSec(sec);return;}
+  if(sec==='parcerias'){m.innerHTML=admParceriasHTML();bindAdmParcerias();if(!admParc.dados&&!admParc.carregando)carregaParcerias();bindAdmSec(sec);return;}
   if(sec==='cme'){
     m.innerHTML='<div class="adm-ph"><h1>🎓 Enquete — Educação Médica Continuada</h1></div>'
       +'<div class="adm-pc" id="adm-cme-body"><div class="empty">Apurando…</div></div>';
@@ -25376,6 +25431,144 @@ var admPodSubtab='ouvir',admPodFiltro='';
 // o professor quer dizer. "Mostrar até" tira o aviso do mural depois do dia escolhido.
 var admAvisoEditId=null;
 function admAvisoDataISO(ms){if(!ms)return '';var d=new Date(+ms);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// ── 🤝 PARCERIAS: CUPONS DE PARCEIRO (23/11/2026) ──
+// Professor: "Vamos desenvolver isso" (cupom de parceiro com desconto, registro de quem trouxe cada venda e um
+// quadro no painel). Primeiro caso: a parceria com um endocrinologista que divulga em grupos de WhatsApp.
+// Cupom: desconto % no plano ANUAL; comissão % sobre o valor pago no 1º ano (e % maior a partir da venda
+// seguinte à meta do semestre). Cada venda paga com cupom fica em endodirect_cupom_vendas (só plano, forma,
+// valores e o pedido do pagar.me: nada de nome ou e-mail de aluno, porque o relatório vai para o parceiro).
+// Cadastro e leitura por RPC só de professor (endodirect_cupom_admin_salvar / endodirect_cupons_admin).
+var admParc={dados:null,carregando:false,erro:'',form:null};
+function parcMes(iso){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).format(new Date(iso));}catch(e){return String(iso||'').slice(0,7);}}
+function parcMesNome(m){var p=String(m||'').split('-'),n=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];return (n[(+p[1]||1)-1]||'')+'/'+(p[0]||'');}
+function parcSemestre(iso){var m=parcMes(iso).split('-');return m[0]+'-'+((+m[1])<=6?'1':'2');}
+function parcPct(v){return String(Math.round((Number(v)||0)*100)/100).replace('.',',')+'%';}
+function parcData(iso){try{return new Date(iso).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});}catch(e){return '';}}
+// Comissão de um cupom: % base em cada venda paga; % da meta da venda seguinte à meta em diante, no mesmo
+// semestre (jan–jun, jul–dez). Estornada não conta. Venda com menos de 7 dias está no prazo de arrependimento
+// (a comissão dela ainda não é devida). `agora` só para os testes.
+function parcComissao(c,vendas,agora){
+  agora=agora||Date.now();
+  var pct=Number(c&&c.comissao_pct)||0,pctM=(c&&c.comissao_pct_meta!=null&&c.comissao_pct_meta!=='')?Number(c.comissao_pct_meta):null,meta=(c&&+c.meta_semestre)||0;
+  var minhas=(vendas||[]).filter(function(v){return v&&c&&v.codigo===c.codigo;}).sort(function(a,b){return String(a.pago_em).localeCompare(String(b.pago_em));});
+  var nSem={},meses={},tot={vendas:0,valor:0,comissao:0,carencia:0,estornos:0};
+  var linhas=minhas.map(function(v){
+    var pago=v.status==='pago',sem=parcSemestre(v.pago_em),n=0;
+    if(pago){nSem[sem]=(nSem[sem]||0)+1;n=nSem[sem];}
+    var taxa=(pago&&meta&&pctM!=null&&n>meta)?pctM:pct;
+    var com=pago?Math.round((+v.valor_pago||0)*taxa/100):0;
+    var car=pago&&(agora-Date.parse(v.pago_em))<7*86400000;
+    var l=Object.assign({},v,{mes:parcMes(v.pago_em),ordemSem:n,taxa:taxa,comissao:com,carencia:car});
+    var m=meses[l.mes]||(meses[l.mes]={mes:l.mes,vendas:0,valor:0,comissao:0,carencia:0,estornos:0});
+    if(pago){m.vendas++;m.valor+=+v.valor_pago||0;m.comissao+=com;if(car)m.carencia+=com;tot.vendas++;tot.valor+=+v.valor_pago||0;tot.comissao+=com;if(car)tot.carencia+=com;}
+    else{m.estornos++;tot.estornos++;}
+    return l;
+  });
+  return {linhas:linhas,porMes:Object.keys(meses).sort().reverse().map(function(k){return meses[k];}),total:tot};
+}
+function parcLink(cod){return 'https://www.endodirect.com.br/?cupom='+encodeURIComponent(cod);}
+function admParcFormHTML(f){
+  var ed=!!f.editando,pl=Array.isArray(f.planos)?f.planos:['gold','standard'];
+  var dt=f.valido_ate?String(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo'}).format(new Date(f.valido_ate))):'';
+  var num=function(id,lab,val,ph,dica){return '<div class="fld2" style="margin:0"><label>'+lab+'</label><input type="number" inputmode="decimal" min="0" max="50" step="0.5" id="'+id+'" value="'+esc(val==null?'':String(val))+'" placeholder="'+esc(ph||'')+'">'+(dica?'<div style="font-size:.68rem;color:var(--t3);margin-top:.2rem">'+dica+'</div>':'')+'</div>';};
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:1rem;font-weight:700;margin-bottom:.8rem">'+(ed?'✏️ Editar cupom '+esc(f.codigo):'🎟️ Novo cupom de parceiro')+'</div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Código do cupom</label><input type="text" id="parc-cod" maxlength="30" style="text-transform:uppercase" placeholder="Ex.: ENDONEWS" value="'+esc(f.codigo||'')+'"'+(ed?' readonly':'')+'>'
+      +'<div style="font-size:.68rem;color:var(--t3);margin-top:.2rem">Letras, números, - e _ (3 a 30). Não muda depois de criado.</div></div>'
+      +'<div class="fld2" style="margin:0"><label>Parceiro</label><input type="text" id="parc-nome" maxlength="120" placeholder="Ex.: Dr. Fulano (grupos de WhatsApp)" value="'+esc(f.parceiro||'')+'"></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem">'+num('parc-desc','Desconto para o aluno (%)',f.desconto_pct!=null?f.desconto_pct:15,'15','No plano anual, sobre o preço cheio. Máximo 50%.')
+      +num('parc-com','Comissão do parceiro (%)',f.comissao_pct!=null?f.comissao_pct:20,'20','Sobre o valor que o aluno pagou no 1º ano.')+'</div>'
+    +'<div class="g2" style="margin-bottom:.7rem">'+num('parc-comm','Comissão acima da meta (%, opcional)',f.comissao_pct_meta,'25','Vale da venda seguinte à meta em diante, no mesmo semestre.')
+      +'<div class="fld2" style="margin:0"><label>Meta do semestre (vendas, opcional)</label><input type="number" inputmode="numeric" min="1" step="1" id="parc-meta" value="'+esc(f.meta_semestre==null?'':String(f.meta_semestre))+'" placeholder="20"></div></div>'
+    +'<div class="g2" style="margin-bottom:.7rem"><div class="fld2" style="margin:0"><label>Vale para</label><div style="display:flex;gap:1rem;flex-wrap:wrap;padding:.4rem 0">'
+      +'<label style="display:flex;gap:.35rem;align-items:center;font-size:.82rem;cursor:pointer"><input type="checkbox" id="parc-gold" style="width:auto"'+(pl.indexOf('gold')>=0?' checked':'')+'> Gold anual</label>'
+      +'<label style="display:flex;gap:.35rem;align-items:center;font-size:.82rem;cursor:pointer"><input type="checkbox" id="parc-std" style="width:auto"'+(pl.indexOf('standard')>=0?' checked':'')+'> Standard anual</label></div></div>'
+      +'<div class="fld2" style="margin:0"><label>Válido até (opcional)</label><input type="date" id="parc-ate" value="'+esc(dt)+'"></div></div>'
+    +'<label style="display:flex;gap:.45rem;align-items:center;font-size:.82rem;margin:.1rem 0 .7rem;cursor:pointer"><input type="checkbox" id="parc-ativo" style="width:auto"'+(f.ativo===false?'':' checked')+'> Ativo (o cupom funciona no checkout)</label>'
+    +'<div class="fld2"><label>Notas (só para os professores)</label><textarea id="parc-notas" rows="2" maxlength="600" placeholder="Combinado, contato, forma de pagamento da comissão…">'+esc(f.notas||'')+'</textarea></div>'
+    +'<div class="upload-status" id="parc-status"></div>'
+    +'<div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-parc-salvar">💾 Salvar cupom</button><button class="btn btn-ghost" id="btn-parc-cancelar">Cancelar</button></div></div>';
+}
+function admParcCupomHTML(c,vendas){
+  var r=parcComissao(c,vendas),t=r.total,venceu=c.valido_ate&&Date.parse(c.valido_ate)<=Date.now(),on=c.ativo&&!venceu;
+  var pl=(c.planos||[]).map(function(p){return p==='gold'?'Gold':'Standard';}).join(' e ');
+  var regra='Comissão '+parcPct(c.comissao_pct)+(c.comissao_pct_meta!=null&&c.meta_semestre?' ('+parcPct(c.comissao_pct_meta)+' a partir da '+(+c.meta_semestre+1)+'ª venda do semestre)':'');
+  var meses=r.porMes.length?'<div style="overflow-x:auto;margin-top:.6rem"><table class="adm-table" style="width:100%;font-size:.78rem;font-variant-numeric:tabular-nums"><thead><tr><th style="text-align:left">Mês</th><th>Vendas</th><th>Recebido</th><th>Comissão</th><th>Estornos</th></tr></thead><tbody>'
+      +r.porMes.map(function(m){return '<tr><td>'+esc(parcMesNome(m.mes))+'</td><td style="text-align:center">'+m.vendas+'</td><td style="text-align:right">'+ckBrl(m.valor)+'</td><td style="text-align:right"><b>'+ckBrl(m.comissao)+'</b>'+(m.carencia?'<div style="font-size:.66rem;color:var(--t3)">'+ckBrl(m.carencia)+' no prazo de 7 dias</div>':'')+'</td><td style="text-align:center">'+(m.estornos||'—')+'</td></tr>';}).join('')
+      +'</tbody></table></div>':'<div class="empty" style="margin-top:.6rem">Nenhuma venda com este cupom ainda.</div>';
+  var lista=r.linhas.length?'<details style="margin-top:.5rem"><summary style="cursor:pointer;font-size:.78rem;color:var(--t2)">Vendas uma a uma ('+r.linhas.length+')</summary><div style="overflow-x:auto"><table class="adm-table" style="width:100%;font-size:.74rem;font-variant-numeric:tabular-nums;margin-top:.4rem"><thead><tr><th style="text-align:left">Data</th><th>Plano</th><th>Forma</th><th>Preço cheio</th><th>Pago</th><th>Comissão</th><th>Situação</th></tr></thead><tbody>'
+      +r.linhas.slice().reverse().map(function(l){var forma={credit_card:'Cartão',pix:'PIX',boleto:'Boleto'}[l.metodo]||'—';return '<tr><td>'+esc(parcData(l.pago_em))+'</td><td>'+esc(l.plano==='gold'?'Gold':'Standard')+'</td><td>'+esc(forma)+'</td><td style="text-align:right">'+ckBrl(l.valor_cheio)+'</td><td style="text-align:right">'+ckBrl(l.valor_pago)+'</td><td style="text-align:right">'+(l.status==='pago'?ckBrl(l.comissao)+' <span style="color:var(--t3)">('+parcPct(l.taxa)+')</span>':'—')+'</td><td>'+(l.status==='pago'?(l.carencia?'paga · no prazo de 7 dias':'paga'):'<span style="color:var(--red)">estornada</span>')+'</td></tr>';}).join('')
+      +'</tbody></table></div></details>':'';
+  return '<div class="card" style="margin-bottom:.8rem" data-parc-card="'+esc(c.codigo)+'">'
+    +'<div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;justify-content:space-between"><div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">'
+      +'<span style="font-family:ui-monospace,monospace;font-weight:800;font-size:.95rem;letter-spacing:.04em">'+esc(c.codigo)+'</span>'
+      +'<span style="font-size:.82rem;color:var(--t2)">'+esc(c.parceiro||'')+'</span>'
+      +'<span style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .5rem;border-radius:999px;'+(on?'background:rgba(74,222,128,.15);color:#4ade80':'background:rgba(148,163,184,.15);color:var(--t3)')+'">'+(on?'Ativo':(venceu?'Vencido':'Inativo'))+'</span></div>'
+      +'<button class="btn btn-outline btn-sm" data-parc-edit="'+esc(c.codigo)+'">✏️ Editar</button></div>'
+    +'<div style="font-size:.78rem;color:var(--t2);margin:.45rem 0 .55rem;line-height:1.5">Desconto de <b>'+parcPct(c.desconto_pct)+'</b> no anual ('+esc(pl)+') · '+esc(regra)+(c.valido_ate?' · válido até '+esc(parcData(c.valido_ate)):'')+'</div>'
+    +'<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><input type="text" readonly value="'+esc(parcLink(c.codigo))+'" style="flex:1 1 16rem;min-width:0;font-size:.78rem" aria-label="Link do cupom"><button class="btn btn-outline btn-sm" data-parc-copia="'+esc(c.codigo)+'">📋 Copiar link</button></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));gap:.5rem;margin-top:.7rem">'
+      +[['Vendas pagas',String(t.vendas)],['Recebido',ckBrl(t.valor)],['Comissão total',ckBrl(t.comissao)],['Estornos',String(t.estornos)]].map(function(x){return '<div style="border:1px solid var(--bd);border-radius:10px;padding:.45rem .6rem"><div style="font-size:.64rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">'+x[0]+'</div><div style="font-size:.98rem;font-weight:700;font-variant-numeric:tabular-nums">'+x[1]+'</div></div>';}).join('')
+    +'</div>'+meses+lista
+    +(c.notas?'<div style="font-size:.74rem;color:var(--t3);margin-top:.5rem;white-space:pre-wrap">📝 '+esc(c.notas)+'</div>':'')
+    +'</div>';
+}
+function admParceriasHTML(){
+  var d=admParc.dados,cab='<div class="adm-ph"><h1>🤝 Parcerias</h1></div>';
+  var nota='<div style="font-size:.76rem;color:var(--t3);margin:0 0 .9rem;line-height:1.55">Cupom de parceiro: o aluno ganha o desconto no <b>plano anual</b> (cartão, PIX ou boleto) digitando o código no pagamento ou entrando pelo link do cupom, que deixa o código pronto por 60 dias naquele aparelho. Cada venda paga com o cupom entra aqui. A comissão é sobre o valor que o aluno pagou; venda com menos de 7 dias ainda está no prazo de arrependimento, e venda estornada sai da conta (se a comissão dela já tiver sido paga, desconte no mês seguinte). No cartão parcelado, a Endodirect recebe em parcelas: a comissão pode ser paga no mesmo ritmo. O relatório não mostra nome nem e-mail de aluno, então pode ser enviado ao parceiro.</div>';
+  if(!d)return cab+'<div class="adm-pc">'+nota+'<div class="empty">'+(admParc.erro?esc(admParc.erro):'Carregando…')+'</div></div>';
+  var form=admParc.form?admParcFormHTML(admParc.form):'<div style="margin-bottom:.9rem"><button class="btn btn-primary" id="btn-parc-novo">🎟️ Novo cupom</button></div>';
+  var cups=(d.cupons||[]).slice().sort(function(a,b){return (b.ativo?1:0)-(a.ativo?1:0)||String(b.criado_em).localeCompare(String(a.criado_em));});
+  return cab+'<div class="adm-pc">'+nota+form
+    +(cups.length?cups.map(function(c){return admParcCupomHTML(c,d.vendas||[]);}).join(''):'<div class="empty">Nenhum cupom de parceiro ainda. Crie o primeiro acima.</div>')+'</div>';
+}
+function carregaParcerias(){
+  var client=getSupabaseClient();if(!client){admParc.erro='Sem conexão com o servidor.';return;}
+  admParc.carregando=true;
+  Promise.resolve(client.rpc('endodirect_cupons_admin')).then(function(r){
+    admParc.carregando=false;
+    if(r&&r.error){admParc.erro='Não foi possível carregar os cupons: '+(r.error.message||'erro')+'.';}
+    else{admParc.dados=(r&&r.data)||{cupons:[],vendas:[]};admParc.erro='';}
+    if(admCurrentSec==='parcerias')renderAdmSec('parcerias');
+  }).catch(function(e){admParc.carregando=false;admParc.erro='Não foi possível carregar os cupons.';if(admCurrentSec==='parcerias')renderAdmSec('parcerias');});
+}
+function bindAdmParcerias(){
+  var m=document.getElementById('adm-main');if(!m||m.__parcLigado)return; // o #adm-main fica: liga uma vez só
+  m.__parcLigado=true;
+  var val=function(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';};
+  m.addEventListener('click',function(ev){
+    if(admCurrentSec!=='parcerias')return;
+    var b=ev.target.closest('button');if(!b||!m.contains(b))return;
+    if(b.id==='btn-parc-novo'){admParc.form={};renderAdmSec('parcerias');try{document.getElementById('parc-cod').focus();}catch(e){}return;}
+    if(b.id==='btn-parc-cancelar'){admParc.form=null;renderAdmSec('parcerias');return;}
+    if(b.hasAttribute('data-parc-edit')){var cod=b.getAttribute('data-parc-edit');var c=((admParc.dados&&admParc.dados.cupons)||[]).filter(function(x){return x.codigo===cod;})[0];if(c){admParc.form=Object.assign({editando:true},c);renderAdmSec('parcerias');try{window.scrollTo(0,0);}catch(e){}}return;}
+    if(b.hasAttribute('data-parc-copia')){var link=parcLink(b.getAttribute('data-parc-copia'));try{navigator.clipboard.writeText(link).then(function(){notify('Link copiado. ✓','ok');},function(){notify(link,'ok');});}catch(e){notify(link,'ok');}return;}
+    if(b.id==='btn-parc-salvar'){
+      var st=document.getElementById('parc-status');var diga=function(t){if(st)st.textContent=t;};
+      var cod=val('parc-cod').toUpperCase(),nome=val('parc-nome');
+      if(!/^[A-Z0-9_-]{3,30}$/.test(cod)||cod==='FUNDADOR'){diga('Código: de 3 a 30 letras, números, - ou _ (FUNDADOR é reservado).');return;}
+      if(nome.length<2){diga('Escreva o nome do parceiro.');return;}
+      var num=function(id){var v=val(id).replace(',','.');return v===''?null:Number(v);};
+      var desc=num('parc-desc'),com=num('parc-com'),comm=num('parc-comm'),meta=num('parc-meta');
+      if(desc==null||!(desc>=0&&desc<=50)){diga('Desconto entre 0 e 50%.');return;}
+      if(com==null||!(com>=0&&com<=50)){diga('Comissão entre 0 e 50%.');return;}
+      if(comm!=null&&!(comm>=0&&comm<=50)){diga('Comissão acima da meta entre 0 e 50%.');return;}
+      if((comm==null)!==(meta==null)){diga('Para a comissão maior, preencha a meta e o percentual (ou deixe os dois em branco).');return;}
+      if(meta!=null&&!(meta>=1&&Math.floor(meta)===meta)){diga('A meta é um número inteiro de vendas.');return;}
+      var planos=[];if((document.getElementById('parc-gold')||{}).checked)planos.push('gold');if((document.getElementById('parc-std')||{}).checked)planos.push('standard');
+      if(!planos.length){diga('Escolha ao menos um plano.');return;}
+      var ate=val('parc-ate');
+      var p={codigo:cod,parceiro:nome,desconto_pct:desc,comissao_pct:com,comissao_pct_meta:comm==null?'':comm,meta_semestre:meta==null?'':meta,planos:planos,
+        ativo:!!(document.getElementById('parc-ativo')||{}).checked,valido_ate:ate?ate+'T23:59:59-03:00':'',notas:val('parc-notas')};
+      var client=getSupabaseClient();if(!client){diga('Sem conexão com o servidor.');return;}
+      b.disabled=true;diga('Salvando…');
+      Promise.resolve(client.rpc('endodirect_cupom_admin_salvar',{p:p})).then(function(r){
+        b.disabled=false;
+        if(r&&r.error){diga('Não salvou: '+(r.error.message||'erro')+'.');return;}
+        admParc.form=null;notify('Cupom '+cod+' salvo. ✓','ok');carregaParcerias();
+      }).catch(function(e){b.disabled=false;diga('Não salvou: '+((e&&e.message)||'erro')+'.');});
+    }
+  });
+}
 function admAvisosAlunosHTML(){
   var ed=admAvisoEditId?(avisosAlunos||[]).filter(function(a){return a&&a.id===admAvisoEditId;})[0]:null;
   var hoje0=new Date();hoje0.setHours(0,0,0,0);
@@ -29450,7 +29643,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var ckModal=document.getElementById('checkout-modal');if(ckModal)ckModal.addEventListener('click',function(e){if(e.target===ckModal)closeCheckout();});
   var ckCycleRow=document.getElementById('ck-cycle-row');if(ckCycleRow)ckCycleRow.addEventListener('click',function(e){var b=e.target.closest('[data-cycle]');if(b)ckSetCycle(b.getAttribute('data-cycle'));});
   var ckMethodRow=document.getElementById('ck-method-row');if(ckMethodRow)ckMethodRow.addEventListener('click',function(e){var b=e.target.closest('[data-method]');if(b)ckSetMethod(b.getAttribute('data-method'));});
-  var ckCoupon=document.getElementById('ck-coupon');if(ckCoupon)ckCoupon.addEventListener('input',function(){ckErr('');ckUpdateView();});
+  var ckCoupon=document.getElementById('ck-coupon');if(ckCoupon)ckCoupon.addEventListener('input',function(){ckErr('');ckParcConfere();ckUpdateView();});
   var ckExp=document.getElementById('ck-exp');if(ckExp)ckExp.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,4);this.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;});
   var ckNum=document.getElementById('ck-num');if(ckNum)ckNum.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,19);this.value=v.replace(/(.{4})/g,'$1 ').trim();});
   var ckDoc=document.getElementById('ck-doc');if(ckDoc)ckDoc.addEventListener('input',function(){var v=this.value.replace(/\D+/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');this.value=v;});
