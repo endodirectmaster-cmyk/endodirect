@@ -252,6 +252,10 @@ ok(root.querySelector('[data-tp-pac]').options.length === 1 && root.querySelecto
   // botão do calendáriozinho ao lado para inserir no calendário mesmo").
   ok(J("[tpDeBR('21/11/2026'),tpDeBR('21/11/26'),tpDeBR('21112026'),tpDeBR('2026-11-21'),tpDeBR('1/2/2026'),tpDeBR('31/02/2026'),tpDeBR('2026-02-31'),tpDeBR('21/13/2026'),tpDeBR('abc'),tpDeBR('')]").join('|') === '2026-11-21|2026-11-21|2026-11-21|2026-11-21|2026-02-01|||||', 'lê dd/mm/aaaa, dd/mm/aa, só dígitos e aaaa-mm-dd; recusa dia que não existe');
   ok(J("[tpMascaraData('2'),tpMascaraData('211'),tpMascaraData('21112'),tpMascaraData('21112026'),tpMascaraData('211120261')]").join('|') === '2|21/1|21/11/2|21/11/2026|21/11/2026', 'máscara: barras entram sozinhas, até 8 dígitos');
+  // Item 4 ("Se suspender", ponte com a Mayo) RETIRADO (professor, 23/11/2026: "se não der para colocar esse botão de
+  // copiar ... a gente deixa como ferramentas separadas e retira o item 4 da trajetória"): nem para o professor, e sem
+  // os campos de idade, sexo e diabetes que só serviam a ele. A Mayo segue como calculadora própria.
+  ok(!r3.querySelector('[data-tp-mayo]') && !/Se suspender|Mayo/i.test(r3.textContent) && !r3.querySelector('[data-tp-campo="idade"],[data-tp-campo="sexo"],[data-tp-campo="dm"]') && run("typeof tpMayoDados") === 'undefined', 'item 4 (Mayo) fora da trajetória, também para o professor');
   // contêiner e conta próprios: o resto do r3 (colar lista, escalonamento) conta com os pesos dele
   const r9 = doc.createElement('div'); r9.id = 'calc9'; doc.body.appendChild(r9);
   run("currentUser={id:'u9',role:'admin'};tpRender(document.getElementById('calc9'))");
