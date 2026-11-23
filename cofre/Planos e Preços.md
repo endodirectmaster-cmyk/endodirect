@@ -67,11 +67,13 @@ cupom próprio + comissão sobre os alunos novos). Combinado de comissão sugeri
   total, meta (se houver), tabela por mês e inscrições uma a uma. RPC `endodirect_minhas_parcerias()` (só
   `authenticated`; acha o e-mail pela própria sessão; devolve só cupons ligados a ele e liberados; sem notas internas,
   sem id de pedido, sem aluno). O painel abre mesmo sem plano ativo (comissão continua visível depois da cortesia).
-- **Primeiro parceiro (23/11/2026):** cupom **`ENDONEWS26`** (professor: "Deixa o nome do cupom ENDONEWS26, pois pode
-  ser que surjam outros nos próximos anos; deixa comissão de 20%"): 15% de desconto ao aluno (proposto), **comissão
-  fixa de 20%** (sem faixa de meta), quadro liberado na conta do parceiro (login institucional no domínio da
-  Endodirect, Gold de cortesia por 90 dias, `provider=manual`). **O cupom só passa a dar desconto quando o professor
-  ativar** (ação financeira). Teste: `scripts/test-cupom-parceiro.js`.
+- **Primeiro parceiro (23/11/2026), ATIVO:** cupom **`ENDONEWS26`** (professor: "Deixa o nome do cupom ENDONEWS26,
+  pois pode ser que surjam outros nos próximos anos"). **15% de desconto** no anual (Gold R$ 703,80; Standard
+  R$ 459). **Comissão de 20%** sobre o valor pago no 1º ano e **25% da 31ª inscrição do semestre em diante** (meta de
+  30 por semestre, escolhida pelo professor; os 25% valem só para as inscrições acima da meta). Paga mês a mês conforme
+  o dinheiro entra. Quadro "Minha parceria" ligado na conta do parceiro (login institucional no domínio da
+  Endodirect, Gold de cortesia por 90 dias, `provider=manual`). Link: `https://www.endodirect.com.br/?cupom=ENDONEWS26`.
+  Teste: `scripts/test-cupom-parceiro.js`.
 
 ## Valores em env (centavos)
 - Mensais: `PAGARME_TIER_STANDARD_AMOUNT=6900`, `..._GOLD_AMOUNT=9900`, `..._PREMIUM_AMOUNT=13900`.
