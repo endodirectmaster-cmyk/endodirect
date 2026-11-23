@@ -71,8 +71,9 @@ cupom próprio + comissão sobre os alunos novos). Combinado de comissão sugeri
   pois pode ser que surjam outros nos próximos anos"). **15% de desconto** no anual (Gold R$ 703,80; Standard
   R$ 459). **Comissão de 20%** sobre o valor pago no 1º ano e **25% da 31ª inscrição do semestre em diante** (meta de
   30 por semestre, escolhida pelo professor; os 25% valem só para as inscrições acima da meta). Paga mês a mês conforme
-  o dinheiro entra. Quadro "Minha parceria" ligado na conta do parceiro (login institucional no domínio da
-  Endodirect, Gold de cortesia por 90 dias, `provider=manual`). Link: `https://www.endodirect.com.br/?cupom=ENDONEWS26`.
+  o dinheiro entra. Conta do parceiro: login institucional no domínio da Endodirect, Gold de cortesia por 90 dias,
+  `provider=manual`. **Quadro "Minha parceria" DESLIGADO** (professor, 23/11: "Pode esconder"), porque o convite enviado
+  ainda não tinha os números; religar marcando "Mostrar o quadro na conta do parceiro" no cupom quando ele topar. Link: `https://www.endodirect.com.br/?cupom=ENDONEWS26`.
   Teste: `scripts/test-cupom-parceiro.js`.
 
 ## Valores em env (centavos)
