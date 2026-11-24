@@ -237,6 +237,16 @@ try {
   fail('regressão da curadoria da Questão do Dia falhou (verifique QOTD_CURATORS/DIR_SUBS/loteSubs no index.html):\n' + out);
 }
 
+// 17a-quater. CONTADOR REGRESSIVO DO SÓCIO-FUNDADOR (24/11/2026): formato, os 5 lugares da oferta
+//     e o desligamento sozinho no fim do prazo.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-contador-fundador.js')], { stdio: 'pipe' });
+  ok('contador do Sócio-fundador: formato certo, nos 5 lugares da oferta e some sozinho no fim');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('contador do Sócio-fundador falhou (fundadorContagem no index.html):\n' + out);
+}
+
 // 17a-ter. BREAKING NEWS DO PROFESSOR NOTIFICA SOZINHA (24/11/2026): uma vez por card, pelo
 //     servidor; o painel só dispara a rota depois de salvar e não manda push duplicado.
 try {
