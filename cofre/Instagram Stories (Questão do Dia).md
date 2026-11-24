@@ -1,9 +1,17 @@
 ---
 tags: [cofre, integracoes, marketing]
-atualizado: 2026-11-22
+atualizado: 2026-11-24
 ---
 
 # Instagram Stories — "Questão do Dia"
+
+## 📥 LOTE "TEMAS DE REVISÃO" NAS PENDÊNCIAS, COM LUGAR MARCADO NA FILA (24/11/2026, sw v486)
+
+40 questões novas distribuídas aos professores pela aba Pendências (Rafael 14, Eduardo 16, Rodolpho 10), em vez
+de entrarem direto na fila. Cada pendência traz `filaApos`/`filaAntes`; ao aprovar, `igPosAprovada` põe a questão
+nesse ponto da fila (intercalada: uma antiga, uma nova). Planejado com gravação em 24/11: a 1ª nova sairia em 25/11
+e a última em 11/02/2027; a que for aprovada depois da data planejada entra no começo da fila. Detalhes em
+[[Decisões]] (2026-11-24).
 
 ## 🔑 DIVISÃO DOS STORIES COM A CONVERSA DO INSTAGRAM (22/11/2026, sw v472)
 
