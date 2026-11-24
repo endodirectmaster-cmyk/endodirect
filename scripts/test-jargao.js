@@ -25,6 +25,11 @@ const ERRADO = [
   // 17/10/2026, comentário da Questão do Dia da sarcoidose (marcado pelo professor)
   'Bisfosfonato isolado não ataca o mecanismo (absorção intestinal mediada por vitamina D)',
   'em macrófagos dos granulomas, não freada por cálcio nem por 1,25(OH)2D',
+  // 24/11/2026, figura da hiperprolactinemia (marcada pelo professor) e o mesmo hábito nos Resumos
+  'Freio dopaminérgico da prolactina e por que o excesso dá sintomas',
+  'A dopamina é o freio principal, agindo em receptores D2 dos lactotrofos',
+  'Bloqueia o autofreio dos POMC',
+  'massa selar corta a dopamina',
   '— a chave é que a enzima depende do SUBSTRATO (banho de sol + cápsula)',
   'PTH suprimido com 1,25(OH)2D alta afasta hiperparatireoidismo primário, tornando a paratireoidectomia errada.',
   '— a hidratação (salina, não restrição) é que faz parte do suporte.',
