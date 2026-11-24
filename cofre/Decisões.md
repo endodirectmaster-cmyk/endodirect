@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-23
+atualizado: 2026-11-24
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-23
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📥 40 QUESTÕES DO DIA DE "TEMAS DE REVISÃO" DISTRIBUÍDAS AOS PROFESSORES (2026-11-24, v486/v487).** Professor: *"distribua entre os professores de acordo com as especialidades já programadas e avisa aos professores na plataforma"*. 40 questões originais em temas que a fila quase não cobria (26 casos, 14 diretas; 27 com gráfico próprio em `figuras/qotd/temas-2026-NN.svg`, 7 com esquema dos Resumos, 6 sem figura), escritas por um agente e conferidas por outro que respondeu às cegas (acertou as 40; nenhum gabarito mudou; 25 com ajuste de precisão). Foram para `ig_pending` (aba Pendências), com `lote:'Temas de revisão'`, pela curadoria de `QOTD_CURATORS`: **Rafael 14** (Adrenal 8, Feminina 3, Masculina 3), **Eduardo 16** (Osteometabolismo 8, Tireoide 6, Transgeneridade 2), **Rodolpho 10** (Neuroendocrinologia 8, Endocrinopatias 2), Bruno 0. **Lugar marcado na fila:** cada pendência leva `filaApos`/`filaAntes` (as questões da fila entre as quais foi planejada: uma que já estava, uma nova, cada área espalhada até fev/2027); `pendApprove` agora usa `igPosAprovada` e insere ali, em vez de `push` no fim (antes de filaAntes se ela espera; senão depois de filaApos; se as duas já saíram, no começo da fila). Sem esses campos, continua indo para o fim. **Aviso:** a janela de pendências ao entrar diz quantas são de cada lote e que entram no dia planejado; o cartão mostra a etiqueta do lote. Teste `test-pendencias-lugar.js` (mutação conferida). Gravação por função temporária com token (sha256) e prazo, os textos fora da conversa; backups `main-antes-qotd-temas-pendencias-2026-11-23` e `-2026-11-24`; conferido: resto do payload e as 6 pendências antigas com md5 iguais, fila (96) intacta. A 1ª tentativa (23/11) parou porque o conector pediu confirmação de um `drop function` e ninguém respondeu: **não juntar limpeza com gravação** na mesma migração.
 - **🎟️ CUPOM DE PARCEIRO SÓ NA PRIMEIRA COMPRA + RÓTULO "CORTESIA" NA LISTA DE ESTUDANTES (2026-11-23, v485).** Professor confirmou as regras (20% do 1º ano, 25% acima de 30/semestre, renovação sem comissão) e autorizou: o cupom só vale para quem nunca pagou. A lista de Estudantes mostrava "Degustação" para cortesia (faltava o rótulo); os números do cartão já estavam certos (54 pagantes + cortesias à parte). Ver [[Planos e Preços]].
 - **🏅 EMBAIXADOR ENDODIRECT: SELO, CONGRESSOS NO MURAL E DEGUSTAÇÃO DE 14 DIAS PELO LINK (2026-11-23, v484, DESLIGADO).** Professor aprovou as sugestões ("Seguir com a sua ideia"; "a degustação estendida pelo link dele para 14 dias foi muito boa"). Chave por cupom em Parcerias; o embaixador publica só congressos (até 2/semana, saem depois do evento, professor retira). Ver [[Planos e Preços]].
 - **✅ ENDONEWS26 ATIVO: 15% AO ALUNO, 20% DE COMISSÃO E 25% ACIMA DE 30 INSCRIÇÕES NO SEMESTRE (2026-11-23).** Professor: "acho que vale a pena subir mais" (a meta de 20 sugerida) → escolheu 30 por semestre e mandou ativar já com 15%. Ver [[Planos e Preços]].
