@@ -30,6 +30,9 @@ const ERRADO = [
   'A dopamina é o freio principal, agindo em receptores D2 dos lactotrofos',
   'Bloqueia o autofreio dos POMC',
   'massa selar corta a dopamina',
+  // 24/11/2026, "desmamar fica feio"
+  'só desmamar com a doença de base controlada',
+  'Precisa de desmame mais lento ou de teste do eixo?',
   '— a chave é que a enzima depende do SUBSTRATO (banho de sol + cápsula)',
   'PTH suprimido com 1,25(OH)2D alta afasta hiperparatireoidismo primário, tornando a paratireoidectomia errada.',
   '— a hidratação (salina, não restrição) é que faz parte do suporte.',

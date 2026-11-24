@@ -38,6 +38,9 @@ const MARCAS = [
   // expressão vulgar de IA". Vale para o substantivo e o composto (autofreio).
   [/\b(auto)?freios?\b/i,         'metáfora (inibição, inibição tônica, retroalimentação negativa)'],
   [/\bcorta a (dopamina|insulina|secreção)\b/i, 'verbo coloquial (reduz, interrompe)'],
+  // 24/11/2026, professor: "Evite o termo também 'desmamar'. Redução de glicocorticoide, tudo bem, mas
+  // desmamar fica feio." (desmame no sentido de lactação, em estudo animal, não entra no material clínico).
+  [/\bdesmam(e|es|ar|a|ando|ado|ada)\b/i, 'termo coloquial (redução gradual, reduzir gradualmente)'],
   [/\ba chave (é|do|da)\b/i,      'moldura retórica'],
   [/\b(pulo do gato|pegadinha|armadilha)\b/i, 'moldura retórica'],
   [/\btornando (a|o|as|os) .{1,40}errad[ao]s?\b/i, 'julgamento coloquial (não está indicada)'],
