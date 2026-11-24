@@ -164,7 +164,7 @@ chave "Endodirect Push" (Key ID 3JT8BL5MU9, só APNs); colou `APNS_PRIVATE_KEY` 
 - Teste `scripts/test-push-apns.js` (ci 17c-undecies-ay), 10 mutações pegas, com "Apple" HTTP/2 local.
 - ✅ **Build 1.1 (9) no TestFlight (16/11, 10h07).** Professor instalou e ativou no Suporte (10h13): linha
   `apns:` gravada com a conta. Botão novo no Suporte: **"🧪 Enviar aviso de teste"** (`kind:'push_teste'`, só
-  admin, `sendToEmail` do próprio e-mail; diz quantos aparelhos, quantos no iPhone e o que falhou). sw v410.
+  admin, `sendToEmail` do próprio e-mail; diz quantos aparelhos, quantos no iPhone e o que falhou). sw v410. **Saiu em 24/11/2026 (v492)**, a pedido do professor: "não está sendo mais utilizado" (botão, `admPushTeste` e a rota `push_teste`).
 - ✅ **Teste de ponta a ponta (16/11, 10h32 BRT):** "🧪 Enviar aviso de teste" → "🔔 Teste do Endodirect" chegou na
   tela bloqueada do iPhone do professor, pela Apple (APNs, chave Endodirect Push); o toque no aviso abriu o app
   (professor: "Abriu").

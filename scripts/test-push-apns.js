@@ -146,13 +146,13 @@ function corpo(nome) {
   return html.slice(ini + 1, i + 1);
 }
 ok('🧨 startApp liga as notificações nativas', /startSessionWatcher\(\);\n  try\{pushNativoIniciar\(\);\}catch\(e\)\{\}/.test(corpo('startApp')));
-// Aviso de teste do professor (Suporte): só admin, só os aparelhos do e-mail de quem pediu.
+// O aviso de teste do Suporte saiu (24/11/2026, "não está sendo mais utilizado"): nem botão,
+// nem função, nem rota no servidor.
 {
   const ai = fs.readFileSync(path.join(RAIZ, 'api', 'ai.js'), 'utf8');
-  const bloco = (ai.match(/if \(sbody && sbody\.kind === 'push_teste'\) \{([\s\S]*?)\n    \}/) || [])[1] || '';
-  ok('🧪 aviso de teste: só administrador', /const admin = await adminFromReq\(req\);\s*if \(!admin\) return json\(res, 401/.test(bloco));
-  ok('🧨 aviso de teste: só os aparelhos de quem pediu (nunca sendToAll)', /await sendToEmail\(admin\.email,/.test(bloco) && !/sendToAll/.test(bloco));
-  ok('botão do teste ligado no Suporte', /id="adm-support-pushteste"/.test(html) && /pt\.addEventListener\('click',admPushTeste\)/.test(html) && /kind:'push_teste'/.test(corpo('admPushTeste')));
+  ok('aviso de teste: sem rota push_teste no /api/ai', !/push_teste/.test(ai));
+  ok('aviso de teste: sem botão nem função no Suporte', !/adm-support-pushteste/.test(html) && !/function admPushTeste/.test(html) && !/kind:'push_teste'/.test(html));
+  ok('Suporte mantém "Ativar avisos" e "Atualizar"', /id="adm-support-pushon"/.test(html) && /id="adm-support-refresh"/.test(html));
 }
 ok('mesmo prefixo no app e no servidor', /var PUSH_APNS_PREFIXO='apns:';/.test(html) && /const APNS_PREFIXO = 'apns:';/.test(fs.readFileSync(path.join(RAIZ, 'lib', 'push.js'), 'utf8')));
 
