@@ -8544,6 +8544,33 @@ function qotdPendingByCurator(){
   if(orphan.total)arr.push(orphan);
   return arr;
 }
+// BREAKING NEWS NOTIFICA SOZINHA (24/11/2026; professor: "Quando for breaking news,
+// automaticamente já dispare"). Depois de gravar o estado global, se o Mural do professor
+// (adm_avisos) tem Breaking News que este aparelho ainda não viu notificada, chama a rota
+// pública que notifica UMA vez por card (lib/push-breaking.js, pushBreakingDoProfessor).
+// Quem decide e marca é o servidor; aqui é só o gatilho. Por isso o painel não manda mais
+// o push da Breaking News nova pela caixa "Notificar ao salvar" (seriam dois avisos).
+var breakingVistos={},breakingEmVoo=false;
+function breakingChave(a){return String((a&&(a.sourceId||(a.at!=null&&a.at!==''?'at:'+a.at:'')||a.link||a.titulo))||'');}
+function ehBreaking(a){return !!a&&(/breaking/i.test(String(a.tipo||''))||a.breaking===true);}
+function breakingNovas(avs){return (avs||[]).filter(function(a){return ehBreaking(a)&&!(Number(a.pushAutoAt)>0)&&!breakingVistos[breakingChave(a)];});}
+function breakingAutoPush(p){
+  if(!(currentUser&&currentUser.role==='admin')||breakingEmVoo)return;
+  var novas=breakingNovas(p&&p.adm_avisos);
+  if(!novas.length)return;
+  breakingEmVoo=true;
+  fetch('/api/publico?rota=push-breaking',{method:'POST',keepalive:true})
+    .then(function(r){return r.json().catch(function(){return null;});})
+    .then(function(j){
+      if(!j||!j.ok)return;
+      novas.forEach(function(a){breakingVistos[breakingChave(a)]=1;});
+      (j.enviados||[]).forEach(function(e){
+        notify(e.ok?('🔔 Breaking News notificada'+(e.sent?' em '+e.sent+' aparelho(s)':'')+': '+e.titulo):('A notificação da Breaking News falhou'+(e.erro?' ('+e.erro+')':'')+'. Use 📲 Notificar no card.'),e.ok?'ok':'err');
+      });
+    })
+    .catch(function(){})
+    .then(function(){breakingEmVoo=false;});
+}
 function persistIgPending(){try{lsSet('ig_pending',igPending);}catch(e){}queueRemoteStateSave();}
 // Alerta (1x por login) quando o professor entra e tem questões pendentes de revisão.
 var pendAlertShown=false;
@@ -9549,7 +9576,7 @@ function saveRemoteState(){
         }
       }
       var stamp=new Date().toISOString();
-      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;globalDigitalSync=_digEnviado;captureGlobalBaseline(p);if(vinhaFalhando){try{notify('Salvo: o servidor voltou e as mudanças pendentes foram gravadas.','info');}catch(e){}}});
+      return client.from('endodirect_global_state').upsert({id:'main',payload:p,updated_by:currentUser.id,updated_at:stamp},{onConflict:'id'}).then(function(res){if(res.error)throw res.error;lastGlobalUpdatedAt=stamp;globalDigitalSync=_digEnviado;captureGlobalBaseline(p);try{breakingAutoPush(p);}catch(e){}if(vinhaFalhando){try{notify('Salvo: o servidor voltou e as mudanças pendentes foram gravadas.','info');}catch(e){}}});
     }));
   }
   return Promise.all(ops)
@@ -29182,7 +29209,7 @@ function muralInlineEditHTML(a){
       +'<div class="g2" style="margin:.4rem 0 .3rem"><div class="fld2" style="margin:0"><label>Tipo</label><select id="mural-inline-tipo">'+tipoOpts+'</select></div><div class="fld2" style="margin:0"><label>Subespecialidade</label><select id="mural-inline-sub">'+subOpts+'</select></div></div>'
       // Marcada sozinha quando o tipo VIRA Breaking News (ver o listener de
       // mural-inline-tipo): o professor esperava que a troca de tipo notificasse.
-      +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .4rem;font-size:.8rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="mural-inline-push" style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular ao salvar (marca sozinho quando o tipo vira Breaking News)</span></label>'
+      +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .4rem;font-size:.8rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="mural-inline-push" style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular ao salvar (Breaking News notifica sozinha)</span></label>'
       +'<div class="g2" style="margin:.1rem 0 .3rem"><div class="fld2" style="margin:0"><label>Fonte / revista</label><input type="text" id="mural-inline-fonte" value="'+fonte+'" placeholder="Ex: NEJM, JCEM, SBEM…"></div><div class="fld2" style="margin:0"><label>Link</label><input type="text" id="mural-inline-link" value="'+link+'" placeholder="https://…"></div></div>'
       +'<div class="fld2" style="margin:0"><label>Imagem de capa (opcional)</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="text" id="mural-inline-img-url" value="'+img+'" placeholder="https://… cole a URL ou anexe" style="flex:1;min-width:180px"><button type="button" class="btn btn-outline btn-sm" id="mural-inline-coverbtn">📎 Anexar</button><input type="file" id="mural-inline-coverfile" accept="image/*" style="display:none"><span id="mural-inline-coverstatus" style="font-size:.72rem;color:var(--t3)"></span></div></div>'
     +'</details>'
@@ -29511,7 +29538,7 @@ admMuralSecHTML=function(){
     +'</div>'
     +'<div id="adm-av-emojipanel" style="display:none;flex-wrap:wrap;gap:4px;margin-top:.45rem;padding:.45rem;border:1px solid var(--bd);border-radius:8px;background:var(--s2)">'+MURAL_EMOJIS.map(function(em){return '<button type="button" class="adm-av-emoji" data-emoji="'+esc(em)+'" style="background:none;border:0;font-size:1.15rem;line-height:1;cursor:pointer;padding:3px 4px;border-radius:6px">'+em+'</button>';}).join('')+'</div>'
     +'<input type="file" id="adm-av-txtimgfile" accept="image/*" style="display:none"></div>'
-    +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Use só para avisos e breaking news.</span></label>'
+    +'<label class="adm-push-opt" style="display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem;font-size:.83rem;color:var(--t2);cursor:pointer"><input type="checkbox" id="adm-av-push"'+(admMuralEdit===null?' checked':'')+' style="width:16px;height:16px;flex-shrink:0"><span>📲 Notificar os alunos no celular (push)'+(admMuralEdit!==null?' — reenviar este aviso ao salvar':' ao publicar')+'. Breaking News notifica sozinha.</span></label>'
     +'<div style="display:flex;gap:6px"><button class="btn btn-primary" id="btn-adm-addav">'+(admMuralEdit!==null?'💾 Salvar alterações':'+ Publicar no mural')+'</button><button class="btn btn-outline" id="btn-adm-av-cancel">Cancelar</button></div></div>'
   ):'';
   return '<div class="adm-ph" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap"><div><h1>Mural de artigos</h1></div><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-outline" id="btn-adm-radar" style="padding:.55rem 1rem">🔄 Atualizar radar agora</button><button class="btn btn-primary" id="btn-adm-newav" style="padding:.55rem 1.1rem">+ Novo aviso</button></div></div>'
@@ -29619,6 +29646,10 @@ bindAdmSec=function(sec){
         admAvisos.push(dados);
         notify('Aviso publicado no mural.','ok');
       }
+      // Breaking News nova (aviso novo, ou edição que trocou o tipo) sai pelo servidor
+      // depois do save (breakingAutoPush); daqui, só os outros tipos e o reenvio.
+      var _bnNova=/breaking/i.test(dados.tipo||'')&&!(admMuralEdit!==null&&ehBreaking(origAv));
+      if(_bnNova)wantPush=false;
       if(wantPush){
         var _isBn=/breaking/i.test(dados.tipo||'');
         admSendPush({title:_isBn?'🚨 Breaking News':'📣 Novo aviso',body:t,url:'https://www.endodirect.com.br/'}).then(function(res){
@@ -29778,7 +29809,9 @@ bindAdmSec=function(sec){
     if(miTipo&&miPush){
       var _tipoOrig=(muralInlineEdit!==null&&admAvisos[muralInlineEdit])?muralDisplayType(admAvisos[muralInlineEdit]):'';
       miTipo.addEventListener('change',function(){
-        miPush.checked=/breaking/i.test(miTipo.value||'')&&!/breaking/i.test(_tipoOrig||'');
+        // Virou Breaking News: a notificação sai sozinha pelo servidor ao salvar
+        // (breakingAutoPush); a caixa fica para reenviar um aviso de outro tipo.
+        if(/breaking/i.test(miTipo.value||'')&&!/breaking/i.test(_tipoOrig||''))miPush.checked=false;
       });
     }
     // Salvar: título + corpo (htmlToMd) + metadados; preserva 'at' e sincroniza o radar.
@@ -29816,7 +29849,9 @@ bindAdmSec=function(sec){
       }
       admAvisos[muralInlineEdit]=updatedAv;
       var _miPush=document.getElementById('mural-inline-push');
-      var _wantPush=!!(_miPush&&_miPush.checked);
+      // Breaking News NOVA (o tipo acabou de virar) é notificada pelo servidor depois do
+      // save; mandar daqui também seria um segundo aviso no celular do aluno.
+      var _wantPush=!!(_miPush&&_miPush.checked)&&!(ehBreaking(updatedAv)&&!ehBreaking(orig));
       muralInlineEdit=null;persistAdm();renderAdmSec('mural');notify('Aviso atualizado.','ok');
       // Push depois de salvar, com o mesmo formato do botão Notificar: corpo = o
       // TÍTULO (quem recebe precisa saber o que aconteceu) e link para o Mural.

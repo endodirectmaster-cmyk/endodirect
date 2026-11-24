@@ -20,6 +20,8 @@
 const {
   paginaCapitulo, paginaIndice, paginaNaoEncontrada, sitemapXml, publicBase,
 } = require('../lib/publico');
+const push = require('../lib/push');
+const { pushBreakingDoProfessor } = require('../lib/push-breaking');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 function serviceKey() {
@@ -110,6 +112,24 @@ async function inscrever(req, res) {
   }
 }
 
+// Breaking News do Mural do professor → notificação no celular, uma vez por card
+// (24/11/2026). Rota pública de propósito: ela não recebe conteúdo nenhum, só manda o
+// que o próprio banco aponta como Breaking News ainda não notificada (RPCs com execute
+// só para a service role), uma vez por card. Chamar de novo não faz nada. Ver
+// lib/push-breaking.js (pushBreakingDoProfessor).
+async function pushBreaking(req, res) {
+  try {
+    const r = await pushBreakingDoProfessor({
+      rpc, base: publicBase(), configurado: push.isConfigured,
+      enviar: (m) => push.sendToAll(m),
+    });
+    return jsonRes(res, r.ok ? 200 : 503, r);
+  } catch (e) {
+    console.error('[publico:push-breaking] erro:', e && e.message);
+    return jsonRes(res, 500, { ok: false, motivo: 'falha' });
+  }
+}
+
 module.exports = async function handler(req, res) {
   const base = publicBase();
   // ⚠️ A ROTA VEM PELA QUERY, nao pelo caminho. O vercel.json reescreve
@@ -128,7 +148,7 @@ module.exports = async function handler(req, res) {
 
   if (!serviceKey()) {
     console.error('[publico] sem service key — 503');
-    if (rota === 'inscrever') return jsonRes(res, 503, { ok: false, erro: 'indisponivel' });
+    if (rota === 'inscrever' || rota === 'push-breaking') return jsonRes(res, 503, { ok: false, erro: 'indisponivel' });
     return envia(res, 503, 'text/plain; charset=utf-8', 'Indisponível no momento.');
   }
 
@@ -136,6 +156,7 @@ module.exports = async function handler(req, res) {
     // ⚠️ Dentro do try: `lerCorpo` percorre o corpo do pedido, e um corpo que nao
     // e iteravel estoura antes do try/catch interno do `inscrever`.
     if (rota === 'inscrever') return await inscrever(req, res);
+    if (rota === 'push-breaking') return await pushBreaking(req, res);
     if (rota === 'sitemap' || /^\/sitemap\.xml\/?$/.test(caminho)) {
       const itens = await indice();
       if (!itens) return envia(res, 503, 'text/plain; charset=utf-8', 'Indisponível no momento.');

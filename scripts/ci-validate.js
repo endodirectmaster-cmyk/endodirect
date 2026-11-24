@@ -237,6 +237,16 @@ try {
   fail('regressão da curadoria da Questão do Dia falhou (verifique QOTD_CURATORS/DIR_SUBS/loteSubs no index.html):\n' + out);
 }
 
+// 17a-ter. BREAKING NEWS DO PROFESSOR NOTIFICA SOZINHA (24/11/2026): uma vez por card, pelo
+//     servidor; o painel só dispara a rota depois de salvar e não manda push duplicado.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-push-breaking-professor.js')], { stdio: 'pipe' });
+  ok('Breaking News do professor: notifica sozinha, uma vez por card, sem push duplicado do painel');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('Breaking News automática falhou (lib/push-breaking.js, api/publico.js, breakingAutoPush no index.html):\n' + out);
+}
+
 // 17a-bis. PENDÊNCIAS COM LUGAR MARCADO (23/11/2026): o lote "Temas de revisão" foi distribuído
 //     aos professores, planejado intercalado com a fila. Aprovar não pode mandar para o fim.
 try {
