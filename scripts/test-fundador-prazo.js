@@ -89,7 +89,7 @@ ok(/process\.env\.FOUNDER_ATE == null \? '2026-11-30T23:59:59-03:00'/.test(src),
 // (4) o site
 const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 ok(/🔥 BLACK FRIDAY<\/span><b>Últimas vagas de Sócio-fundador:<\/b>[^<]*<b>12× R\$ 45,00<\/b>, com preço travado para sempre\. <b data-founder-prazo>A oferta encerra na segunda, 30\/11, às 23h59<\/b>/.test(html), 'landing: faixa da Black Friday com o prazo');
-ok(/<div id="lp-bf" style="display:none;/.test(html) && /if\(bf\)bf\.style\.display=founderOn\?'':'none';/.test(html), 'landing: barra do topo da Black Friday, só com a oferta aberta');
+ok(/<div id="lp-bf"( data-founder-some)? style="display:none;/.test(html) && /if\(bf\)bf\.style\.display=founderOn\?'':'none';/.test(html), 'landing: barra do topo da Black Friday, só com a oferta aberta');
 ok(!/Válido para os primeiros 100 assinantes/.test(html), 'o texto antigo ("primeiros 100") saiu das faixas');
 ok(/assineAnnual&&t\.key==='gold'&&!!\(ckFounder\(\)&&ckFounder\(\)\.enabled\)/.test(html), 'selo "Sócio-fundador" no cartão Gold só com a oferta aberta');
 ok(/function fundadorPrazoTxt\(iso\)/.test(html) && /A oferta encerra hoje, às /.test(html), 'tela de planos: prazo com "hoje" no último dia');
