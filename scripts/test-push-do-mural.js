@@ -62,14 +62,17 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
       + '\n_tipo.value=' + JSON.stringify(novoTipo) + ';_tipo._fn();', ctx);
     return ctx._push.checked;
   }
-  ok(roda('Comunicado', 'Breaking News') === true, '⚠️ Comunicado → Breaking News não marcou o push (o caso do professor)');
+  // 24/11/2026: Breaking News nova é notificada pelo SERVIDOR depois do save (breakingAutoPush →
+  // api/publico?rota=push-breaking, uma vez por card; ver test-push-breaking-professor.js). A
+  // caixa não se marca mais: marcada, o painel mandaria um segundo aviso no celular do aluno.
+  ok(roda('Comunicado', 'Breaking News') === false, '⚠️ Comunicado → Breaking News marcou a caixa: o painel mandaria um push além do automático do servidor');
   ok(roda('Comunicado', 'Evento') === false, 'trocar para um tipo comum não pode propor push');
   ok(roda('Breaking News', 'Breaking News') === false, 'reeditar um card que já era Breaking News não re-notifica sozinho');
   ok(roda('Breaking News', 'Comunicado') === false, 'rebaixar de Breaking News não propõe push');
   // O salvar envia quando a caixa está marcada, com corpo = título e link do mural.
   const s = html.indexOf("var miSave=document.getElementById('btn-mural-inline-save')");
   const salvar = html.slice(s, s + 4000);
-  ok(/var _wantPush=!!\(_miPush&&_miPush\.checked\);/.test(salvar), 'o salvar não lê a caixa de push');
+  ok(/var _wantPush=!!\(_miPush&&_miPush\.checked\)&&!\(ehBreaking\(updatedAv\)&&!ehBreaking\(orig\)\);/.test(salvar), 'o salvar não lê a caixa de push (ou voltou a mandar push de Breaking News nova pelo painel)');
   ok(/if\(_wantPush\)\{[\s\S]*?admSendPush\(\{title:_bn\?'🚨 Breaking News'/.test(salvar), 'o salvar não envia o push de Breaking News');
   ok(/body:_bnTitulo,url:'https:\/\/www\.endodirect\.com\.br\/#mural'/.test(salvar), 'o push do salvar tem de levar o TÍTULO e apontar para o Mural');
   ok(salvar.indexOf('var _wantPush') < salvar.indexOf("muralInlineEdit=null;persistAdm();renderAdmSec('mural')"),
@@ -184,4 +187,4 @@ const ok = (c, m) => { if (!c) falhas.push(m); };
 }
 
 if (falhas.length) { console.error('✗ ' + falhas.length + ' falha(s):\n - ' + falhas.join('\n - ')); process.exit(1); }
-console.log('✓ push do mural: botão no card VIVO, confirma com o texto à vista, manda o título, não escreve no item; editor propõe o push quando o tipo vira Breaking News');
+console.log('✓ push do mural: botão no card VIVO, confirma com o texto à vista, manda o título, não escreve no item; Breaking News nova sai pelo servidor (o editor não duplica)');
