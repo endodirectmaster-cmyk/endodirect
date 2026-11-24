@@ -34,6 +34,10 @@ const MARCAS = [
   // ("Bisfosfonato isolado não ataca o mecanismo", "1-alfa-hidroxilase … não freada").
   [/\batac(a|am|ar)\b/i,          'verbo coloquial (atua sobre, age em)'],
   [/\b(freada|freado|freia|freiam|frear)\b/i, 'metáfora (inibida, suprimida)'],
+  // 24/11/2026, figura dos Resumos "Freio dopaminérgico da prolactina…": "'freio dopaminérgico' é
+  // expressão vulgar de IA". Vale para o substantivo e o composto (autofreio).
+  [/\b(auto)?freios?\b/i,         'metáfora (inibição, inibição tônica, retroalimentação negativa)'],
+  [/\bcorta a (dopamina|insulina|secreção)\b/i, 'verbo coloquial (reduz, interrompe)'],
   [/\ba chave (é|do|da)\b/i,      'moldura retórica'],
   [/\b(pulo do gato|pegadinha|armadilha)\b/i, 'moldura retórica'],
   [/\btornando (a|o|as|os) .{1,40}errad[ao]s?\b/i, 'julgamento coloquial (não está indicada)'],
