@@ -230,6 +230,56 @@ aluno) e foram para o Bunny Stream, como as aulas dos cursos.
 - 🧨 Professor com o painel aberto durante a troca: F5 antes de editar um vídeo dos Resumos, senão
   o painel pode tentar gravar o endereço antigo.
 
+## Bunny em TODAS as bibliotecas (25/11/2026, v496)
+
+Professor: *"quero que você faça em todas as pastas o mesmo esquema que você fez dos resumos. A gente
+sobe o arquivo para a plataforma e de lá você transfere para o Bunny Stream"* e *"Tudo que já subiu,
+não precisa subir de novo. É só você agora fazer as devidas alterações para manter somente [o
+streaming]"*.
+- **Bibliotecas e CDN:**
+
+  | Curso | Biblioteca | CDN |
+  |---|---|---|
+  | Resumos | 820720 | `vz-4fb917fa-a7a` |
+  | EMC | 741440 | `vz-0161a494-b29` |
+  | Endocrinologia Essencial | 680513 | `vz-1196f9a8-6ea` |
+  | EndoTEEM 2026 | 683460 | `vz-f9c42905-205` |
+
+  Hiperglicemia Hospitalar e Lípides ainda não têm aula nem biblioteca.
+- **Chaves na Vercel** (`BUNNY_KEY_RESUMOS`, `BUNNY_KEY_EMC`, `BUNNY_KEY_ESSENCIAL`, `BUNNY_KEY_ENDOTEEM`),
+  cadastradas pelo professor. Por quê:
+  - O Bunny só aceita a chave DA BIBLIOTECA (a da conta não serve).
+  - O segredo de rede do ambiente guarda uma chave por endereço, e todas usam `video.bunnycdn.com`.
+  - O segredo do ambiente com a chave dos Resumos ficou sem uso.
+- **Rota** `api/ai.js` `kind:'bunny'` → `lib/bunny.js`. Ações:
+  - `enviar`: só arquivo do nosso Storage;
+  - `status`, `listar`, `resolucoes`;
+  - `mp4`: apaga só as cópias MP4 (`outputs=mp4&allResolutions=true&deleteMp4Files=true`). Simula antes e recusa
+    se o plano tocar na playlist.
+- **Quem chama a rota:** o professor logado, ou a checagem diária com um código curto gravado em
+  `endodirect_tarefa_token` (RLS sem política; até 1 h).
+- **Painel:**
+  - A aula dos cursos aceita arquivo (TUS em `cursos/videos/<curso>`). Nos cursos e nos Resumos, o painel pede
+    ao Bunny logo depois do envio e guarda `bunny.guid`.
+  - O aluno assiste pelo Storage até a madrugada, quando o passo 0 da checagem das 03:13 troca o `src` para o
+    `.m3u8` (backup, guarda e conferência).
+  - Trocar o vídeo de uma aula por arquivo novo apaga os tópicos antigos, que a madrugada refaz.
+- **Limpeza dos MP4:** 115 aulas (3 EMC, 75 EndoTEEM, 37 Endocrinologia Essencial), 5 cópias cada.
+  - Os Resumos já não tinham MP4.
+  - Depois disso as 141 aulas do Bunny tocam (playlist, variante e 1º segmento com o Referer do site).
+- 🧨 **"Serve MP4 fallback files" desligado NÃO bloqueia os MP4 que já existem** (testado após o Purge:
+  206 vindo da origem). Só apagando. E o MP4 fallback desligado impede que as aulas novas gerem cópia.
+- 🧨 **As zonas das bibliotecas de vídeo não aparecem no CDN do painel do Bunny** ("No pull zones
+  found"): não dá para pôr Edge Rule nelas.
+- 🧨 **A EMC usa HLS com `init.mp4`** (fMP4). Bloquear toda extensão `.mp4` derrubaria as aulas. Os
+  MP4 de download se chamam `play_<altura>p.mp4`.
+- **Configuração de cada biblioteca** (o professor clica no painel do Bunny):
+  - Security: Allowed domains `endodirect.com.br` e `*.endodirect.com.br`, "Block direct url file access" ligado,
+    "Enable direct play" DESLIGADO (menos no Endocrinologia Essencial: a aula 4 usa `player.mediadelivery.net/play/680513/…`).
+  - Encoding: Early-Play desligado, "Serve original files" desligado ("Keep original files" fica ligado),
+    MP4 fallback desligado, Free Encoding (o Premium cobrava US$ 0,05/min e não usamos nada dele).
+  - Depois: Purge com `https://<cdn>.b-cdn.net/*` na lista de URLs.
+
 ## Endocrinologia Essencial: "Nesta aula" (17–18/11/2026)
 
 Pedido do professor (17/11): "implementar nas aulas do curso de endocrinologia essencial os tópicos da
