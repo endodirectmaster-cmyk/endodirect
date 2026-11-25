@@ -128,8 +128,11 @@ function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'da
      avisa por e-mail, para consertar antes de o aluno reclamar. Organização "endodirect" na região
      da UE (de.sentry.io), projeto endodirect-site. Leio os erros pelo conector do Sentry.
      LGPD: vai só o erro técnico.
-       - Sem IP (dataCollection.userInfo:false → infer_ip "never"), sem usuário, sem cookies, sem
-         corpo de requisição, e dos cabeçalhos só o User-Agent (navegador/aparelho).
+       - Sem IP (dataCollection.userInfo:false → infer_ip "never"), sem cookies, sem corpo de
+         requisição, e dos cabeçalhos só o User-Agent (navegador/aparelho).
+       - Da conta, só o CÓDIGO INTERNO (o id da conta no Supabase, um uuid aleatório), sem nome nem
+         e-mail (professor, 25/11/2026: aceitou avisar o aluno nos casos graves, com rascunho que ele
+         aprova; só nós ligamos o código à pessoa, pelo banco). Sem login, nenhum usuário vai.
        - O endereço vai sem ?consulta e sem #fragmento: o retorno do login traz código ou token ali.
        - E-mail no texto do erro vira [e-mail]; a trilha não leva o console; clique leva só
          tag/id/classe (sem valores de atributo, onde poderia haver nome de paciente).
@@ -164,9 +167,14 @@ function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'da
     }
   }
   var enviados = 0;
+  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function codigoDaConta(){
+    try { var u = window.currentUser, id = u && u.id; return (typeof id === 'string' && UUID.test(id)) ? id.toLowerCase() : ''; } catch (e) { return ''; }
+  }
   function antesDeEnviar(ev){
     if (++enviados > 25) return null;
-    delete ev.user;
+    var conta = codigoDaConta();
+    if (conta) ev.user = { id: conta }; else delete ev.user;
     var ua = ev.request && ev.request.headers && ev.request.headers['User-Agent'];
     ev.request = { url: semConsulta((ev.request && ev.request.url) || location.href) };
     if (ua) ev.request.headers = { 'User-Agent': ua };
@@ -2181,6 +2189,10 @@ body.busca-aberta{overflow:hidden}
 .marca-tc-falsa>video,.marca-tc-falsa>iframe{width:100%!important;height:100%!important;max-height:none!important;object-fit:contain;aspect-ratio:auto!important}
 .marca-tc-falsa .marca-tc{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right))}
 body.marca-tc-aberta{overflow:hidden}
+.video-falha{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(6,11,22,.88);color:#e9eef8;text-align:center}
+.video-falha .vf-caixa{display:flex;flex-direction:column;align-items:center;gap:.45rem;max-width:360px;font-size:.84rem;line-height:1.5}
+.video-falha .vf-caixa span{color:#a7b2c6;font-size:.76rem}
+.video-falha .btn{color:#fff;border-color:#3b5a8c;margin-top:.3rem}
 .off-barra{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:space-between;margin:.2rem 0 .9rem;padding:.6rem .8rem;border:1px solid var(--bd);border-radius:12px;background:var(--s2);font-size:.8rem;line-height:1.4;color:var(--t2)}
 .off-txt{flex:1 1 14rem;min-width:0}
 .off-txt b{color:var(--tx)}
@@ -9623,17 +9635,37 @@ function saveRemoteState(){
     }));
   }
   return Promise.all(ops)
-    .then(function(){return true;})
+    .then(function(){salvarFalhouOk();return true;})
     .catch(function(e){
       if(e&&e.leituraGlobal)return false; // já reagendada (e avisada, se insiste) acima
-      if(!remoteStateWarned){
-        remoteStateWarned=true;
-        console.warn('Supabase save failed',e);
-        notify('Não foi possível salvar no Supabase ainda. Verifique o setup SQL.','err');
-      }
+      console.warn('Supabase save failed',e);
+      salvarFalhou();
       return false;
     });
 }
+// SALVAMENTO QUE FALHA (25/11/2026). Professor aceitou: "quando algo falha e o aluno percebe, a plataforma
+// mostra ali mesmo". Antes: um aviso técnico ("Verifique o setup SQL"), só uma vez por sessão (o mesmo
+// remoteStateWarned da carga o calava) e NENHUMA nova tentativa: se o aluno não mexesse em mais nada, o
+// progresso ficava só no aparelho. Agora: aviso claro na 1ª falha, novas tentativas sozinhas (10 s, 20 s ...
+// até 60 s, 8 vezes, e na volta da conexão) e "Pronto: salvo" quando uma delas dá certo.
+var salvarFalhas=0,salvarRetryTimer=null;
+function salvarFalhou(){
+  salvarFalhas++;
+  if(salvarFalhas===1){
+    var adm=currentUser&&currentUser.role==='admin';
+    try{notify(adm?'Não consegui salvar no servidor agora. Sigo tentando sozinho: não feche o painel até aparecer "Salvo".'
+      :'Sem conexão com o servidor: o seu progresso ainda não foi salvo. Vou tentar de novo sozinho em alguns segundos.','err');}catch(x){}
+  }
+  clearTimeout(salvarRetryTimer);salvarRetryTimer=null;
+  if(salvarFalhas<=8)salvarRetryTimer=setTimeout(function(){salvarRetryTimer=null;queueRemoteStateSave(true);},Math.min(60000,10000*salvarFalhas));
+}
+function salvarFalhouOk(){
+  clearTimeout(salvarRetryTimer);salvarRetryTimer=null;
+  if(!salvarFalhas)return;
+  salvarFalhas=0;
+  try{notify('Pronto: salvo. ✓','ok');}catch(x){}
+}
+try{window.addEventListener('online',function(){if(salvarFalhas)queueRemoteStateSave(true);});}catch(e){}
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 // Só aceita http(s) em hrefs (bloqueia javascript:/data: etc.).
@@ -16613,7 +16645,7 @@ function montarAulaHls(raiz,tent){
   if(!tent)aulaSoltarHls();
   if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;return;}   // Safari/iOS: nativo
   if(window.Hls&&window.Hls.isSupported()){
-    try{aulaHls=new window.Hls();aulaHls.loadSource(src);aulaHls.attachMedia(v);return;}catch(e){}
+    try{aulaHls=new window.Hls();videoHlsLigar(v,aulaHls);aulaHls.loadSource(src);aulaHls.attachMedia(v);return;}catch(e){}
   }
   // O hls.js entra por <script defer> de CDN: pode ainda não ter chegado quando
   // o aluno abre a aula. Espera até 10s antes de desistir — e desistir é FALAR.
@@ -20335,11 +20367,50 @@ function montarVideosHls(raiz,tent){
   raiz.querySelectorAll('.dir-video video[data-hls]:not([data-hls-ok])').forEach(function(v){
     var src=v.getAttribute('data-hls');
     if(v.canPlayType&&v.canPlayType('application/vnd.apple.mpegurl')){v.src=src;v.setAttribute('data-hls-ok','1');return;}
-    if(window.Hls&&window.Hls.isSupported()){try{var h=new window.Hls();h.loadSource(src);h.attachMedia(v);v.setAttribute('data-hls-ok','1');return;}catch(e){}}
+    if(window.Hls&&window.Hls.isSupported()){try{var h=new window.Hls();videoHlsLigar(v,h);h.loadSource(src);h.attachMedia(v);v.setAttribute('data-hls-ok','1');return;}catch(e){}}
     falta=true;
   });
-  if(falta&&(tent||0)<20)setTimeout(function(){montarVideosHls(raiz,(tent||0)+1);},500);
+  if(falta&&(tent||0)<20){setTimeout(function(){montarVideosHls(raiz,(tent||0)+1);},500);return;}
+  // O reprodutor (hls.js) não chegou em 10 s: dizer na tela, em vez de deixar o vídeo preto.
+  if(falta)raiz.querySelectorAll('.dir-video video[data-hls]:not([data-hls-ok])').forEach(videoFalhaMostrar);
 }
+// VIDEOAULA QUE NÃO CARREGA (25/11/2026). Professor aceitou mostrar a falha na própria tela. Antes, um erro
+// de rede ou do arquivo deixava o vídeo preto e mudo. Agora, erro do <video> (qualquer player com controles)
+// ou erro fatal do hls.js põe por cima do vídeo: "Não foi possível carregar a videoaula", com "Tentar de novo"
+// (remonta o vídeo e volta ao minuto em que estava).
+function videoHlsLigar(v,h){
+  v.__hls=h;
+  try{h.on(window.Hls.Events.ERROR,function(_e,d){if(d&&d.fatal)videoFalhaMostrar(v);});}catch(e){}
+}
+function videoFalhaMostrar(v){
+  var p=v&&v.parentNode;if(!p||!p.querySelector||p.querySelector(':scope > .video-falha'))return;
+  try{if(getComputedStyle(p).position==='static')p.style.position='relative';}catch(e){}
+  var d=document.createElement('div');d.className='video-falha';d.setAttribute('role','alert');
+  d.innerHTML='<div class="vf-caixa"><b>Não foi possível carregar a videoaula.</b>'
+    +'<span>Costuma ser a conexão. Tente de novo; se continuar, avise pelo Suporte.</span>'
+    +'<button type="button" class="btn btn-outline btn-sm">↻ Tentar de novo</button></div>';
+  d.querySelector('button').addEventListener('click',function(){d.remove();videoRecarregar(v);});
+  p.appendChild(d);
+}
+function videoRecarregar(v){
+  var src=v.getAttribute('data-hls')||v.getAttribute('src')||v.currentSrc||'';if(!src)return;
+  var t=v.currentTime||0;
+  try{if(v.__hls)v.__hls.destroy();}catch(e){}v.__hls=null;
+  if(v.id==='aula-video'){try{aulaSoltarHls();}catch(e){}}
+  var hls=v.getAttribute('data-hls')&&!(v.canPlayType&&v.canPlayType('application/vnd.apple.mpegurl'));
+  if(hls&&window.Hls&&window.Hls.isSupported()){
+    var h=new window.Hls();videoHlsLigar(v,h);if(v.id==='aula-video')aulaHls=h;h.loadSource(src);h.attachMedia(v);
+  }else if(hls){videoFalhaMostrar(v);return;}
+  else{try{v.src=src;v.load();}catch(e){}}
+  if(t>0)v.addEventListener('loadedmetadata',function(){try{v.currentTime=t;}catch(e){}},{once:true});
+}
+// Erro do próprio <video> (arquivo .mp4, HLS nativo do Safari): o evento não borbulha, então vai na captura.
+document.addEventListener('error',function(ev){
+  var v=ev.target;
+  if(!v||v.tagName!=='VIDEO'||!v.controls||!v.error||!v.isConnected||v.id==='aovivo-video')return; // ao vivo tem aviso próprio
+  if(!(v.getAttribute('src')||v.getAttribute('data-hls')||v.currentSrc))return; // vídeo sem arquivo ainda
+  videoFalhaMostrar(v);
+},true);
 function dirCardHTML(d,i){
   // Sem título por card: o tema (cabeçalho da aba) já é o título da seção.
   // Cabeçalho com a fonte só nos formatos Resumo/Mapa; nos Flashcards ele é omitido.

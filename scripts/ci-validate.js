@@ -2483,5 +2483,15 @@ try {
   fail('regressão do embaixador (index.html, lib/trial-emails.js) falhou:\n' + out);
 }
 
+// FALHAS NA TELA (25/11/2026). Professor aceitou mostrar na hora o que falhou: progresso que não salvou (aviso
+//      claro e novas tentativas) e videoaula que não carrega (aviso por cima do vídeo, com "Tentar de novo").
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-falhas-na-tela.js')], { stdio: 'pipe' });
+  ok('falhas na tela: progresso que não salvou e videoaula que não carrega avisam o aluno');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão das falhas na tela (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
