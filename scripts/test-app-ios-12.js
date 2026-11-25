@@ -33,7 +33,8 @@ const ent = ler('app-ios', 'ios', 'App', 'App', 'App.entitlements');
 ok('🧨 domínios associados: links e senhas do www', /<key>com\.apple\.developer\.associated-domains<\/key>\s*<array>\s*<string>applinks:www\.endodirect\.com\.br<\/string>\s*<string>webcredentials:www\.endodirect\.com\.br<\/string>/.test(ent));
 ok('notificações e Entrar com a Apple continuam', /aps-environment/.test(ent) && /com\.apple\.developer\.applesignin/.test(ent));
 const pbx = ler('app-ios', 'ios', 'App', 'App.xcodeproj', 'project.pbxproj');
-ok('projeto na versão 1.2 ou maior', (pbx.match(/MARKETING_VERSION = ([\d.]+);/g) || []).length === 2 && (pbx.match(/MARKETING_VERSION = ([\d.]+);/g) || []).every((m) => { const v = m.match(/([\d.]+);/)[1].split('.').map(Number); return v[0] > 1 || (v[0] === 1 && (v[1] || 0) >= 2); }));
+// Desde a 1.4 o projeto tem também o widget (mais 2 configurações): todas na mesma versão, >= 1.2.
+ok('projeto na versão 1.2 ou maior', (pbx.match(/MARKETING_VERSION = ([\d.]+);/g) || []).length >= 2 && new Set(pbx.match(/MARKETING_VERSION = ([\d.]+);/g)).size === 1 && (pbx.match(/MARKETING_VERSION = ([\d.]+);/g) || []).every((m) => { const v = m.match(/([\d.]+);/)[1].split('.').map(Number); return v[0] > 1 || (v[0] === 1 && (v[1] || 0) >= 2); }));
 const wf = ler('.github', 'workflows', 'app-ios.yml');
 ok('a rotina confere os domínios associados no app compilado', /grep -q 'applinks:www\.endodirect\.com\.br'/.test(wf));
 

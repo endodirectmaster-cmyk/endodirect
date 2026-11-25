@@ -1,4 +1,5 @@
 import UIKit
+import AVFoundation
 import Capacitor
 
 @UIApplicationMain
@@ -7,7 +8,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Versão 1.4 (25/11/2026): a videoaula continua tocando o ÁUDIO com a tela bloqueada ou em
+        // outro app, como um podcast. A categoria "playback" (com UIBackgroundModes = audio no
+        // Info.plist) mantém o som da página vivo em segundo plano e ignora a chave de silêncio,
+        // como num player de vídeo. Só define a categoria: a sessão de áudio liga quando a aula
+        // começa a tocar, então abrir o app não interrompe a música de outro app.
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [])
+        } catch {
+            print("Endodirect: sessão de áudio não configurada: \(error)")
+        }
         return true
     }
 

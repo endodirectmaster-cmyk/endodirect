@@ -157,6 +157,18 @@ module.exports = async function handler(req, res) {
     // e iteravel estoura antes do try/catch interno do `inscrever`.
     if (rota === 'inscrever') return await inscrever(req, res);
     if (rota === 'push-breaking') return await pushBreaking(req, res);
+    // Widget da Questão do Dia no iPhone (app 1.4, 25/11/2026): a última questão publicada,
+    // só id, área e enunciado. Sem alternativas, gabarito ou comentário (a RPC nem os lê).
+    // O enunciado já é público (story das 18h, notificação do celular). Cache de borda de
+    // 5 min: os widgets de todos os alunos viram poucas leituras do banco.
+    if (rota === 'qotd-widget') {
+      const q = await rpc('endodirect_qotd_widget');
+      if (q === null) return envia(res, 200, 'application/json; charset=utf-8', JSON.stringify({ ok: true, qotd: null }), 60);
+      const limpa = (q && typeof q === 'object' && typeof q.stem === 'string')
+        ? { id: String(q.id || '').slice(0, 80), sub: q.sub ? String(q.sub).slice(0, 60) : null, stem: q.stem.slice(0, 700) }
+        : null;
+      return envia(res, 200, 'application/json; charset=utf-8', JSON.stringify({ ok: true, qotd: limpa }), 300);
+    }
     if (rota === 'sitemap' || /^\/sitemap\.xml\/?$/.test(caminho)) {
       const itens = await indice();
       if (!itens) return envia(res, 503, 'text/plain; charset=utf-8', 'Indisponível no momento.');

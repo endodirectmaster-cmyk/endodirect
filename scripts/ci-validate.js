@@ -2504,5 +2504,15 @@ try {
   fail('regressão do Bunny nas bibliotecas (lib/bunny.js, api/ai.js, index.html) falhou:\n' + out);
 }
 
+// APP DO IPHONE 1.4 (25/11/2026). Professor: "Faz os 3": gravação de tela pausa a aula e vai ao painel de
+//      contas suspeitas, áudio da aula com a tela bloqueada e widget da Questão do Dia (sem gabarito).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-app-ios-14.js')], { stdio: 'pipe' });
+  ok('app do iPhone 1.4: gravação de tela, áudio com a tela bloqueada e widget da Questão do Dia');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do app do iPhone 1.4 (app-ios, index.html, api/publico.js) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

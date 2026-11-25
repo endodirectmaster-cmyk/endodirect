@@ -105,6 +105,29 @@ jobs:
             exit 1
           fi
           echo "Domínios associados (links do site e senhas) embutidos no app."
+          # Versão 1.4: o widget da Questão do Dia vai dentro do app, e o áudio da aula segue
+          # com a tela bloqueada (UIBackgroundModes = audio).
+          WID="$APP/PlugIns/QuestaoDoDia.appex"
+          if [ ! -d "$WID" ]; then
+            echo "::error::O widget da Questão do Dia não foi embutido no app (PlugIns/QuestaoDoDia.appex)."
+            exit 1
+          fi
+          if [ "$(/usr/libexec/PlistBuddy -c 'Print :NSExtension:NSExtensionPointIdentifier' "$WID/Info.plist")" != "com.apple.widgetkit-extension" ]; then
+            echo "::error::O widget não se declara como extensão do WidgetKit."
+            exit 1
+          fi
+          VAPP=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")
+          VWID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$WID/Info.plist")
+          if [ "$VAPP" != "$VWID" ]; then
+            echo "::error::Versão do widget ($VWID) diferente da do app ($VAPP): a App Store recusa."
+            exit 1
+          fi
+          echo "Widget da Questão do Dia embutido (versão $VWID)."
+          if ! /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$APP/Info.plist" | grep -q audio; then
+            echo "::error::O app saiu sem o áudio em segundo plano (UIBackgroundModes = audio)."
+            exit 1
+          fi
+          echo "Áudio em segundo plano ligado."
 
       - name: Conferir os segredos
         if: inputs.modo == 'testflight'
