@@ -1,6 +1,6 @@
 ---
 tags: [cofre, resumos, video]
-atualizado: 2026-11-18
+atualizado: 2026-11-25
 ---
 
 # Videoaulas dos Resumos
@@ -158,6 +158,18 @@ Coloca isso como uma skill sua."*
 - 🧨 **Os slides dos Resumos têm o nome da aula como sobretítulo em todos os quadros.**
   Agrupar pela 1ª linha (como funcionava na EMC) juntava a aula inteira num slide só. Agora
   o cabeçalho são as duas primeiras linhas com texto de verdade, comparadas por semelhança.
+
+### Arquivo substituído perde os capítulos (25/11/2026)
+O professor trocou o arquivo de "Alfalipoproteinemias" (Lípides): retirou o vídeo e subiu o novo. O painel grava um
+vídeo NOVO (src e `at` novos) **sem `caps`**: os capítulos do antigo saem junto. Pedido dele: *"dê só a conferida se
+as minutagens estão batendo com a anterior"*. Como fazer:
+- rodar `slides.sh` no src novo;
+- comparar os segundos das trocas de seção com a `tabela.txt` do vídeo antigo;
+- gravar os `caps` no vídeo novo, com backup e guarda pelo src.
+
+Nesse caso, as 12 trocas de seção caíram nos mesmos segundos (mesma duração, 24:21). A única mudança foi no texto: os
+slides novos dizem "HDL" onde os antigos diziam "HDL-c", e os títulos dos capítulos acompanharam os slides. O mural
+volta a mostrar a aula como nova, pela data do arquivo novo.
 
 ## Uma videoaula por vez: lista de escolha (09/11/2026)
 
