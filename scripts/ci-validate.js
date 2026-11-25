@@ -2493,5 +2493,16 @@ try {
   fail('regressão das falhas na tela (index.html) falhou:\n' + out);
 }
 
+// BUNNY EM TODAS AS BIBLIOTECAS (25/11/2026). Professor: "quero que você faça em todas as pastas o mesmo esquema
+//      que você fez dos resumos" e "manter somente [o streaming]". Cada curso na sua biblioteca, chave só na Vercel,
+//      só arquivo do nosso Storage vai ao Bunny, a limpeza apaga só os MP4, e o painel pede ao Bunny depois do envio.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-bunny-bibliotecas.js')], { stdio: 'pipe' });
+  ok('Bunny nas bibliotecas: cada curso na sua, chave só na Vercel, só MP4 apagado, envio pelo painel');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Bunny nas bibliotecas (lib/bunny.js, api/ai.js, index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
