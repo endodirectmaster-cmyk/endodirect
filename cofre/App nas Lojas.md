@@ -30,7 +30,9 @@ Professor, ao perguntar por novidades do app: "Faz os 3".
 - **App Review:** nas notas, dizer que o áudio em segundo plano é das videoaulas ("abra uma videoaula e bloqueie a
   tela"). **Privacidade do app:** os registros de captura ficam ligados à conta (dado de uso, para segurança).
 - A parte do site foi no ar com a v497 (sem efeito no site nem nas versões antigas do app, que não têm o plugin).
-- 25/11: compilada no Mac do GitHub e **build 20 no TestFlight** (16h37 BRT). Situação: ver Pendências.
+- 25/11: compilada no Mac do GitHub e **build 20 no TestFlight** (16h37 BRT); testada pelo professor no iPhone (as três
+  funcionam). **Enviada à revisão da Apple às 17h59 BRT**. Privacidade do app: entrou "Dados de falhas" (Sentry).
+  Situação: ver Pendências.
 
 ## 📴 Versão 1.3: Resumos sem internet (17/11/2026)
 
