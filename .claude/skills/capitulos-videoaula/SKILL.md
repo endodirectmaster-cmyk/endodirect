@@ -40,6 +40,10 @@ curso), mesmo dado (`adm_cursos[k].caps`). Os vídeos ficam em outra biblioteca 
 (`vz-1196f9a8-6ea.b-cdn.net`, liberada na rede do ambiente em 17/11). Aula no Vimeo ou no player
 embutido (`player.mediadelivery.net`) fica sem capítulos: o player deles não deixa saltar o tempo daqui.
 
+Videoaulas dos Resumos: desde 25/11/2026 ficam na biblioteca "Resumos" do Bunny (`vz-4fb917fa-a7a.b-cdn.net`,
+mesmo Referer). Vídeo novo que o painel subiu ao Storage do Supabase vai antes para o Bunny (passo 0 da
+checagem diária); `slides.sh` lê os dois.
+
 Nada faltando: termine aí, sem gravar nada e sem avisar ninguém.
 
 ## 2. Ler os slides
