@@ -23,7 +23,9 @@ Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas
 - [x] Privacidade do app publicada em 25/11: "Interações com o produto" já declarado (Análise e Funcionalidade do app);
   acrescentado **Diagnóstico → Dados de falhas** (Sentry, que entrou em 20/11 e não estava declarado): Funcionalidade do
   app, vinculado à identidade, sem rastreamento. Agora são 12 tipos de dados.
-- [ ] Quando a Apple aprovar (e-mail), o professor clica em "Liberar esta versão".
+- [x] **1.4 aprovada pela Apple em 25/11, 20h20 BRT** (e-mail "Review of your Endodirect Endocrinologia (iOS) submission
+  is complete", print do professor; ~2 h 20 min na fila).
+- [ ] Professor: clicar em "Liberar esta versão" na 1.4 (lançamento manual).
 - [ ] Até 15/01/2027: App Store Connect → Informações do app → atualizar as respostas da classificação etária
   (perguntas novas sobre compartilhamento de localização e encontros; aviso da Apple na página da versão). Respostas
   esperadas: o app não compartilha localização nem tem encontros/namoro.
