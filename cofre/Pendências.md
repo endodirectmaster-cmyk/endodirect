@@ -12,7 +12,7 @@ atualizado: 2026-11-25
 - [x] Aula 4 do Endocrinologia Essencial no `.m3u8` (`vz-1196f9a8-6ea.b-cdn.net/37be5953-…`), com o "pode" do professor.
   - Backup `main-antes-aula4-essencial-hls-2026-11-25`; só o `src` mudou.
   - A checagem das 03:13 faz os tópicos dela.
-- [ ] Professor: desligar "Enable direct play" no Endocrinologia Essencial (nenhuma aula usa mais), e o Claude confere.
+- [x] "Enable direct play" desligado também no Endocrinologia Essencial (conferido: 403 nas páginas de direct play das quatro bibliotecas).
 - Arquivos antigos dos Resumos no Storage do Supabase: só apagar com o "pode" do professor.
 - O segredo de rede do ambiente (video.bunnycdn.com, chave dos Resumos) ficou sem uso; pode sair.
 
