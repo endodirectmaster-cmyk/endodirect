@@ -15,8 +15,9 @@ Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas
   runner `macos-26` do GitHub tiver o Xcode 27, o passo "Escolher o Xcode" pega o mais novo; conferir antes de abril.
 - [ ] Professor testa no TestFlight: gravar a tela durante uma aula (pausa e aviso), tirar um print (aparece no painel de
   contas suspeitas), bloquear a tela com a aula tocando (o áudio segue) e pôr o widget na tela inicial.
-- [ ] Enviar à Apple: nas notas para o revisor, "abra uma videoaula e bloqueie a tela" (áudio em segundo plano);
-  conferir a Privacidade do app (registros de captura ligados à conta, para segurança).
+- [ ] Enviar à Apple (a 1.3 já foi liberada, então a 1.4 pode ir): versão nova "1.4" com o build 20; nas notas para o
+  revisor, ACRESCENTAR ao fim o parágrafo "VERSION 1.4" (as notas são cumulativas); Privacidade do app: Dados de uso →
+  Interação com o produto, ligado à identidade, finalidade Funcionalidade do app (segurança). Lançamento manual.
 
 ## 🎞️ Bunny: o que falta nas bibliotecas (25/11)
 
@@ -44,7 +45,7 @@ MARKETING_VERSION 1.3). O site já grava o pacote quando o app tem o plugin; no 
   (Resumos sem internet por até 7 dias, estudos-chave, continuar de onde parou, grifos, busca única); nas Notas ao
   revisor, acrescentado o parágrafo "VERSION 1.3: offline reading…" (as notas anteriores ficaram). Lançamento manual.
 - [x] **1.3 aprovada pela Apple em 18/11, 15h31 BRT** ("eligible for distribution").
-- [ ] **Professor: liberar a 1.3** no App Store Connect ("Liberar esta versão"; o lançamento é manual).
+- [x] **1.3 liberada pelo professor** (confirmado por ele em 25/11: "Ja liberei 1.3").
 
 ## 🎬 Endocrinologia Essencial: capítulos e slides (18/11)
 - [x] "Nesta aula" em 34 das 37 aulas (ver [[Videoaulas dos Resumos]]).

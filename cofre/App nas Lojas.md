@@ -104,7 +104,7 @@ https://apps.apple.com/br/app/id6833147654.
      parágrafo "VERSION 1.3: offline reading" acrescentado ao fim (as notas são cumulativas: não apagar as antigas).
      Lançamento manual.
      **Aprovada em 18/11, 15h31 BRT** (e-mail "Review of your Endodirect Endocrinologia (iOS) submission is complete",
-     print do professor; ~16 h e meia na fila). Lançamento manual: falta o professor clicar em "Liberar esta versão".
+     print do professor; ~16 h e meia na fila). **Liberada pelo professor** (confirmado em 25/11).
      Tema claro (01–03) e escuro (04–08) misturados: fica assim (professor: "Não precisa").
 - **Conta do revisor:** fica como está; a Apple usa de novo a cada versão nova (1.1 incluída).
 
