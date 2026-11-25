@@ -17,9 +17,16 @@ Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas
   bloqueada ("Audio funcionando com tela bloqueada também") e o widget aparece na tela inicial com a questão do dia.
   O registro no painel não aparece com a conta do professor (de propósito: o professor fica fora); para ver as colunas
   📸/🎥, testar com uma conta de aluno.
-- [ ] Enviar à Apple (a 1.3 já foi liberada, então a 1.4 pode ir): versão nova "1.4" com o build 20; nas notas para o
-  revisor, ACRESCENTAR ao fim o parágrafo "VERSION 1.4" (as notas são cumulativas); Privacidade do app: Dados de uso →
-  Interação com o produto, ligado à identidade, finalidade Funcionalidade do app (segurança). Lançamento manual.
+- [x] **1.4 enviada à revisão da Apple em 25/11, 17h59 BRT** ("1.4 Aguardando revisão"), build 20. "O que há de novo"
+  trocado (widget, áudio com a tela bloqueada, proteção do conteúdo); parágrafo "VERSION 1.4" acrescentado ao fim das notas
+  ao revisor (as antigas ficaram). Lançamento manual.
+- [x] Privacidade do app publicada em 25/11: "Interações com o produto" já declarado (Análise e Funcionalidade do app);
+  acrescentado **Diagnóstico → Dados de falhas** (Sentry, que entrou em 20/11 e não estava declarado): Funcionalidade do
+  app, vinculado à identidade, sem rastreamento. Agora são 12 tipos de dados.
+- [ ] Quando a Apple aprovar (e-mail), o professor clica em "Liberar esta versão".
+- [ ] Até 15/01/2027: App Store Connect → Informações do app → atualizar as respostas da classificação etária
+  (perguntas novas sobre compartilhamento de localização e encontros; aviso da Apple na página da versão). Respostas
+  esperadas: o app não compartilha localização nem tem encontros/namoro.
 
 ## 🎞️ Bunny: o que falta nas bibliotecas (25/11)
 
