@@ -36,7 +36,8 @@ vm.runInContext(`
   clearInterval=function(){};
 `, ctx);
 vm.runInContext(html.slice(html.indexOf('\nvar MARCA_VIDEO_SEL='), html.indexOf('\nvar marcaRelogioId=') + 50).split('\n').slice(0, 3).join('\n'), ctx);
-['marcaTexto', 'marcaSvgURL', 'marcaAplicar', 'marcaCanto', 'marcaPosicao', 'marcaFsTroca', 'marcaVideos', 'marcaTelaCheia', 'marcaTelaCheiaFalsa', 'marcaIniciar', 'marcaParar']
+vm.runInContext((html.match(/\nvar MARCA_TC_SVG=[^\n]*\n[^\n]*\n/) || [''])[0], ctx);
+['marcaTexto', 'marcaSvgURL', 'marcaAplicar', 'marcaCanto', 'marcaPosicao', 'marcaFsTroca', 'marcaVideos', 'marcaChromiumMouse', 'marcaBotaoBaixo', 'marcaTelaCheia', 'marcaTelaCheiaFalsa', 'marcaIniciar', 'marcaParar', 'videoCliquePausa']
   .forEach((n) => vm.runInContext(corpo(n), ctx));
 const run = (c) => vm.runInContext(c, ctx);
 const doc = dom.window.document;
@@ -130,6 +131,82 @@ run('marcaFsTroca()');
   fsEl = null; delete emc.requestFullscreen;
 })();
 
+// 4b) botão de tela cheia de BAIXO e clique que pausa (25/11/2026). Professor: "o botão de maximizar lá de baixo
+// não está funcionando, apenas do canto superior direito" e "ao clicar com o botão esquerdo do mouse em qualquer
+// região da tela, pausar a aula".
+ok(!emc.querySelector('.marca-tc-baixo') && !emc.classList.contains('marca-cr'), 'sem Chrome/Edge com mouse (celular, iPhone, Firefox, Safari): nada de botão de baixo, o player fica como era');
+ok(typeof run('MARCA_TC_SVG') === 'string' && /class="tc-entra"/.test(run('MARCA_TC_SVG')) && /class="tc-sai"/.test(run('MARCA_TC_SVG')), 'ícones de entrar e sair da tela cheia');
+Object.defineProperty(dom.window.navigator, 'userAgentData', { configurable: true, value: { brands: [{ brand: 'Not A Brand' }, { brand: 'Chromium' }, { brand: 'Google Chrome' }] } });
+let fino = true;
+dom.window.matchMedia = () => ({ matches: fino });
+ok(run('marcaChromiumMouse()') === true, 'Chrome/Edge com mouse: precisa do botão de baixo');
+fino = false;
+ok(run('marcaChromiumMouse()') === false, 'Chrome no celular (toque): sem botão de baixo');
+fino = true;
+const cr = doc.createElement('div');
+cr.innerHTML = '<video src="b.m3u8" controls></video>';
+doc.body.appendChild(cr);
+run('timers=[]');
+run('marcaVideos(document.body)');
+const crv = cr.querySelector('video'), bb = cr.querySelector(':scope > .marca-tc-baixo');
+ok(!!bb && cr.querySelectorAll('.marca-tc-baixo').length === 1, 'Chrome com mouse: o vídeo ganha o botão de tela cheia de baixo (um só)');
+ok(cr.classList.contains('marca-cr'), 'o quadro marca-cr esconde o botão nativo apagado do Chrome');
+ok(bb && bb.getAttribute('aria-label') === 'Tela cheia' && bb.type === 'button', 'botão de baixo acessível');
+ok(cr.classList.contains('marca-ctl'), 'vídeo parado: a barra está à vista, e o botão de baixo também');
+run('marcaVideos(document.body)');
+ok(cr.querySelectorAll('.marca-tc-baixo').length === 1, 'marcar de novo não duplica o botão de baixo');
+let pedCr = 0;
+cr.requestFullscreen = () => { pedCr++; return Promise.resolve(); };
+const fsAntes = fsEl; fsEl = null; // nada em tela cheia agora (a seção 4 ainda resolve a dela depois)
+bb.click();
+fsEl = fsAntes;
+ok(pedCr === 1, '🧨 o botão de baixo põe o QUADRO (com a marca) em tela cheia, como o ⛶ de cima');
+delete cr.requestFullscreen;
+Object.defineProperty(crv, 'paused', { configurable: true, get: () => false });
+cr.classList.remove('marca-ctl');
+cr.dispatchEvent(new dom.window.MouseEvent('mousemove', { bubbles: true }));
+ok(cr.classList.contains('marca-ctl'), 'mexer o mouse sobre o vídeo mostra o botão de baixo');
+const esc = run('timers').filter((t) => t[1] === 2500);
+ok(esc.length >= 1, 'tocando: o botão some 2,5 s depois do último movimento (o tempo da barra do Chrome)');
+esc.forEach((t) => t[0]());
+ok(!cr.classList.contains('marca-ctl'), 'tocando e mouse parado: o botão de baixo some com a barra');
+cr.classList.add('marca-ctl');
+cr.dispatchEvent(new dom.window.MouseEvent('mouseleave'));
+ok(!cr.classList.contains('marca-ctl'), 'tocando e o mouse saiu do vídeo: o botão some');
+delete crv.paused;
+// clique na imagem pausa / retoma
+let acao = '', prevenido = 0;
+const vc2 = doc.createElement('video'); vc2.controls = true;
+Object.defineProperty(vc2, 'paused', { configurable: true, get: () => acao !== 'play' });
+vc2.play = () => { acao = 'play'; return Promise.resolve(); };
+vc2.pause = () => { acao = 'pause'; };
+const clique = (o) => Object.assign({ target: vc2, button: 0, pointerType: 'mouse', preventDefault: () => { prevenido++; } }, o || {});
+run('videoCliquePausa')(clique());
+ok(acao === 'play' && prevenido === 1, '🧨 clique com o botão esquerdo na imagem parada: toca (e tira o play/pause próprio do navegador, para não alternar duas vezes)');
+run('videoCliquePausa')(clique());
+ok(acao === 'pause' && prevenido === 2, '🧨 clique com o botão esquerdo na imagem tocando: pausa a aula');
+acao = 'x'; prevenido = 0;
+run('videoCliquePausa')(clique({ button: 2 }));
+run('videoCliquePausa')(clique({ pointerType: 'touch' }));
+run('videoCliquePausa')(clique({ ctrlKey: true }));
+run('videoCliquePausa')(clique({ target: doc.createElement('div') }));
+vc2.controls = false; run('videoCliquePausa')(clique()); vc2.controls = true;
+ok(acao === 'x' && prevenido === 0, 'botão direito, toque no celular, Ctrl+clique, fora do vídeo ou vídeo sem controles (vitrine): nada muda');
+fino = false;
+run('videoCliquePausa')(clique({ pointerType: undefined }));
+ok(acao === 'x', 'navegador sem pointerType e sem mouse: o toque não pausa');
+fino = true;
+run('videoCliquePausa')(clique({ pointerType: undefined }));
+ok(acao === 'play', 'navegador sem pointerType, com mouse: o clique funciona');
+cr.remove();
+delete dom.window.navigator.userAgentData;
+delete dom.window.matchMedia;
+ok(/\ndocument\.addEventListener\('click',videoCliquePausa,true\);/.test(html), 'o clique que pausa fica ligado para a página toda, na captura (antes do player do navegador)');
+ok(/if\(marcaChromiumMouse\(\)\)marcaBotaoBaixo\(p,v\);/.test(corpo('marcaVideos')), 'marcaVideos põe o botão de baixo no Chrome/Edge com mouse');
+ok(/\.marca-cr>video::-webkit-media-controls-fullscreen-button\{visibility:hidden\}/.test(html), 'CSS: o nativo apagado fica invisível, mas guarda o lugar na barra');
+ok(/\.marca-tc-baixo\{position:absolute;right:49px;bottom:24px;[^}]*opacity:0;pointer-events:none;/.test(html) && /\.marca-ctl>\.marca-tc-baixo,\.marca-tc-baixo:focus-visible\{opacity:1;pointer-events:auto\}/.test(html), 'CSS: o botão de baixo no lugar do nativo, à vista só com a barra');
+ok(/:fullscreen>\.marca-tc-baixo \.tc-sai\{display:block\}/.test(html), 'em tela cheia, o botão de baixo mostra "sair"');
+
 // 5) vídeo que entra depois (troca de aula) também ganha a marca; Sair tira tudo
 run('marcaIniciar()');
 const nova = doc.createElement('div');
@@ -140,7 +217,7 @@ doc.body.appendChild(nova);
   await new Promise((r) => setImmediate(r));
   ok(!!nova.querySelector('.marca-video'), 'vídeo que entra depois na tela (outra aula) ficou sem marca');
   run('marcaParar()');
-  ok(!doc.querySelector('.marca-video') && !doc.querySelector('.marca-tc') && !doc.body.style.getPropertyValue('--marca-aluno'), '"Sair": a marca do aluno tem de sair da tela');
+  ok(!doc.querySelector('.marca-video') && !doc.querySelector('.marca-tc') && !doc.querySelector('.marca-tc-baixo') && !doc.body.style.getPropertyValue('--marca-aluno'), '"Sair": a marca do aluno tem de sair da tela');
   const nova2 = doc.createElement('div');
   nova2.innerHTML = '<video></video>';
   doc.body.appendChild(nova2);

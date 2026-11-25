@@ -2166,6 +2166,15 @@ body.busca-aberta{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.marca-video span{transition:none}}
 .marca-tc{position:absolute;right:8px;top:8px;z-index:5;width:34px;height:34px;border:0;border-radius:8px;background:rgba(0,0,0,.45);color:#fff;font-size:18px;line-height:34px;cursor:pointer;padding:0}
 .marca-tc:focus-visible{outline:2px solid #7fa6ff;outline-offset:2px}
+/* Botão de tela cheia de BAIXO (25/11/2026), no lugar do nativo do Chrome, que o nofullscreen deixava apagado e sem
+   efeito. O nativo fica invisível mas guarda o lugar na barra; o nosso fica nesse lugar e aparece e some com a barra. */
+.marca-cr>video::-webkit-media-controls-fullscreen-button{visibility:hidden}
+.marca-tc-baixo{position:absolute;right:49px;bottom:24px;z-index:5;width:48px;height:48px;border:0;padding:0;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s}
+.marca-ctl>.marca-tc-baixo,.marca-tc-baixo:focus-visible{opacity:1;pointer-events:auto}
+.marca-tc-baixo:focus-visible{outline:2px solid #7fa6ff;outline-offset:-6px;border-radius:50%}
+.marca-tc-baixo svg{width:24px;height:24px;display:block;fill:currentColor}
+.marca-tc-baixo .tc-sai,:fullscreen>.marca-tc-baixo .tc-entra{display:none}
+:fullscreen>.marca-tc-baixo .tc-sai{display:block}
 :fullscreen{background:#000}
 :fullscreen>video,:fullscreen>iframe{width:100%!important;height:100%!important;max-height:none!important;object-fit:contain}
 .marca-tc-falsa{position:fixed!important;inset:0!important;z-index:99990!important;background:#000!important;border-radius:0!important;margin:0!important;display:flex!important;align-items:center;justify-content:center;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
@@ -13551,10 +13560,12 @@ function avisosDoMural(agora){
   });
   Object.keys(porDia).forEach(function(dia){
     var vs=porDia[dia].sort(function(a,b){return b.at-a.at;});
-    if(vs.length===1){var v=vs[0];autos.push({tipo:'video',titulo:v.titulo,texto:v.tema+' · '+v.sub,at:v.at,dir:v.dir,src:v.src});return;}
+    // Uma só no dia também vira grupo (25/11/2026). Professor: "O botão de alfa-lipoproteinemias está
+    // com esse nome ver e está diferente das outras aulas ... Deixar semelhante aos demais botões":
+    // "1 videoaula nova nos Resumos", a área embaixo e o botão ▶ com o nome da aula, como as de várias.
     var subs=[];vs.forEach(function(v){if(subs.indexOf(v.sub)<0)subs.push(v.sub);});
     var todosResumos=vs.every(function(v){return v.privado;});
-    autos.push({tipo:'video',titulo:vs.length+' videoaulas novas'+(todosResumos?' nos Resumos':''),texto:subs.join(' · '),at:vs[0].at,grupo:vs});
+    autos.push({tipo:'video',titulo:vs.length+(vs.length===1?' videoaula nova':' videoaulas novas')+(todosResumos?' nos Resumos':''),texto:subs.join(' · '),at:vs[0].at,grupo:vs});
   });
   (typeof admCursos!=='undefined'&&Array.isArray(admCursos)?admCursos:[]).forEach(function(c){
     if(!c||c.curso!==EMC_SLUG)return;
@@ -18738,6 +18749,7 @@ function marcaVideos(raiz){
       v.addEventListener('webkitbeginfullscreen',function(){setTimeout(function(){try{v.webkitExitFullscreen();}catch(e){}marcaTelaCheiaFalsa(p,true);},60);});
       var b=document.createElement('button');b.type='button';b.className='marca-tc';b.setAttribute('aria-label','Tela cheia');b.textContent='⛶';
       b.addEventListener('click',function(){marcaTelaCheia(p);});p.appendChild(b);
+      if(marcaChromiumMouse())marcaBotaoBaixo(p,v);
     }
   });
   if(!marcaRelogioId)marcaRelogioId=setInterval(function(){
@@ -18745,6 +18757,39 @@ function marcaVideos(raiz){
     if(!ss.length){clearInterval(marcaRelogioId);marcaRelogioId=null;return;}
     ss.forEach(function(x){marcaPosicao(x,false);});
   },60000);
+}
+// TELA CHEIA PELO BOTÃO DE BAIXO (25/11/2026). Professor: "o botão de maximizar lá de baixo não está funcionando,
+// apenas do canto superior direito". Medido no Chromium: com controlslist=nofullscreen o Chrome mostra o botão
+// nativo APAGADO e o clique não faz nada; sem o nofullscreen, ele põe só o <video> em tela cheia (a marca some) e o
+// clique nativo gasta a ativação do usuário, então trocar pela tela cheia do quadro falha ("Permissions check
+// failed") e o clique no botão nativo nem chega aos ouvintes da página. Saída: no Chrome/Edge com mouse, o
+// nativo fica invisível (guarda o lugar na barra) e um botão nosso, no mesmo lugar, põe o QUADRO em tela cheia,
+// como o ⛶ de cima. Ele aparece com a barra (vídeo parado ou mouse mexendo) e some 2,5 s depois do último
+// movimento com o vídeo tocando, o tempo da barra do Chrome. Celular, iPhone, Firefox e Safari ficam como antes.
+function marcaChromiumMouse(){
+  try{
+    var ua=navigator.userAgentData,br=ua&&ua.brands;
+    if(!br||!br.some(function(x){return /Chromium/.test(String(x&&x.brand));}))return false;
+    return !window.matchMedia||window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  }catch(e){return false;}
+}
+var MARCA_TC_SVG='<svg class="tc-entra" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>'
+  +'<svg class="tc-sai" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>';
+function marcaBotaoBaixo(p,v){
+  if(p.querySelector(':scope > .marca-tc-baixo'))return;
+  p.classList.add('marca-cr');
+  var bb=document.createElement('button');bb.type='button';bb.className='marca-tc-baixo';bb.setAttribute('aria-label','Tela cheia');bb.title='Tela cheia';
+  bb.innerHTML=MARCA_TC_SVG;
+  bb.addEventListener('click',function(){marcaTelaCheia(p);});p.appendChild(bb);
+  var t=null;
+  var mostra=function(){
+    p.classList.add('marca-ctl');clearTimeout(t);
+    if(!v.paused&&!v.ended)t=setTimeout(function(){if(!v.paused&&!v.ended)p.classList.remove('marca-ctl');},2500);
+  };
+  p.addEventListener('mousemove',mostra);
+  p.addEventListener('mouseleave',function(){clearTimeout(t);if(!v.paused&&!v.ended)p.classList.remove('marca-ctl');});
+  ['play','pause','ended'].forEach(function(ev){v.addEventListener(ev,mostra);});
+  if(v.paused)p.classList.add('marca-ctl');
 }
 function marcaTelaCheia(p){
   var fs=document.fullscreenElement||document.webkitFullscreenElement;
@@ -18758,6 +18803,20 @@ function marcaTelaCheiaFalsa(p,liga){
   p.classList.toggle('marca-tc-falsa',!!liga);
   try{document.body.classList.toggle('marca-tc-aberta',!!liga);}catch(e){}
 }
+// CLIQUE NA IMAGEM PAUSA A AULA (25/11/2026). Professor: "ao clicar com o botão esquerdo do mouse em qualquer
+// região da tela, pausar a aula". Vale para todo <video> com controles (Resumos, EMC, cursos, ao vivo), dentro
+// e fora da tela cheia. Clique nos controles nativos não chega aqui (medido no Chromium); o da imagem chega, e o
+// preventDefault tira o play/pause próprio do Chrome e do Firefox, para não alternar duas vezes. Só com mouse:
+// no celular, o toque na imagem mostra a barra do player, como sempre.
+function videoCliquePausa(e){
+  var v=e.target;
+  if(!v||v.tagName!=='VIDEO'||!v.controls||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
+  if(e.pointerType?e.pointerType!=='mouse':!(window.matchMedia&&window.matchMedia('(hover:hover) and (pointer:fine)').matches))return;
+  e.preventDefault();
+  if(v.paused||v.ended){try{var r=v.play();if(r&&r.catch)r.catch(function(){});}catch(x){}}
+  else{try{v.pause();}catch(x){}}
+}
+document.addEventListener('click',videoCliquePausa,true);
 function marcaIniciar(){
   marcaAplicar();
   if(!marcaTexto())return;

@@ -80,12 +80,16 @@ ctx.admCursos = [
 const itens = JSON.parse(vm.runInContext('JSON.stringify(avisosDoMural(' + AGORA + ').map(function(a){return [a.tipo,a.titulo,a.manual?1:0,a.link||"",a.grupo?a.grupo.map(function(v){return v.titulo+"|"+v.src+"|"+(v.dir?v.dir.tema:"")}):null,a.texto||""]}))', ctx));
 const titulos = itens.map((x) => x[1]);
 ok('🧨 avisos do professor primeiro (mais novo em cima), depois aula e videoaula (mais novo em cima) — veio ' + JSON.stringify(titulos),
-  JSON.stringify(titulos) === JSON.stringify(['Simulado sábado', 'Link malicioso', 'Edital publicado', 'Aula EMC nova', 'Vídeo novo', '2 videoaulas novas nos Resumos']));
+  JSON.stringify(titulos) === JSON.stringify(['Simulado sábado', 'Link malicioso', 'Edital publicado', 'Aula EMC nova', '1 videoaula nova nos Resumos', '2 videoaulas novas nos Resumos']));
 ok('🧨 aviso vencido ("mostrar até" no passado) sai do mural', !titulos.includes('Vencido'));
 ok('aviso sem título não entra', itens.length === 6);
-ok('🧨 videoaula dos RESUMOS (capítulo privado) entra no mural — o filtro não depende da aba ativa', titulos.includes('Vídeo novo')
+const sozinha = itens.find((x) => x[1] === '1 videoaula nova nos Resumos');
+ok('🧨 videoaula dos RESUMOS (capítulo privado) entra no mural — o filtro não depende da aba ativa', !!sozinha
   && !/dirIsVisibleAnyTipo|refPrivadoMode/.test(corpo('avisosDoMural').replace(/\/\/[^\n]*/g, '')));
-const grupo = itens.find((x) => x[4]);
+const grupo = itens.find((x) => x[1] === '2 videoaulas novas nos Resumos');
+ok('🧨 videoaula sozinha no dia fica igual às de várias (25/11/2026): "1 videoaula nova nos Resumos", a área no texto e um botão ▶ com o nome dela (nada de "Ver →")',
+  !!sozinha && JSON.stringify(sozinha[4]) === JSON.stringify(['Vídeo novo|v1|Hipotireoidismo']) && sozinha[5] === 'Tireoide'
+  && itens.filter((x) => x[0] === 'video').every((x) => Array.isArray(x[4]) && x[4].length));
 ok('🧨 videoaulas do mesmo dia viram um aviso só, com um botão por vídeo (mais nova primeiro) e as áreas no texto',
   !!grupo && JSON.stringify(grupo[4]) === JSON.stringify(['Obesidade B|ob|Lipodistrofias', 'Lípides A|la|Metabolismo Lipídico']) && grupo[5] === 'Obesidade · Lípides');
 ok('item "só de vídeo" da degustação não entra (não é capítulo; a vitrine dela cuida)', !JSON.stringify(itens).includes('Só vídeo da degustação'));
