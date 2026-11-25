@@ -8,6 +8,11 @@ atualizado: 2026-11-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🗑️ CÓPIA DOS VÍDEOS NO SUPABASE SAI DEPOIS DA TROCA PARA O BUNNY (2026-11-25).** Professor: *"faz sentido também deixar no Supabase? [...] questão de segurança [...] espaço"* → *"Pode"*.
+  - As 28 cópias antigas dos Resumos (686 MB) foram apagadas.
+  - Daqui em diante, a checagem das 03:13 apaga a cópia na madrugada seguinte à troca, pela rota `apagar_storage`, que só age nas pastas de vídeo e só se nenhum `src` usa o arquivo.
+  - O Bunny guarda o original.
+  - Antes disso, com o "pode" do professor, a aula 4 do Endocrinologia Essencial saiu do direct play para o `.m3u8`, e o "Enable direct play" foi desligado nas quatro bibliotecas.
 - **🎞️ BUNNY EM TODAS AS BIBLIOTECAS E SÓ STREAMING (2026-11-25, v496).** Professor: *"quero que você faça em todas as pastas o mesmo esquema que você fez dos resumos"* e *"manter somente [o streaming]"*. Nada foi reenviado: as aulas que já estavam no Bunny ficaram com os mesmos endereços.
   - O painel sobe o arquivo e pede ao Bunny do curso; a madrugada troca o `src`.
   - A chave de cada biblioteca fica na Vercel; a rota `kind:'bunny'` é só do professor ou da checagem diária.
