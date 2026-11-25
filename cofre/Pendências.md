@@ -8,9 +8,11 @@ atualizado: 2026-11-25
 ## 📱 App do iPhone 1.4: gravação de tela, áudio e widget (25/11)
 
 Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas]].
-- [ ] "App iOS" em `compilar` (rodada 45685357194).
-- [ ] `testflight`. Se a assinatura falhar por causa do widget, o professor registra o identificador
-  `br.com.endodirect.app.QuestaoDoDia` no portal da Apple (Identifiers → +).
+- [x] "App iOS" em `compilar` (rodada 45685357194, sucesso): widget embutido (versão 1.4) e áudio em segundo plano ligado.
+- [x] `testflight`: **build 20 enviado** (rodada 45686299046, 25/11 16h37 BRT). A assinatura na nuvem da Apple aceitou o
+  identificador novo do widget (`br.com.endodirect.app.QuestaoDoDia`) sem passo do professor no portal.
+- Aviso da Apple no envio: a partir de abril de 2027 só entra app feito com o SDK do iOS 27 (Xcode 27). Quando o
+  runner `macos-26` do GitHub tiver o Xcode 27, o passo "Escolher o Xcode" pega o mais novo; conferir antes de abril.
 - [ ] Professor testa no TestFlight: gravar a tela durante uma aula (pausa e aviso), tirar um print (aparece no painel de
   contas suspeitas), bloquear a tela com a aula tocando (o áudio segue) e pôr o widget na tela inicial.
 - [ ] Enviar à Apple: nas notas para o revisor, "abra uma videoaula e bloqueie a tela" (áudio em segundo plano);
