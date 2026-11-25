@@ -5,6 +5,17 @@ atualizado: 2026-11-25
 
 # Pendências
 
+## 📱 App do iPhone 1.4: gravação de tela, áudio e widget (25/11)
+
+Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas]].
+- [ ] "App iOS" em `compilar` (rodada 45685357194).
+- [ ] `testflight`. Se a assinatura falhar por causa do widget, o professor registra o identificador
+  `br.com.endodirect.app.QuestaoDoDia` no portal da Apple (Identifiers → +).
+- [ ] Professor testa no TestFlight: gravar a tela durante uma aula (pausa e aviso), tirar um print (aparece no painel de
+  contas suspeitas), bloquear a tela com a aula tocando (o áudio segue) e pôr o widget na tela inicial.
+- [ ] Enviar à Apple: nas notas para o revisor, "abra uma videoaula e bloqueie a tela" (áudio em segundo plano);
+  conferir a Privacidade do app (registros de captura ligados à conta, para segurança).
+
 ## 🎞️ Bunny: o que falta nas bibliotecas (25/11)
 
 - [x] EMC, EndoTEEM e Endocrinologia Essencial configurados pelo professor. O Purge das três zonas foi feito.

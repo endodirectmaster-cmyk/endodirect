@@ -2192,6 +2192,11 @@ body.marca-tc-aberta{overflow:hidden}
 .video-falha{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(6,11,22,.88);color:#e9eef8;text-align:center}
 .video-falha .vf-caixa{display:flex;flex-direction:column;align-items:center;gap:.45rem;max-width:360px;font-size:.84rem;line-height:1.5}
 .video-falha .vf-caixa span{color:#a7b2c6;font-size:.76rem}
+/* App do iPhone 1.4: tela sendo gravada ou espelhada. O vídeo some e o aviso fica no lugar. */
+.tela-gravando video{visibility:hidden}
+.video-captura{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;padding:1rem;background:#060b16;color:#e9eef8;text-align:center}
+.video-captura .vf-caixa{display:flex;flex-direction:column;align-items:center;gap:.45rem;max-width:360px;font-size:.84rem;line-height:1.5}
+.video-captura .vf-caixa span{color:#a7b2c6;font-size:.76rem}
 .video-falha .btn{color:#fff;border-color:#3b5a8c;margin-top:.3rem}
 .off-barra{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:space-between;margin:.2rem 0 .9rem;padding:.6rem .8rem;border:1px solid var(--bd);border-radius:12px;background:var(--s2);font-size:.8rem;line-height:1.4;color:var(--t2)}
 .off-txt{flex:1 1 14rem;min-width:0}
@@ -20382,6 +20387,138 @@ function videoHlsLigar(v,h){
   v.__hls=h;
   try{h.on(window.Hls.Events.ERROR,function(_e,d){if(d&&d.fatal)videoFalhaMostrar(v);});}catch(e){}
 }
+// ── 📵 APP DO IPHONE 1.4: GRAVAÇÃO DE TELA E PRINT (25/11/2026) ─────────────────────────────
+// Professor, depois de fechar o Bunny só em streaming: "Faz os 3". O app (CapturaPlugin.swift)
+// avisa quando a tela começa ou para de ser gravada/espelhada ("mudou") e quando tiram print
+// ("print"). Enquanto grava: toda videoaula pausa, some (.tela-gravando video) e um aviso fica no
+// lugar; tentar dar play pausa de novo. Ao parar, o aviso sai e o aluno dá play quando quiser.
+// Print ou gravação com aula, Resumo, questões, simulado, flashcards ou mapa na tela vai para o
+// painel de contas suspeitas (endodirect_captura_registrar; no máximo 1 por tipo e tela a cada 30 s).
+// Site e app 1.3 ou anterior: sem o plugin, nada disso liga.
+var CAPTURA_PAINEIS={cursos:1,ref:1,resu:1,quest:1,sim:1,simfull:1,flash:1,mmap:1,aovivo:1};
+var capturaAtiva=false,capturaIniciada=false,capturaUltimo={};
+function capturaPainelAtual(){var p=document.querySelector('.panel.on');return p?String(p.id||'').replace(/^panel-/,''):'';}
+function capturaOnde(){
+  var vs=document.querySelectorAll('video');
+  for(var i=0;i<vs.length;i++){var v=vs[i];if(v.isConnected&&v.offsetParent!==null)return v.id==='aula-video'?'aula':'videoaula';}
+  var p=capturaPainelAtual();return CAPTURA_PAINEIS[p]?p:'';
+}
+function capturaRegistrar(tipo){
+  if(tipo!=='print'&&tipo!=='gravacao')return false;
+  if(!(currentUser&&currentUser.id)||currentUser.role==='admin')return false;
+  var onde=capturaOnde();if(!onde)return false;
+  var agora=Date.now(),k=tipo+':'+onde;
+  if(capturaUltimo[k]&&agora-capturaUltimo[k]<30000)return false;
+  capturaUltimo[k]=agora;
+  var client=getSupabaseClient();if(!client)return false;
+  try{Promise.resolve(client.rpc('endodirect_captura_registrar',{p_tipo:tipo,p_onde:onde})).then(function(){},function(){});}catch(e){}
+  return true;
+}
+function capturaAviso(v){
+  var p=v&&v.parentNode;if(!p||!p.querySelector||p.querySelector(':scope > .video-captura'))return;
+  try{if(getComputedStyle(p).position==='static')p.style.position='relative';}catch(e){}
+  var d=document.createElement('div');d.className='video-captura';d.setAttribute('role','alert');
+  d.innerHTML='<div class="vf-caixa"><b>Gravação de tela detectada</b>'
+    +'<span>Para proteger o conteúdo, a aula fica pausada enquanto a tela do aparelho é gravada ou espelhada. Pare a gravação para continuar.</span></div>';
+  p.appendChild(d);
+}
+function capturaAplicar(on){
+  on=!!on;if(on===capturaAtiva)return;
+  capturaAtiva=on;
+  document.documentElement.classList.toggle('tela-gravando',on);
+  if(on){
+    capturaRegistrar('gravacao');
+    try{aulaAudioFundoParar(false);}catch(e){}
+    var vs=document.querySelectorAll('video');
+    for(var i=0;i<vs.length;i++){try{vs[i].pause();}catch(e){}capturaAviso(vs[i]);}
+  }else{
+    var ds=document.querySelectorAll('.video-captura');
+    for(var j=0;j<ds.length;j++)ds[j].remove();
+  }
+}
+document.addEventListener('play',function(ev){
+  var v=ev.target;if(!capturaAtiva||!v||v.tagName!=='VIDEO')return;
+  try{v.pause();}catch(e){}capturaAviso(v);
+},true);
+function iniciarCapturaApp(){
+  if(capturaIniciada||!appNativoIOS())return;
+  var P=pluginNativo('Captura');if(!P||typeof P.addListener!=='function')return;
+  capturaIniciada=true;
+  try{P.addListener('mudou',function(ev){capturaAplicar(!!(ev&&ev.gravando));});}catch(e){}
+  try{P.addListener('print',function(){capturaRegistrar('print');});}catch(e){}
+  try{Promise.resolve(P.estado()).then(function(r){capturaAplicar(!!(r&&r.gravando));},function(){});}catch(e){}
+}
+// ── 🎧 APP DO IPHONE 1.4: OUVIR A AULA COM A TELA BLOQUEADA (25/11/2026) ────────────────────
+// O app liga o áudio em segundo plano (UIBackgroundModes = audio; sessão "playback" no
+// AppDelegate). Se ainda assim o iPhone pausar o VÍDEO ao bloquear a tela, a página passa o som
+// para um <audio> com o mesmo endereço HLS, do mesmo ponto e na mesma velocidade, com o nome da
+// aula e os controles na tela de bloqueio (Media Session). Ao voltar, o vídeo segue de onde o
+// áudio parou. Só o som sai do app: nada do vídeo (nem a marca d'água) fica exposto.
+// Se o vídeo continuar tocando sozinho em segundo plano, nada é trocado.
+var aulaFundo={audio:null,video:null};
+document.addEventListener('timeupdate',function(ev){var v=ev.target;if(v&&v.tagName==='VIDEO'&&!v.paused)v.__ultimoTocando=Date.now();},true);
+function aulaVideoTocando(){
+  var vs=document.querySelectorAll('video'),agora=Date.now();
+  for(var i=0;i<vs.length;i++){
+    var v=vs[i];if(!v.isConnected||v.ended||v.id==='aovivo-video')continue;
+    if(!v.paused||(v.__ultimoTocando&&agora-v.__ultimoTocando<1500))return v;
+  }
+  return null;
+}
+function aulaTituloDoVideo(v){
+  try{if(v.id==='aula-video'&&Array.isArray(admCursos)&&admCursos[curAulaIdx])return String(admCursos[curAulaIdx].title||'Videoaula');}catch(e){}
+  return 'Videoaula';
+}
+function aulaAudioFundoComecar(v){
+  if(!v||capturaAtiva)return false;
+  var src=String(v.getAttribute('data-hls')||v.currentSrc||v.getAttribute('src')||'').replace(/#t=[\d.]+$/,'');
+  if(!/^https:\/\//i.test(src))return false;
+  var a=aulaFundo.audio;
+  if(!a){a=aulaFundo.audio=document.createElement('audio');a.setAttribute('playsinline','');a.preload='auto';}
+  var t=v.currentTime||0,vel=v.playbackRate||1;
+  aulaFundo.video=v;
+  var tocar=function(){
+    try{a.currentTime=t;}catch(e){}
+    try{a.playbackRate=vel;}catch(e){}
+    try{var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+  };
+  if(a.getAttribute('src')===src&&a.readyState>=1)tocar();
+  else{a.addEventListener('loadedmetadata',tocar,{once:true});a.src=src;try{a.load();}catch(e){}}
+  try{if(!v.paused)v.pause();}catch(e){}
+  try{
+    var ms=navigator.mediaSession;
+    if(ms){
+      if(typeof MediaMetadata==='function')ms.metadata=new MediaMetadata({title:aulaTituloDoVideo(v),artist:'Endodirect'});
+      ms.setActionHandler('play',function(){try{a.play();}catch(e){}});
+      ms.setActionHandler('pause',function(){try{a.pause();}catch(e){}});
+      ms.setActionHandler('seekbackward',function(){try{a.currentTime=Math.max(0,a.currentTime-15);}catch(e){}});
+      ms.setActionHandler('seekforward',function(){try{a.currentTime=a.currentTime+15;}catch(e){}});
+    }
+  }catch(e){}
+  return true;
+}
+function aulaAudioFundoParar(retomar){
+  var a=aulaFundo.audio,v=aulaFundo.video;
+  aulaFundo.video=null;
+  if(!a||!v)return false;
+  var t=a.currentTime||0,tocava=!a.paused;
+  try{a.pause();}catch(e){}
+  if(v.isConnected){
+    try{if(t>0)v.currentTime=t;}catch(e){}
+    if(retomar&&tocava&&!capturaAtiva){try{var p=v.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
+  }
+  return true;
+}
+document.addEventListener('visibilitychange',function(){
+  if(!appNativoIOS())return;
+  if(document.visibilityState==='hidden'){
+    var v=aulaVideoTocando();if(!v||capturaAtiva)return;
+    // Dá um instante para ver se o próprio vídeo segue tocando em segundo plano.
+    setTimeout(function(){if(document.visibilityState==='hidden'&&v.paused&&!v.ended&&!capturaAtiva)aulaAudioFundoComecar(v);},700);
+  }else{
+    aulaAudioFundoParar(true);
+  }
+});
 function videoFalhaMostrar(v){
   var p=v&&v.parentNode;if(!p||!p.querySelector||p.querySelector(':scope > .video-falha'))return;
   try{if(getComputedStyle(p).position==='static')p.style.position='relative';}catch(e){}
@@ -23961,14 +24098,16 @@ function carregaAdmAparelhos(cb,forca){
 }
 function admAparelhosHTML(){
   var cab='<div class="card-head"><span class="card-title">🔐 Aparelhos: possível conta compartilhada</span></div>'
-    +'<p style="font-size:.75rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Cada conta fica em até 2 aparelhos e pode trocar 2 vezes a cada 30 dias. Aqui aparecem as contas com <b>4 ou mais aparelhos diferentes</b>, <b>2 trocas</b> ou <b>2 aparelhos barrados</b> nos últimos 30 dias.</p>';
+    +'<p style="font-size:.75rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Cada conta fica em até 2 aparelhos e pode trocar 2 vezes a cada 30 dias. Aqui aparecem as contas com <b>4 ou mais aparelhos diferentes</b>, <b>2 trocas</b>, <b>2 aparelhos barrados</b> ou <b>3 prints ou gravações de tela</b> de aula ou conteúdo no app do iPhone, nos últimos 30 dias.</p>';
   if(admAparErr)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div class="empty">Não consegui carregar: '+esc(admAparErr)+'</div></div>';
   if(!admAparData)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div class="empty">Carregando…</div></div>';
   if(!admAparData.length)return '<div class="card" style="margin-bottom:1rem">'+cab+'<div style="font-size:.8rem;color:var(--grn);font-weight:600">✅ Nenhuma conta com sinal de compartilhamento nos últimos 30 dias.</div></div>';
   var linhas=admAparData.map(function(c){
     var nome=c.nome||String(c.email||'').split('@')[0];
     var dados='Aparelhos diferentes: <b>'+(+c.aparelhos_30d||0)+'</b> · Trocas: <b>'+(+c.trocas_30d||0)+'</b> · Aparelhos barrados: <b>'+(+c.aparelhos_bloqueados_30d||0)+'</b>'
-      +((+c.bloqueios_30d||0)?' ('+(+c.bloqueios_30d)+' tentativa'+((+c.bloqueios_30d)>1?'s':'')+')':'')+' · Último uso: '+esc(aparelhoData(c.ultimo)||'—');
+      +((+c.bloqueios_30d||0)?' ('+(+c.bloqueios_30d)+' tentativa'+((+c.bloqueios_30d)>1?'s':'')+')':'')
+      +(((+c.prints_30d||0)+(+c.gravacoes_30d||0))?' · 📸 Prints: <b>'+(+c.prints_30d||0)+'</b> · 🎥 Gravações de tela: <b>'+(+c.gravacoes_30d||0)+'</b>':'')
+      +' · Último uso: '+esc(aparelhoData(c.ultimo)||'—');
     return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.7rem 0;border-top:1px solid var(--bd)">'
       +'<div style="min-width:0;flex:1 1 260px"><div style="font-size:.85rem;font-weight:700">'+esc(nome)+'</div><div style="font-size:.74rem;color:var(--t2)">'+esc(c.email||'')+'</div>'
       +'<div style="font-size:.74rem;color:var(--t2);margin-top:.25rem;line-height:1.5">'+dados+'</div></div>'
@@ -30134,6 +30273,7 @@ document.addEventListener('DOMContentLoaded',function(){
   }catch(e){}
   startSupabaseAuthWatcher();
   iniciarRetornoLoginApp(); // app do iPhone: retorno do login com Google
+  iniciarCapturaApp(); // app do iPhone 1.4: gravação de tela e print
   mostrarBotaoApple(); // app do iPhone: Entrar com a Apple (diretriz 4.8)
   // Restaura sessão de conta demo no reload (logins de teste não têm sessão
   // Supabase). demo_session só fica setado quando o último login foi demo

@@ -4,12 +4,23 @@ import AuthenticationServices
 import Capacitor
 
 // Controlador principal do app: o mesmo do Capacitor, mais o registro dos plugins que
-// são do próprio app (hoje, só o "Entrar com a Apple"). O SceneDelegate e o
-// Main.storyboard apontam para esta classe.
+// são do próprio app ("Entrar com a Apple", login do Google e, desde a 1.4, a captura de tela).
+// O SceneDelegate e o Main.storyboard apontam para esta classe.
 class AppViewController: CAPBridgeViewController {
+    // Versão 1.4: sem Picture in Picture. A janelinha flutuante mostra o vídeo sem a marca d'água
+    // (que é desenhada pela página por cima do vídeo) e fora da proteção contra gravação de tela.
+    // Com a tela bloqueada, o aluno segue ouvindo a aula (AppDelegate + site), sem expor o vídeo.
+    override open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
+        let configuracao = super.webViewConfiguration(for: instanceConfiguration)
+        configuracao.allowsPictureInPictureMediaPlayback = false
+        return configuracao
+    }
+
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(AppleSignInPlugin())
         bridge?.registerPluginInstance(WebAuthPlugin())
+        // Versão 1.4: avisa a página quando a tela é gravada/espelhada ou quando tiram print.
+        bridge?.registerPluginInstance(CapturaPlugin())
         // Calculadora de reganho pós-GLP-1 (site dos autores, aberto num quadro dentro do
         // Endodirect): teclado numérico nos campos de número. Vale também para quadros de
         // outro domínio (forMainFrameOnly: false); o próprio script só age nesse site.
