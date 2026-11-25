@@ -13,8 +13,10 @@ Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas
   identificador novo do widget (`br.com.endodirect.app.QuestaoDoDia`) sem passo do professor no portal.
 - Aviso da Apple no envio: a partir de abril de 2027 só entra app feito com o SDK do iOS 27 (Xcode 27). Quando o
   runner `macos-26` do GitHub tiver o Xcode 27, o passo "Escolher o Xcode" pega o mais novo; conferir antes de abril.
-- [ ] Professor testa no TestFlight: gravar a tela durante uma aula (pausa e aviso), tirar um print (aparece no painel de
-  contas suspeitas), bloquear a tela com a aula tocando (o áudio segue) e pôr o widget na tela inicial.
+- [x] Professor testou no TestFlight (25/11, prints): gravação de tela pausa a aula com o aviso, áudio segue com a tela
+  bloqueada ("Audio funcionando com tela bloqueada também") e o widget aparece na tela inicial com a questão do dia.
+  O registro no painel não aparece com a conta do professor (de propósito: o professor fica fora); para ver as colunas
+  📸/🎥, testar com uma conta de aluno.
 - [ ] Enviar à Apple (a 1.3 já foi liberada, então a 1.4 pode ir): versão nova "1.4" com o build 20; nas notas para o
   revisor, ACRESCENTAR ao fim o parágrafo "VERSION 1.4" (as notas são cumulativas); Privacidade do app: Dados de uso →
   Interação com o produto, ligado à identidade, finalidade Funcionalidade do app (segurança). Lançamento manual.
