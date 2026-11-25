@@ -35,6 +35,8 @@ const { licencaOpeni, baixarImagemOpeni } = require('../lib/openi-imagem');
 const { excluirConta } = require('../lib/excluir-conta');
 const { contaRevisao } = require('../lib/conta-revisao');
 const { testarChaveApple } = require('../lib/apple-revogar');
+// Bunny Stream: envio das aulas novas e limpeza dos MP4, com a chave de cada biblioteca na Vercel.
+const { bunnyAcao, tarefaValida } = require('../lib/bunny');
 function pickModel(requested) {
   return normModelo(requested) || DEFAULT_MODEL;
 }
@@ -225,6 +227,17 @@ module.exports = async function handler(req, res) {
       const r = await testarChaveApple();
       res.setHeader('Cache-Control', 'no-store');
       return json(res, 200, r);
+    }
+    // (d5) Bunny Stream (25/11/2026): manda ao Bunny da biblioteca do curso a aula que o
+    // professor subiu ao Storage, consulta o processamento e apaga as cópias MP4 de download
+    // (só o streaming fica). Professor logado no painel OU a checagem diária com o código curto
+    // do banco. A chave de cada biblioteca fica na Vercel. Ver lib/bunny.js.
+    if (sbody && sbody.kind === 'bunny') {
+      const admin = await adminFromReq(req);
+      if (!admin && !(await tarefaValida(sbody.tarefa))) return json(res, 401, { ok: false, error: 'Apenas administradores.' });
+      const r = await bunnyAcao(sbody);
+      res.setHeader('Cache-Control', 'no-store');
+      return json(res, r.ok ? 200 : (r.code || 400), r);
     }
     // (e) Busca de imagem de exame no Open-i (PubMed Central) p/ ilustrar a Questão
     // do Dia. Não usa Anthropic → tratado aqui. Best-effort: falha vira lista vazia.

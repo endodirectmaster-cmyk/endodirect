@@ -101,7 +101,9 @@ ok('envio: upload retomável em resumos/videos', add.indexOf("uploadAdminAssetRe
 ok('envio: confirmação acima de 30 min', add.indexOf('if(dur>30*60+5&&!confirm(') > 0);
 ok('tela do painel: limite de 30 min no texto e no rótulo', /Vídeos curtos do capítulo \(até 30 min cada\)/.test(SRC) && /Arquivo de vídeo \(MP4, até 30 min\)/.test(SRC) && !/até 15 min/.test(SRC));
 ok('envio: título obrigatório', add.indexOf("if(!titulo){notify('Dê um título à videoaula.','err');return;}") > 0);
-ok('envio: grava título, src, duração, caminho e data', add.indexOf('grava({titulo:titulo,src:up.url,dur:isFinite(dur)?Math.round(dur):undefined,path:up.path,at:Date.now()})') > 0);
+ok('envio: grava título, src, duração, caminho e data', add.indexOf('var v={titulo:titulo,src:up.url,dur:isFinite(dur)?Math.round(dur):undefined,path:up.path,at:Date.now()};') > 0 && add.indexOf('grava(v);') > 0);
+// Desde 25/11/2026 o painel também pede ao Bunny da biblioteca Resumos logo depois do envio (lib/bunny.js).
+ok('envio: pede ao Bunny (biblioteca Resumos) depois de gravar', add.indexOf("grava(v);bunnyEnviarAula('resumos',v,'src',titulo,persistDiretrizes);") > 0);
 ok('envio: link precisa ser Bunny, YouTube ou Vimeo (http)', add.indexOf('if(!(ytId(link)||vimeoId(link)||safeHttpUrl(link)))') > 0);
 ok('envio: grava pelo persistDiretrizes', /d\.videos\.push\(v\);persistDiretrizes\(\);/.test(add));
 
