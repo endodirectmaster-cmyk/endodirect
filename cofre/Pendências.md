@@ -7,18 +7,12 @@ atualizado: 2026-11-25
 
 ## 🎞️ Bunny: o que falta nas bibliotecas (25/11)
 
-- Professor no painel do Bunny:
-  - **EMC:** desligar "Enable direct play".
-  - **Endocrinologia Essencial:**
-    - domínios e "Block direct url file access";
-    - na Encoding: Early-Play, "Serve original files" e MP4 fallback desligados;
-    - "Enable direct play" fica LIGADO, por causa da aula 4.
-  - Depois, o Purge das três zonas (`vz-0161a494-b29`, `vz-f9c42905-205`, `vz-1196f9a8-6ea`).
-- Claude:
-  - Testar as três de novo depois disso: site 200; sem Referer, outro site, original, MP4 e direct play recusados.
-  - Opcional, se o professor der o "pode": trocar o `src` da aula 4 do Endocrinologia Essencial pelo `.m3u8`
-    `vz-1196f9a8-6ea.b-cdn.net/37be5953-…/playlist.m3u8`, que já toca. Ela ganharia marca d'água e tópicos, e o
-    direct play poderia ser desligado.
+- [x] EMC, EndoTEEM e Endocrinologia Essencial configurados pelo professor. O Purge das três zonas foi feito.
+  - Conferido: o MP4 responde 404 em todas, e as 141 aulas do Bunny tocam.
+- [x] Aula 4 do Endocrinologia Essencial no `.m3u8` (`vz-1196f9a8-6ea.b-cdn.net/37be5953-…`), com o "pode" do professor.
+  - Backup `main-antes-aula4-essencial-hls-2026-11-25`; só o `src` mudou.
+  - A checagem das 03:13 faz os tópicos dela.
+- [ ] Professor: desligar "Enable direct play" no Endocrinologia Essencial (nenhuma aula usa mais), e o Claude confere.
 - Arquivos antigos dos Resumos no Storage do Supabase: só apagar com o "pode" do professor.
 - O segredo de rede do ambiente (video.bunnycdn.com, chave dos Resumos) ficou sem uso; pode sair.
 
