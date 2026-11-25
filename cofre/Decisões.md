@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-24
+atualizado: 2026-11-25
 ---
 
 # Decisões
@@ -8,6 +8,11 @@ atualizado: 2026-11-24
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎬 VÍDEOS DOS RESUMOS NO BUNNY (2026-11-25).** Professor, sobre o Cloudflare: *"Somente os videos do bunny. Dou acesso total"*. Escolha dele: tirar do Supabase os vídeos dos Resumos, que gastavam banda de saída e não se adaptavam à conexão do aluno, e levá-los ao Bunny, como as aulas dos cursos.
+  - Biblioteca nova "Resumos" (820720), criada e configurada pelo professor: só o site toca, sem MP4 para baixar.
+  - Os 26 vídeos foram copiados pelo próprio Bunny, conferidos (duração, bloqueio sem Referer, reprodução a 1080p) e trocados no banco (só o `src`, com backup e conferência).
+  - A checagem diária das 03:13 ganhou o passo 0: vídeo novo que o painel subiu ao Storage vai para o Bunny antes dos capítulos.
+  - Os arquivos antigos ficam no Storage como reserva até o "pode" do professor. Detalhes em [[Videoaulas dos Resumos]].
 - **📣 AVISAR O ALUNO QUANDO ALGO FALHA (2026-11-25, v495).** Professor: *"Acha que vale mandar uma mensagem no e-mail do aluno ou na própria plataforma também, quando acontecer isso?"*. Recomendei não avisar por e-mail a cada erro técnico (a maioria ele nem percebe, e o excesso de aviso perde o valor) e sim três coisas. Ele: *"Aceito suas sugestões"*.
   - **(1) Na hora, na tela:**
     - Progresso que não salvou: antes o aviso era técnico ("Verifique o setup SQL"), saía uma vez só e não havia nova tentativa. Agora `salvarFalhou` mostra "Sem conexão com o servidor: o seu progresso ainda não foi salvo…" e tenta de novo sozinho (10 s, 20 s… até 60 s, 8 vezes, e no evento `online`). `salvarFalhouOk` avisa "Pronto: salvo. ✓".

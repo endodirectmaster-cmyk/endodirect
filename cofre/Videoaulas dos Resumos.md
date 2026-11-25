@@ -23,6 +23,7 @@ inserir aos poucos pequenos vídeos (como o exemplo em anexo) de no máx 15 min 
   - vem depois de "🧠 Mapas mentais", como **🎬 Videoaulas**.
   - Sem vídeo, `refFormat` volta para `resumo`, e o capítulo segue com as três abas de antes.
 - **Player (`dirVideoPlayerHTML`):**
+  - desde 25/11/2026 todos os vídeos dos Resumos são `.m3u8` do Bunny (ver a seção "Bunny" abaixo);
   - arquivo (Storage) em `<video controls playsinline preload="metadata">`, com `#t=0.1` no fim
     do `src` para o iPhone mostrar o 1º quadro;
   - `.m3u8` (Bunny) vai em `data-hls` e é montado por `montarVideosHls`: no Safari toca nativo;
@@ -195,10 +196,39 @@ tópicos, a minutagem (...) tanto para a versão de computador, mas também para
 
 ## Pontos de atenção
 
-- Vídeo grande no Storage gasta banda de saída do Supabase. Se as videoaulas crescerem muito,
-  avaliar mandar para o Bunny (como as aulas dos cursos) e colar o `.m3u8` no campo de link; o
-  player já aceita.
+- O painel ainda sobe o arquivo ao Storage do Supabase; a checagem diária das 03:13 o passa para o
+  Bunny (ver a seção abaixo). Quem preferir pode subir direto no Bunny (biblioteca "Resumos") e
+  colar o `.m3u8` no campo de link; o player já aceita.
 - Excluir a videoaula no painel tira o item da lista, mas **não apaga o arquivo** do Storage.
+
+## Bunny: onde ficam os vídeos dos Resumos (25/11/2026)
+
+Professor, ao perguntar do Cloudflare: *"Somente os videos do bunny. Dou acesso total"*. Os 26
+vídeos dos Resumos saíram do Storage do Supabase (banda de saída cara, sem adaptação à conexão do
+aluno) e foram para o Bunny Stream, como as aulas dos cursos.
+- **Biblioteca "Resumos"**, id 820720, CDN `vz-4fb917fa-a7a.b-cdn.net`. Endereço gravado no `src`:
+  `https://vz-4fb917fa-a7a.b-cdn.net/<GUID>/playlist.m3u8` (o player já monta `.m3u8` por
+  `montarVideosHls`).
+- **Configuração** (feita pelo professor, conferida pelos prints):
+  - domínios permitidos `endodirect.com.br` e `*.endodirect.com.br`;
+  - acesso direto à URL bloqueado (sem o Referer do site, 403);
+  - "direct play" e o MP4 de reserva desligados (só HLS, sem `.mp4` para baixar);
+  - originais guardados.
+- **Chave da API:** fica só no segredo de rede do ambiente (site `video.bunnycdn.com`, cabeçalho
+  `AccessKey`), que o proxy injeta. Nunca no chat nem no repositório. `request_credential` não aceita
+  o cabeçalho `AccessKey`: o professor o cadastrou à mão nas configurações do ambiente.
+- **Como foi feito:** `POST /library/820720/videos/fetch` com `{url, title}` para cada arquivo (o
+  Bunny busca no Storage), espera do status 4, duração conferida contra `dur` (26/26), playlist com
+  o Referer do site 200 e sem ele 403, reprodução no Chromium com hls.js a 1080p e salto de tempo.
+- **Troca no banco:** só os 26 `src`, com backup `main-antes-videos-bunny-2026-11-25`, guarda pelo
+  `src` antigo e conferência: o payload sem os `src` é idêntico ao backup (títulos, capítulos,
+  durações, datas e degustação intactos).
+- **Arquivos antigos** continuam no Storage do Supabase como reserva. Só saem com o "pode" do
+  professor.
+- **Vídeo novo:** a checagem diária das 03:13 (passo 0) acha o `src` que ainda aponta para
+  `/storage/v1/object/public/` e repete o caminho acima antes de fazer os capítulos.
+- 🧨 Professor com o painel aberto durante a troca: F5 antes de editar um vídeo dos Resumos, senão
+  o painel pode tentar gravar o endereço antigo.
 
 ## Endocrinologia Essencial: "Nesta aula" (17–18/11/2026)
 

@@ -4,7 +4,7 @@
 #   slides.sh <url-do-video> <pasta-de-trabalho>
 #
 # A URL pode ser um .mp4 (Storage do Supabase, vídeos dos Resumos) ou o playlist.m3u8 do
-# Bunny (aulas da EMC). Saída:
+# Bunny (aulas dos cursos e, desde 25/11/2026, os vídeos dos Resumos). Saída:
 #   <pasta>/tempos.txt       segundo de cada quadro guardado
 #   <pasta>/s_NNN.jpg(.txt)  o quadro e o texto lido pelo tesseract
 #   <pasta>/tabela.txt       "m:ss  1ª linha | 2ª linha" a cada troca de cabeçalho
