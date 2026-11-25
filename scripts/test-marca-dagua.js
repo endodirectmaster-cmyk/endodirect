@@ -37,7 +37,7 @@ vm.runInContext(`
 `, ctx);
 vm.runInContext(html.slice(html.indexOf('\nvar MARCA_VIDEO_SEL='), html.indexOf('\nvar marcaRelogioId=') + 50).split('\n').slice(0, 3).join('\n'), ctx);
 vm.runInContext((html.match(/\nvar MARCA_TC_SVG=[^\n]*\n[^\n]*\n/) || [''])[0], ctx);
-['marcaTexto', 'marcaSvgURL', 'marcaAplicar', 'marcaCanto', 'marcaPosicao', 'marcaFsTroca', 'marcaVideos', 'marcaChromiumMouse', 'marcaBotaoBaixo', 'marcaTelaCheia', 'marcaTelaCheiaFalsa', 'marcaIniciar', 'marcaParar', 'videoCliquePausa']
+['marcaTexto', 'marcaSvgURL', 'marcaAplicar', 'marcaCanto', 'marcaPosicao', 'marcaFsTroca', 'marcaVideos', 'chromiumComMouse', 'marcaBotaoBaixo', 'marcaTelaCheia', 'marcaTelaCheiaFalsa', 'marcaIniciar', 'marcaParar', 'videoCliquePausa']
   .forEach((n) => vm.runInContext(corpo(n), ctx));
 const run = (c) => vm.runInContext(c, ctx);
 const doc = dom.window.document;
@@ -139,9 +139,9 @@ ok(typeof run('MARCA_TC_SVG') === 'string' && /class="tc-entra"/.test(run('MARCA
 Object.defineProperty(dom.window.navigator, 'userAgentData', { configurable: true, value: { brands: [{ brand: 'Not A Brand' }, { brand: 'Chromium' }, { brand: 'Google Chrome' }] } });
 let fino = true;
 dom.window.matchMedia = () => ({ matches: fino });
-ok(run('marcaChromiumMouse()') === true, 'Chrome/Edge com mouse: precisa do botão de baixo');
+ok(run('chromiumComMouse()') === true, 'Chrome/Edge com mouse: precisa do botão de baixo');
 fino = false;
-ok(run('marcaChromiumMouse()') === false, 'Chrome no celular (toque): sem botão de baixo');
+ok(run('chromiumComMouse()') === false, 'Chrome no celular (toque): sem botão de baixo');
 fino = true;
 const cr = doc.createElement('div');
 cr.innerHTML = '<video src="b.m3u8" controls></video>';
@@ -198,11 +198,19 @@ ok(acao === 'x', 'navegador sem pointerType e sem mouse: o toque não pausa');
 fino = true;
 run('videoCliquePausa')(clique({ pointerType: undefined }));
 ok(acao === 'play', 'navegador sem pointerType, com mouse: o clique funciona');
+// Safari/Firefox (sem navigator.userAgentData do Chromium): o navegador já alterna sozinho no clique, e o Safari
+// ignora o preventDefault; o nosso alternaria de novo (Sentry ENDODIRECT-SITE-2/3, 25/11/2026).
+const uad = dom.window.navigator.userAgentData;
+delete dom.window.navigator.userAgentData;
+acao = 'x'; prevenido = 0;
+run('videoCliquePausa')(clique());
+ok(acao === 'x' && prevenido === 0, '🧨 Safari/Firefox: o clique na imagem fica com o próprio navegador (o nosso não alterna de novo nem chama preventDefault)');
+Object.defineProperty(dom.window.navigator, 'userAgentData', { configurable: true, value: uad });
 cr.remove();
 delete dom.window.navigator.userAgentData;
 delete dom.window.matchMedia;
 ok(/\ndocument\.addEventListener\('click',videoCliquePausa,true\);/.test(html), 'o clique que pausa fica ligado para a página toda, na captura (antes do player do navegador)');
-ok(/if\(marcaChromiumMouse\(\)\)marcaBotaoBaixo\(p,v\);/.test(corpo('marcaVideos')), 'marcaVideos põe o botão de baixo no Chrome/Edge com mouse');
+ok(/if\(chromiumComMouse\(\)\)marcaBotaoBaixo\(p,v\);/.test(corpo('marcaVideos')), 'marcaVideos põe o botão de baixo no Chrome/Edge com mouse');
 ok(/\.marca-cr>video::-webkit-media-controls-fullscreen-button\{visibility:hidden\}/.test(html), 'CSS: o nativo apagado fica invisível, mas guarda o lugar na barra');
 ok(/\.marca-tc-baixo\{position:absolute;right:49px;bottom:24px;[^}]*opacity:0;pointer-events:none;/.test(html) && /\.marca-ctl>\.marca-tc-baixo,\.marca-tc-baixo:focus-visible\{opacity:1;pointer-events:auto\}/.test(html), 'CSS: o botão de baixo no lugar do nativo, à vista só com a barra');
 ok(/:fullscreen>\.marca-tc-baixo \.tc-sai\{display:block\}/.test(html), 'em tela cheia, o botão de baixo mostra "sair"');
