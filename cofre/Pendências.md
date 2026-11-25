@@ -26,9 +26,10 @@ Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas
 - [x] **1.4 aprovada pela Apple em 25/11, 20h20 BRT** (e-mail "Review of your Endodirect Endocrinologia (iOS) submission
   is complete", print do professor; ~2 h 20 min na fila).
 - [x] **1.4 liberada pelo professor em 25/11, ~20h26 BRT** ("1.4 Pronto para distribuição", print).
-- [ ] Até 15/01/2027: App Store Connect → Informações do app → atualizar as respostas da classificação etária
-  (perguntas novas sobre compartilhamento de localização e encontros; aviso da Apple na página da versão). Respostas
-  esperadas: o app não compartilha localização nem tem encontros/namoro.
+- [ ] **No próximo envio (1.5) ou até 15/01/2027:** classificação etária → pergunta nova "Compartilhamento de
+  localização" (passo 1, em branco) = **Não** (e "encontros", se aparecer, = Não). Em 25/11 o questionário abriu só para
+  leitura (bolinhas cinza): a Apple só deixa editar com uma versão nova em preparação. As demais respostas ficam como
+  estão (+16 / A16 no Brasil, por causa do conteúdo médico).
 
 ## 🎞️ Bunny: o que falta nas bibliotecas (25/11)
 
