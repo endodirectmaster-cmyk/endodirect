@@ -275,7 +275,8 @@ streaming]"*.
   MP4 de download se chamam `play_<altura>p.mp4`.
 - **Configuração de cada biblioteca** (o professor clica no painel do Bunny):
   - Security: Allowed domains `endodirect.com.br` e `*.endodirect.com.br`, "Block direct url file access" ligado,
-    "Enable direct play" DESLIGADO (menos no Endocrinologia Essencial: a aula 4 usa `player.mediadelivery.net/play/680513/…`).
+    "Enable direct play" DESLIGADO. A aula 4 do Endocrinologia Essencial usava `player.mediadelivery.net/play/680513/…`;
+    em 25/11 passou para o `.m3u8` (com o "pode" do professor), então nenhuma aula depende mais disso.
   - Encoding: Early-Play desligado, "Serve original files" desligado ("Keep original files" fica ligado),
     MP4 fallback desligado, Free Encoding (o Premium cobrava US$ 0,05/min e não usamos nada dele).
   - Depois: Purge com `https://<cdn>.b-cdn.net/*` na lista de URLs.
@@ -289,7 +290,8 @@ minutagem, assim como já existe no programa de educação médica e também nos
   (`main-antes-capitulos-ee-2026-11-17a` … `…-17e`), guarda por aula (curso `endo_essencial`, GUID do `src`,
   `caps` vazio) e conferência por md5 do payload sem os `caps` = backup.
 - **Sem capítulos:** a aula 0 (Avaliação clínica do paciente com obesidade) está no Vimeo e a 4 (Uso e abuso
-  dos esteroides anabolizantes) num player embutido; nenhum dos dois deixa saltar. A 9 (Disfunção Erétil)
+  dos esteroides anabolizantes) num player embutido; nenhum dos dois deixa saltar. Em 25/11/2026 a 4 passou para o `.m3u8`
+  do Bunny (mesmo vídeo, guid 37be5953…) e entra na checagem das 03:13. A 9 (Disfunção Erétil)
   vai ser reenviada pelo professor ("pode pular ela, por enquanto"); a checagem diária das 03:13 a pega
   quando o `src` novo chegar.
 - **Bunny das aulas:** `vz-1196f9a8-6ea.b-cdn.net/<GUID>/playlist.m3u8` (exige o Referer do site).
