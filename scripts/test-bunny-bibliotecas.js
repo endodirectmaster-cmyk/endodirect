@@ -114,6 +114,28 @@ async function main() {
   respostas = [{ status: 200, body: [] }];
   ok(await tarefaValida(tk) === false, 'código vencido ou inexistente: recusado');
 
+  // apagar do Storage a cópia que já foi para o Bunny (professor, 25/11/2026: "Pode")
+  const cam = 'resumos/videos/2026-11-02/1793663784222-rastreio.mp4';
+  for (const ruim of ['resumos/pmc/figura.png', 'resumos/videos/../../segredo.mp4', 'outra/videos/x.mp4', 'resumos/videos//x.mp4', '', 'cursos/videos/emc/x.exe']) {
+    chamadas = [];
+    r = await bunnyAcao({ acao: 'apagar_storage', caminho: ruim });
+    ok(!r.ok && r.code === 400 && chamadas.length === 0, '🧨 apagar fora das pastas de vídeo: recusado sem chamar nada: ' + ruim);
+  }
+  chamadas = []; respostas = [{ status: 200, body: true }];
+  r = await bunnyAcao({ acao: 'apagar_storage', caminho: cam });
+  ok(!r.ok && r.code === 409 && chamadas.length === 1, '🧨 arquivo ainda usado por alguma aula: nada é apagado');
+  ok(/\/rest\/v1\/rpc\/endodirect_storage_em_uso$/.test(chamadas[0].url) && JSON.parse(chamadas[0].op.body).p_path === cam, 'confere o uso pela função do banco, com o caminho exato');
+  chamadas = []; respostas = [{ status: 200, body: false }, { status: 200, body: [{ name: cam }] }];
+  r = await bunnyAcao({ acao: 'apagar_storage', caminho: cam });
+  ok(r.ok && r.apagado === true && chamadas.length === 2, 'arquivo sem uso: apagado: ' + JSON.stringify(r));
+  ok(/\/storage\/v1\/object\/endodirect-assets$/.test(chamadas[1].url) && chamadas[1].op.method === 'DELETE' && JSON.parse(chamadas[1].op.body).prefixes.join() === cam, 'apaga só aquele arquivo do bucket endodirect-assets');
+  chamadas = []; respostas = [{ status: 500, body: { message: 'x' } }];
+  r = await bunnyAcao({ acao: 'apagar_storage', caminho: cam });
+  ok(!r.ok && r.code === 502 && chamadas.length === 1, '🧨 sem conseguir conferir o uso: nada é apagado');
+  chamadas = []; respostas = [{ status: 200, body: false }, { status: 200, body: [] }];
+  r = await bunnyAcao({ acao: 'apagar_storage', caminho: 'cursos/videos/emc/1-aula.mp4' });
+  ok(r.ok && r.apagado === false, 'arquivo que já não existia: ok, apagado=false');
+
   // ── 2) api/ai.js ──
   const api = fs.readFileSync(path.join(raiz, 'api', 'ai.js'), 'utf8');
   const iRota = api.indexOf("sbody.kind === 'bunny'");
