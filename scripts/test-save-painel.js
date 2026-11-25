@@ -94,7 +94,7 @@ function cenario(servidor) {
   vm.createContext(sb);
   vm.runInContext([objeto('GLOBAL_MERGE_KEYS'), DECL || 'var globalReadRetries=0,globalReadRetryTimer=null;', 'var globalDigitalSync=null;', corpo('stableStr'),
     corpo('itemSig'), corpo('mergeConcurrent'), corpo('globalDigital'), corpo('captureGlobalBaseline'), corpo('globalStatePayload'),
-    corpo('applyStatePayload'), corpo('saveRemoteState')].join('\n'), sb);
+    corpo('applyStatePayload'), corpo('saveRemoteState'), 'var salvarFalhas=0,salvarRetryTimer=null;', corpo('salvarFalhou'), corpo('salvarFalhouOk')].join('\n'), sb);
   // o painel carregou o estado do servidor (como no hydrate)
   vm.runInContext('applyStatePayload(' + JSON.stringify(servidor.payload) + ');lastGlobalUpdatedAt=' + JSON.stringify(servidor.updated_at) +
     ';captureGlobalBaseline(' + JSON.stringify(servidor.payload) + ');', sb);

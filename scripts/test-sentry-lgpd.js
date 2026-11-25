@@ -73,7 +73,7 @@ function caixa(host, busca, ua, comDsn) {
   const out = o.beforeSend(JSON.parse(JSON.stringify(ev)));
   const s = JSON.stringify(out);
   ok('nada de SEGREDO, e-mail, nome do paciente, cookie ou referer', !/SEGREDO|@exemplo\.com|a@b\.com|Maria da Silva|Cookie|Referer/.test(s), s.slice(0, 300));
-  ok('sem usuário', !('user' in out));
+  ok('sem login: nenhum usuário', !('user' in out));
   ok('endereço sem consulta nem fragmento', out.request.url === 'https://www.endodirect.com.br/');
   ok('User-Agent mantido', out.request.headers && out.request.headers['User-Agent'] === 'UA');
   ok('e-mail vira [e-mail]', out.message === 'falhou para [e-mail]' && out.exception.values[0].value === 'erro de [e-mail]');
@@ -95,6 +95,20 @@ function caixa(host, busca, ua, comDsn) {
   const d = caixa('www.endodirect.com.br', '?app=ios', 'Mozilla/5.0 EndodirectApp/1.2 (ios)', true);
   d.w.__endoSentryInit();
   ok('sem o parâmetro, nenhuma mensagem de teste', d.chamadas.mensagens.length === 0);
+}
+// 1c. Com login (25/11/2026): só o código interno da conta (uuid), nunca e-mail, nome ou IP.
+{
+  const c = caixa('www.endodirect.com.br', '', 'Mozilla/5.0', true);
+  c.w.__endoSentryInit();
+  const o = c.chamadas.init || {};
+  const ev = { user: { id: 'u1', email: 'a@b.com', ip_address: '{{auto}}' }, message: 'falhou', request: { url: 'https://www.endodirect.com.br/' } };
+  c.w.currentUser = { id: '2F1E6C1A-9B7D-4C3E-8A5F-0123456789AB', email: 'aluno@exemplo.com', name: 'Maria da Silva' };
+  const comConta = o.beforeSend(JSON.parse(JSON.stringify(ev)));
+  ok('com login: user só com o código interno da conta (uuid, minúsculo)', JSON.stringify(comConta.user) === JSON.stringify({ id: '2f1e6c1a-9b7d-4c3e-8a5f-0123456789ab' }), JSON.stringify(comConta.user));
+  ok('com login: nada de e-mail, nome ou IP no evento', !/@exemplo\.com|a@b\.com|Maria da Silva|ip_address/.test(JSON.stringify(comConta)));
+  c.w.currentUser = { id: 'demo', email: 'x@y.z' };
+  ok('conta de demonstração (id que não é uuid): nenhum usuário', !('user' in o.beforeSend(JSON.parse(JSON.stringify(ev)))));
+  c.w.currentUser = null;
 }
 // 2. Sem DSN: não inicia, e a fila é descartada.
 {

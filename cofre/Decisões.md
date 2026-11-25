@@ -8,6 +8,16 @@ atualizado: 2026-11-24
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📣 AVISAR O ALUNO QUANDO ALGO FALHA (2026-11-25, v495).** Professor: *"Acha que vale mandar uma mensagem no e-mail do aluno ou na própria plataforma também, quando acontecer isso?"*. Recomendei não avisar por e-mail a cada erro técnico (a maioria ele nem percebe, e o excesso de aviso perde o valor) e sim três coisas. Ele: *"Aceito suas sugestões"*.
+  - **(1) Na hora, na tela:**
+    - Progresso que não salvou: antes o aviso era técnico ("Verifique o setup SQL"), saía uma vez só e não havia nova tentativa. Agora `salvarFalhou` mostra "Sem conexão com o servidor: o seu progresso ainda não foi salvo…" e tenta de novo sozinho (10 s, 20 s… até 60 s, 8 vezes, e no evento `online`). `salvarFalhouOk` avisa "Pronto: salvo. ✓".
+    - Videoaula que não carrega: antes ficava preta. Agora o erro do `<video>` (na captura, menos o ao vivo), o erro fatal do hls.js (`videoHlsLigar`) e o reprodutor que não chegou em 10 s mostram `.video-falha` por cima do vídeo, com "Tentar de novo" (`videoRecarregar` volta ao mesmo minuto).
+    - Teste: `scripts/test-falhas-na-tela.js`, com mutações conferidas.
+  - **(2) Casos graves, um a um:**
+    - O Sentry passa a receber `user.id` = código interno da conta (uuid do Supabase, `codigoDaConta`), sem nome, e-mail nem IP. Conta de demonstração (id que não é uuid) e visitante não mandam usuário. Teste em `scripts/test-sentry-lgpd.js`.
+    - Política de Privacidade (item 5, Sentry) atualizada em 25/11/2026.
+    - A tarefa "Erros do Sentry" acha a conta pelo id (Supabase, só leitura) e prepara um RASCUNHO no Gmail ao aluno, que o professor revisa e envia.
+  - **(3) Falha que atingiu muita gente:** depois de corrigida, a tarefa propõe o texto de um aviso no Mural, que só sai com o "pode" do professor.
 - **🛎️ SENTRY CONFERIDO A CADA 3 HORAS PELO CLAUDE (2026-11-25).** Professor: *"Existe a possibilidade de automaticamente que o Sentry detectar esses erros e disparar na caixa de entrada lhe alertar também"*. Ele escolheu: a cada 3 horas; conserto claro e pequeno, corrigir e publicar; grande ou incerto, só investigar e avisar.
   - Tarefa agendada "Erros do Sentry: conferir a cada 3 horas e corrigir": cron `27 */3 * * *` (UTC), presa à sessão principal do Claude Code.
   - Uma tarefa que abre sessão nova a cada rodada foi criada sem conectores e rodaria sem o Sentry. Por isso foi apagada e trocada por esta, como a checagem diária das videoaulas.
