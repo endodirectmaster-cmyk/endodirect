@@ -8,6 +8,13 @@ atualizado: 2026-11-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎞️ BUNNY EM TODAS AS BIBLIOTECAS E SÓ STREAMING (2026-11-25, v496).** Professor: *"quero que você faça em todas as pastas o mesmo esquema que você fez dos resumos"* e *"manter somente [o streaming]"*. Nada foi reenviado: as aulas que já estavam no Bunny ficaram com os mesmos endereços.
+  - O painel sobe o arquivo e pede ao Bunny do curso; a madrugada troca o `src`.
+  - A chave de cada biblioteca fica na Vercel; a rota `kind:'bunny'` é só do professor ou da checagem diária.
+  - As cópias MP4 de 115 aulas foram apagadas pela API, e as 141 aulas do Bunny seguem tocando.
+  - Testado no Bunny: "Serve MP4 fallback files" não bloqueia o que já existe, e as zonas de vídeo não aceitam Edge Rule pelo painel.
+  - Encoding da EMC passou para o Free (decisão do professor).
+  - Detalhes em [[Videoaulas dos Resumos]].
 - **🎬 VÍDEOS DOS RESUMOS NO BUNNY (2026-11-25).** Professor, sobre o Cloudflare: *"Somente os videos do bunny. Dou acesso total"*. Escolha dele: tirar do Supabase os vídeos dos Resumos, que gastavam banda de saída e não se adaptavam à conexão do aluno, e levá-los ao Bunny, como as aulas dos cursos.
   - Biblioteca nova "Resumos" (820720), criada e configurada pelo professor: só o site toca, sem MP4 para baixar.
   - Os 26 vídeos foram copiados pelo próprio Bunny, conferidos (duração, bloqueio sem Referer, reprodução a 1080p) e trocados no banco (só o `src`, com backup e conferência).

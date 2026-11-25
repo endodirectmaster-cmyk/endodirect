@@ -1,9 +1,26 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-18
+atualizado: 2026-11-25
 ---
 
 # Pendências
+
+## 🎞️ Bunny: o que falta nas bibliotecas (25/11)
+
+- Professor no painel do Bunny:
+  - **EMC:** desligar "Enable direct play".
+  - **Endocrinologia Essencial:**
+    - domínios e "Block direct url file access";
+    - na Encoding: Early-Play, "Serve original files" e MP4 fallback desligados;
+    - "Enable direct play" fica LIGADO, por causa da aula 4.
+  - Depois, o Purge das três zonas (`vz-0161a494-b29`, `vz-f9c42905-205`, `vz-1196f9a8-6ea`).
+- Claude:
+  - Testar as três de novo depois disso: site 200; sem Referer, outro site, original, MP4 e direct play recusados.
+  - Opcional, se o professor der o "pode": trocar o `src` da aula 4 do Endocrinologia Essencial pelo `.m3u8`
+    `vz-1196f9a8-6ea.b-cdn.net/37be5953-…/playlist.m3u8`, que já toca. Ela ganharia marca d'água e tópicos, e o
+    direct play poderia ser desligado.
+- Arquivos antigos dos Resumos no Storage do Supabase: só apagar com o "pode" do professor.
+- O segredo de rede do ambiente (video.bunnycdn.com, chave dos Resumos) ficou sem uso; pode sair.
 
 ## 📱 App do iPhone 1.3: Resumos sem internet (17/11)
 
