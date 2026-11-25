@@ -13551,10 +13551,12 @@ function avisosDoMural(agora){
   });
   Object.keys(porDia).forEach(function(dia){
     var vs=porDia[dia].sort(function(a,b){return b.at-a.at;});
-    if(vs.length===1){var v=vs[0];autos.push({tipo:'video',titulo:v.titulo,texto:v.tema+' · '+v.sub,at:v.at,dir:v.dir,src:v.src});return;}
+    // Uma só no dia também vira grupo (25/11/2026). Professor: "O botão de alfa-lipoproteinemias está
+    // com esse nome ver e está diferente das outras aulas ... Deixar semelhante aos demais botões":
+    // "1 videoaula nova nos Resumos", a área embaixo e o botão ▶ com o nome da aula, como as de várias.
     var subs=[];vs.forEach(function(v){if(subs.indexOf(v.sub)<0)subs.push(v.sub);});
     var todosResumos=vs.every(function(v){return v.privado;});
-    autos.push({tipo:'video',titulo:vs.length+' videoaulas novas'+(todosResumos?' nos Resumos':''),texto:subs.join(' · '),at:vs[0].at,grupo:vs});
+    autos.push({tipo:'video',titulo:vs.length+(vs.length===1?' videoaula nova':' videoaulas novas')+(todosResumos?' nos Resumos':''),texto:subs.join(' · '),at:vs[0].at,grupo:vs});
   });
   (typeof admCursos!=='undefined'&&Array.isArray(admCursos)?admCursos:[]).forEach(function(c){
     if(!c||c.curso!==EMC_SLUG)return;
