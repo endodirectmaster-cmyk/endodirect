@@ -25,7 +25,7 @@ Código pronto (PR #1177; a parte do site no ar com a v497). Ver [[App nas Lojas
   app, vinculado à identidade, sem rastreamento. Agora são 12 tipos de dados.
 - [x] **1.4 aprovada pela Apple em 25/11, 20h20 BRT** (e-mail "Review of your Endodirect Endocrinologia (iOS) submission
   is complete", print do professor; ~2 h 20 min na fila).
-- [ ] Professor: clicar em "Liberar esta versão" na 1.4 (lançamento manual).
+- [x] **1.4 liberada pelo professor em 25/11, ~20h26 BRT** ("1.4 Pronto para distribuição", print).
 - [ ] Até 15/01/2027: App Store Connect → Informações do app → atualizar as respostas da classificação etária
   (perguntas novas sobre compartilhamento de localização e encontros; aviso da Apple na página da versão). Respostas
   esperadas: o app não compartilha localização nem tem encontros/namoro.
