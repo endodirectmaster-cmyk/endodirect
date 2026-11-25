@@ -1,6 +1,6 @@
 ---
 tags: [cofre, app, lojas]
-atualizado: 2026-11-18
+atualizado: 2026-11-25
 ---
 
 # App nas Lojas (Google Play e App Store)
@@ -9,6 +9,28 @@ Pedido do professor (18/10/2026): *"Quero deixar transformar a plataforma do ED 
 aplicativo no google play e apple store. Me de o passo a passo"*. A pesquisa (fontes
 oficiais da Apple, do Google e do gov.br, lidas em 18/10) e o passo a passo foram
 entregues na conversa. Aqui ficam o resumo, as decisões e o que falta.
+
+## 🎬 Versão 1.4: gravação de tela, áudio com a tela bloqueada e widget (25/11/2026)
+
+Professor, ao perguntar por novidades do app: "Faz os 3".
+- **Gravação de tela.** O plugin nativo `Captura` (`ios/App/App/CapturaPlugin.swift`) repassa ao site dois avisos do
+  iPhone: tela gravada ou espelhada (`UIScreen.capturedDidChangeNotification`) e print
+  (`userDidTakeScreenshotNotification`). Na videoaula, a gravação pausa o vídeo, esconde a imagem e mostra um aviso.
+  Prints e gravações nas telas de conteúdo (Cursos, Resumos, Questões, Simulado, Flashcards, Mapas, Ao vivo) vão para
+  `endodirect_capturas` (RPC `endodirect_captura_registrar`, só logado, até 30 por dia, professor fora) e aparecem no
+  painel de contas suspeitas (📸 / 🎥, 2 pontos cada; 3 ou mais em 30 dias põem a conta na lista). O iOS não deixa
+  bloquear o print: dá só para saber dele.
+- **Áudio com a tela bloqueada.** `AVAudioSession` em `.playback`, `UIBackgroundModes` = audio, Picture-in-Picture
+  desligado (`AppViewController.webViewConfiguration`). Quando o iPhone pausa o vídeo ao bloquear, o site continua só
+  o áudio (um `<audio>` com o mesmo HLS, no mesmo ponto e velocidade), com título e botões na tela de bloqueio
+  (Media Session). Ao voltar, o vídeo retoma de onde o áudio parou.
+- **Widget da Questão do Dia.** Extensão WidgetKit `QuestaoDoDia` (`br.com.endodirect.app.QuestaoDoDia`, iOS 16+):
+  pequeno, médio e tela de bloqueio. Lê `api/publico?rota=qotd-widget` (só id, subespecialidade e enunciado; cache
+  de borda de 5 min), atualiza às 07h40 e a cada 3 h; o toque abre `#qotd/<id>` no app.
+- **App Review:** nas notas, dizer que o áudio em segundo plano é das videoaulas ("abra uma videoaula e bloqueie a
+  tela"). **Privacidade do app:** os registros de captura ficam ligados à conta (dado de uso, para segurança).
+- A parte do site foi no ar com a v497 (sem efeito no site nem nas versões antigas do app, que não têm o plugin).
+  Situação: ver Pendências.
 
 ## 📴 Versão 1.3: Resumos sem internet (17/11/2026)
 

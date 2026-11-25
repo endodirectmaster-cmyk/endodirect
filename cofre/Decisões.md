@@ -8,6 +8,12 @@ atualizado: 2026-11-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📱 APP DO IPHONE 1.4: GRAVAÇÃO DE TELA, ÁUDIO COM A TELA BLOQUEADA E WIDGET (2026-11-25, v497).** Professor, depois de eu propor três novidades para o app: *"Faz os 3"*.
+  - Gravação de tela pausa e esconde a videoaula; print e gravação nas telas de conteúdo entram no painel de contas suspeitas (2 pontos cada). O iOS não deixa impedir o print, só saber dele.
+  - O registro fica numa tabela própria (`endodirect_capturas`, sem acesso direto; só a RPC, até 30 por dia) e sai com a exclusão da conta. A política de privacidade ganhou o item.
+  - Áudio em segundo plano: o site troca o vídeo pausado pelo sistema por um `<audio>` com o mesmo HLS. Escolha por ser o caminho que não depende de o WKWebView manter vídeo tocando com a tela apagada.
+  - Widget lê uma rota pública só com o enunciado (já público no story e na notificação): sem login, sem grupo de app e sem chave.
+  - Detalhes em [[App nas Lojas]].
 - **🗑️ CÓPIA DOS VÍDEOS NO SUPABASE SAI DEPOIS DA TROCA PARA O BUNNY (2026-11-25).** Professor: *"faz sentido também deixar no Supabase? [...] questão de segurança [...] espaço"* → *"Pode"*.
   - As 28 cópias antigas dos Resumos (686 MB) foram apagadas.
   - Daqui em diante, a checagem das 03:13 apaga a cópia na madrugada seguinte à troca, pela rota `apagar_storage`, que só age nas pastas de vídeo e só se nenhum `src` usa o arquivo.

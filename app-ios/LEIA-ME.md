@@ -27,6 +27,20 @@ manda o login para `br.com.endodirect.app://login-callback`, o app recebe, a fol
 fecha e o aluno entra. O iPhone pode perguntar "Abrir no Endodirect?" nessa volta;
 basta tocar em **Abrir**.
 
+## Versão 1.4 (25/11/2026)
+
+| Peça | Onde |
+|---|---|
+| Aviso de gravação de tela e de print para o site (`Capacitor.Plugins.Captura`, eventos `mudou` e `print`) | `ios/App/App/CapturaPlugin.swift`, registrado em `AppViewController.swift` |
+| Áudio da videoaula com a tela bloqueada (`AVAudioSession .playback`, `UIBackgroundModes` audio, sem Picture-in-Picture) | `AppDelegate.swift`, `Info.plist`, `AppViewController.swift` |
+| Widget da Questão do Dia (pequeno, médio e tela de bloqueio), extensão `br.com.endodirect.app.QuestaoDoDia` | `ios/App/QuestaoDoDia/`, target **QuestaoDoDia** no projeto |
+
+O site faz o resto (pausar a aula durante a gravação, registrar no painel de contas
+suspeitas, trocar o vídeo pelo áudio ao bloquear a tela). A rota do widget é
+`/api/publico?rota=qotd-widget`. O teste `scripts/test-app-ios-14.js` (no CI) confere as
+três peças, e o passo "compilar" do workflow confere que o widget foi embutido no app com
+a mesma versão.
+
 ## 1. No Supabase ✅ feito em 30/10/2026
 
 Supabase → projeto Endodirect → **Authentication** → **URL Configuration** →
@@ -185,6 +199,7 @@ app-ios/
 ├── ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
 │                           esquema compartilhado (o GitHub arquiva por ele)
 ├── www/                    só a página offline (o app abre o site)
+├── ios/App/QuestaoDoDia/   widget da Questão do Dia (WidgetKit)
 └── ios/App/                projeto do Xcode
 ```
 
