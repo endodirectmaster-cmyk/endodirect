@@ -13,7 +13,7 @@ atualizado: 2026-11-25
   - Backup `main-antes-aula4-essencial-hls-2026-11-25`; só o `src` mudou.
   - A checagem das 03:13 faz os tópicos dela.
 - [x] "Enable direct play" desligado também no Endocrinologia Essencial (conferido: 403 nas páginas de direct play das quatro bibliotecas).
-- Arquivos antigos dos Resumos no Storage do Supabase: só apagar com o "pode" do professor.
+- [x] Arquivos antigos dos Resumos no Storage do Supabase: apagados com o "pode" do professor (28 cópias, 686 MB). As próximas saem sozinhas na madrugada seguinte à troca.
 - O segredo de rede do ambiente (video.bunnycdn.com, chave dos Resumos) ficou sem uso; pode sair.
 
 ## 📱 App do iPhone 1.3: Resumos sem internet (17/11)

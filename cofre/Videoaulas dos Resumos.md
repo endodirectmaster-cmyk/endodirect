@@ -223,8 +223,9 @@ aluno) e foram para o Bunny Stream, como as aulas dos cursos.
 - **Troca no banco:** só os 26 `src`, com backup `main-antes-videos-bunny-2026-11-25`, guarda pelo
   `src` antigo e conferência: o payload sem os `src` é idêntico ao backup (títulos, capítulos,
   durações, datas e degustação intactos).
-- **Arquivos antigos** continuam no Storage do Supabase como reserva. Só saem com o "pode" do
-  professor.
+- **Arquivos antigos:** ficaram no Storage do Supabase como reserva até o "pode" do professor (25/11/2026,
+  à tarde): as 28 cópias de `resumos/videos/` (os 26 vídeos e 2 versões substituídas, 686 MB) foram apagadas
+  pela rota `apagar_storage`. Ver "Cópia no Supabase" abaixo.
 - **Vídeo novo:** a checagem diária das 03:13 (passo 0) acha o `src` que ainda aponta para
   `/storage/v1/object/public/` e repete o caminho acima antes de fazer os capítulos.
 - 🧨 Professor com o painel aberto durante a troca: F5 antes de editar um vídeo dos Resumos, senão
@@ -280,6 +281,24 @@ streaming]"*.
   - Encoding: Early-Play desligado, "Serve original files" desligado ("Keep original files" fica ligado),
     MP4 fallback desligado, Free Encoding (o Premium cobrava US$ 0,05/min e não usamos nada dele).
   - Depois: Purge com `https://<cdn>.b-cdn.net/*` na lista de URLs.
+
+### Cópia no Supabase: sai na madrugada seguinte à troca (25/11/2026)
+
+Professor: *"faz sentido também deixar no Supabase? [...] além de ter essa questão de segurança, também
+vai ocupar um espaço bem razoável no servidor"* → *"Pode"*. Os motivos:
+- o bucket é público: quem tem o link baixa o vídeo inteiro, sem a trava de domínio do Bunny;
+- o Bunny já guarda o original ("Keep original files").
+Como funciona:
+- **Rota `apagar_storage`** (`lib/bunny.js`):
+  - só caminhos de `resumos/videos/` ou `cursos/videos/` (vídeo, sem `..`);
+  - antes de apagar, `endodirect_storage_em_uso(path)` no banco (só o service role executa) confere que nenhum `src`
+    ainda aponta para o arquivo; o campo `path` antigo não conta como uso;
+  - se a conferência falhar, nada é apagado.
+- **Checagem das 03:13:**
+  - Na troca, grava `bunny.trocado`.
+  - Na madrugada seguinte (mais de 20 h depois), confere que o `.m3u8` toca, chama `apagar_storage` com o `path` do item e
+    grava `bunny.storageApagado`.
+  - Nunca apaga por SQL.
 
 ## Endocrinologia Essencial: "Nesta aula" (17–18/11/2026)
 
