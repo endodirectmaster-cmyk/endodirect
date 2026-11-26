@@ -121,5 +121,51 @@ ok('🧨 grava já no servidor (save imediato)', /return queueRemoteStateSave\(t
 ok('🧨 notificação só depois de gravado no servidor', /Promise\.resolve\(gravou\)\.then\(function\(salvo\)\{\s*if\(!salvo\)\{notify\(/.test(bind) && /return admSendPush\(\{title:/.test(bind));
 ok('excluir pede confirmação', /if\(!confirm\('Excluir o aviso "/.test(bind));
 
+// ── 6. Podcasts (26/11/2026) ────────────────────────────────────────────────────────────
+// Professor: "Suba no mural do dashboard quando tiver alguma atualização também de podcast."
+// 🧨 Modos de quebrar: episódio antigo voltar como novidade; quem não tem a aba Podcasts ver o aviso;
+// o botão do aviso não levar ao episódio.
+{
+  const ctxP = { Date, Math, String, Array, Number, Object, EMC_SLUG: 'emc', avisosAlunos: [], diretrizes: [], admCursos: [],
+    dirIsRascunho: () => false, dirTemaOf: () => 'Geral', verPodcast: true };
+  ctxP.canSeePanel = (id) => (id === 'podcast' ? ctxP.verPodcast : true);
+  ctxP.podcasts = [
+    { title: 'FD 111 - Episódio novo', area: 'Diabetes', at: AGORA - 2 * D, tipo: 'rss' },
+    { title: 'FD 110 - Esporte', area: 'Endocrinologia Esportiva', at: AGORA - 9 * D, tipo: 'rss' },
+    { title: 'FD 90 - Antigo', area: 'Tireoide', at: AGORA - 60 * D, tipo: 'rss' },
+    { title: 'Agendado no futuro', area: 'Diabetes', at: AGORA + 3 * D },
+    { title: '   ', area: 'Diabetes', at: AGORA - 1 * D },
+  ];
+  vm.createContext(ctxP);
+  vm.runInContext(decl + '\n' + ['avisoLinkSeguro', 'avisosDoMural'].map(corpo).join('\n'), ctxP);
+  const run = () => JSON.parse(vm.runInContext('JSON.stringify(avisosDoMural(' + AGORA + ').filter(function(a){return a.tipo==="podcast"}).map(function(a){return [a.titulo,a.texto,!!a.pod]}))', ctxP));
+  const pods = run();
+  ok('🧨 episódio de podcast dos últimos 30 dias entra no mural, mais novo em cima, com a área no texto — veio ' + JSON.stringify(pods),
+    JSON.stringify(pods) === JSON.stringify([['FD 111 - Episódio novo', 'Diabetes', true], ['FD 110 - Esporte', 'Endocrinologia do Esporte', true]]));
+  ok('🧨 episódio com mais de 30 dias, do futuro ou sem título não entra', pods.length === 2);
+  ctxP.verPodcast = false;
+  ok('🧨 quem não abre a aba Podcasts não vê o aviso do episódio', run().length === 0);
+  ok('tipo "podcast" com ícone 🎧 e nome "Podcast novo"', /podcast:\{ico:'🎧',nome:'Podcast novo'\}/.test(decl));
+  // O cartão do Dashboard, desenhado: ícone, nome do tipo, título do episódio e o botão "Ver →".
+  ctxP.verPodcast = true;
+  const caixa = { style: {}, innerHTML: '', querySelectorAll: () => [] };
+  Object.assign(ctxP, { esc: (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])),
+    acervoRefVisita: () => 0, document: { getElementById: (id) => (id === 'dash-avisos' ? caixa : null) } });
+  vm.runInContext(corpo('renderDashAvisos'), ctxP);
+  // Datas relativas a hoje (renderDashAvisos usa o relógio de verdade).
+  ctxP.podcasts = [{ title: 'FD 111 - Episódio novo', area: 'Diabetes', at: Date.now() - 2 * D, tipo: 'rss' }];
+  try { vm.runInContext('renderDashAvisos()', ctxP); } catch (e) { console.log('  (render) ' + e.message); }
+  ok('🧨 o Dashboard desenha o aviso do podcast com 🎧, "Podcast novo", o título e o botão "Ver →"',
+    /🎧/.test(caixa.innerHTML) && /Podcast novo/.test(caixa.innerHTML) && /FD 111 - Episódio novo/.test(caixa.innerHTML)
+    && /dav-abrir" data-aviso-abrir="0">Ver →/.test(caixa.innerHTML));
+}
+ok('🧨 o aviso do podcast tem botão "Ver →" e abre o episódio na aba Podcasts',
+  /a\.tipo==='podcast'/.test(corpo('renderDashAvisos')) && /if\(a\.tipo==='podcast'&&a\.pod\)\{podcastAbrirEpisodio\(a\.pod\);return;\}/.test(abrir));
+const abreEp = corpo('podcastAbrirEpisodio');
+ok('🧨 abrir o episódio filtra a área dele, vai à página certa, abre a aba e rola até o cartão',
+  /podFilter=podArea\(ep\);/.test(abreEp) && /podPagina=i>0&&podPor>0\?Math\.floor\(i\/podPor\):0;/.test(abreEp)
+  && /goPanel\('podcast'\);/.test(abreEp) && /\[data-pod-at="'\+\(\+ep\.at\|\|0\)\+'"\]/.test(abreEp)
+  && /'<div class="card pod-card" data-pod-at="'\+\(\+p\.at\|\|0\)\+'">/.test(html));
+
 if (bad) { console.log('✗ mural de avisos: ' + bad + ' falha(s)'); process.exit(1); }
-console.log('✓ mural de avisos: chega ao aluno, só o que vale (sem vencidos nem antigos), abre o que anuncia, e o professor escreve no painel');
+console.log('✓ mural de avisos: chega ao aluno, só o que vale (sem vencidos nem antigos), abre o que anuncia, e o professor escreve no painel; podcasts novos também');

@@ -1864,6 +1864,7 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
    (ícone à esquerda, texto recuado). No celular, o texto e o player ocupam a largura toda, a descrição longa vem
    recolhida com "Ler mais" e o "Siga/Acesse" sai (o aluno já está no Endodirect). */
 .pod-cab{display:flex;align-items:flex-start;gap:.8rem}
+.pod-card.pod-destaque{box-shadow:0 0 0 2px var(--gold);transition:box-shadow .3s}
 .pod-ico{width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
 .pod-tit{flex:1;min-width:0}
 .pod-nome{font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px}
@@ -13567,7 +13568,7 @@ var AVISOS_AUTO_DIAS=30,AVISOS_VISIVEIS=4,dashAvisosTodos=false,dashAvisosItens=
 var AVISO_TIPOS={
   aviso:{ico:'📢',nome:'Aviso'},edital:{ico:'📄',nome:'Edital'},prova:{ico:'📝',nome:'Prova'},
   video:{ico:'🎬',nome:'Videoaula nova'},emc:{ico:'🎓',nome:'Aula nova · Educação Médica Continuada'},
-  congresso:{ico:'📅',nome:'Congresso'}
+  congresso:{ico:'📅',nome:'Congresso'},podcast:{ico:'🎧',nome:'Podcast novo'}
 };
 function avisoLinkSeguro(u){u=String(u||'').trim();return /^https?:\/\/[^\s"'<>]+$/i.test(u)?u:'';}
 function avisosDoMural(agora){
@@ -13610,6 +13611,15 @@ function avisosDoMural(agora){
     var at=+c.at||0;if(at<limite||at>agora+60000)return;
     autos.push({tipo:'emc',titulo:String(c.title||'Aula nova'),texto:String(c.modulo||'').trim(),at:at,emcAt:at});
   });
+  // Podcasts (26/11/2026). Professor: "Suba no mural do dashboard quando tiver alguma atualização também de
+  // podcast." Cada episódio dos últimos 30 dias (pela data do episódio, a do feed), só para quem abre a aba Podcasts.
+  if(typeof canSeePanel!=='function'||canSeePanel('podcast')){
+    (typeof podcasts!=='undefined'&&Array.isArray(podcasts)?podcasts:[]).forEach(function(p){
+      var at=+((p&&p.at)||0);if(!p||!String(p.title||'').trim()||at<limite||at>agora+60000)return;
+      var area=p.area?String(p.area):'';
+      autos.push({tipo:'podcast',titulo:String(p.title),texto:area==='Endocrinologia Esportiva'?'Endocrinologia do Esporte':area,at:at,pod:p});
+    });
+  }
   // Congressos dos embaixadores (23/11/2026): depois dos avisos do professor, pela data do evento.
   var congs=(typeof congressosMural!=='undefined'&&Array.isArray(congressosMural)?congressosMural:[]).map(function(c){return congressoParaMural(c,agora);}).filter(Boolean)
     .sort(function(a,b){return String(a.inicio).localeCompare(String(b.inicio));});
@@ -13703,7 +13713,7 @@ function renderDashAvisos(){
   el.innerHTML='<div class="card dash-avisos"><div class="card-head"><span class="card-title">📌 Mural de avisos</span></div>'
     +'<div class="dav-lista">'+mostra.map(function(a,k){
       var t=AVISO_TIPOS[a.tipo]||AVISO_TIPOS.aviso,novo=ref&&a.at>ref;
-      var abre=!a.grupo&&(a.tipo==='video'||a.tipo==='emc'||!!a.link);
+      var abre=!a.grupo&&(a.tipo==='video'||a.tipo==='emc'||a.tipo==='podcast'||!!a.link);
       var data=a.quando||(a.at?new Date(a.at).toLocaleDateString('pt-BR'):'');
       return '<div class="dav-item'+(a.manual?' dav-manual':'')+'">'
         +'<span class="dav-ico" aria-hidden="true">'+t.ico+'</span>'
@@ -13730,6 +13740,7 @@ function avisoAbrir(a){
   if(!a)return;
   if(a.link){try{window.open(a.link,'_blank','noopener');}catch(e){}return;}
   if(a.tipo==='emc'){cursoLinkPendente={slug:EMC_SLUG,at:a.emcAt||0};goPanel('cursos');return;}
+  if(a.tipo==='podcast'&&a.pod){podcastAbrirEpisodio(a.pod);return;}
   if(a.tipo==='video'&&a.dir){
     var d=a.dir,priv=!!d.privado,painel=priv?'resu':'ref';
     goPanel(painel);
@@ -16198,6 +16209,21 @@ function podcastPlayerHTML(p){
 // Ordem das categorias de podcast; "Miscelânea" (não categorizados) sempre por último.
 var POD_ORDER=['Tireoide','Diabetes','Obesidade','Adrenal','Neuroendocrinologia','Osteometabolismo','Dislipidemia','Endocrinologia Pediátrica','Endocrinologia Esportiva','Endocrinologia Masculina','Endocrinologia Feminina','Transgeneridade'];
 function podArea(p){return (p&&p.area)?p.area:'Miscelânea';}
+// Abre a aba Podcasts no episódio (aviso do Mural, 26/11/2026): filtra a subespecialidade dele, vai à página
+// em que ele está e rola até o cartão, que pisca de leve.
+function podcastAbrirEpisodio(ep){
+  if(!ep)return;
+  podFilter=podArea(ep);
+  var lista=podcasts.filter(function(p){return podArea(p)===podFilter;}),i=lista.indexOf(ep);
+  if(i<0){var at=+ep.at||0;for(var k=0;k<lista.length;k++){if((+lista[k].at||0)===at&&lista[k].title===ep.title){i=k;break;}}}
+  podPagina=i>0&&podPor>0?Math.floor(i/podPor):0;
+  goPanel('podcast');
+  setTimeout(function(){
+    var c=document.querySelector('#pod-list [data-pod-at="'+(+ep.at||0)+'"]');if(!c)return;
+    try{c.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){c.scrollIntoView();}
+    c.classList.add('pod-destaque');setTimeout(function(){c.classList.remove('pod-destaque');},2400);
+  },80);
+}
 function podDataStr(p){var t=p&&Number(p.at);if(!t)return '';var d=new Date(t);return isNaN(d.getTime())?'':d.toLocaleDateString('pt-BR');}
 function renderPodcasts(){
   var frow=document.getElementById('pod-filter-row');
@@ -16219,7 +16245,7 @@ function renderPodcasts(){
   });}
   var _pg=listaPaginas(list.length,podPor,podPagina);podPagina=_pg.pagina;
   var _mostra=list.slice(podPagina*podPor,podPagina*podPor+podPor);
-  el.innerHTML=listaPorHTML('pod',podPor,list.length,list.length===1?'episódio':'episódios')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);var _pt=podDescPartes(p.desc),_longo=_pt.texto.join(' ').length>180;return'<div class="card pod-card"><div class="pod-cab"><div class="pod-ico">🎧</div><div class="pod-tit"><div class="pod-nome">'+esc(p.title)+'</div><div class="pod-meta"><span class="tag tag-blue" style="margin-right:5px">'+esc(rotuloSubesp(a))+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div></div></div><div class="pod-corpo'+(_longo?' pod-longo':'')+'"><div class="pod-texto">'+podDescCompletoHTML(p.desc)+'</div>'+(_longo?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais</button>':'')+podcastPlayerHTML(p)+'</div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
+  el.innerHTML=listaPorHTML('pod',podPor,list.length,list.length===1?'episódio':'episódios')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);var _pt=podDescPartes(p.desc),_longo=_pt.texto.join(' ').length>180;return'<div class="card pod-card" data-pod-at="'+(+p.at||0)+'"><div class="pod-cab"><div class="pod-ico">🎧</div><div class="pod-tit"><div class="pod-nome">'+esc(p.title)+'</div><div class="pod-meta"><span class="tag tag-blue" style="margin-right:5px">'+esc(rotuloSubesp(a))+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div></div></div><div class="pod-corpo'+(_longo?' pod-longo':'')+'"><div class="pod-texto">'+podDescCompletoHTML(p.desc)+'</div>'+(_longo?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais</button>':'')+podcastPlayerHTML(p)+'</div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
   qotdArchLigaPaginacao(el,'pod',function(n){podPor=n;lsSet('pod_por_pagina',n);podPagina=0;renderPodcasts();},function(d){podPagina+=d;renderPodcasts();});
 }
 // DESCRIÇÃO EM PARÁGRAFOS, JUSTIFICADA (14/11/2026). Print do professor na aba Podcasts:
