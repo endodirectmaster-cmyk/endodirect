@@ -13613,11 +13613,20 @@ function avisosDoMural(agora){
   });
   // Podcasts (26/11/2026). Professor: "Suba no mural do dashboard quando tiver alguma atualização também de
   // podcast." Cada episódio dos últimos 30 dias (pela data do episódio, a do feed), só para quem abre a aba Podcasts.
+  // No mesmo formato das videoaulas (professor, com print: "Deixa o podcast no mural em formato de botão também,
+  // como acontece com as aulas. Tirar esse ver"): "1 podcast novo", a área no texto e um botão ▶ por episódio;
+  // os do mesmo dia viram um aviso só.
   if(typeof canSeePanel!=='function'||canSeePanel('podcast')){
+    var podDia={};
     (typeof podcasts!=='undefined'&&Array.isArray(podcasts)?podcasts:[]).forEach(function(p){
       var at=+((p&&p.at)||0);if(!p||!String(p.title||'').trim()||at<limite||at>agora+60000)return;
-      var area=p.area?String(p.area):'';
-      autos.push({tipo:'podcast',titulo:String(p.title),texto:area==='Endocrinologia Esportiva'?'Endocrinologia do Esporte':area,at:at,pod:p});
+      var area=p.area?String(p.area):'',dt=new Date(at),dia=dt.getFullYear()+'-'+dt.getMonth()+'-'+dt.getDate();
+      (podDia[dia]=podDia[dia]||[]).push({tipo:'podcast',titulo:String(p.title),area:area==='Endocrinologia Esportiva'?'Endocrinologia do Esporte':area,at:at,pod:p});
+    });
+    Object.keys(podDia).forEach(function(dia){
+      var ps=podDia[dia].sort(function(a,b){return b.at-a.at;}),areas=[];
+      ps.forEach(function(p){if(p.area&&areas.indexOf(p.area)<0)areas.push(p.area);});
+      autos.push({tipo:'podcast',titulo:ps.length+(ps.length===1?' podcast novo':' podcasts novos'),texto:areas.join(' · '),at:ps[0].at,grupo:ps});
     });
   }
   // Congressos dos embaixadores (23/11/2026): depois dos avisos do professor, pela data do evento.
@@ -13713,7 +13722,7 @@ function renderDashAvisos(){
   el.innerHTML='<div class="card dash-avisos"><div class="card-head"><span class="card-title">📌 Mural de avisos</span></div>'
     +'<div class="dav-lista">'+mostra.map(function(a,k){
       var t=AVISO_TIPOS[a.tipo]||AVISO_TIPOS.aviso,novo=ref&&a.at>ref;
-      var abre=!a.grupo&&(a.tipo==='video'||a.tipo==='emc'||a.tipo==='podcast'||!!a.link);
+      var abre=!a.grupo&&(a.tipo==='video'||a.tipo==='emc'||!!a.link);
       var data=a.quando||(a.at?new Date(a.at).toLocaleDateString('pt-BR'):'');
       return '<div class="dav-item'+(a.manual?' dav-manual':'')+'">'
         +'<span class="dav-ico" aria-hidden="true">'+t.ico+'</span>'

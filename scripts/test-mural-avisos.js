@@ -131,6 +131,7 @@ ok('excluir pede confirmação', /if\(!confirm\('Excluir o aviso "/.test(bind));
   ctxP.canSeePanel = (id) => (id === 'podcast' ? ctxP.verPodcast : true);
   ctxP.podcasts = [
     { title: 'FD 111 - Episódio novo', area: 'Diabetes', at: AGORA - 2 * D, tipo: 'rss' },
+    { title: 'FD 111b - Mesmo dia', area: 'Tireoide', at: AGORA - 2 * D + 60000, tipo: 'rss' },
     { title: 'FD 110 - Esporte', area: 'Endocrinologia Esportiva', at: AGORA - 9 * D, tipo: 'rss' },
     { title: 'FD 90 - Antigo', area: 'Tireoide', at: AGORA - 60 * D, tipo: 'rss' },
     { title: 'Agendado no futuro', area: 'Diabetes', at: AGORA + 3 * D },
@@ -138,11 +139,13 @@ ok('excluir pede confirmação', /if\(!confirm\('Excluir o aviso "/.test(bind));
   ];
   vm.createContext(ctxP);
   vm.runInContext(decl + '\n' + ['avisoLinkSeguro', 'avisosDoMural'].map(corpo).join('\n'), ctxP);
-  const run = () => JSON.parse(vm.runInContext('JSON.stringify(avisosDoMural(' + AGORA + ').filter(function(a){return a.tipo==="podcast"}).map(function(a){return [a.titulo,a.texto,!!a.pod]}))', ctxP));
+  const run = () => JSON.parse(vm.runInContext('JSON.stringify(avisosDoMural(' + AGORA + ').filter(function(a){return a.tipo==="podcast"}).map(function(a){return [a.titulo,a.texto,(a.grupo||[]).map(function(p){return p.titulo+"|"+(p.tipo)+"|"+(!!p.pod)})]}))', ctxP));
   const pods = run();
-  ok('🧨 episódio de podcast dos últimos 30 dias entra no mural, mais novo em cima, com a área no texto — veio ' + JSON.stringify(pods),
-    JSON.stringify(pods) === JSON.stringify([['FD 111 - Episódio novo', 'Diabetes', true], ['FD 110 - Esporte', 'Endocrinologia do Esporte', true]]));
-  ok('🧨 episódio com mais de 30 dias, do futuro ou sem título não entra', pods.length === 2);
+  ok('🧨 podcast no formato das videoaulas: "N podcast(s) novo(s)", áreas no texto e um botão por episódio (mais novo primeiro); os do mesmo dia num aviso só — veio ' + JSON.stringify(pods),
+    JSON.stringify(pods) === JSON.stringify([
+      ['2 podcasts novos', 'Tireoide · Diabetes', ['FD 111b - Mesmo dia|podcast|true', 'FD 111 - Episódio novo|podcast|true']],
+      ['1 podcast novo', 'Endocrinologia do Esporte', ['FD 110 - Esporte|podcast|true']]]));
+  ok('🧨 episódio com mais de 30 dias, do futuro ou sem título não entra', pods.length === 2 && !JSON.stringify(pods).includes('Antigo') && !JSON.stringify(pods).includes('futuro'));
   ctxP.verPodcast = false;
   ok('🧨 quem não abre a aba Podcasts não vê o aviso do episódio', run().length === 0);
   ok('tipo "podcast" com ícone 🎧 e nome "Podcast novo"', /podcast:\{ico:'🎧',nome:'Podcast novo'\}/.test(decl));
@@ -155,12 +158,12 @@ ok('excluir pede confirmação', /if\(!confirm\('Excluir o aviso "/.test(bind));
   // Datas relativas a hoje (renderDashAvisos usa o relógio de verdade).
   ctxP.podcasts = [{ title: 'FD 111 - Episódio novo', area: 'Diabetes', at: Date.now() - 2 * D, tipo: 'rss' }];
   try { vm.runInContext('renderDashAvisos()', ctxP); } catch (e) { console.log('  (render) ' + e.message); }
-  ok('🧨 o Dashboard desenha o aviso do podcast com 🎧, "Podcast novo", o título e o botão "Ver →"',
-    /🎧/.test(caixa.innerHTML) && /Podcast novo/.test(caixa.innerHTML) && /FD 111 - Episódio novo/.test(caixa.innerHTML)
-    && /dav-abrir" data-aviso-abrir="0">Ver →/.test(caixa.innerHTML));
+  ok('🧨 o Dashboard desenha o aviso do podcast com 🎧, "Podcast novo" e o episódio num botão ▶ (sem "Ver →")',
+    /🎧/.test(caixa.innerHTML) && /Podcast novo/.test(caixa.innerHTML) && /1 podcast novo/.test(caixa.innerHTML)
+    && /class="dav-video" data-aviso-abrir="0:0"><span class="dav-video-play" aria-hidden="true">▶<\/span><span><b>FD 111 - Episódio novo<\/b>/.test(caixa.innerHTML)
+    && !/Ver →/.test(caixa.innerHTML));
 }
-ok('🧨 o aviso do podcast tem botão "Ver →" e abre o episódio na aba Podcasts',
-  /a\.tipo==='podcast'/.test(corpo('renderDashAvisos')) && /if\(a\.tipo==='podcast'&&a\.pod\)\{podcastAbrirEpisodio\(a\.pod\);return;\}/.test(abrir));
+ok('🧨 o botão do episódio abre o episódio na aba Podcasts', /if\(a\.tipo==='podcast'&&a\.pod\)\{podcastAbrirEpisodio\(a\.pod\);return;\}/.test(abrir));
 const abreEp = corpo('podcastAbrirEpisodio');
 ok('🧨 abrir o episódio filtra a área dele, vai à página certa, abre a aba e rola até o cartão',
   /podFilter=podArea\(ep\);/.test(abreEp) && /podPagina=i>0&&podPor>0\?Math\.floor\(i\/podPor\):0;/.test(abreEp)
