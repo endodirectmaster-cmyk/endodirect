@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-25
+atualizado: 2026-11-26
 ---
 
 # Decisões
@@ -8,6 +8,7 @@ atualizado: 2026-11-25
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **⏰ SESSÃO: 48 HORAS SEM USO (2026-11-26, v498; professor: *"Deixa login ativo da plataforma por 48h"*).** `SESSION_IDLE_MS` de 12 h para 48 h; a janela "Você está sem usar a plataforma há 48 horas… Deseja permanecer conectado?" continua, com 60 s para responder. O relógio só corre com a plataforma aberta; fechar e reabrir não derruba a sessão (o Supabase guarda o login). `test-sessao-inativa.js` ajustado (47 h 59 min não abre; 48 h abre).
 - **📱 APP DO IPHONE 1.4: GRAVAÇÃO DE TELA, ÁUDIO COM A TELA BLOQUEADA E WIDGET (2026-11-25, v497).** Professor, depois de eu propor três novidades para o app: *"Faz os 3"*.
   - Gravação de tela pausa e esconde a videoaula; print e gravação nas telas de conteúdo entram no painel de contas suspeitas (2 pontos cada). O iOS não deixa impedir o print, só saber dele.
   - O registro fica numa tabela própria (`endodirect_capturas`, sem acesso direto; só a RPC, até 30 por dia) e sai com a exclusão da conta. A política de privacidade ganhou o item.
