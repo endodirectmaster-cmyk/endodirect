@@ -8,6 +8,7 @@ atualizado: 2026-11-26
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎧 PODCAST NOVO NO MURAL DE AVISOS DO DASHBOARD (2026-11-26, v499; professor: *"Suba no mural do dashboard quando tiver alguma atualização também de podcast"*).** `avisosDoMural` passa a incluir cada episódio dos últimos 30 dias (pela data do episódio no feed, `at`), com 🎧 "Podcast novo", o título e a subespecialidade, só para quem abre a aba Podcasts (`canSeePanel('podcast')`). O botão "Ver →" chama `podcastAbrirEpisodio`: filtra a subespecialidade do episódio, vai à página em que ele está, abre a aba e rola até o cartão, que pisca em dourado. Teste em `scripts/test-mural-avisos.js` (seção 6, com o cartão desenhado).
 - **⏰ SESSÃO: 48 HORAS SEM USO (2026-11-26, v498; professor: *"Deixa login ativo da plataforma por 48h"*).** `SESSION_IDLE_MS` de 12 h para 48 h; a janela "Você está sem usar a plataforma há 48 horas… Deseja permanecer conectado?" continua, com 60 s para responder. O relógio só corre com a plataforma aberta; fechar e reabrir não derruba a sessão (o Supabase guarda o login). `test-sessao-inativa.js` ajustado (47 h 59 min não abre; 48 h abre).
 - **📱 APP DO IPHONE 1.4: GRAVAÇÃO DE TELA, ÁUDIO COM A TELA BLOQUEADA E WIDGET (2026-11-25, v497).** Professor, depois de eu propor três novidades para o app: *"Faz os 3"*.
   - Gravação de tela pausa e esconde a videoaula; print e gravação nas telas de conteúdo entram no painel de contas suspeitas (2 pontos cada). O iOS não deixa impedir o print, só saber dele.
