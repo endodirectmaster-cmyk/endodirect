@@ -119,6 +119,15 @@ ok(/var painel=refPrivadoMode\?'resu':'ref';/.test(corpo('grifoSelecao')) && /do
 ok(/data-grifo-modo="sub" aria-pressed=/.test(corpo('grifoModal')) && /grifoRepinta\(g\)/.test(corpo('grifoModal')), 'a janela do grifo troca a cor e o estilo de um grifo que já existe');
 ok(/:root mark\.grifo\.g-sub,:root\[data-theme\] mark\.grifo\.g-sub\{background:transparent;/.test(html) && /mark\.grifo\.g-vermelho\{--gc:248,113,113\}/.test(html) && /:root\[data-theme="dark"\] mark\.grifo\{background:rgba\(var\(--gc\),\.3\)\}/.test(html),
   '🧨 CSS: cores via --gc (o tema escuro não pode forçar o amarelo) e o sublinhado sem fundo');
+// 8) O 🖍 AO LADO DA ESTRELA (27/11/2026): avisa que dá para grifar, sem depender de o aluno selecionar por acaso
+const card2 = corpo('dirCardHTML');
+ok(/var _grifoBtn=\(refFormat==='resumo'\)\?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">🖍<\/button>':'';/.test(card2)
+  && /'<span class="dir-card-acoes">'\+_grifoBtn\+favStarHTML\('resumo',d\)\+'<\/span>'/.test(card2), '🧨 o 🖍 tem de ficar ao lado da estrela no texto do capítulo (Resumos e Diretrizes)');
+ok(/var gd=e\.target&&e\.target\.closest\?e\.target\.closest\('\[data-grifo-dica\]'\):null;\s*if\(gd\)\{grifoDicaAbre\(\);return;\}/.test(corpo('grifosInit')), 'o 🖍 abre a barra com a dica');
+ok(/b\.classList\.add\('on','dica'\)/.test(corpo('grifoDicaAbre')) && /Selecione um trecho do texto e toque numa cor para grifar ou sublinhar\./.test(corpo('grifoBarra')), 'a dica explica o que fazer');
+ok(/if\(!b\.classList\.contains\('dica'\)\)b\.classList\.remove\('on'\);return;/.test(corpo('grifoSelecao')) && /b\.classList\.remove\('dica'\);\s*b\.classList\.add\('on'\);/.test(corpo('grifoSelecao')),
+  '🧨 com a dica aberta, a barra não some antes de o aluno selecionar; ao selecionar, vira a barra normal');
+ok(/grifoDicaFecha\(\)/.test(corpo('goPanel')) && /classList\.remove\('on','dica'\)/.test(corpo('grifoCria')), 'a dica fecha ao trocar de tela e depois de marcar');
 run('DB.grifos=[]');
 ok(run('grifosNotasItemHTML()') === '', 'sem grifos, nada na lista de Notas');
 

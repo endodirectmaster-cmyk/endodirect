@@ -8,6 +8,9 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **💧 MARCA D'ÁGUA MAIS ESPAÇADA + 🖍 AO LADO DA ESTRELA (2026-11-27, v506; professor, com prints: *"Diminui um pouco as marcas d'água que ficaram muito frequentes nos resumos"* e *"a seleção de texto só aparece se o aluno, por acaso, selecionar [...] O ideal é que [...] aparecesse também ali no canto superior direito, próximo da estrelinha"*).**
+  - Marca d'água dos Resumos: uma a cada **760×560 px** (antes 520×380; em 18/11 já tinha saído de 420×230), cerca de metade. Mesmo texto, cor e inclinação; a tela de um celular ainda mostra ao menos uma.
+  - No canto do cartão do capítulo (Resumos e Diretrizes), um **🖍 ao lado da ☆**: abre a barra de cores com a dica "Selecione um trecho do texto e toque numa cor para grifar ou sublinhar." A cor e o modo escolhidos ali valem para o próximo trecho; a dica some ao selecionar (vira a barra normal), no ✕, depois de marcar ou ao trocar de tela.
 - **🗂️ RESUMOS: NOVA ORGANIZAÇÃO (2026-11-27, v505; professor, depois da prévia: *"Aceito todas as sugestões, exceto [...] o tempo total de leitura, por exemplo, onde tem cerca de 2 horas e 15 minutos de leitura. Pode retirar essa informação. O restante, aceito"*).** Prévia: artifact "Resumos: nova organização" (canvas com computador, celular e subespecialidades).
   - **Capítulos** (aluno e painel do professor): número na ordem que o professor define (01, 02…); no cartão, os minutos de leitura (200 palavras/min) e as videoaulas; o 📄 e o "1 resumo" saíram. No topo: "15 capítulos · 8 com videoaula · Todos com mapa mental e flashcards" (quando nem todos têm, diz quantos). **Sem o tempo total**, a pedido. Artigos e Diretrizes ficaram como estavam.
   - **4 colunas** no computador (3 até 1180 px, 2 até 900 px) e **lista no celular** (número, título, minutos, estado).

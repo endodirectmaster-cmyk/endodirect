@@ -2147,6 +2147,16 @@ mark.grifo.grifo-pisca{outline:2px solid var(--gold);outline-offset:2px}
 .grifo-barra .grifo-modo{padding:.5rem .7rem;min-width:40px}
 .grifo-barra .grifo-modo[aria-pressed="true"]{background:#fff;color:#14203a}
 .grifo-barra .grifo-modo-u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.grifo-dica-txt{display:none}
+.grifo-barra.dica{flex-wrap:wrap;justify-content:center;border-radius:18px}
+.grifo-barra.dica .grifo-dica-txt{display:block;flex-basis:100%;text-align:center;color:#fff;font-size:.78rem;line-height:1.4;padding:.25rem .5rem .15rem}
+.grifo-barra.dica [data-grifar="nota"]{display:none}
+.dir-card-acoes{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:.1rem}
+.grifo-dica-btn{background:none;border:0;cursor:pointer;font-size:1rem;line-height:1;padding:.2rem .3rem;border-radius:8px;opacity:.85}
+.grifo-dica-btn:hover{background:var(--s2);opacity:1}
+.grifo-dica-btn:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.dir-card.dir-com-grifo .dir-card-top{padding-right:4.6rem}
+.dir-card.dir-com-grifo .dir-texto>:first-child{padding-right:3.8rem}
 .grifo-cores{display:flex;gap:6px;padding:0 4px}
 .grifo-barra .grifo-cor,.grifo-caixa .grifo-cor{width:30px;height:30px;min-width:30px;padding:0;border-radius:999px;border:2px solid rgba(255,255,255,.55);cursor:pointer;background:rgb(var(--gc))}
 .grifo-caixa .grifo-cor{border-color:var(--bd2)}
@@ -13450,6 +13460,7 @@ function renderAoVivo(){
   if(ba)ba.addEventListener('click',function(){try{goPanel('plano');}catch(e){location.hash='#planos';}});
 }
 function goPanel(id){
+  try{if(typeof grifoDicaFecha==='function')grifoDicaFecha();}catch(e){} // a dica do 🖍 não acompanha para outra tela
   // Aula ao vivo desligada (ver AO_VIVO_ATIVO): desvia ANTES de qualquer coisa,
   // senão o painel morto ainda seria gravado como `last_panel` e o aluno voltaria
   // nele a cada reload, só para ser desviado de novo.
@@ -18739,7 +18750,8 @@ function grifoBarra(){
   var b=document.getElementById('grifo-barra');if(b)return b;
   b=document.createElement('div');b.id='grifo-barra';b.className='grifo-barra';
   // Grifar ou sublinhar, as 5 cores (tocar numa cor já marca o trecho), anotar e fechar.
-  b.innerHTML='<button type="button" class="grifo-modo" data-grifo-modo="grifo" aria-label="Grifar" title="Grifar" aria-pressed="true">🖍</button>'
+  b.innerHTML='<span class="grifo-dica-txt">Selecione um trecho do texto e toque numa cor para grifar ou sublinhar.</span>'
+    +'<button type="button" class="grifo-modo" data-grifo-modo="grifo" aria-label="Grifar" title="Grifar" aria-pressed="true">🖍</button>'
     +'<button type="button" class="grifo-modo grifo-modo-u" data-grifo-modo="sub" aria-label="Sublinhar" title="Sublinhar" aria-pressed="false">U</button>'
     +grifoCoresHTML(grifoPref().cor)
     +'<button type="button" data-grifar="nota" aria-label="Marcar e anotar" title="Marcar e anotar">📝</button><button type="button" data-grifar="x" aria-label="Fechar">✕</button>';
@@ -18752,11 +18764,15 @@ function grifoBarra(){
     if(cr){var p1=grifoPref();grifoPrefSalva(cr.getAttribute('data-grifo-cor'),p1.estilo);grifoBarraPinta(b);grifoCria(false);return;}
     var t=e.target.closest?e.target.closest('[data-grifar]'):null;if(!t)return;
     var q=t.getAttribute('data-grifar');
-    if(q==='x'){grifoSel=null;b.classList.remove('on');try{window.getSelection().removeAllRanges();}catch(er){}return;}
+    if(q==='x'){grifoSel=null;b.classList.remove('on','dica');try{window.getSelection().removeAllRanges();}catch(er){}return;}
     grifoCria(q==='nota');
   });
   document.body.appendChild(b);return b;
 }
+// O 🖍 do cartão: mostra a barra com a dica, mesmo sem nada selecionado. As cores e o modo já valem para
+// o próximo trecho; a dica some ao selecionar, no ✕ ou ao trocar de tela.
+function grifoDicaAbre(){var b=grifoBarra();grifoBarraPinta(b);b.classList.add('on','dica');}
+function grifoDicaFecha(){var b=document.getElementById('grifo-barra');if(b&&b.classList.contains('dica')){b.classList.remove('dica');if(!grifoSel)b.classList.remove('on');}}
 function grifoSelecao(){
   var s=null;try{s=window.getSelection();}catch(e){}
   var b=grifoBarra();
@@ -18767,9 +18783,10 @@ function grifoSelecao(){
   var painel=refPrivadoMode?'resu':'ref';
   var a=el(s.anchorNode),f=el(s.focusNode),root=document.getElementById(painel==='resu'?'resu-body':'ref-body');
   var dentro=function(x){return x&&root&&root.contains(x)&&x.closest&&x.closest('.dir-texto,.dir-pts')&&!x.closest('.wys-edit');};
-  if(!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;b.classList.remove('on');return;}
+  if(!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;if(!b.classList.contains('dica'))b.classList.remove('on');return;}
   grifoSel={txt:txt,sub:refSubSel,tipo:refTipoSel,tema:refTemaSel,painel:painel};
   grifoBarraPinta(b);
+  b.classList.remove('dica');
   b.classList.add('on');
 }
 function grifoCria(comNota){
@@ -18778,7 +18795,7 @@ function grifoCria(comNota){
   var g={id:'g'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),sub:s.sub,tipo:s.tipo,tema:s.tema,txt:s.txt.slice(0,800),nota:'',at:Date.now(),
     cor:pf.cor,estilo:pf.estilo,painel:s.painel==='ref'?'ref':'resu'};
   grifosLista().push(g);persist();
-  grifoSel=null;grifoBarra().classList.remove('on');
+  grifoSel=null;grifoBarra().classList.remove('on','dica');
   try{window.getSelection().removeAllRanges();}catch(e){}
   var root=document.getElementById(g.painel==='ref'?'ref-body':'resu-body');
   if(root){var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id,g))break;}}
@@ -18845,8 +18862,10 @@ function grifosInit(){
   if(grifosLigado)return;grifosLigado=true;
   var t=null;
   document.addEventListener('selectionchange',function(){clearTimeout(t);t=setTimeout(grifoSelecao,220);});
-  // Tocar num trecho grifado abre a nota (só na leitura, nunca no editor).
+  // Tocar num trecho grifado abre a nota (só na leitura, nunca no editor). O 🖍 do cartão abre a barra com a dica.
   document.addEventListener('click',function(e){
+    var gd=e.target&&e.target.closest?e.target.closest('[data-grifo-dica]'):null;
+    if(gd){grifoDicaAbre();return;}
     var mk=e.target&&e.target.closest?e.target.closest('mark.grifo'):null;
     if(!mk||mk.closest('.wys-edit'))return;
     var s=null;try{s=window.getSelection();}catch(er){}
@@ -18917,10 +18936,12 @@ function marcaTexto(){
 function marcaSvgURL(t){
   var x=String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   // Menos repetições (professor, 18/11: "Deixa menos marca d'água aparecendo na tela"): uma marca a cada
-  // 520×380 px (antes 420×230). O texto fica na parte esquerda do ladrilho para caber inteiro
-  // num cartão de celular (~360 px).
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="520" height="380">'
-    +'<text x="210" y="190" text-anchor="middle" transform="rotate(-24 210 190)" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#7d8899" fill-opacity="0.2">'+x+'</text></svg>';
+  // 520×380 px (antes 420×230). De novo em 27/11 ("Diminui um pouco as marcas d'água que ficaram muito
+  // frequentes nos resumos"): uma a cada 760×560 px, cerca de metade das marcas. O texto fica na parte
+  // esquerda do ladrilho para caber inteiro num cartão de celular (~360 px), e uma tela de celular ainda
+  // mostra ao menos uma marca.
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="760" height="560">'
+    +'<text x="210" y="280" text-anchor="middle" transform="rotate(-24 210 280)" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#7d8899" fill-opacity="0.2">'+x+'</text></svg>';
   return 'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
 }
 function marcaAplicar(){
@@ -20883,8 +20904,12 @@ function dirCardHTML(d,i){
   // A estrela flutua no canto superior direito do card: o cabecalho de fonte e
   // opcional (some nos resumos privados), entao ancorar nele deixaria metade dos
   // cards sem favorito.
-  return '<div class="dir-card'+(refPrivadoMode?' dir-marca':'')+'" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
-    +'<span style="position:absolute;top:.7rem;right:.8rem">'+favStarHTML('resumo',d)+'</span>'
+  // 🖍 ao lado da estrela (professor, 27/11/2026: "a seleção de texto só aparece se o aluno, por acaso,
+  // selecionar [...] O ideal é que [...] aparecesse também ali no canto superior direito, próximo da
+  // estrelinha, para ele saber que existe essa opção de grifar"): abre a barra de cores com a dica.
+  var _grifoBtn=(refFormat==='resumo')?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">🖍</button>':'';
+  return '<div class="dir-card'+(refPrivadoMode?' dir-marca':'')+(_grifoBtn?' dir-com-grifo':'')+'" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
+    +'<span class="dir-card-acoes">'+_grifoBtn+favStarHTML('resumo',d)+'</span>'
     +head+body+'</div>';
 }
 // Editor WYSIWYG do resumo — edição DIRETA no texto formatado, na própria tela.

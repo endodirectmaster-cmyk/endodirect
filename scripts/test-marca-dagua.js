@@ -58,7 +58,7 @@ const svg = decodeURIComponent(url.replace(/^url\("data:image\/svg\+xml;charset=
 ok(/^url\("data:image\/svg\+xml;charset=utf-8,/.test(url) && !/["']/.test(url.slice(5, -2)), 'marca não é uma URL de imagem segura para o CSS: ' + url.slice(0, 80));
 ok(/Ana &lt;b&gt;Lima&lt;\/b&gt; &amp; Cia · ana@x\.y/.test(svg) && !/<b>/.test(svg), 'nome com < & > tem de ser escapado no SVG');
 ok(/fill-opacity="0\.2"/.test(svg) && /rotate\(-24/.test(svg), 'marca clara e em diagonal');
-ok(/width="520" height="380"/.test(svg), 'marca espaçada (uma a cada 520×380 px): o professor pediu menos marca na tela');
+ok(/width="760" height="560"/.test(svg), 'marca espaçada (uma a cada 760×560 px): o professor pediu menos marca na tela (18/11 e de novo 27/11)');
 run('marcaAplicar()');
 ok(doc.body.style.getPropertyValue('--marca-aluno').indexOf('data:image/svg+xml') >= 0, 'marcaAplicar não pôs a marca no body (--marca-aluno)');
 
@@ -238,7 +238,7 @@ doc.body.appendChild(nova);
   ok(/marcaIniciar\(\)/.test(corpo('startApp')), 'a marca não liga ao entrar (startApp)');
   ok(/document\.addEventListener\('fullscreenchange',marcaFsTroca\);document\.addEventListener\('webkitfullscreenchange',marcaFsTroca\);/.test(corpo('marcaIniciar')), 'a tela cheia nativa do vídeo não é vigiada');
   ok(/marcaParar\(\)/.test(corpo('doLogout')), 'a marca não sai no "Sair" (doLogout)');
-  ok(/'<div class="dir-card'\+\(refPrivadoMode\?' dir-marca':''\)\+'" style="position:relative"/.test(corpo('dirCardHTML')), 'capítulo dos Resumos sem a classe dir-marca');
+  ok(/'<div class="dir-card'\+\(refPrivadoMode\?' dir-marca':''\)\+/.test(corpo('dirCardHTML')), 'capítulo dos Resumos sem a classe dir-marca');
   ok(/marcaAplicar\(\);/.test(corpo('resuPosRender')), 'a tela dos Resumos não reaplica a marca');
   ok(/ov\.className='lb-marca';/.test(corpo('ensureLightbox')), 'figura ampliada sem a marca');
   ok(/var MARCA_VIDEO_SEL='video,iframe\[src\*="vimeo\.com"\],iframe\[src\*="youtube\.com"\],iframe\[src\*="mediadelivery\.net"\]';/.test(html), 'a marca precisa cobrir vídeo próprio, Bunny, Vimeo e YouTube');
