@@ -8,6 +8,11 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🖍 GRIFO CONTÍNUO (2026-11-27, v509; professor: *"tem como deixar o grifo de modo contínuo [...] ao selecionar determinado trecho da frase, já fazer o grifo"*).**
+  - O 🖍 ao lado da estrela agora liga e desliga o grifo contínuo (o botão fica aceso em amarelo). Ligado, a barra fica aberta com a explicação, as 5 cores e grifar/sublinhar, e cada trecho selecionado vira grifo sem tocar na cor. Desliga no ✕, no próprio 🖍 ou ao trocar de tela. Desligado, continua o jeito de antes (selecionar e tocar na cor).
+  - Quando grifa: no mouse, ao soltar o botão (nunca enquanto ainda está apertado); no toque e no teclado, quando a seleção fica parada 0,9 s, porque as alças de seleção do celular não avisam quando terminam.
+  - O começo e o fim vão até a palavra inteira (`grifoAjustaPalavras`), só depois de soltar.
+  - Substitui a "dica" do 🖍 (v506): o texto da barra explica o modo e cita a aba Notas.
 - **💊 MURAL: NOME DE FÁRMACO EM PORTUGUÊS (2026-11-27; professor, com print do card "Coprescrição de topiramato com semaglutida": *"Saiu 'topiramate' ao invés de 'topiramato'"*).**
   - Causa: o resumo sai do abstract em inglês e a IA manteve a forma inglesa do nome.
   - Agora: o prompt do radar (artigos, RSS e informes), das notícias e da discussão pede a forma em português (DCB), e `lib/farmacos-pt.js` confere a saída. Ela troca pelo dicionário e pelos radicais regulares (-gliflozina, -gliptina, -glitazona, -vastatina, -glutida/-dutida/-lintida..., -tinibe, -dronato) e acerta o artigo quando o nome fica feminino ("do retatrutide" → "da retatrutida").
