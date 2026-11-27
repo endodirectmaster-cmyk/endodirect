@@ -79,6 +79,25 @@ const marks = box.querySelectorAll('mark.grifo[data-grifo="g1"]');
 ok(marks.length >= 3 && [...marks].map((m) => m.textContent).join('').replace(/\s+/g, '') === 'T4livrenormaldefineohipotireoidismo', 'o grifo não embrulhou exatamente o trecho: ' + box.innerHTML);
 ok(box.textContent === 'O TSH entre 4,5 e 10 mUI/L com T4 livre normal define ohipotireoidismo subclínico.', 'grifar alterou o texto do capítulo: ' + box.textContent);
 ok(run('grifoMarca(document.querySelector(".dir-texto"),"trecho que não existe","g2")') === false, 'trecho inexistente não pode virar grifo');
+// 3b) GRIFO SOBRE GRIFO (27/11/2026, "sobreposição de cores nos textos. Não é para acontecer isso"): nunca um
+// <mark> dentro de outro; onde os dois se cruzam vale só o mais novo, e o texto não muda.
+const box2 = doc.createElement('div');
+box2.className = 'dir-pts';
+box2.innerHTML = '<p>Alpha beta gamma delta epsilon</p>';
+doc.body.appendChild(box2);
+run('grifoMarca(document.querySelector(".dir-pts"),"beta gamma delta","v1",{cor:"amarelo"})');
+run('grifoMarca(document.querySelector(".dir-pts"),"gamma","v2",{cor:"verde"})');
+ok(!box2.querySelector('mark mark'), '🧨 grifo dentro de grifo (as cores se somam na tela): ' + box2.innerHTML);
+ok([...box2.querySelectorAll('mark')].map((m) => m.getAttribute('data-grifo') + ':' + m.textContent).join('|') === 'v1:beta |v2:gamma|v1: delta', 'o trecho em comum tem de ficar só com o grifo novo, e o antigo continua antes e depois: ' + box2.innerHTML);
+ok(box2.textContent === 'Alpha beta gamma delta epsilon', 'grifar por cima alterou o texto: ' + box2.textContent);
+run('grifoMarca(document.querySelector(".dir-pts"),"Alpha beta gamma delta","v3",{cor:"azul"})');
+ok(!box2.querySelector('mark mark') && !box2.querySelector('mark[data-grifo="v1"],mark[data-grifo="v2"]') && box2.querySelectorAll('mark[data-grifo="v3"]').length >= 1 && box2.textContent === 'Alpha beta gamma delta epsilon', 'um grifo que cobre os antigos por inteiro tem de ficar sozinho: ' + box2.innerHTML);
+ok(![...box2.querySelectorAll('mark')].some((m) => !m.textContent), 'sobrou <mark> vazio: ' + box2.innerHTML);
+box2.remove();
+const cria = corpo('grifoCria');
+ok(!/notify\(/.test(cria), '🧨 o aviso verde "Trecho grifado..." não aparece mais a cada grifo (professor, 27/11/2026)');
+ok(/cobertos=Object\.keys\(antes\)\.filter/.test(cria) && /!String\(x\.nota\|\|''\)\.trim\(\)/.test(cria), 'o grifo antigo coberto por inteiro sai da lista (menos o que tem nota)');
+ok(/Os grifos ficam reunidos na aba Notas\./.test(corpo('grifoBarra')), 'a dica do 🖍 diz que os grifos ficam na aba Notas');
 // 4) remover desfaz a marca sem mexer no texto
 run('DB.grifos=[{id:"g1",sub:"Tireoide",tipo:"capitulo",tema:"Hipotireoidismo",txt:"T4 livre normal",nota:"",at:2}];grifoRemove("g1")');
 ok(!box.querySelector('mark.grifo') && run('DB.grifos.length') === 0 && box.textContent.indexOf('T4 livre normal') > 0, 'remover o grifo não desfez a marca');
