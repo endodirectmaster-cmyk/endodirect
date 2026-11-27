@@ -1018,6 +1018,10 @@ textarea{resize:vertical;line-height:1.6}
 .sf-revisa:not(:empty){margin-top:.5rem}
 .sf-comparar{margin:.65rem auto 0;max-width:30rem;font-size:.86rem;line-height:1.5;color:var(--tx);background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:.45rem 1rem}
 .sf-comparar b{color:var(--gold)}
+.pf-lb-liga{display:flex;align-items:center;gap:.45rem;font-size:.84rem;font-weight:600;margin-bottom:.6rem;cursor:pointer}
+.pf-lb-linha{display:flex;gap:.6rem 1rem;flex-wrap:wrap;margin-bottom:.8rem;font-size:.8rem;color:var(--t2)}
+.pf-lb-linha select{margin-left:.35rem;font-size:16px}
+.pf-lb-push{font-size:.76rem;color:var(--gold);line-height:1.5;margin:0 0 .8rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
 .sf-comparar span{display:block;font-size:.68rem;color:var(--t3);margin-top:.1rem}
 .q-fb.ok{background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
@@ -11475,10 +11479,10 @@ function isAuthCallbackUrl(){
 // perfil já no cartão de exclusão. Não é painel do menu.
 // `#cursos/<curso>-<at>` vem da notificação de aula nova da Educação Médica Continuada
 // (07/11/2026): abre o curso já na subespecialidade da aula (ver cursoLinkPendente).
-var LINK_PAINEIS={qotd:1,mural:1,aovivo:1,'excluir-conta':1,cursos:1};
+var LINK_PAINEIS={qotd:1,mural:1,aovivo:1,'excluir-conta':1,cursos:1,quest:1}; // quest: lembrete diário de estudo (27/11/2026)
 var LINK_PAINEL_KEY='endo_link_painel';
 function lerLinkDoEndereco(){
-  var m=/^#(qotd|mural|aovivo|excluir-conta|cursos)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
+  var m=/^#(qotd|mural|aovivo|excluir-conta|cursos|quest)(?:\/([A-Za-z0-9_-]{1,80}))?$/.exec(String(window.location.hash||''));
   return m?{p:m[1],arg:m[2]||''}:null;
 }
 function guardarLinkPainel(){
@@ -28791,10 +28795,11 @@ function renderPerfil(){
     +'</div>'+(podeExcluirConta()?excluirContaCardHTML():'')+'</div>';
   body.innerHTML='<div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.6rem"><div><h1>Meu perfil</h1></div>'+(perfilEdit?'':'<button class="btn btn-primary" id="btn-perfil-edit">✏️ Editar perfil</button>')+'</div>'
     +'<div class="card" style="margin-bottom:1rem"><div style="display:flex;align-items:center;gap:1rem"><div class="tb-avatar" style="width:58px;height:58px;font-size:1.3rem;background:var(--navy);border-radius:14px">'+esc(nome.charAt(0))+'</div><div style="flex:1"><div style="font-size:1.3rem;font-weight:800">'+esc(nome)+'</div><div style="font-size:.8rem;color:var(--t2)">'+esc(label)+'</div>'+(meuEmbaixador?'<div style="margin-top:.35rem"><span class="tag" style="background:rgba(234,179,8,.15);color:#eab308;font-weight:700">🏅 Embaixador Endodirect</span></div>':'')+'<div style="margin-top:.4rem"><span class="tag tag-blue">'+esc(email)+'</span></div></div></div></div>'
-    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"></div>'+assinaturaCard+qdCard+nlCard
+    +inner+(perfilEdit?'':themeCardHTML()+'<div id="perfil-faceid" style="display:none;margin-top:1rem"></div>'+'<div id="perfil-aparelhos" style="display:none;margin-top:1rem"></div>'+assinaturaCard+lembreteCardHTML()+qdCard+nlCard
       // Feedback espontâneo também no Perfil (17/11/2026; saiu do topo). O convite automático (+30 dias) segue.
       +'<div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-title">💬 Sua opinião</span></div><p style="font-size:.78rem;color:var(--t2);margin:0 0 .7rem">Elogios, sugestões e críticas sobre a plataforma vão direto ao professor.</p><button type="button" class="btn btn-outline btn-sm" id="perfil-feedback">Enviar feedback</button></div>');
   wirePerfil();
+  try{lembreteLigar();}catch(e){}
   try{faceIdPerfilRender();}catch(e){}
   try{aparelhosPerfilRender();}catch(e){}
   // Vindo da página pública /excluir-conta (link #excluir-conta): rola até o cartão.
@@ -28820,6 +28825,50 @@ function renderPerfil(){
 // de demonstração local não tem o que apagar no servidor.
 var perfilRolarExclusao=false;
 var perfilRolarQotd=false;
+// ── LEMBRETE DIÁRIO DE ESTUDO (27/11/2026) ──────────────────────────────────────
+// Professor, da lista de sugestões: "Faz a 1, 5, 6 e 10" (a 5: "Hora das suas 10 questões"). O aluno liga
+// aqui, escolhe a hora e a meta; vai em user_profile.lembrete = {on, h, q, tz} (sincroniza com o perfil).
+// Quem manda é o servidor (lib/lembrete-estudo.js), de hora em hora pelo pg_cron do banco, na hora do FUSO
+// deste aparelho, uma vez por dia, e não incomoda quem já fez a meta do dia.
+var LEMBRETE_METAS=[5,10,15,20,30,50];
+function lembretePref(){
+  var p=(currentUser&&currentUser.profile)||lsGet('user_profile')||{},l=p.lembrete;
+  var h=(l&&+l.h>=0&&+l.h<=23)?Math.floor(+l.h):19,q=(l&&LEMBRETE_METAS.indexOf(+l.q)>=0)?+l.q:10;
+  return {on:!!(l&&l.on===true),h:h,q:q};
+}
+function lembreteFuso(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Sao_Paulo';}catch(e){return 'America/Sao_Paulo';}}
+function lembreteCardHTML(){
+  var l=lembretePref(),horas='',metas='';
+  for(var h=5;h<=23;h++)horas+='<option value="'+h+'"'+(h===l.h?' selected':'')+'>'+(h<10?'0':'')+h+'h</option>';
+  LEMBRETE_METAS.forEach(function(q){metas+='<option value="'+q+'"'+(q===l.q?' selected':'')+'>'+q+' questões</option>';});
+  var semPush=!(typeof pushSupported==='function'&&pushSupported()&&typeof pushAtivoAgora==='function'&&pushAtivoAgora());
+  return '<div class="card" id="perfil-lembrete" style="margin-top:1rem"><div class="card-head"><span class="card-title">⏰ Lembrete diário de estudo</span></div>'
+    +'<p style="font-size:.78rem;color:var(--t2);margin:.1rem 0 .8rem;line-height:1.55">Todo dia, na hora que você escolher, chega no celular: <b>"Hora das suas '+l.q+' questões"</b>. Se você já tiver feito a meta do dia, ele não chega.</p>'
+    +'<label class="pf-lb-liga"><input type="checkbox" id="pf-lb-on"'+(l.on?' checked':'')+'> Quero o lembrete</label>'
+    +'<div class="pf-lb-linha"><label>Às <select id="pf-lb-h">'+horas+'</select></label><label>Meta <select id="pf-lb-q">'+metas+'</select></label></div>'
+    +(semPush?'<div class="pf-lb-push">Para o lembrete chegar, as notificações precisam estar ativas neste aparelho. <button type="button" class="btn btn-outline btn-sm" id="pf-lb-push">🔔 Ativar notificações</button></div>':'')
+    +'<div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap"><button class="btn btn-primary" id="btn-pf-lb-save">💾 Salvar</button><span id="pf-lb-msg" style="font-size:.76rem;font-weight:600"></span></div></div>';
+}
+function lembreteSalvar(){
+  var on=!!(document.getElementById('pf-lb-on')||{}).checked;
+  var h=+((document.getElementById('pf-lb-h')||{}).value),q=+((document.getElementById('pf-lb-q')||{}).value);
+  if(!(h>=0&&h<=23))h=19;if(LEMBRETE_METAS.indexOf(q)<0)q=10;
+  var prof=lsGet('user_profile')||{};
+  prof.lembrete={on:on,h:h,q:q,tz:lembreteFuso()};
+  lsSet('user_profile',prof);
+  if(currentUser)currentUser.profile=prof;
+  queueRemoteStateSave();
+  var msg=document.getElementById('pf-lb-msg');
+  if(msg){msg.textContent=on?('Salvo · todo dia às '+(h<10?'0':'')+h+'h, meta de '+q+' questões.'):'Salvo · lembrete desligado.';msg.style.color=on?'var(--grn)':'var(--t2)';}
+  return prof.lembrete;
+}
+function lembreteLigar(){
+  var b=document.getElementById('btn-pf-lb-save');if(b)b.addEventListener('click',lembreteSalvar);
+  var pb=document.getElementById('pf-lb-push');
+  if(pb)pb.addEventListener('click',function(){
+    try{pushEnable().then(function(){notify('🔔 Notificações ativadas!','ok');var w=pb.parentNode;if(w&&w.parentNode)w.parentNode.removeChild(w);},function(e){notify((e&&e.message)||'Não consegui ativar as notificações.','err');});}catch(e){}
+  });
+}
 function podeExcluirConta(){
   return !!(currentUser&&currentUser.id&&currentUser.role==='aluno'&&!isAdminUser());
 }

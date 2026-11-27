@@ -1,6 +1,6 @@
 ---
 tags: [cofre, arquitetura]
-atualizado: 2026-11-14
+atualizado: 2026-11-27
 ---
 
 # Arquitetura
@@ -67,6 +67,19 @@ atualizado: 2026-11-14
 - `endocrine-radar`: `30 10 * * *` (diário)
 - `healthcheck`: `0 11 * * 1` (segundas)
 - Crons autenticam via `Authorization: Bearer $CRON_SECRET`.
+
+### Relógio e gatilhos NO BANCO (pg_cron + pg_net, desde 27/11/2026)
+- A Vercel (Hobby) só aceita 2 crons diários e está em 12/12 funções. O que precisa de hora em hora ou de reação no
+  momento do login roda no Supabase e chama a rota existente `/api/admin/refresh-radar`:
+  - `pg_cron` job **`endodirect-tarefas-hora`** (`0 * * * *`) → `endodirect_chamar_tarefa('tarefas_hora')`: lembretes
+    diários de estudo (`lib/lembrete-estudo.js`) e reenvio dos alertas de aparelho que ficaram na fila.
+  - `endodirect_aparelho_entrar` → `endodirect_alerta_aparelho_registrar` → `pg_net` → action `alertas_aparelho`
+    (`lib/aparelho-alerta.js`, e-mail pela Resend).
+- Autenticação: token de 64 hex no **Vault** (`endodirect_tarefas_token`); a rota pergunta ao banco
+  (`endodirect_tarefas_token_confere`, só service_role). O token só abre essas duas ações. Ninguém o digita.
+- Ver o histórico das chamadas: `select status_code, created from net._http_response order by created desc limit 20;`
+  e dos jobs: `select * from cron.job_run_details order by start_time desc limit 20;`.
+- Arquivo: `supabase/aparelho-novo-e-lembrete.sql`.
 
 ## Tema claro/escuro (#250–#252)
 - **Escuro é o padrão.** `:root` define as variáveis escuras; `html[data-theme="light"]{…}` sobrescreve para o claro. O atributo `data-theme` é setado já no `<head>` a partir de `localStorage.endodirect_theme` (default `dark`), evitando flash.

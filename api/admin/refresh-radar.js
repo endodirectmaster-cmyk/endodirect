@@ -17,6 +17,8 @@ const { selecionar } = require('../../lib/discussao-auto');
 const { dispararCadeia } = require('../../lib/discussao-kick');
 const { pmcIdFromLink } = require('../../lib/fulltext');
 const push = require('../../lib/push');
+const { processarAlertasAparelho } = require('../../lib/aparelho-alerta');
+const { sendLembretesEstudo } = require('../../lib/lembrete-estudo');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://auth.endodirect.com.br';
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -44,6 +46,24 @@ async function userFromToken(token) {
   return r.json().catch(() => null);
 }
 
+// TOKEN DO BANCO (27/11/2026). O banco chama esta rota pelo pg_net: no login de um aparelho novo
+// (alerta por e-mail) e de hora em hora pelo pg_cron (lembretes de estudo). O token mora no Vault
+// do banco (supabase/aparelho-novo-e-lembrete.sql) e não existe em nenhum outro lugar: a rota
+// pergunta ao banco, com a chave de serviço, se confere. Só abre as AÇÕES_DO_BANCO.
+const ACOES_DO_BANCO = ['alertas_aparelho', 'tarefas_hora'];
+async function tokenDoBanco(token) {
+  if (!/^[0-9a-f]{64}$/.test(token)) return false;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/endodirect_tarefas_token_confere`, {
+      method: 'POST',
+      headers: { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE, 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ p_token: token })
+    });
+    if (!r.ok) return false;
+    return (await r.json().catch(() => false)) === true;
+  } catch (e) { return false; }
+}
+
 async function isAdminEmail(email) {
   const url = `${SUPABASE_URL}/rest/v1/endodirect_admins?email=eq.${encodeURIComponent(email)}&select=email`;
   const r = await fetch(url, { headers: { apikey: SERVICE_ROLE, Authorization: 'Bearer ' + SERVICE_ROLE, Accept: 'application/json' } });
@@ -67,7 +87,8 @@ module.exports = async function handler(req, res) {
   // gerar as discussoes em cadeia (uma invocacao por artigo). Usa o CRON_SECRET,
   // o mesmo segredo dos crons — nunca chega ao navegador.
   const doServidor = !!process.env.CRON_SECRET && token === process.env.CRON_SECRET;
-  if (!doServidor) {
+  const doBanco = !doServidor && await tokenDoBanco(token);
+  if (!doServidor && !doBanco) {
     const user = await userFromToken(token);
     const email = user && String(user.email || '').toLowerCase();
     if (!email) return json(res, 401, { ok: false, error: 'Sessao invalida.' });
@@ -78,6 +99,20 @@ module.exports = async function handler(req, res) {
   // no celular dos alunos inscritos (avisos/breaking news). Sem action → radar.
   let payload = {};
   try { payload = JSON.parse((await readRawBody(req)).toString('utf8') || '{}'); } catch (e) { payload = {}; }
+
+  // O token do banco só abre as duas tarefas dele (nunca o radar, o aviso a todos etc.).
+  if (doBanco && ACOES_DO_BANCO.indexOf(payload && payload.action) < 0) return json(res, 403, { ok: false, error: 'Acao nao permitida.' });
+  // { action: 'alertas_aparelho' } → e-mail ao aluno de aparelho novo / 3º aparelho barrado (lib/aparelho-alerta.js).
+  if (payload && payload.action === 'alertas_aparelho') {
+    const alertas = await processarAlertasAparelho();
+    return json(res, 200, { ok: true, alertas });
+  }
+  // { action: 'tarefas_hora' } → de hora em hora (pg_cron): lembretes de estudo da hora e alerta que ficou na fila.
+  if (payload && payload.action === 'tarefas_hora') {
+    const lembretes = await sendLembretesEstudo();
+    const alertas = await processarAlertasAparelho();
+    return json(res, 200, { ok: true, lembretes, alertas });
+  }
 
   // Previa da newsletter para UM endereco (nao mexe na trava do dia nem na base).
   if (payload && payload.action === 'newsletter-teste') {

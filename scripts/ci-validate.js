@@ -2534,5 +2534,15 @@ try {
   fail('regressão da comparação do Simulado (index.html, supabase/simulado-comparar.sql) falhou:\n' + out);
 }
 
+// E-MAIL DE APARELHO NOVO + LEMBRETE DIÁRIO DE ESTUDO (27/11/2026). Professor: "Faz a 1, 5, 6 e 10" (a 10 e a 5).
+//      O banco enfileira o alerta no login e chama a rota pelo pg_net; o pg_cron chama de hora em hora (lembretes).
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-aparelho-alerta-lembrete.js')], { stdio: 'pipe' });
+  ok('alerta de aparelho novo e lembrete: token só do banco, sem envio em dobro, fuso do aluno, meta feita não incomoda');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do alerta de aparelho / lembrete de estudo (supabase, lib, api/admin/refresh-radar.js, index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
