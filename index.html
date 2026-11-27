@@ -2148,12 +2148,13 @@ mark.grifo.grifo-pisca{outline:2px solid var(--gold);outline-offset:2px}
 .grifo-barra .grifo-modo[aria-pressed="true"]{background:#fff;color:#14203a}
 .grifo-barra .grifo-modo-u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
 .grifo-dica-txt{display:none}
-.grifo-barra.dica{flex-wrap:wrap;justify-content:center;border-radius:18px}
-.grifo-barra.dica .grifo-dica-txt{display:block;flex-basis:100%;text-align:center;color:#fff;font-size:.78rem;line-height:1.4;padding:.25rem .5rem .15rem}
-.grifo-barra.dica [data-grifar="nota"]{display:none}
+.grifo-barra.auto{flex-wrap:wrap;justify-content:center;border-radius:18px}
+.grifo-barra.auto .grifo-dica-txt{display:block;flex-basis:100%;text-align:center;color:#fff;font-size:.78rem;line-height:1.4;padding:.25rem .5rem .15rem}
+.grifo-barra.auto [data-grifar="nota"]{display:none}
 .dir-card-acoes{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:.1rem}
 .grifo-dica-btn{background:none;border:0;cursor:pointer;line-height:1;padding:.2rem .3rem;border-radius:8px;color:var(--t2);display:inline-flex;align-items:center;justify-content:center}
 .grifo-dica-btn:hover{background:var(--s2);color:var(--tx)}
+.grifo-dica-btn[aria-pressed="true"]{background:rgba(250,204,21,.28);color:var(--tx);box-shadow:inset 0 0 0 1px rgba(250,204,21,.7)}
 .grifo-dica-ico{display:block;flex:none}
 .grifo-dica-btn:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .dir-card.dir-com-grifo .dir-card-top{padding-right:4.6rem}
@@ -13461,7 +13462,7 @@ function renderAoVivo(){
   if(ba)ba.addEventListener('click',function(){try{goPanel('plano');}catch(e){location.hash='#planos';}});
 }
 function goPanel(id){
-  try{if(typeof grifoDicaFecha==='function')grifoDicaFecha();}catch(e){} // a dica do 🖍 não acompanha para outra tela
+  try{if(typeof grifoAutoLiga==='function'&&grifoAuto)grifoAutoLiga(false);}catch(e){} // o grifo contínuo não acompanha para outra tela
   // Aula ao vivo desligada (ver AO_VIVO_ATIVO): desvia ANTES de qualquer coisa,
   // senão o painel morto ainda seria gravado como `last_panel` e o aluno voltaria
   // nele a cada reload, só para ser desviado de novo.
@@ -18624,6 +18625,9 @@ function execNoteCmd(cmd){
 // guardado como TEXTO e reencontrado no capítulo a cada abertura (sem posição fixa, para
 // sobreviver a correções do texto; se o trecho mudar, o grifo continua na aba Notas).
 var leituraRestaurando=false,leituraUltSalva=0,leituraUltRemota=0,grifoSel=null,grifosLigado=false;
+// Grifo contínuo (professor, 27/11/2026: "dá para deixar um modo de automaticamente, ao selecionar determinado
+// trecho da frase, já fazer o grifo"): ligado pelo 🖍 do cartão, cada trecho selecionado é grifado na hora.
+var grifoAuto=false,grifoAutoT=null,grifoPonteiro=false;
 function leituraItem(l){
   if(!l||!l.sub||!l.tema)return null;
   var tipo=l.tipo==='artigo'?'artigo':'capitulo',r=null;
@@ -18764,7 +18768,7 @@ function grifoBarra(){
   var b=document.getElementById('grifo-barra');if(b)return b;
   b=document.createElement('div');b.id='grifo-barra';b.className='grifo-barra';
   // Grifar ou sublinhar, as 5 cores (tocar numa cor já marca o trecho), anotar e fechar.
-  b.innerHTML='<span class="grifo-dica-txt">Selecione um trecho do texto e toque numa cor para grifar ou sublinhar. Os grifos ficam reunidos na aba Notas.</span>'
+  b.innerHTML='<span class="grifo-dica-txt">Grifo contínuo ligado: selecione um trecho e ele é grifado na hora, na cor escolhida abaixo. Os grifos ficam reunidos na aba Notas.</span>'
     +'<button type="button" class="grifo-modo" data-grifo-modo="grifo" aria-label="Grifar" title="Grifar" aria-pressed="true">🖍</button>'
     +'<button type="button" class="grifo-modo grifo-modo-u" data-grifo-modo="sub" aria-label="Sublinhar" title="Sublinhar" aria-pressed="false">U</button>'
     +grifoCoresHTML(grifoPref().cor)
@@ -18778,30 +18782,57 @@ function grifoBarra(){
     if(cr){var p1=grifoPref();grifoPrefSalva(cr.getAttribute('data-grifo-cor'),p1.estilo);grifoBarraPinta(b);grifoCria(false);return;}
     var t=e.target.closest?e.target.closest('[data-grifar]'):null;if(!t)return;
     var q=t.getAttribute('data-grifar');
-    if(q==='x'){grifoSel=null;b.classList.remove('on','dica');try{window.getSelection().removeAllRanges();}catch(er){}return;}
+    if(q==='x'){grifoSel=null;if(grifoAuto)grifoAutoLiga(false);b.classList.remove('on','auto');try{window.getSelection().removeAllRanges();}catch(er){}return;}
     grifoCria(q==='nota');
   });
   document.body.appendChild(b);return b;
 }
-// O 🖍 do cartão: mostra a barra com a dica, mesmo sem nada selecionado. As cores e o modo já valem para
-// o próximo trecho; a dica some ao selecionar, no ✕ ou ao trocar de tela.
-function grifoDicaAbre(){var b=grifoBarra();grifoBarraPinta(b);b.classList.add('on','dica');}
-function grifoDicaFecha(){var b=document.getElementById('grifo-barra');if(b&&b.classList.contains('dica')){b.classList.remove('dica');if(!grifoSel)b.classList.remove('on');}}
+// O 🖍 do cartão liga e desliga o grifo contínuo. Ligado, a barra fica aberta com a explicação, as cores e o
+// grifar/sublinhar; cada trecho selecionado vira grifo sem precisar tocar na cor. Desliga no ✕, no próprio 🖍
+// ou ao trocar de tela. Desligado, vale o jeito de antes: selecionar e tocar na cor.
+function grifoAutoLiga(on){
+  grifoAuto=!!on;clearTimeout(grifoAutoT);
+  document.querySelectorAll('[data-grifo-dica]').forEach(function(x){x.setAttribute('aria-pressed',grifoAuto?'true':'false');});
+  var b=grifoAuto?grifoBarra():document.getElementById('grifo-barra');if(!b)return;
+  if(grifoAuto){grifoBarraPinta(b);b.classList.add('on','auto');}
+  else{b.classList.remove('auto');if(!grifoSel)b.classList.remove('on');}
+}
+// Grifa o trecho selecionado no modo contínuo. No mouse, ao soltar o botão; no toque (e no teclado), quando a
+// seleção fica parada por um instante, porque as alças de seleção do celular não avisam quando terminam.
+function grifoAutoCria(){
+  clearTimeout(grifoAutoT);
+  if(!grifoAuto||grifoPonteiro)return;
+  grifoAjustaPalavras();
+  grifoSelecao();
+  if(grifoSel)grifoCria(false);
+}
+// No grifo contínuo, o arrasto rápido corta palavras ("levação" em vez de "Elevação"): o começo e o fim da
+// seleção vão até a palavra inteira. Só depois de soltar, para não brigar com o aluno enquanto ele seleciona.
+function grifoAjustaPalavras(){
+  try{
+    var s=window.getSelection();if(!s||s.isCollapsed||!s.rangeCount)return;
+    var r=s.getRangeAt(0).cloneRange(),L=/[0-9A-Za-zÀ-ÖØ-öø-ÿ]/;
+    var sc=r.startContainer,so=r.startOffset,ec=r.endContainer,eo=r.endOffset;
+    if(sc.nodeType===3){var v=sc.nodeValue;while(so>0&&L.test(v.charAt(so-1))&&L.test(v.charAt(so)))so--;}
+    if(ec.nodeType===3){var w=ec.nodeValue;while(eo<w.length&&eo>0&&L.test(w.charAt(eo))&&L.test(w.charAt(eo-1)))eo++;}
+    if(so!==r.startOffset||eo!==r.endOffset){r.setStart(sc,so);r.setEnd(ec,eo);s.removeAllRanges();s.addRange(r);}
+  }catch(e){}
+}
 function grifoSelecao(){
   var s=null;try{s=window.getSelection();}catch(e){}
   var b=grifoBarra();
-  if(!s||s.isCollapsed||!s.rangeCount){grifoSel=null;b.classList.remove('on');return;}
+  if(!s||s.isCollapsed||!s.rangeCount){grifoSel=null;if(!grifoAuto)b.classList.remove('on');return;}
   var txt=String(s.toString()||'').trim();
   var el=function(n){return n&&(n.nodeType===1?n:n.parentNode);};
   // Resumos (#resu-body) e, desde 27/11/2026, Diretrizes (#ref-body).
   var painel=refPrivadoMode?'resu':'ref';
   var a=el(s.anchorNode),f=el(s.focusNode),root=document.getElementById(painel==='resu'?'resu-body':'ref-body');
   var dentro=function(x){return x&&root&&root.contains(x)&&x.closest&&x.closest('.dir-texto,.dir-pts')&&!x.closest('.wys-edit');};
-  if(!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;if(!b.classList.contains('dica'))b.classList.remove('on');return;}
+  if(!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;if(!grifoAuto)b.classList.remove('on');return;}
   grifoSel={txt:txt,sub:refSubSel,tipo:refTipoSel,tema:refTemaSel,painel:painel};
   grifoBarraPinta(b);
-  b.classList.remove('dica');
   b.classList.add('on');
+  if(grifoAuto){clearTimeout(grifoAutoT);if(!grifoPonteiro)grifoAutoT=setTimeout(grifoAutoCria,900);}
 }
 function grifoCria(comNota){
   var s=grifoSel;if(!s)return;
@@ -18809,7 +18840,8 @@ function grifoCria(comNota){
   var g={id:'g'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),sub:s.sub,tipo:s.tipo,tema:s.tema,txt:s.txt.slice(0,800),nota:'',at:Date.now(),
     cor:pf.cor,estilo:pf.estilo,painel:s.painel==='ref'?'ref':'resu'};
   grifosLista().push(g);persist();
-  grifoSel=null;grifoBarra().classList.remove('on','dica');
+  grifoSel=null;clearTimeout(grifoAutoT);
+  var gb=grifoBarra();if(grifoAuto)gb.classList.add('on','auto');else gb.classList.remove('on','auto');
   try{window.getSelection().removeAllRanges();}catch(e){}
   var root=document.getElementById(g.painel==='ref'?'ref-body':'resu-body');
   if(root){
@@ -18884,10 +18916,24 @@ function grifosInit(){
   if(grifosLigado)return;grifosLigado=true;
   var t=null;
   document.addEventListener('selectionchange',function(){clearTimeout(t);t=setTimeout(grifoSelecao,220);});
-  // Tocar num trecho grifado abre a nota (só na leitura, nunca no editor). O 🖍 do cartão abre a barra com a dica.
+  // Grifo contínuo: com o mouse, o trecho é grifado ao soltar o botão. Enquanto o dedo ou o mouse estão
+  // apertados a seleção ainda está mudando, então nada é grifado.
+  var fora=function(e){return e&&e.target&&e.target.closest&&e.target.closest('#grifo-barra,.grifo-modal');};
+  document.addEventListener('pointerdown',function(e){if(fora(e))return;grifoPonteiro=true;clearTimeout(grifoAutoT);},true);
+  document.addEventListener('pointercancel',function(){grifoPonteiro=false;},true);
+  document.addEventListener('pointerup',function(e){
+    if(fora(e)){grifoPonteiro=false;return;}
+    grifoPonteiro=false;
+    if(!grifoAuto)return;
+    if(e.pointerType==='mouse'||e.pointerType==='pen')setTimeout(grifoAutoCria,30);
+    else{clearTimeout(grifoAutoT);grifoAutoT=setTimeout(grifoAutoCria,900);}
+  },true);
+  window.addEventListener('blur',function(){grifoPonteiro=false;});
+  // Tocar num trecho grifado abre a nota (só na leitura, nunca no editor). O 🖍 do cartão liga ou desliga o
+  // grifo contínuo.
   document.addEventListener('click',function(e){
     var gd=e.target&&e.target.closest?e.target.closest('[data-grifo-dica]'):null;
-    if(gd){grifoDicaAbre();return;}
+    if(gd){grifoAutoLiga(!grifoAuto);return;}
     var mk=e.target&&e.target.closest?e.target.closest('mark.grifo'):null;
     if(!mk||mk.closest('.wys-edit'))return;
     var s=null;try{s=window.getSelection();}catch(er){}
@@ -20932,7 +20978,7 @@ function dirCardHTML(d,i){
   // estrelinha, para ele saber que existe essa opção de grifar"): abre a barra de cores com a dica.
   // O ícone é desenho (marca-texto na cor do tema + traço amarelo), não o emoji: no Windows o 🖍 saía preto
   // na tela escura (professor, 27/11/2026: "O lápis ficou bem escuro na tela escura").
-  var _grifoBtn=(refFormat==='resumo')?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">'+grifoIco()+'</button>':'';
+  var _grifoBtn=(refFormat==='resumo')?'<button type="button" class="grifo-dica-btn" data-grifo-dica aria-pressed="'+(grifoAuto?'true':'false')+'" title="Grifo contínuo: ligar ou desligar" aria-label="Grifo contínuo: ligar ou desligar">'+grifoIco()+'</button>':'';
   return '<div class="dir-card'+(refPrivadoMode?' dir-marca':'')+(_grifoBtn?' dir-com-grifo':'')+'" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
     +'<span class="dir-card-acoes">'+_grifoBtn+favStarHTML('resumo',d)+'</span>'
     +head+body+'</div>';

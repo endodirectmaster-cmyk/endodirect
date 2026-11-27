@@ -140,16 +140,61 @@ ok(/:root mark\.grifo\.g-sub,:root\[data-theme\] mark\.grifo\.g-sub\{background:
   '🧨 CSS: cores via --gc (o tema escuro não pode forçar o amarelo) e o sublinhado sem fundo');
 // 8) O 🖍 AO LADO DA ESTRELA (27/11/2026): avisa que dá para grifar, sem depender de o aluno selecionar por acaso
 const card2 = corpo('dirCardHTML');
-ok(/var _grifoBtn=\(refFormat==='resumo'\)\?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">'\+grifoIco\(\)\+'<\/button>':'';/.test(card2)
+ok(/var _grifoBtn=\(refFormat==='resumo'\)\?'<button type="button" class="grifo-dica-btn" data-grifo-dica aria-pressed="'\+\(grifoAuto\?'true':'false'\)\+'" title="Grifo contínuo: ligar ou desligar" aria-label="Grifo contínuo: ligar ou desligar">'\+grifoIco\(\)\+'<\/button>':'';/.test(card2)
   && /'<span class="dir-card-acoes">'\+_grifoBtn\+favStarHTML\('resumo',d\)\+'<\/span>'/.test(card2), '🧨 o 🖍 tem de ficar ao lado da estrela no texto do capítulo (Resumos e Diretrizes)');
 // O ícone é desenho na cor do texto (no Windows o emoji 🖍 saía preto na tela escura, 27/11/2026).
 ok(/stroke="currentColor"/.test(corpo('grifoIco')) && !/🖍/.test(corpo('grifoIco')), '🧨 o ícone do marca-texto tem de usar a cor do texto (currentColor), não o emoji');
 ok(/\.grifo-dica-btn\{[^}]*color:var\(--t2\)/.test(html), '🧨 o botão do marca-texto precisa de cor própria (botão não herda a cor do texto e ficava preto na tela escura)');
-ok(/var gd=e\.target&&e\.target\.closest\?e\.target\.closest\('\[data-grifo-dica\]'\):null;\s*if\(gd\)\{grifoDicaAbre\(\);return;\}/.test(corpo('grifosInit')), 'o 🖍 abre a barra com a dica');
-ok(/b\.classList\.add\('on','dica'\)/.test(corpo('grifoDicaAbre')) && /Selecione um trecho do texto e toque numa cor para grifar ou sublinhar\./.test(corpo('grifoBarra')), 'a dica explica o que fazer');
-ok(/if\(!b\.classList\.contains\('dica'\)\)b\.classList\.remove\('on'\);return;/.test(corpo('grifoSelecao')) && /b\.classList\.remove\('dica'\);\s*b\.classList\.add\('on'\);/.test(corpo('grifoSelecao')),
-  '🧨 com a dica aberta, a barra não some antes de o aluno selecionar; ao selecionar, vira a barra normal');
-ok(/grifoDicaFecha\(\)/.test(corpo('goPanel')) && /classList\.remove\('on','dica'\)/.test(corpo('grifoCria')), 'a dica fecha ao trocar de tela e depois de marcar');
+// 9) GRIFO CONTÍNUO (27/11/2026, professor: "dá para deixar um modo de automaticamente, ao selecionar determinado
+// trecho da frase, já fazer o grifo"): o 🖍 liga e desliga; ligado, selecionar já grifa, sem tocar na cor.
+ok(/var gd=e\.target&&e\.target\.closest\?e\.target\.closest\('\[data-grifo-dica\]'\):null;\s*if\(gd\)\{grifoAutoLiga\(!grifoAuto\);return;\}/.test(corpo('grifosInit')), '🧨 o 🖍 do cartão liga e desliga o grifo contínuo');
+ok(/if\(e\.pointerType==='mouse'\|\|e\.pointerType==='pen'\)setTimeout\(grifoAutoCria,30\);/.test(corpo('grifosInit')) && /grifoPonteiro=true;clearTimeout\(grifoAutoT\);/.test(corpo('grifosInit')),
+  '🧨 no mouse, o trecho é grifado ao soltar o botão (e nunca enquanto ainda está apertado)');
+ok(/grifoAutoLiga\(false\)/.test(corpo('goPanel')), 'o grifo contínuo desliga ao trocar de tela');
+ok(/Grifo contínuo ligado: selecione um trecho e ele é grifado na hora/.test(corpo('grifoBarra')), 'a barra explica o grifo contínuo');
+ok(/\.grifo-dica-btn\[aria-pressed="true"\]\{/.test(html), 'o 🖍 aceso mostra que o grifo contínuo está ligado');
+vm.runInContext(html.match(/var grifoAuto=false,grifoAutoT=null,grifoPonteiro=false;/)[0], ctx);
+vm.runInContext('function lsGet(k){return __salvo.ls[k];}', ctx);
+['grifoPref', 'grifoPrefSalva', 'grifoBarraPinta', 'grifoBarra', 'grifoAutoLiga', 'grifoAutoCria', 'grifoAjustaPalavras', 'grifoSelecao', 'grifoCria'].forEach((n) => vm.runInContext(corpo(n), ctx));
+const card3 = doc.createElement('div'); card3.className = 'dir-card';
+card3.innerHTML = '<button type="button" data-grifo-dica aria-pressed="false"></button><div class="dir-texto"><p>Selênio melhora a orbitopatia leve de Graves.</p></div>';
+doc.getElementById('resu-body').appendChild(card3);
+run('refPrivadoMode=true;refSubSel="Tireoide";refTipoSel="capitulo";refTemaSel="Hipotireoidismo";DB.grifos=[];grifoSel=null');
+const seleciona = (palavra) => {
+  const tw = doc.createTreeWalker(card3.querySelector('p'), 4); let no = null;
+  while (tw.nextNode()) { if (tw.currentNode.nodeValue.indexOf(palavra) >= 0) { no = tw.currentNode; break; } }
+  const k = no.nodeValue.indexOf(palavra);
+  const r = doc.createRange(); r.setStart(no, k); r.setEnd(no, k + palavra.length);
+  const sel = dom.window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+};
+// desligado: selecionar só abre a barra, como antes
+seleciona('orbitopatia leve'); run('grifoSelecao()');
+ok(run('DB.grifos.length') === 0 && run('grifoAutoT') === null, 'com o grifo contínuo desligado, selecionar não pode grifar sozinho');
+run('grifoAutoLiga(true)');
+const barraAuto = doc.getElementById('grifo-barra');
+ok(barraAuto.classList.contains('on') && barraAuto.classList.contains('auto') && card3.querySelector('[data-grifo-dica]').getAttribute('aria-pressed') === 'true', 'ligar o grifo contínuo abre a barra e acende o 🖍');
+// com o dedo/mouse ainda apertado nada é grifado
+run('grifoPonteiro=true;grifoAutoCria()');
+ok(run('DB.grifos.length') === 0, '🧨 com o mouse ou o dedo ainda apertado, não pode grifar (a seleção ainda está mudando)');
+run('grifoPonteiro=false;grifoAutoCria()');
+ok(run('DB.grifos.length') === 1 && run('DB.grifos[0].txt') === 'orbitopatia leve' && card3.querySelector('mark.grifo'), '🧨 ligado, selecionar um trecho já grifa, sem tocar na cor: ' + run('JSON.stringify(DB.grifos)'));
+ok(barraAuto.classList.contains('on') && barraAuto.classList.contains('auto'), 'depois de grifar, a barra do grifo contínuo continua aberta para o próximo trecho');
+// arrasto que corta a palavra: o grifo vai até a palavra inteira
+seleciona('lênio melhor'); run('grifoAutoCria()');
+ok(run('DB.grifos.length') === 2 && run('DB.grifos[1].txt') === 'Selênio melhora', '🧨 o grifo contínuo tem de pegar a palavra inteira quando o arrasto corta o começo ou o fim: ' + run('JSON.stringify(DB.grifos.map(function(g){return g.txt;}))'));
+run('grifoRemove(DB.grifos[1].id)');
+seleciona('e Grav'); run('grifoAutoCria()');
+ok(run('DB.grifos.length') === 2 && run('DB.grifos[1].txt') === 'de Graves', '🧨 o fim do arrasto também vai até o fim da palavra: ' + run('JSON.stringify(DB.grifos.map(function(g){return g.txt;}))'));
+run('grifoRemove(DB.grifos[1].id)');
+seleciona('Graves'); run('grifoSelecao()');
+ok(run('grifoAutoT') !== null, 'no toque e no teclado, a seleção parada agenda o grifo');
+run('clearTimeout(grifoAutoT);grifoAutoCria()');
+ok(run('DB.grifos.length') === 2, 'o segundo trecho também é grifado');
+run('grifoAutoLiga(false)');
+ok(!barraAuto.classList.contains('auto') && !barraAuto.classList.contains('on') && card3.querySelector('[data-grifo-dica]').getAttribute('aria-pressed') === 'false', 'desligar fecha a barra e apaga o 🖍');
+seleciona('Selênio'); run('grifoSelecao()');
+ok(run('grifoAutoT') === null || run('DB.grifos.length') === 2, 'desligado de novo, volta ao jeito de antes');
+card3.remove();
 run('DB.grifos=[]');
 ok(run('grifosNotasItemHTML()') === '', 'sem grifos, nada na lista de Notas');
 
