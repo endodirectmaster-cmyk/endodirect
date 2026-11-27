@@ -105,7 +105,7 @@ ok('o cálculo vem um instante depois (setTimeout), para não atrasar a marcaç�
 const sf = corpo('submitSF');
 ok('🧨 Simulado: cada questão não certa (errada ou em branco) ganha o lugar do botão', /\(!ok\?'<div class="sf-revisa" data-sf-revisa="'\+i\+'"><\/div>':''\)/.test(sf));
 ok('🧨 Simulado: os lugares são preenchidos depois de o relatório estar na tela',
-  /innerHTML=fbPontualHTML\(\)\+html;\n  fbPontualLigar\(\);\n  var sfQs=sfState\.qs;\n  setTimeout\(function\(\)\{\n    document\.querySelectorAll\('#sf-report-content \[data-sf-revisa\]'\)\.forEach\(function\(el\)\{\n      var i=\+el\.getAttribute\('data-sf-revisa'\);el\.innerHTML=revisaBotaoHTML\('sf:'\+i,sfQs\[i\]\);/.test(sf));
+  /innerHTML=fbPontualHTML\(\)\+html;\n  fbPontualLigar\(\);\n  simuladoComparar\(pct,sfState\.total\);\n  var sfQs=sfState\.qs;\n  setTimeout\(function\(\)\{\n    document\.querySelectorAll\('#sf-report-content \[data-sf-revisa\]'\)\.forEach\(function\(el\)\{\n      var i=\+el\.getAttribute\('data-sf-revisa'\);el\.innerHTML=revisaBotaoHTML\('sf:'\+i,sfQs\[i\]\);/.test(sf));
 
 // ── 5. Clique e aparência ───────────────────────────────────────────────────────────────
 const iClick = html.indexOf("var rvr=c('[data-revisa]');"), iRow = html.indexOf("var qrow=c('.q-row');");

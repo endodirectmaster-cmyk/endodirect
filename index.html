@@ -1016,6 +1016,9 @@ textarea{resize:vertical;line-height:1.6}
 .q-revisa{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.15rem .45rem;text-align:left;margin:.1rem 0 .4rem;white-space:normal;line-height:1.35}
 .q-revisa-cap{font-weight:400;color:var(--t2);font-size:.92em}
 .sf-revisa:not(:empty){margin-top:.5rem}
+.sf-comparar{margin:.65rem auto 0;max-width:30rem;font-size:.86rem;line-height:1.5;color:var(--tx);background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:.45rem 1rem}
+.sf-comparar b{color:var(--gold)}
+.sf-comparar span{display:block;font-size:.68rem;color:var(--t3);margin-top:.1rem}
 .q-fb.ok{background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .q-fb.annul{background:#33270c;color:#fbbf24;border:1px solid #5a4a1e}
@@ -21529,6 +21532,26 @@ function startSFTimer(){
   };
   upd();sfTimer=setInterval(upd,1000);
 }
+// "VOCÊ FOI MELHOR QUE X% DOS ALUNOS" (27/11/2026). Professor, da lista de sugestões: "Faz a 1, 5,
+// 6 e 10" (a 6). A RPC compara a nota deste simulado com o aproveitamento geral em questões de cada
+// outro aluno (anônimo; só a porcentagem volta; com menos de 15 alunos, nada). Simulado de menos de
+// 10 questões não compara: a nota oscila demais para dizer algo.
+function simuladoComparar(pct,total){
+  var el=document.getElementById('sf-comparar');if(!el)return;
+  if(!(total>=10)||!currentUser)return;
+  var client=getSupabaseClient();if(!client)return;
+  try{
+    client.rpc('endodirect_simulado_comparar',{p_pct:pct}).then(function(r){
+      var d=r&&r.data;if(!d||d.ok!==true||typeof d.melhor_que!=='number')return;
+      var x=Math.max(0,Math.min(100,Math.round(d.melhor_que)));
+      el.innerHTML=x>0
+        ?'📊 Você foi melhor que <b>'+x+'%</b> dos alunos'
+        :'📊 Abaixo do aproveitamento dos demais alunos desta vez: os erros abaixo são o melhor guia de estudo.';
+      el.innerHTML+='<span>Comparação anônima com o aproveitamento de cada aluno da plataforma em questões.</span>';
+      el.hidden=false;
+    },function(){});
+  }catch(e){}
+}
 function submitSF(){
   if(sfTimer)clearInterval(sfTimer);
   var correct=0,byArea={},byTema={};
@@ -21548,7 +21571,7 @@ function submitSF(){
   document.getElementById('sf-exam').style.display='none';
   document.getElementById('sf-report').style.display='block';
   var pct=Math.round(correct/sfState.total*100);
-  var html='<div class="card" style="text-align:center;margin-bottom:.85rem"><div style="font-size:2.2rem">'+(pct>=70?'🎉':'📚')+'</div><div style="font-size:1.4rem;font-weight:700;margin:.3rem 0">'+correct+'/'+sfState.total+' ('+pct+'%)</div><div style="font-size:.78rem;color:var(--t2)">Tempo usado: '+Math.round((Date.now()-sfState.startedAt)/60000)+' min</div></div>';
+  var html='<div class="card" style="text-align:center;margin-bottom:.85rem"><div style="font-size:2.2rem">'+(pct>=70?'🎉':'📚')+'</div><div style="font-size:1.4rem;font-weight:700;margin:.3rem 0">'+correct+'/'+sfState.total+' ('+pct+'%)</div><div style="font-size:.78rem;color:var(--t2)">Tempo usado: '+Math.round((Date.now()-sfState.startedAt)/60000)+' min</div><div id="sf-comparar" class="sf-comparar" hidden></div></div>';
   html+='<div class="card" style="margin-bottom:.85rem"><div class="card-head"><span class="card-title">Desempenho por área</span></div>'+Object.keys(byArea).map(function(a){var d=byArea[a];var p=Math.round(d.c/d.t*100);var col=p>=70?'var(--grn)':p>=50?'var(--gold)':'var(--red)';return'<div class="rep-area-row"><div class="rep-area-name">'+esc(a)+'</div><div class="rep-area-track"><div class="rep-area-fill" style="width:'+p+'%;background:'+col+'"></div></div><div class="rep-area-pct">'+d.c+'/'+d.t+'</div></div>';}).join('')+'</div>';
   var temaKeys=Object.keys(byTema);
   if(temaKeys.length>1){
@@ -21565,6 +21588,7 @@ function submitSF(){
   }).join('');
   document.getElementById('sf-report-content').innerHTML=fbPontualHTML()+html;
   fbPontualLigar();
+  simuladoComparar(pct,sfState.total);
   var sfQs=sfState.qs;
   setTimeout(function(){
     document.querySelectorAll('#sf-report-content [data-sf-revisa]').forEach(function(el){

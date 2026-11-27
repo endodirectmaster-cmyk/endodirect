@@ -2524,5 +2524,15 @@ try {
   fail('regressão do "Revisar no Resumo" (index.html) falhou:\n' + out);
 }
 
+// "VOCÊ FOI MELHOR QUE X% DOS ALUNOS" NO SIMULADO (27/11/2026). Professor: "Faz a 1, 5, 6 e 10" (a 6).
+//      Comparação anônima com o aproveitamento de cada outro aluno; com menos de 15 alunos, nada.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-simulado-comparar.js')], { stdio: 'pipe' });
+  ok('comparação do simulado: anônima, só logado, mínimo de 15 alunos, nada de "undefined%"');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da comparação do Simulado (index.html, supabase/simulado-comparar.sql) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
