@@ -8,6 +8,10 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🛰️ SENTRY: A CONTA NUNCA CHEGAVA NOS EVENTOS (2026-11-27, v510; checagem das 12h28, ENDODIRECT-SITE-2 de volta).**
+  - Achado: desde a v495 o Sentry lia `window.currentUser`, mas o `currentUser` do app é variável do bloco principal (IIFE) e nunca esteve no `window`. Todo evento saía sem `user.id`, e o "quantas contas" ficava sempre zero. O teste passava porque punha `window.currentUser` à mão.
+  - Agora o app expõe só o uuid por `window.__endoContaId` (logo depois de `var currentUser=null;`), e o Sentry lê por ali. Nome e e-mail continuam fora. O teste (`test-sentry-lgpd.js`) confere a função no index.html e o evento com o uuid; conferido que falha sem a linha.
+  - O erro em si (ENDODIRECT-SITE-2, `AbortError: The operation was aborted.`, Safari 18.6 no Mac, player do curso): a videoaula falhou ao carregar, o aluno tocou em "Tentar de novo" (`videoRecarregar` → `v.load()`), o vídeo voltou e ele clicou duas vezes na imagem (toca/pausa do próprio Safari, v494). O play do controle nativo foi interrompido e o Safari soltou a rejeição sem pilha. Nenhum `play()` nosso fica sem `.catch` (o do mediaSession é só do app). Sem conserto no código; anotado no Sentry.
 - **🖍 GRIFO CONTÍNUO (2026-11-27, v509; professor: *"tem como deixar o grifo de modo contínuo [...] ao selecionar determinado trecho da frase, já fazer o grifo"*).**
   - O 🖍 ao lado da estrela agora liga e desliga o grifo contínuo (o botão fica aceso em amarelo). Ligado, a barra fica aberta com a explicação, as 5 cores e grifar/sublinhar, e cada trecho selecionado vira grifo sem tocar na cor. Desliga no ✕, no próprio 🖍 ou ao trocar de tela. Desligado, continua o jeito de antes (selecionar e tocar na cor).
   - Quando grifa: no mouse, ao soltar o botão (nunca enquanto ainda está apertado); no toque e no teclado, quando a seleção fica parada 0,9 s, porque as alças de seleção do celular não avisam quando terminam.

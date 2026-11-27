@@ -169,7 +169,12 @@ function currentTheme(){try{return localStorage.getItem('endodirect_theme')||'da
   var enviados = 0;
   var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   function codigoDaConta(){
-    try { var u = window.currentUser, id = u && u.id; return (typeof id === 'string' && UUID.test(id)) ? id.toLowerCase() : ''; } catch (e) { return ''; }
+    // O currentUser do app mora dentro do bloco principal (não é window.currentUser): o app expõe só o uuid
+    // por window.__endoContaId. Sem isso, nenhum evento trazia a conta (achado na checagem de 27/11/2026).
+    try {
+      var id = (typeof window.__endoContaId === 'function') ? window.__endoContaId() : (window.currentUser && window.currentUser.id);
+      return (typeof id === 'string' && UUID.test(id)) ? id.toLowerCase() : '';
+    } catch (e) { return ''; }
   }
   function antesDeEnviar(ev){
     if (++enviados > 25) return null;
@@ -11106,6 +11111,9 @@ function aiFromFile(file,system,userPrefix,maxTok){
 }
 
 var currentUser=null;
+// Só o código interno da conta (uuid) para o Sentry marcar quantas contas um erro atingiu. Nome e e-mail não saem
+// daqui. O Sentry fica fora deste bloco e não enxerga a variável currentUser.
+window.__endoContaId=function(){return (currentUser&&typeof currentUser.id==='string')?currentUser.id:'';};
 // Atualiza nome/e-mail/avatar do professor no topo (botão e menu). Reaplica
 // após o hydrate para corrigir o cabeçalho quando o admPerfil é ajustado
 // (ex.: identidade da sessão sobrepondo resíduo de localStorage).
