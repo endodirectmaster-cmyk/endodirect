@@ -2544,5 +2544,15 @@ try {
   fail('regressão do alerta de aparelho / lembrete de estudo (supabase, lib, api/admin/refresh-radar.js, index.html) falhou:\n' + out);
 }
 
+// RESUMOS: NOVA ORGANIZAÇÃO (27/11/2026). Professor aprovou a prévia (capítulos numerados, minutos e videoaulas no
+//      cartão, 4 colunas, progresso do aluno), sem o tempo total de leitura.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-resumos-organizacao.js')], { stdio: 'pipe' });
+  ok('Resumos: capítulos numerados, minutos/videoaulas, 4 colunas, % lido sincronizado (o maior), sem tempo total');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão da nova organização dos Resumos (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
