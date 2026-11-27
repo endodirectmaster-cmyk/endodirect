@@ -8142,8 +8142,9 @@ var DB={
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
-  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','feitas','plan','acervoVisto','podOuvidos'].forEach(function(k){lsSet(k,DB[k]);});
+  ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','feitas','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
   lsSet('leitura',DB.leitura);lsSet('grifos',DB.grifos);lsSet('lidos',DB.lidos); // Resumos: último capítulo lido, grifos (17/11/2026) e % lido por capítulo (27/11/2026)
+  lsSet('podOuvidos',DB.podOuvidos); // Podcasts: episódios ouvidos (27/11/2026)
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -16345,7 +16346,11 @@ function podArea(p){return (p&&p.area)?p.area:'Miscelânea';}
 function podcastAbrirEpisodio(ep){
   if(!ep)return;
   podFilter=podArea(ep);
-  var lista=podcasts.filter(function(p){return podArea(p)===podFilter;}),i=lista.indexOf(ep);
+  var lista=podcasts.filter(function(p){return podArea(p)===podFilter;});
+  // Com "Esconder os já ouvidos" ligado, a página conta só os não ouvidos; se o próprio episódio já foi ouvido,
+  // a opção desliga nesta visita para ele aparecer.
+  if(podOcultaOuvidos){if(podOuvido(ep))podOcultaOuvidos=false;else lista=lista.filter(function(p){return !podOuvido(p);});}
+  var i=lista.indexOf(ep);
   if(i<0){var at=+ep.at||0;for(var k=0;k<lista.length;k++){if((+lista[k].at||0)===at&&lista[k].title===ep.title){i=k;break;}}}
   podPagina=i>0&&podPor>0?Math.floor(i/podPor):0;
   goPanel('podcast');

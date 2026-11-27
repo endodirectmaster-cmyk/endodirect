@@ -96,9 +96,10 @@ const pod = corpo('renderPodcasts');
 ok(/var _ver=podOcultaOuvidos\?list\.filter\(function\(p\)\{return !podOuvido\(p\);\}\):list;/.test(pod) && /el\.innerHTML=podProgHTML\(\)\+/.test(pod), '"Esconder os já ouvidos" filtra a lista; a linha de progresso fica no topo');
 ok(/data-pod-key="'\+esc\(podKey\(p\)\)\+'"/.test(pod) && /podBotaoOuvidoHTML\(_ok\)/.test(pod) && /podAudioLigar\(el\);/.test(pod), 'cada cartão tem a chave, o botão, e o áudio é ligado depois de desenhar');
 ok(/var PERSONAL_STATE_KEYS=\[[^\]]*'podOuvidos'/.test(html), '🧨 podOuvidos tem de ser chave PESSOAL (sincroniza entre aparelhos e não vai para o estado geral)');
-ok(/podOuvidos:DB\.podOuvidos,/.test(html) && /'acervoVisto','podOuvidos'\]\.forEach\(function\(k\)\{lsSet\(k,DB\[k\]\);\}\);/.test(corpo('persist')), 'podOuvidos vai para o servidor e fica no aparelho');
+ok(/podOuvidos:DB\.podOuvidos,/.test(html) && /lsSet\('podOuvidos',DB\.podOuvidos\);/.test(corpo('persist')), 'podOuvidos vai para o servidor e fica no aparelho');
 ok(/if\(payload\.podOuvidos&&typeof payload\.podOuvidos==='object'&&!Array\.isArray\(payload\.podOuvidos\)\)DB\.podOuvidos=payload\.podOuvidos;/.test(html), 'o estado do servidor aplica os ouvidos');
 ok(/DB\.lidos=\{\};DB\.podOuvidos=\{\};\}catch\(e\)\{\}/.test(html), 'ao sair da conta, os ouvidos são limpos do aparelho');
+ok(/if\(podOcultaOuvidos\)\{if\(podOuvido\(ep\)\)podOcultaOuvidos=false;else lista=lista\.filter\(function\(p\)\{return !podOuvido\(p\);\}\);\}/.test(corpo('podcastAbrirEpisodio')), '🧨 abrir um episódio pelo Mural com "Esconder os já ouvidos" ligado acha a página certa (e mostra o episódio mesmo se já ouvido)');
 ok(/\.pod-ouvido-tag\{/.test(html) && /\.pod-prog \.pod-oculta\{/.test(html), 'CSS do selo e da opção de esconder');
 
 if (falhas.length) { console.error('✗ podcasts ouvidos:\n  - ' + falhas.join('\n  - ')); process.exit(1); }

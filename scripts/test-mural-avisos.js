@@ -166,9 +166,9 @@ ok('excluir pede confirmação', /if\(!confirm\('Excluir o aviso "/.test(bind));
 ok('🧨 o botão do episódio abre o episódio na aba Podcasts', /if\(a\.tipo==='podcast'&&a\.pod\)\{podcastAbrirEpisodio\(a\.pod\);return;\}/.test(abrir));
 const abreEp = corpo('podcastAbrirEpisodio');
 ok('🧨 abrir o episódio filtra a área dele, vai à página certa, abre a aba e rola até o cartão',
-  /podFilter=podArea\(ep\);/.test(abreEp) && /podPagina=i>0&&podPor>0\?Math\.floor\(i\/podPor\):0;/.test(abreEp)
+  /podFilter=podArea\(ep\);/.test(abreEp) && /podPagina=i>0&&podPor>0\?Math\.floor\(i\/podPor\):0;/.test(abreEp) && /var i=lista\.indexOf\(ep\);/.test(abreEp)
   && /goPanel\('podcast'\);/.test(abreEp) && /\[data-pod-at="'\+\(\+ep\.at\|\|0\)\+'"\]/.test(abreEp)
-  && /'<div class="card pod-card" data-pod-at="'\+\(\+p\.at\|\|0\)\+'">/.test(html));
+  && /'<div class="card pod-card(?:'\+\(_ok\?' pod-ouvido':''\)\+')?" data-pod-at="'\+\(\+p\.at\|\|0\)\+'"(?: data-pod-key="'\+esc\(podKey\(p\)\)\+'")?>/.test(html));
 
 if (bad) { console.log('✗ mural de avisos: ' + bad + ' falha(s)'); process.exit(1); }
 console.log('✓ mural de avisos: chega ao aluno, só o que vale (sem vencidos nem antigos), abre o que anuncia, e o professor escreve no painel; podcasts novos também');
