@@ -43,7 +43,8 @@ vm.runInContext(`
 `, ctx);
 const ini = html.indexOf('var leituraRestaurando=false');
 ok(ini > 0, 'o bloco de leitura/grifos sumiu');
-['leituraItem', 'leituraSalva', 'leituraPosDe', 'resuPosRender', 'renderDashContinuar', 'grifosLista', 'grifosDoCapitulo', 'grifoMarca', 'grifosAplicar',
+vm.runInContext(html.match(/var GRIFO_CORES=\[[^\n]*\];/)[0], ctx);
+['leituraItem', 'leituraSalva', 'leituraPosDe', 'resuPosRender', 'renderDashContinuar', 'grifoCorOk', 'grifoClasse', 'grifoCapituloExiste', 'grifoCoresHTML', 'grifosLista', 'grifosDoCapitulo', 'grifoMarca', 'grifosAplicar',
   'grifosNotasItemHTML', 'grifosNotasHTML', 'grifoRemove', 'grifosNotasAtualiza'].forEach((n) => vm.runInContext(corpo(n), ctx));
 vm.runInContext('var leituraRestaurando=false,leituraUltSalva=0,leituraUltRemota=0,grifoSel=null,grifosLigado=true;function grifosInit(){}function renderNoteList(){}function abrirLeitura(){}function offlineLigarBotoes(){}function offlineTrocaFiguras(){}function marcaAplicar(){}', ctx);
 const run = (c) => vm.runInContext(c, ctx);
@@ -88,9 +89,36 @@ doc.getElementById('resu-body').appendChild(card);
 run('refTemaSel="Hipotireoidismo";refTipoSel="capitulo";DB.grifos=[{id:"a",sub:"Tireoide",tipo:"capitulo",tema:"Hipotireoidismo",txt:"não melhorou sintomas",nota:"cai em prova",at:3},{id:"b",sub:"Tireoide",tipo:"capitulo",tema:"Hipotireoidismo",txt:"Desfecho primário negativo",nota:"",at:4},{id:"c",sub:"Tireoide",tipo:"capitulo",tema:"Outro",txt:"Levotiroxina",at:5}];grifosAplicar(document.getElementById("resu-body"))');
 ok(card.querySelector('mark[data-grifo="a"]') && card.querySelector('.dir-pts mark[data-grifo="b"]') && !card.querySelector('mark[data-grifo="c"]'), 'ao abrir o capítulo, só os grifos DELE aparecem (texto e pontos-chave)');
 // 6) aba Notas
-ok(/🖍 Grifos dos Resumos/.test(run('grifosNotasItemHTML()')) && /3 trechos grifados/.test(run('grifosNotasItemHTML()')), 'a lista de Notas não mostra a entrada dos grifos');
+ok(/🖍 Grifos \(Resumos e Diretrizes\)/.test(run('grifosNotasItemHTML()')) && /3 trechos marcados/.test(run('grifosNotasItemHTML()')), 'a lista de Notas não mostra a entrada dos grifos');
 const gn = run('grifosNotasHTML()');
 ok(/📖 Hipotireoidismo/.test(gn) && /📝 cai em prova/.test(gn) && /data-grifo-abre="a"/.test(gn) && /data-grifo-remove="b"/.test(gn) && (gn.match(/grifos-grupo"/g) || []).length === 2, 'os grifos na aba Notas não estão agrupados por capítulo com nota e ações: ' + gn.slice(0, 400));
+// 7) CORES, SUBLINHADO E DIRETRIZES (27/11/2026)
+ok(card.querySelector('mark[data-grifo="a"]').className === 'grifo g-amarelo', 'grifo antigo (sem cor) tem de continuar amarelo e grifado: ' + card.querySelector('mark[data-grifo="a"]').className);
+ok(run('grifoClasse({cor:"vermelho",estilo:"sub"})') === 'g-vermelho g-sub' && run('grifoClasse({cor:"roxo"})') === 'g-amarelo' && run('grifoClasse(null)') === 'g-amarelo', 'classes de cor/estilo erradas (cor desconhecida volta ao amarelo)');
+ok(run('GRIFO_CORES.map(function(c){return c[0];}).join(",")') === 'amarelo,verde,azul,rosa,vermelho', 'as 5 cores (amarelo, verde, azul, rosa, vermelho)');
+const coresHTML = run('grifoCoresHTML("azul")');
+ok((coresHTML.match(/data-grifo-cor="/g) || []).length === 5 && /data-grifo-cor="azul" aria-label="Azul" title="Azul" aria-pressed="true"/.test(coresHTML) && /data-grifo-cor="vermelho" aria-label="Vermelho" title="Vermelho" aria-pressed="false"/.test(coresHTML), 'botões de cor sem nome acessível ou sem a cor marcada');
+// Diretrizes: só os grifos do painel certo
+const ref = doc.createElement('div'); ref.id = 'ref-body'; doc.body.appendChild(ref);
+const cardRef = doc.createElement('div'); cardRef.className = 'dir-card'; cardRef.innerHTML = '<div class="dir-texto"><p>Levotiroxina não melhorou sintomas em idosos.</p></div>'; ref.appendChild(cardRef);
+run('DB.grifos.push({id:"d",sub:"Tireoide",tipo:"capitulo",tema:"Hipotireoidismo",txt:"Levotiroxina",cor:"verde",estilo:"sub",painel:"ref",at:6});refPrivadoMode=false;resuPosRender(document.getElementById("ref-body"))');
+ok(cardRef.querySelector('mark[data-grifo="d"]') && cardRef.querySelector('mark[data-grifo="d"]').className === 'grifo g-verde g-sub' && !cardRef.querySelector('mark[data-grifo="a"]'), '🧨 nas Diretrizes têm de aparecer só os grifos das Diretrizes, com a cor e o sublinhado');
+ok(!card.querySelector('mark[data-grifo="d"]') && run('grifosDoCapitulo("Tireoide","capitulo","Hipotireoidismo","resu").length') === 2, '🧨 grifo das Diretrizes não pode aparecer no Resumo do mesmo tema');
+run('refPrivadoMode=true');
+run('diretrizes.push({sub:"Tireoide",tema:"Hipotireoidismo",privado:false})');
+ok(run('grifoCapituloExiste({painel:"ref",sub:"Tireoide",tipo:"capitulo",tema:"Hipotireoidismo"})') === true && run('grifoCapituloExiste({painel:"ref",sub:"Tireoide",tipo:"capitulo",tema:"Outro"})') === false
+  && run('grifoCapituloExiste({sub:"Tireoide",tipo:"capitulo",tema:"Hipotireoidismo"})') === true, 'achar o capítulo do grifo (Resumos ou Diretrizes)');
+const gn2 = run('grifosNotasHTML()');
+ok(/📋 Hipotireoidismo<span>Tireoide · Diretrizes<\/span>/.test(gn2) && /<blockquote class="g-verde g-sub">Levotiroxina<\/blockquote>/.test(gn2), 'na aba Notas, o grifo das Diretrizes vem separado e com a cor');
+// a barra e a janela
+const barra = corpo('grifoBarra');
+ok(/data-grifo-modo="grifo" aria-label="Grifar"/.test(barra) && /data-grifo-modo="sub" aria-label="Sublinhar"/.test(barra) && /grifoCoresHTML\(grifoPref\(\)\.cor\)/.test(barra), '🧨 a barra da seleção tem de oferecer grifar/sublinhar e as cores');
+ok(/if\(cr\)\{var p1=grifoPref\(\);grifoPrefSalva\(cr\.getAttribute\('data-grifo-cor'\),p1\.estilo\);grifoBarraPinta\(b\);grifoCria\(false\);return;\}/.test(barra), '🧨 tocar numa cor marca o trecho com ela (e lembra a escolha)');
+ok(/cor:pf\.cor,estilo:pf\.estilo,painel:s\.painel==='ref'\?'ref':'resu'/.test(corpo('grifoCria')), 'o grifo novo guarda cor, estilo e painel');
+ok(/var painel=refPrivadoMode\?'resu':'ref';/.test(corpo('grifoSelecao')) && /document\.getElementById\(painel==='resu'\?'resu-body':'ref-body'\)/.test(corpo('grifoSelecao')), '🧨 selecionar texto nas Diretrizes também oferece grifar');
+ok(/data-grifo-modo="sub" aria-pressed=/.test(corpo('grifoModal')) && /grifoRepinta\(g\)/.test(corpo('grifoModal')), 'a janela do grifo troca a cor e o estilo de um grifo que já existe');
+ok(/:root mark\.grifo\.g-sub,:root\[data-theme\] mark\.grifo\.g-sub\{background:transparent;/.test(html) && /mark\.grifo\.g-vermelho\{--gc:248,113,113\}/.test(html) && /:root\[data-theme="dark"\] mark\.grifo\{background:rgba\(var\(--gc\),\.3\)\}/.test(html),
+  '🧨 CSS: cores via --gc (o tema escuro não pode forçar o amarelo) e o sublinhado sem fundo');
 run('DB.grifos=[]');
 ok(run('grifosNotasItemHTML()') === '', 'sem grifos, nada na lista de Notas');
 
