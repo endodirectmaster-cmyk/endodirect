@@ -63,6 +63,7 @@ $$;
 create or replace function public.endodirect_aparelho_entrar(p_device_id text, p_ua text default null)
 returns text language plpgsql security definer set search_path = public as $$
 declare v_uid uuid := auth.uid(); v_limite int := 2; v_ativos int; v_ua text := left(coalesce(p_ua, ''), 300);
+  v_novo boolean; v_bloq_antes timestamptz;
 begin
   if v_uid is null then return 'sem_conta'; end if;
   if p_device_id is null or length(p_device_id) < 8 or left(p_device_id, 1) = '#' then return 'sem_conta'; end if;
@@ -88,10 +89,18 @@ begin
     insert into public.endodirect_devices(user_id, device_id, user_agent, last_seen, created_at)
     values (v_uid, p_device_id, v_ua, now(), now())
     on conflict (user_id, device_id) do update set revogado_em = null, revogado_motivo = null,
-      last_seen = now(), user_agent = excluded.user_agent;
+      last_seen = now(), user_agent = excluded.user_agent
+    returning (xmax = 0) into v_novo;
+    -- 27/11/2026: aparelho NUNCA visto entrou numa conta que já tinha outro → e-mail ao aluno
+    -- (supabase/aparelho-novo-e-lembrete.sql). O 1º aparelho da conta não avisa (é o cadastro).
+    if v_novo and exists (select 1 from public.endodirect_devices d
+                           where d.user_id = v_uid and d.device_id <> p_device_id and left(d.device_id, 1) <> '#') then
+      perform public.endodirect_alerta_aparelho_registrar(v_uid, 'novo', v_ua);
+    end if;
     return 'ok';
   end if;
   -- Vagas cheias: fica registrada a tentativa (uma a cada 10 min por aparelho) e o aparelho não entra.
+  select bloqueado_em into v_bloq_antes from public.endodirect_devices where user_id = v_uid and device_id = p_device_id;
   insert into public.endodirect_devices(user_id, device_id, user_agent, last_seen, created_at,
     revogado_em, revogado_motivo, bloqueios, bloqueado_em)
   values (v_uid, p_device_id, v_ua, now(), now(), now(), 'bloqueado', 1, now())
@@ -100,6 +109,10 @@ begin
       + case when public.endodirect_devices.bloqueado_em is null
                or public.endodirect_devices.bloqueado_em < now() - interval '10 minutes' then 1 else 0 end,
     bloqueado_em = now(), user_agent = excluded.user_agent;
+  -- 27/11/2026: a tentativa barrada também vai por e-mail (a mesma janela de 10 min da contagem).
+  if v_bloq_antes is null or v_bloq_antes < now() - interval '10 minutes' then
+    perform public.endodirect_alerta_aparelho_registrar(v_uid, 'bloqueado', v_ua);
+  end if;
   return 'cheio';
 end; $$;
 
