@@ -8,6 +8,13 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🗂️ RESUMOS: NOVA ORGANIZAÇÃO (2026-11-27, v505; professor, depois da prévia: *"Aceito todas as sugestões, exceto [...] o tempo total de leitura, por exemplo, onde tem cerca de 2 horas e 15 minutos de leitura. Pode retirar essa informação. O restante, aceito"*).** Prévia: artifact "Resumos: nova organização" (canvas com computador, celular e subespecialidades).
+  - **Capítulos** (aluno e painel do professor): número na ordem que o professor define (01, 02…); no cartão, os minutos de leitura (200 palavras/min) e as videoaulas; o 📄 e o "1 resumo" saíram. No topo: "15 capítulos · 8 com videoaula · Todos com mapa mental e flashcards" (quando nem todos têm, diz quantos). **Sem o tempo total**, a pedido. Artigos e Diretrizes ficaram como estavam.
+  - **4 colunas** no computador (3 até 1180 px, 2 até 900 px) e **lista no celular** (número, título, minutos, estado).
+  - **Progresso do aluno**: "✓ Lido" (≥ 90% do capítulo rolado) ou "40% lido" com barrinha; faixa "Você leu 3 de 15 capítulos ▬ Continuar: 04 · …" (o 1º em andamento, senão o 1º não lido); na grade das subespecialidades, "3 de 15 capítulos lidos" (só capítulos). Degustação não vê progresso.
+  - Dado novo: `DB.lidos` = {"<sub>||<tema>": 0–100}, pessoal (PERSONAL_STATE_KEYS), sincronizado; ao juntar servidor e aparelho vale o MAIOR (ler no celular não apaga o lido no computador); o % só sobe. Capítulo que cabe na tela conta como lido 0,7 s depois de aberto. Começa vazio para todos (antes só existia o "último capítulo lido").
+  - Professor: mesma numeração e selos no painel, com a alça de arrastar, renomear/excluir e o "🚧 rascunho" mantidos.
+  - Conferido em tela (1280 e 390 px, CSS real). Teste: `scripts/test-resumos-organizacao.js` (7 mutações pegas).
 - **🖍 GRIFOS COM CORES, SUBLINHADO E NAS DIRETRIZES (2026-11-27, v504; professor: *"dentro das diretrizes, dos resumos, a opção de deixar para o aluno sublinhar ou grifar os textos. E, por exemplo, ao grifar, escolher a cor que ele quer grifar, se é com vermelho, amarelo, etc."*).** O grifo de 17/11 (só amarelo, só nos Resumos) ganhou:
   - na barra que aparece ao selecionar o texto: 🖍 grifar ou U sublinhar, e 5 cores (amarelo, verde, azul, rosa, vermelho). Tocar na cor já marca o trecho; 📝 marca e abre a nota. A última cor e o último estilo ficam lembrados no aparelho (`grifo_pref`);
   - na janela do grifo (tocar no trecho): trocar a cor ou o estilo de um grifo que já existe;

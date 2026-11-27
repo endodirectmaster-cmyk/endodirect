@@ -2634,6 +2634,53 @@ input.dmm-inp-subsub{flex:1;min-width:0;background:transparent;color:var(--t2);f
 .dir-tema-card.dtc-dragging{opacity:.55;outline:2px dashed var(--blue2);outline-offset:2px}
 .dir-sub-grid.dtc-reordenando .dir-tema-card{transition:transform .12s}
 .dir-sub-grid.dtc-reordenando{user-select:none}
+/* RESUMOS: NOVA ORGANIZAÇÃO (27/11/2026) — capítulos numerados, minutos e videoaulas no cartão, 4 colunas,
+   progresso do aluno. Só nos Resumos (aluno e professor); as outras grades seguem como estavam. */
+.dir-sub-grid.resu-grade{grid-template-columns:repeat(4,minmax(0,1fr));gap:.9rem}
+@media(max-width:1180px){.dir-sub-grid.resu-grade{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.dir-sub-grid.resu-grade{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.dir-sub-grid.resu-grade{grid-template-columns:minmax(0,1fr);gap:.5rem}}
+.resu-resumo{display:flex;flex-wrap:wrap;gap:.25rem 1rem;font-size:.8rem;color:var(--t2);margin:.1rem 0 .4rem}
+.resu-resumo b{color:var(--tx);font-variant-numeric:tabular-nums}
+.resu-prog{display:flex;align-items:center;gap:.5rem .9rem;flex-wrap:wrap;padding:.65rem .95rem;border:1px solid var(--bd);border-radius:12px;background:var(--s2);font-size:.8rem;color:var(--t2);margin:.5rem 0 .2rem}
+.resu-prog b{color:var(--tx)}
+.resu-prog-bar{display:block;flex:1 1 140px;min-width:110px;height:6px;border-radius:6px;background:var(--bd);overflow:hidden}
+.resu-prog-bar>span{display:block;height:100%;border-radius:6px;background:var(--blue2)}
+.resu-prog-bar>span.ok,.resu-prog .resu-prog-bar>span{background:var(--grn)}
+.resu-prog-go{border:0;background:none;color:var(--blue2);font:inherit;font-weight:700;cursor:pointer;padding:.25rem 0;text-align:left}
+.resu-prog-go:hover{text-decoration:underline}
+.resu-cap{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"num st" "tit tit" "meta meta" "bar bar";grid-template-rows:auto auto 1fr auto;row-gap:.55rem;column-gap:.5rem;min-height:9.2rem;text-align:left;border:1px solid var(--bd);background:var(--surface);border-radius:14px;padding:1rem 1.1rem;cursor:pointer;transition:border-color .15s,transform .15s;color:var(--tx);font-family:var(--font)}
+.resu-cap:hover{border-color:var(--blue);transform:translateY(-2px)}
+.resu-cap:focus-visible,.resu-prog-go:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+.resu-num{grid-area:num;justify-self:start;display:inline-flex;align-items:center;justify-content:center;min-width:2.1rem;height:1.75rem;padding:0 .45rem;box-sizing:border-box;border-radius:8px;background:var(--blue-l);color:var(--blue2);font-size:.8rem;font-weight:800;font-variant-numeric:tabular-nums}
+.resu-st{grid-area:st;justify-self:end;align-self:center;font-size:.72rem;font-weight:700;padding:.18rem .55rem;border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.resu-st.lido{background:var(--grn-l);color:var(--grn)}
+.resu-st.and{background:var(--gold-l);color:var(--gold-tx)}
+.resu-st.lk{padding:0;font-size:.95rem}
+.resu-cap h3{grid-area:tit;margin:0;font-size:.95rem;font-weight:700;line-height:1.38;color:var(--tx);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.resu-meta{grid-area:meta;align-self:end;display:flex;flex-wrap:wrap;gap:.3rem .9rem;font-size:.76rem;color:var(--t2)}
+.resu-meta span{display:inline-flex;align-items:center;gap:.3rem}
+.resu-meta svg{flex:none}
+.resu-cap-bar{grid-area:bar;display:block;height:4px;border-radius:4px;background:var(--s2);overflow:hidden}
+.resu-cap-bar>span{display:block;height:100%;background:var(--gold)}
+.resu-cap.dir-locked{opacity:.78}
+@media(max-width:560px){
+  .resu-cap{grid-template-columns:2.3rem minmax(0,1fr) auto;grid-template-areas:"num tit st" "num meta st" "bar bar bar";grid-template-rows:auto auto auto;row-gap:.2rem;column-gap:.7rem;min-height:0;padding:.7rem .8rem;border-radius:12px}
+  .resu-num{align-self:center;min-width:2.1rem}
+  .resu-cap h3{font-size:.9rem;line-height:1.32}
+  .resu-cap-bar{margin-top:.35rem}
+}
+.dir-sub-btn.resu-subbtn{display:grid;grid-template-columns:2.6rem minmax(0,1fr);column-gap:.75rem;row-gap:.1rem;align-items:center;align-content:start;border-left:1px solid var(--bd);padding:1rem 1.05rem}
+.dir-sub-btn.resu-subbtn:hover{border-color:var(--blue)}
+.dir-sub-btn.resu-subbtn .dsb-ico{grid-row:1 / span 2;display:inline-flex;align-items:center;justify-content:center;width:2.6rem;height:2.6rem;border-radius:12px;background:var(--blue-l);font-size:1.35rem;text-align:center}
+.dir-sub-btn.resu-subbtn h3{margin:0;font-size:1rem;line-height:1.25}
+.dir-sub-btn.resu-subbtn .dsb-cnt{grid-column:2;margin:0}
+.dir-sub-btn.resu-subbtn .dsb-vid,.dir-sub-btn.resu-subbtn .dsb-off,.dir-sub-btn.resu-subbtn .resu-sub-prog{grid-column:1 / -1}
+.resu-sub-prog{display:flex;flex-direction:column;gap:.3rem;margin-top:.65rem;font-size:.72rem;color:var(--t2)}
+.resu-sub-prog .resu-prog-bar{flex:none;min-width:0;height:5px}
+@media(max-width:820px){.dir-sub-btn.resu-subbtn{grid-template-columns:2.3rem minmax(0,1fr);padding:.7rem .85rem}.dir-sub-btn.resu-subbtn .dsb-ico{width:2.3rem;height:2.3rem;font-size:1.2rem}.resu-sub-prog{margin-top:.45rem}}
+.dir-tema-card .dtc-num{margin-left:1.9rem;align-self:flex-start;margin-bottom:.45rem}
+.dir-tema-card .dtc-cnt.resu-meta{margin-top:auto;padding-top:.45rem}
 /* Alça de arraste da FILA da Questão do Dia — mesma linguagem visual da alça dos
    temas de Resumos (⠿, contorno tracejado ao arrastar).
    ⚠️ `touch-action:none` é o que impede o navegador de ROLAR a página em vez de
@@ -8065,11 +8112,13 @@ var DB={
   // Resumos (17/11/2026): último capítulo lido e posição; trechos grifados com nota. Pessoais.
   leitura:lsGet('leitura')||null,
   grifos:lsGet('grifos')||[],
+  // Quanto o aluno já leu de cada capítulo dos Resumos (27/11/2026): {"<sub>||<tema>": 0–100}. Pessoal.
+  lidos:lsGet('lidos')||{},
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
   ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','feitas','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
-  lsSet('leitura',DB.leitura);lsSet('grifos',DB.grifos); // Resumos: último capítulo lido e grifos (17/11/2026)
+  lsSet('leitura',DB.leitura);lsSet('grifos',DB.grifos);lsSet('lidos',DB.lidos); // Resumos: último capítulo lido, grifos (17/11/2026) e % lido por capítulo (27/11/2026)
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -8869,7 +8918,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,leitura:DB.leitura,grifos:DB.grifos,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,leitura:DB.leitura,grifos:DB.grifos,lidos:DB.lidos,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -8917,7 +8966,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','leitura','grifos','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','leitura','grifos','lidos','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -8930,6 +8979,8 @@ function applyStatePayload(payload,personalOnly){
   if(Array.isArray(payload.mm))DB.mm=payload.mm;
   if(Array.isArray(payload.notes))DB.notes=payload.notes;
   if(Array.isArray(payload.grifos))DB.grifos=payload.grifos;
+  // % lido por capítulo: vale o MAIOR entre o servidor e o aparelho (ler no celular não apaga o lido no computador).
+  if(payload.lidos&&typeof payload.lidos==='object')resuLidosMescla(payload.lidos);
   // Último capítulo lido: vale o mais recente (o aparelho que leu agora não volta atrás).
   if(payload.leitura&&typeof payload.leitura==='object'&&(!DB.leitura||(payload.leitura.at||0)>=(DB.leitura.at||0)))DB.leitura=payload.leitura;
   if(payload.crono!==undefined)DB.crono=payload.crono;
@@ -11268,7 +11319,7 @@ var pendingOnboardCheck=false; // decidir o onboarding após o hydrate (com base
 // hydrate em seguida traz o estado REMOTO do usuário correto.
 function clearLocalUserData(){
   ['user_profile','q','fc','mm','notes','crono','sf_results','perf','feitas','ck_billing','deg_trials','fc_seeded','mm_seeded','fc_shared_seeded','fc_member_seeded'].forEach(function(k){lsSet(k,null);});
-  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};DB.leitura=null;DB.grifos=[];}catch(e){}
+  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};DB.leitura=null;DB.grifos=[];DB.lidos={};}catch(e){}
   try{degTrials={};}catch(e){}
 }
 // Após o hydrate: se o aluno (membro real) continuar sem perfil, é a 1ª vez —
@@ -18568,7 +18619,7 @@ function leituraItem(l){
   return r;
 }
 function leituraSalva(remota){
-  try{lsSet('leitura',DB.leitura);}catch(e){}
+  try{lsSet('leitura',DB.leitura);lsSet('lidos',DB.lidos);}catch(e){}
   var agora=Date.now();
   if(remota||agora-leituraUltRemota>20000){leituraUltRemota=agora;try{queueRemoteStateSave();}catch(e){}}
 }
@@ -18583,6 +18634,7 @@ function leituraNoScroll(){
   if(!root||!p||!p.classList.contains('on')||!refPrivadoMode||!refTemaSel||refRevArt)return;
   var l=DB.leitura;if(!l||l.sub!==refSubSel||l.tema!==refTemaSel)return;
   l.pos=leituraPosDe(root);l.at=Date.now();
+  if((l.tipo||'capitulo')!=='artigo')resuLidoMarca(l.sub,l.tema,l.pos); // % lido do capítulo (27/11/2026)
   var agora=Date.now();if(agora-leituraUltSalva>800){leituraUltSalva=agora;leituraSalva(false);}
 }
 // Chamado ao fim de cada desenho dos Resumos (renderDiretrizesInto).
@@ -18599,6 +18651,8 @@ function resuPosRender(root){
   DB.leitura={sub:refSubSel,tipo:refTipoSel,tema:refTemaSel,pos:mesmo?(+l.pos||0):0,at:Date.now()};
   leituraSalva(!mesmo);
   if(refFormat==='resumo')grifosAplicar(root);
+  // Capítulo curto, que cabe na tela sem rolar, também conta como lido (27/11/2026).
+  setTimeout(function(){try{leituraNoScroll();}catch(e){}},700);
 }
 function abrirLeitura(){
   var l=DB.leitura;if(!leituraItem(l))return;
@@ -21096,6 +21150,92 @@ function dirFigurasHTML(figs){
   return html+'</div>';
 }
 // Visão em 3 níveis: subespecialidade → tema → diretriz (nos 4 formatos).
+// ── RESUMOS: NOVA ORGANIZAÇÃO (27/11/2026) ─────────────────────────────────────────────
+// Professor, sobre a prévia (capítulos numerados, selos no lugar de "1 resumo", 4 colunas): "Aceito todas as
+// sugestões, exceto [...] o tempo total de leitura [...] Pode retirar essa informação." Então:
+//  · capítulo numerado na ordem que o professor define (01, 02…), como o sumário de um livro;
+//  · no cartão, os minutos de leitura (200 palavras/min) e as videoaulas; mapa mental e flashcards, quando estão
+//    em todos, aparecem uma vez só, no topo ("Todos com mapa mental e flashcards"). SEM o tempo total;
+//  · 4 colunas no computador, lista no celular;
+//  · para o aluno: "✓ Lido" / "40% lido" em cada capítulo, "Você leu 3 de 15" com "Continuar" e, na grade de
+//    subespecialidades, "3 de 15 capítulos lidos". O % vem de DB.lidos (pessoal, sincronizado; vale o maior).
+var RESU_LIDO=90; // % a partir do qual o capítulo conta como lido
+function resuLidosMapa(){if(!DB.lidos||typeof DB.lidos!=='object'||Array.isArray(DB.lidos))DB.lidos={};return DB.lidos;}
+function resuLidoChave(sub,tema){return String(sub)+'||'+String(tema);}
+function resuLidoPct(sub,tema){var v=+resuLidosMapa()[resuLidoChave(sub,tema)]||0;return Math.max(0,Math.min(100,Math.round(v)));}
+function resuLidoMarca(sub,tema,pos){
+  if(!sub||!tema)return false;
+  var pc=Math.round(Math.max(0,Math.min(1,+pos||0))*100),m=resuLidosMapa(),k=resuLidoChave(sub,tema);
+  if(pc<=(+m[k]||0))return false;
+  m[k]=pc;return true;
+}
+function resuLidosMescla(remoto){
+  if(!remoto||typeof remoto!=='object'||Array.isArray(remoto))return;
+  var m=resuLidosMapa();
+  Object.keys(remoto).forEach(function(k){var v=Math.min(100,Math.max(0,+remoto[k]||0));if(v>(+m[k]||0))m[k]=v;});
+}
+var resuInfoCache={};
+// Minutos de leitura, videoaulas, mapa mental e flashcards de um capítulo (o 1º item do tema que `pred` aceita).
+function resuCapInfo(sub,tema,pred){
+  var it=null;
+  for(var i=0;i<diretrizes.length;i++){var d=diretrizes[i];if(d&&pred(d)&&dirTipoOf(d)==='capitulo'&&(String(d.sub||'Geral').trim()||'Geral')===sub&&dirTemaOf(d)===tema){it=d;break;}}
+  if(!it)return null;
+  var txt=String(it.resumo||''),pts=Array.isArray(it.pts)?it.pts.join(' '):'';
+  var ck=sub+'||'+tema+'||'+txt.length+'|'+pts.length,pal=resuInfoCache[ck];
+  if(pal==null){var pl=buscaPlano(txt+' '+pts);pal=pl?pl.split(/\s+/).length:0;resuInfoCache[ck]=pal;}
+  var mapa=!!(it.mapa&&typeof it.mapa==='object'&&Array.isArray(it.mapa.nodes)&&it.mapa.nodes.length);
+  return {min:pal?Math.max(1,Math.round(pal/200)):0,vids:dirVideosDe(it).length,mapa:mapa,fc:Array.isArray(it.flashcards)&&it.flashcards.length>0};
+}
+var RESU_ICO_RELOGIO='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>';
+var RESU_ICO_VIDEO='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m10 9 5 3-5 3z"></path></svg>';
+function resuMetaHTML(info){
+  if(!info)return '<span>Sem conteúdo ainda</span>';
+  var h='';
+  if(info.min)h+='<span>'+RESU_ICO_RELOGIO+info.min+' min de leitura</span>';
+  if(info.vids)h+='<span>'+RESU_ICO_VIDEO+(info.vids===1?'1 videoaula':info.vids+' videoaulas')+'</span>';
+  return h;
+}
+// "15 capítulos · 8 com videoaula · Todos com mapa mental e flashcards" (sem o tempo total, a pedido).
+function resuResumoHTML(infos){
+  var n=infos.length,v=0,m=0,f=0;
+  infos.forEach(function(x){if(!x)return;if(x.vids)v++;if(x.mapa)m++;if(x.fc)f++;});
+  var pp=['<span><b>'+n+'</b> '+(n===1?'capítulo':'capítulos')+'</span>'];
+  if(v)pp.push('<span><b>'+v+'</b> com videoaula</span>');
+  if(n&&m===n&&f===n)pp.push('<span>Todos com mapa mental e flashcards</span>');
+  else{if(m)pp.push('<span><b>'+m+'</b> com mapa mental</span>');if(f)pp.push('<span><b>'+f+'</b> com flashcards</span>');}
+  return '<div class="resu-resumo">'+pp.join('')+'</div>';
+}
+// O cartão do capítulo (aluno). n = posição na ordem do professor; lk = travado na degustação.
+function resuCapCardHTML(t,n,info,lk,comProgresso){
+  var num=(n<10?'0':'')+n,pct=comProgresso?resuLidoPct(refSubSel,t.tema):0,st='',bar='';
+  if(lk)st='<span class="resu-st lk" aria-label="Exclusivo para assinantes">🔒</span>';
+  else if(pct>=RESU_LIDO)st='<span class="resu-st lido">✓ Lido</span>';
+  else if(pct>=5){st='<span class="resu-st and">'+pct+'% lido</span>';bar='<span class="resu-cap-bar"><span style="width:'+pct+'%"></span></span>';}
+  return '<button class="resu-cap'+(lk?' dir-locked':'')+'" data-dir-'+(lk?'lockedtema':'tema')+'="'+esc(t.tema)+'">'
+    +'<span class="resu-num">'+num+'</span>'+st
+    +'<h3>'+esc(t.tema)+'</h3>'
+    +'<span class="resu-meta">'+(lk?'<span>Exclusivo para assinantes</span>':resuMetaHTML(info))+'</span>'+bar+'</button>';
+}
+// "Você leu 3 de 15 capítulos ▬▬ Continuar: 04 · …" (o 1º em andamento; senão, o 1º não lido).
+function resuProgressoHTML(temas){
+  if(!temas.length)return '';
+  var lidos=0,alvo=-1,andamento=-1;
+  temas.forEach(function(t,i){var pc=resuLidoPct(refSubSel,t.tema);if(pc>=RESU_LIDO)lidos++;else{if(andamento<0&&pc>=5)andamento=i;if(alvo<0)alvo=i;}});
+  var ir=andamento>=0?andamento:alvo,n=temas.length,pct=Math.round(100*lidos/n);
+  var txt=lidos===n?('Você leu <b>todos os '+n+'</b> capítulos'):(lidos?('Você leu <b>'+lidos+' de '+n+'</b> capítulos'):'Você ainda não leu nenhum capítulo');
+  return '<div class="resu-prog"><span>'+txt+'</span><span class="resu-prog-bar"><span'+(lidos===n?' class="ok"':'')+' style="width:'+pct+'%"></span></span>'
+    +(ir>=0?'<button type="button" class="resu-prog-go" data-dir-tema="'+esc(temas[ir].tema)+'">'+((andamento>=0||lidos)?'Continuar':'Começar')+': '+((ir+1)<10?'0':'')+(ir+1)+' · '+esc(temas[ir].tema)+' →</button>':'')
+    +'</div>';
+}
+// Grade de subespecialidades: "3 de 15 capítulos lidos" (só capítulos; artigos não entram).
+function resuSubProgressoHTML(sub){
+  var temas=dirTemaList(sub,false,function(d){return !dirIsRascunho(d)&&d.privado===true&&dirTipoOf(d)==='capitulo';});
+  if(!temas.length)return '';
+  var lidos=0;temas.forEach(function(t){if(resuLidoPct(sub,t.tema)>=RESU_LIDO)lidos++;});
+  var n=temas.length,pct=Math.round(100*lidos/n);
+  var txt=lidos===n?'Todos os capítulos lidos':(lidos?(lidos+' de '+n+' capítulos lidos'):'Nenhum capítulo lido ainda');
+  return '<span class="resu-sub-prog"><span class="resu-prog-bar"><span'+(lidos===n?' class="ok"':'')+' style="width:'+pct+'%"></span></span><span>'+txt+'</span></span>';
+}
 function diretrizesViewHTML(){
   var _T=refPrivadoMode?'📚 Resumos':'📋 Diretrizes';
   // Rótulo por tipo: nos Artigos conta "trials"; nos Capítulos/Diretrizes segue o padrão.
@@ -21167,13 +21307,19 @@ function diretrizesViewHTML(){
         +'<p>A lista abaixo é a última cópia guardada neste aparelho. O acervo completo está no servidor; basta tentar de novo.</p>'
         +'<button class="btn btn-primary btn-sm" id="btn-resumos-retry" style="margin-top:.6rem">🔄 Tentar de novo</button></div>';
     }
-    return '<div class="ph"><h1>'+_T+'</h1></div>'+_avisoDir+offlineAvisoHTML()
-      +'<div class="dir-sub-grid">'+subs.map(function(s){
+    // Resumos (27/11/2026): "14 subespecialidades · 118 capítulos · 153 artigos" e 4 colunas.
+    var _r1='';
+    if(refPrivadoMode){
+      var _tc=0,_ta=0;subs.forEach(function(s){var a=dirArtigoCount(s.sub);_ta+=a;_tc+=s.count-a;});
+      _r1='<div class="resu-resumo"><span><b>'+subs.length+'</b> '+(subs.length===1?'subespecialidade':'subespecialidades')+'</span><span><b>'+_tc+'</b> '+(_tc===1?'capítulo':'capítulos')+'</span>'+(_ta?'<span><b>'+_ta+'</b> '+(_ta===1?'artigo':'artigos')+'</span>':'')+'</div>';
+    }
+    return '<div class="ph"><h1>'+_T+'</h1></div>'+_r1+_avisoDir+offlineAvisoHTML()
+      +'<div class="dir-sub-grid'+(refPrivadoMode?' resu-grade':'')+'">'+subs.map(function(s){
         var _c=refPrivadoMode?_cntSub(s.count,dirArtigoCount(s.sub)):_cnt(s.count);
         var _nv=dirNovosNaSub(s.sub,refPrivadoMode?dirIsVisibleAnyTipo:dirIsVisible);
         // Degustação: a área com videoaula liberada avisa já na grade.
         var _vl=(_degFmt&&dirVideoAmostraDaSub(s.sub))?'<div class="dsb-vid">🎬 1 videoaula liberada</div>':'';
-        return '<button class="dir-sub-btn" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div>'+_vl+((refPrivadoMode&&offlineIdx[s.sub]&&!offlineUsando)?'<div class="dsb-off">✓ disponível sem internet</div>':'')+'</button>';
+        return '<button class="dir-sub-btn'+(refPrivadoMode?' resu-subbtn':'')+'" data-dir-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+novosSufixoHTML(_nv,!refPrivadoMode)+'</h3><div class="dsb-cnt">'+_c+'</div>'+_vl+((refPrivadoMode&&offlineIdx[s.sub]&&!offlineUsando)?'<div class="dsb-off">✓ disponível sem internet</div>':'')+((refPrivadoMode&&!_deg1)?resuSubProgressoHTML(s.sub):'')+'</button>';
       }).join('')+'</div>';
   }
   // Nível 2 — grade de temas dentro da subespecialidade.
@@ -21202,8 +21348,12 @@ function diretrizesViewHTML(){
     // Revisão rápida dos estudos (17/11/2026): os cartões tomam o lugar da grade de artigos.
     if(_isArt&&refRevArt&&typeof dirRevisaoArtigosHTML==='function')return dirRevisaoArtigosHTML(temas);
     var _revBtn=(_isArt&&temas.length>1&&!_deg1)?'<button class="btn btn-outline btn-sm dir-rev-btn" data-dir-revart>⚡ Revisão rápida: os pontos-chave de cada estudo</button>':'';
-    return head2+(_deg1?'':offlineBarraHTML(refSubSel))+_revBtn+'<div class="dir-sub-grid">'+temas.map(function(t,ti){
+    // Capítulos dos Resumos (27/11/2026): numerados, com minutos/videoaulas e o progresso do aluno.
+    var _resuCaps=refPrivadoMode&&!_isArt;
+    var _infos=_resuCaps?temas.map(function(t){return resuCapInfo(refSubSel,t.tema,dirIsVisible);}):[];
+    return head2+(_resuCaps?resuResumoHTML(_infos)+(_deg1?'':resuProgressoHTML(temas)):'')+(_deg1?'':offlineBarraHTML(refSubSel))+_revBtn+'<div class="dir-sub-grid'+(refPrivadoMode?' resu-grade':'')+'">'+temas.map(function(t,ti){
       var lk=_deg1&&ti>0;
+      if(_resuCaps)return resuCapCardHTML(t,ti+1,_infos[ti],lk,!_deg1);
       return '<button class="dir-sub-btn'+(lk?' dir-locked':'')+'" data-dir-'+(lk?'lockedtema':'tema')+'="'+esc(t.tema)+'"><div class="dsb-ico">'+(lk?'🔒':(_isArt?'🔬':'📄'))+'</div><h3>'+esc(t.tema)+'</h3>'+(lk?'<div class="dsb-cnt">Exclusivo p/ assinantes</div>':(t.count>1?'<div class="dsb-cnt">'+_cnt(t.count)+'</div>':''))+'</button>';
     }).join('')+'</div>'
     +_blocoVid
@@ -25590,7 +25740,7 @@ function admRefSecHTML(){
   }else if(!admRefSub){
     // Nos Resumos a grade conta capítulos + artigos (a escolha é um nível abaixo).
     body=''
-      +'<div class="dir-sub-grid">'+dirSubList(admRefMode==='res'?dirModeMatchAnyTipo:dirModeMatch).filter(function(s){return admRefMode==='res'||RESUMOS_ONLY_SUBS.indexOf(s.sub)<0;}).map(function(s){
+      +'<div class="dir-sub-grid'+(admRefMode==='res'?' resu-grade':'')+'">'+dirSubList(admRefMode==='res'?dirModeMatchAnyTipo:dirModeMatch).filter(function(s){return admRefMode==='res'||RESUMOS_ONLY_SUBS.indexOf(s.sub)<0;}).map(function(s){
       var _c;
       if(admRefMode==='res'){
         var _a=admArtigoCount(s.sub),_cp=s.count-_a,_p=[];
@@ -25598,7 +25748,7 @@ function admRefSecHTML(){
         if(_a)_p.push(_a+' '+(_a===1?'artigo':'artigos'));
         _c=_p.join(' · ');
       }else _c=s.count+' '+(s.count===1?L.one:L.many);
-      return '<button class="dir-sub-btn" data-admref-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+_c+'</div></button>';
+      return '<button class="dir-sub-btn'+(admRefMode==='res'?' resu-subbtn':'')+'" data-admref-sub="'+esc(s.sub)+'"><div class="dsb-ico">'+dirSubIcon(s.sub)+'</div><h3>'+esc(s.sub)+'</h3><div class="dsb-cnt">'+_c+'</div></button>';
     }).join('')+'</div>';
   }else if(!admRefTema){
     var temas=dirTemaList(admRefSub,true,dirModeMatch,admRefMode==='res'?admRefTipo:null);
@@ -25609,7 +25759,9 @@ function admRefSecHTML(){
         +'<input type="text" id="adm-ref-newtema" placeholder="'+(_aArt?'Ex: SURPASS-2 (2021), SELECT (2023), FLOW (2024)':'Ex: Hipotireoidismo, Osteoporose, Nódulo tireoidiano')+'">'
         +'<div style="display:flex;gap:.4rem"><button class="btn btn-primary btn-sm" id="btn-ref-tema-create">'+(_aArt?'Criar artigo':'Criar tema')+'</button><button class="btn btn-outline btn-sm" id="btn-ref-tema-addcancel">Cancelar</button></div></div>';
     }
-    cards+=temas.map(function(t){
+    var _aCaps=(admRefMode==='res'&&!_aArt); // capítulos dos Resumos: numerados, com minutos e videoaulas (27/11/2026)
+    var _aInfos=_aCaps?temas.map(function(t){return resuCapInfo(admRefSub,t.tema,dirModeMatch);}):[];
+    cards+=temas.map(function(t,ti){
       if(admRefTemaEdit===t.tema){
         return '<div class="dir-tema-edit"><label style="font-size:.72rem;color:var(--t2);font-weight:600">Renomear tema</label>'
           +'<input type="text" id="adm-ref-edittema" value="'+esc(t.tema)+'">'
@@ -25618,7 +25770,8 @@ function admRefSecHTML(){
       return '<div class="dir-tema-card" data-admref-tema="'+esc(t.tema)+'">'
         +'<button class="dtc-drag" data-ref-tema-drag="'+esc(t.tema)+'" title="Arraste para reordenar" aria-label="Arraste para reordenar '+esc(t.tema)+'">⠿</button>'
         +'<div class="dir-tema-acts"><button data-ref-tema-edit="'+esc(t.tema)+'" title="Renomear tema">✏️</button><button data-ref-tema-del="'+esc(t.tema)+'" title="Excluir tema">🗑</button></div>'
-        +'<div class="dtc-ico">'+(_aArt?'🔬':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' '+(t.count===1?L.one:L.many)+(admRascunhoCount(admRefSub,t.tema)?' · <b style="color:#b4690e">🚧 rascunho</b>':'')+'</div></div>';
+        +(_aCaps?('<span class="resu-num dtc-num">'+((ti+1)<10?'0':'')+(ti+1)+'</span><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt resu-meta">'+resuMetaHTML(_aInfos[ti])+(admRascunhoCount(admRefSub,t.tema)?'<b style="color:#b4690e">🚧 rascunho</b>':'')+'</div></div>')
+          :('<div class="dtc-ico">'+(_aArt?'🔬':'📄')+'</div><h3>'+esc(t.tema)+'</h3><div class="dtc-cnt">'+t.count+' '+(t.count===1?L.one:L.many)+(admRascunhoCount(admRefSub,t.tema)?' · <b style="color:#b4690e">🚧 rascunho</b>':'')+'</div></div>'));
     }).join('');
     // Alternador Capítulos × Artigos — só nos Resumos; aqui aparece sempre
     // (diferente do aluno), pois é por ele que o professor cadastra o 1º trial.
@@ -25648,8 +25801,9 @@ function admRefSecHTML(){
     body='<button class="dir-back" data-admref-back>← Todas as subespecialidades</button>'
       +'<div class="ph" style="margin-top:0"><h1>'+dirSubIcon(admRefSub)+' '+esc(admRefSub)+'</h1>'+(_atxt?'<p>'+_atxt+'</p>':'')+'</div>'
       +_atog
+      +(_aCaps&&temas.length?resuResumoHTML(_aInfos.filter(function(x){return x;})):'')
       +_btnLote
-      +(cards?'<div class="dir-sub-grid">'+cards+'</div>':'');
+      +(cards?'<div class="dir-sub-grid'+(admRefMode==='res'?' resu-grade':'')+'">'+cards+'</div>':'');
   }else{
     // Visão do tema idêntica à do aluno (Resumo / Flashcards / Mapas mentais),
     // somente leitura — acrescida do botão Editar/Excluir por diretriz.

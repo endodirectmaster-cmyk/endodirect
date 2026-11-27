@@ -146,7 +146,7 @@ run(`registros=[{uid:'u1',sub:'Tireoide',at:${agora},itens:[{sub:'Tireoide',tema
   ok(/offlineEntrarSemRede\(\)/.test(corpo('startSupabaseAuthWatcher')), 'sem rede e com token vencido o app não entra');
   ok(/if\(!travarFaceId\)\{try\{offlineLimparTudo\(\);\}/.test(corpo('doLogout')), '"Sair" tem de apagar a cópia (menos o Face ID, que só trava)');
   ok(/offlineLigarBotoes\(root\);offlineTrocaFiguras\(root\);/.test(corpo('resuPosRender')), 'a tela dos Resumos não liga os botões nem troca as figuras');
-  ok(/head2\+\(_deg1\?'':offlineBarraHTML\(refSubSel\)\)/.test(corpo('diretrizesViewHTML')) && /offlineAvisoHTML\(\)/.test(corpo('diretrizesViewHTML')), 'faixa da área ou aviso sem internet fora da tela');
+  ok(/head2\+[^\n]*\(_deg1\?'':offlineBarraHTML\(refSubSel\)\)\+_revBtn/.test(corpo('diretrizesViewHTML')) && /offlineAvisoHTML\(\)/.test(corpo('diretrizesViewHTML')), 'faixa da área ou aviso sem internet fora da tela');
   ok(/addEventListener\('online',offlineReconectou\)/.test(html) && /doLogout\(\)/.test(corpo('offlineReconectou')), 'a volta da rede não recarrega (ou não encerra a sessão recusada)');
   ok(/r\.ok\|\|!\/\^image\\\/\/i\.test|!\/\^image\\\/\/i\.test\(x\.tipo\)/.test(corpo('offlineBaixarFiguras')) && /credentials:'omit'/.test(corpo('offlineBaixarFiguras')), 'só guarda imagem, sem credenciais');
   // service worker: só a supabase-js cruza a origem
