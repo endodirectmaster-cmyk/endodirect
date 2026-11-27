@@ -2564,5 +2564,15 @@ try {
   fail('regressão dos nomes de fármacos em português (lib/farmacos-pt.js) falhou:\n' + out);
 }
 
+// PODCASTS: EPISÓDIO OUVIDO (27/11/2026). Sugestão de uma aluna, repassada pelo professor: marcar como concluído,
+//      como nos cursos e nos Resumos. Botão no cartão, marca sozinho a partir de 90% do áudio, pessoal e sincronizado.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-podcasts-ouvidos.js')], { stdio: 'pipe' });
+  ok('Podcasts: "Marcar como ouvido", automático a partir de 90% do áudio, sincronizado, "Esconder os já ouvidos"');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos podcasts ouvidos (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

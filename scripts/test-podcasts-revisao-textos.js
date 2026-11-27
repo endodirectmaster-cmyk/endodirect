@@ -19,7 +19,7 @@ function corpo(nome) {
 }
 // 11. Podcasts
 const pod = corpo('renderPodcasts');
-ok('🧨 cabeçalho (ícone + título) separado do corpo (texto e player)', /<div class="card pod-card"( data-pod-at="'\+\(\+p\.at\|\|0\)\+'")?><div class="pod-cab"><div class="pod-ico">🎧<\/div><div class="pod-tit">/.test(pod) && /<div class="pod-corpo'\+\(_longo\?' pod-longo':''\)\+'"><div class="pod-texto">/.test(pod));
+ok('🧨 cabeçalho (ícone + título) separado do corpo (texto e player)', /<div class="card pod-card(?:'\+\(_ok\?' pod-ouvido':''\)\+')?"( data-pod-at="'\+\(\+p\.at\|\|0\)\+'")?(?: data-pod-key="'\+esc\(podKey\(p\)\)\+'")?><div class="pod-cab"><div class="pod-ico">🎧<\/div><div class="pod-tit">/.test(pod) && /<div class="pod-corpo'\+\(_longo\?' pod-longo':''\)\+'"><div class="pod-texto">/.test(pod));
 ok('🧨 "Ler mais" só na descrição longa (> 180 caracteres de texto)', /_longo=_pt\.texto\.join\(' '\)\.length>180;/.test(pod) && /\(_longo\?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais<\/button>':''\)/.test(pod));
 ok('🧨 "Ler mais" ligado uma vez só', /if\(!podMaisLigado\)\{podMaisLigado=true;document\.addEventListener\('click'/.test(pod));
 const cssPod = (html.match(/\/\* PODCASTS COMPACTOS[\s\S]*?\n@media \(max-width:820px\)\{([\s\S]*?)\n\}/) || ['', ''])[1];

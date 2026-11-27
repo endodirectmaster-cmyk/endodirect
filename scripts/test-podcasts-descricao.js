@@ -73,7 +73,7 @@ ok('descrição nova (com quebras) é respeitada como veio', ctx.podDescParagraf
 const h = ctx.podDescHTML(antigo107);
 ok('cada parágrafo num <p>, "Referências:" como título', /^<div class="pod-desc"><p>Neste FD/.test(h) && /<p class="pod-desc-ref">Referencias:<\/p>/.test(h), h.slice(0, 160));
 ok('texto escapado (sem HTML do feed na tela)', ctx.podDescHTML('<b>x</b>').indexOf('<b>') < 0);
-ok('🧨 a lista de podcasts do aluno usa a descrição formatada, fora da linha da data', /<div class="pod-texto">'\+podDescCompletoHTML\(p\.desc\)\+'<\/div>'/.test(corpo('renderPodcasts')) && /\+podcastPlayerHTML\(p\)\+'<\/div><\/div>';/.test(corpo('renderPodcasts')) && !/\+esc\(p\.desc\|\|''\)\+'<\/div>'/.test(corpo('renderPodcasts')));
+ok('🧨 a lista de podcasts do aluno usa a descrição formatada, fora da linha da data', /<div class="pod-texto">'\+podDescCompletoHTML\(p\.desc\)\+'<\/div>'/.test(corpo('renderPodcasts')) && /\+podcastPlayerHTML\(p\)\+(?:podBotaoOuvidoHTML\(_ok\)\+)?'<\/div><\/div>';/.test(corpo('renderPodcasts')) && !/\+esc\(p\.desc\|\|''\)\+'<\/div>'/.test(corpo('renderPodcasts')));
 ok('🧨 justificado (com hifenização), parágrafos separados', /\.pod-desc\{[^}]*text-align:justify[^}]*hyphens:auto/.test(html) && /\.pod-desc p\{margin:0 0 \.4rem\}/.test(html));
 
 // ── 4. Cartão do PAINEL DO PROFESSOR (16/11/2026; print do FD 109: "melhorar a formatação aqui no
