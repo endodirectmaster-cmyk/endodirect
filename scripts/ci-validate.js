@@ -2583,5 +2583,15 @@ try {
   fail('regressão dos selos de grau das Diretrizes (index.html) falhou:\n' + out);
 }
 
+// SAIR SÓ DESTE APARELHO (27/11/2026). Professor: "Está saindo do meu iPhone mesmo antes das 48h [...] saindo do
+// meu painel em alguns desktops diferentes?". O signOut() sem escopo derrubava todos os aparelhos da conta.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-sair-so-deste-aparelho.js')], { stdio: 'pipe' });
+  ok('"Sair" e a saída por inatividade encerram só a sessão deste aparelho (o iPhone não cai junto)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do "Sair" só deste aparelho (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

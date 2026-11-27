@@ -111,7 +111,7 @@ async function sair(opts) {
   ok('🧨 trava do Face ID: não recarrega (a sessão fica guardada para o rosto)', r.ev.join('|') === 'logout' && !r.timers.length && 'sb-abc-auth-token' in r.ls);
   r = await sair({ app: true, confirma: false });
   ok('"Cancelar" na pergunta: nada acontece', !r.ev.length);
-  ok('🧨 doLogout guarda a promessa do signOut e diz se só travou', /ultimoSair=client\.auth\.signOut\(\)/.test(corpo('doLogout')) && /return travarFaceId;/.test(corpo('doLogout')));
+  ok('🧨 doLogout guarda a promessa do signOut e diz se só travou', /ultimoSair=client\.auth\.signOut\(\{scope:'local'\}\)/.test(corpo('doLogout')) && /return travarFaceId;/.test(corpo('doLogout')));
   ok('na volta sem sessão, o app abre no login (e não na landing)', /if\(\(isAppLoja\(\)\|\|__pedeExcl\)&&__lsx&&__lsx\.style\.display!=='flex'\)showLoginScreen\(\);/.test(html));
 
   if (bad) { console.log('✗ tela depois de entrar no iPhone: ' + bad + ' falha(s)'); process.exit(1); }
