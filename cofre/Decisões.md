@@ -8,6 +8,12 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🖍 GRIFOS COM CORES, SUBLINHADO E NAS DIRETRIZES (2026-11-27, v504; professor: *"dentro das diretrizes, dos resumos, a opção de deixar para o aluno sublinhar ou grifar os textos. E, por exemplo, ao grifar, escolher a cor que ele quer grifar, se é com vermelho, amarelo, etc."*).** O grifo de 17/11 (só amarelo, só nos Resumos) ganhou:
+  - na barra que aparece ao selecionar o texto: 🖍 grifar ou U sublinhar, e 5 cores (amarelo, verde, azul, rosa, vermelho). Tocar na cor já marca o trecho; 📝 marca e abre a nota. A última cor e o último estilo ficam lembrados no aparelho (`grifo_pref`);
+  - na janela do grifo (tocar no trecho): trocar a cor ou o estilo de um grifo que já existe;
+  - as **Diretrizes** (`#ref-body`) também aceitam grifo; o grifo guarda `painel` ('resu'/'ref') e só aparece no painel em que foi feito. Na aba Notas, "🖍 Grifos (Resumos e Diretrizes)", agrupados por capítulo, com a cor na borda.
+  - Dado: `grifos[i]` ganhou `cor`, `estilo` ('grifo'|'sub') e `painel`. Grifo antigo sem os campos = amarelo, grifado, nos Resumos (nada a migrar). CSS por variável `--gc` (o tema escuro não força o amarelo).
+  - Barra conferida a 390 px de largura (336 px). Teste: `scripts/test-leitura-grifos.js` (6 mutações pegas).
 - **🔐 E-MAIL DE APARELHO NOVO NA CONTA + ⏰ LEMBRETE DIÁRIO DE ESTUDO (2026-11-27, v503; professor: *"Faz a 1, 5, 6 e 10"*, a 10 e a 5).**
   - **Aparelho novo (10):** quando um aparelho NUNCA visto entra numa conta que já tinha outro, o aluno recebe um e-mail ("Novo aparelho entrou na sua conta Endodirect": tipo do aparelho, ex. "Chrome no Windows", e horário de Brasília; se não foi ele, trocar a senha e remover em Perfil › Meus aparelhos). Um 3º aparelho barrado também avisa ("Tentativa de entrar… em outro aparelho"). O 1º aparelho da conta (o cadastro) não avisa; professor e contas isentas não recebem; até 3 alertas por conta em 24 h.
   - Quem dispara é o **banco**, no próprio `endodirect_aparelho_entrar` (pg_net → rota `alertas_aparelho`), e não o navegador: um cliente adulterado não deixaria de avisar. Fila `endodirect_alertas_aparelho` com `skip locked` (sem e-mail em dobro) e até 3 tentativas. Remetente: o do suporte (resposta cai no suporte).

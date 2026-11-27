@@ -2130,19 +2130,42 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dash-cont-bar{height:4px;border-radius:99px;background:var(--bd2);margin-top:.45rem;overflow:hidden}
 .dash-cont-bar span{display:block;height:100%;background:var(--blue);border-radius:99px}
 .dash-cont-go{font-size:.78rem;font-weight:700;color:var(--blue);white-space:nowrap}
-mark.grifo{background:rgba(250,204,21,.38);color:inherit;border-radius:3px;padding:0 1px;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-:root[data-theme="dark"] mark.grifo{background:rgba(250,204,21,.3)}
+mark.grifo{--gc:250,204,21;background:rgba(var(--gc),.38);color:inherit;border-radius:3px;padding:0 1px;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+:root[data-theme="dark"] mark.grifo{background:rgba(var(--gc),.3)}
+/* Cores e sublinhado (27/11/2026): a cor é a variável --gc; o sublinhado tira o fundo. */
+mark.grifo.g-verde{--gc:52,211,153}
+mark.grifo.g-azul{--gc:96,165,250}
+mark.grifo.g-rosa{--gc:244,114,182}
+mark.grifo.g-vermelho{--gc:248,113,113}
+:root mark.grifo.g-sub,:root[data-theme] mark.grifo.g-sub{background:transparent;padding:0;text-decoration:underline;text-decoration-color:rgb(var(--gc));text-decoration-thickness:2.5px;text-underline-offset:3px;text-decoration-skip-ink:none}
 mark.grifo.grifo-pisca{outline:2px solid var(--gold);outline-offset:2px}
 .grifo-barra{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:9000;display:none;gap:6px;width:max-content;max-width:calc(100vw - 24px);padding:6px;border-radius:999px;background:#14203a;border:1px solid rgba(255,255,255,.25);box-shadow:0 8px 28px rgba(0,0,0,.35)}
 .grifo-barra.on{display:flex}
 .grifo-barra button{white-space:nowrap;border:0;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:.82rem;font-weight:600;padding:.55rem .9rem;cursor:pointer;-webkit-user-select:none;user-select:none}
 .grifo-barra button[data-grifar="x"]{background:transparent;padding:.55rem .7rem}
+.grifo-barra{align-items:center}
+.grifo-barra .grifo-modo{padding:.5rem .7rem;min-width:40px}
+.grifo-barra .grifo-modo[aria-pressed="true"]{background:#fff;color:#14203a}
+.grifo-barra .grifo-modo-u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.grifo-cores{display:flex;gap:6px;padding:0 4px}
+.grifo-barra .grifo-cor,.grifo-caixa .grifo-cor{width:30px;height:30px;min-width:30px;padding:0;border-radius:999px;border:2px solid rgba(255,255,255,.55);cursor:pointer;background:rgb(var(--gc))}
+.grifo-caixa .grifo-cor{border-color:var(--bd2)}
+.grifo-cor[aria-pressed="true"]{box-shadow:0 0 0 3px #14203a,0 0 0 5px #fff}
+.grifo-caixa .grifo-cor[aria-pressed="true"]{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--tx)}
+.grifo-cor.g-amarelo{--gc:250,204,21}.grifo-cor.g-verde{--gc:52,211,153}.grifo-cor.g-azul{--gc:96,165,250}.grifo-cor.g-rosa{--gc:244,114,182}.grifo-cor.g-vermelho{--gc:248,113,113}
+.grifo-estilo{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .8rem;margin:0 0 .8rem}
+.grifo-estilo .grifo-cores{padding:0}
+.grifo-estilo .grifo-modo{border:1px solid var(--bd2);background:var(--s2);color:var(--tx);border-radius:999px;font:inherit;font-size:.78rem;font-weight:600;padding:.4rem .75rem;cursor:pointer}
+.grifo-estilo .grifo-modo[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media(max-width:400px){.grifo-barra{gap:4px;padding:5px}.grifo-barra .grifo-cor{width:26px;height:26px;min-width:26px}.grifo-barra .grifo-modo{min-width:34px;padding:.45rem .55rem}}
 .grifo-modal{position:fixed;inset:0;z-index:99990;background:rgba(8,12,24,.6);display:none;align-items:flex-end;justify-content:center;padding:16px}
 .grifo-caixa{width:100%;max-width:560px;background:var(--surface,var(--s1,#fff));color:var(--tx);border:1px solid var(--bd2);border-radius:16px;padding:1rem 1.05rem calc(env(safe-area-inset-bottom,0px) + 1rem);max-height:85vh;overflow-y:auto}
 @media(min-width:700px){.grifo-modal{align-items:center}}
 .grifo-cab{font-size:.85rem;font-weight:700;display:flex;flex-direction:column;gap:.1rem;margin-bottom:.6rem}
 .grifo-cab span{font-size:.7rem;font-weight:500;color:var(--t3)}
-.grifo-trecho,.grifos-item blockquote{margin:0 0 .7rem;padding:.55rem .75rem;border-left:3px solid #facc15;background:var(--s2);border-radius:0 8px 8px 0;font-size:.84rem;line-height:1.5;color:var(--tx)}
+.grifo-trecho,.grifos-item blockquote{--gc:250,204,21;margin:0 0 .7rem;padding:.55rem .75rem;border-left:3px solid rgb(var(--gc));background:var(--s2);border-radius:0 8px 8px 0;font-size:.84rem;line-height:1.5;color:var(--tx)}
+.grifo-trecho.g-verde,.grifos-item blockquote.g-verde{--gc:52,211,153}.grifo-trecho.g-azul,.grifos-item blockquote.g-azul{--gc:96,165,250}
+.grifo-trecho.g-rosa,.grifos-item blockquote.g-rosa{--gc:244,114,182}.grifo-trecho.g-vermelho,.grifos-item blockquote.g-vermelho{--gc:248,113,113}
 .grifo-lab{display:block;font-size:.72rem;font-weight:700;color:var(--t2);margin-bottom:.3rem}
 .grifo-caixa textarea{width:100%;font:inherit;font-size:16px;line-height:1.45;padding:.55rem .65rem;border:1px solid var(--bd2);border-radius:10px;background:var(--bg);color:var(--tx);resize:vertical}
 .grifo-acoes{display:flex;gap:.45rem;align-items:center;margin-top:.75rem;flex-wrap:wrap}
@@ -18564,6 +18587,8 @@ function leituraNoScroll(){
 }
 // Chamado ao fim de cada desenho dos Resumos (renderDiretrizesInto).
 function resuPosRender(root){
+  // Diretrizes (27/11/2026): só os grifos; leitura, marcadores e offline continuam só nos Resumos.
+  if(root&&root.id==='ref-body'&&!refPrivadoMode){grifosInit();if(refSubSel&&refTemaSel&&!refRevArt&&refFormat==='resumo')grifosAplicar(root);return;}
   if(!root||root.id!=='resu-body'||!refPrivadoMode)return;
   grifosInit();
   marcaAplicar();
@@ -18604,11 +18629,27 @@ function renderDashContinuar(){
   if(b){b.addEventListener('click',abrirLeitura);b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();abrirLeitura();}});}
 }
 // ── Grifos ──
+// CORES, SUBLINHADO E DIRETRIZES (27/11/2026). Professor: "dentro das diretrizes, dos resumos, a opção de
+// deixar para o aluno sublinhar ou grifar os textos. E, por exemplo, ao grifar, escolher a cor que ele quer
+// grifar, se é com vermelho, amarelo, etc." Cada grifo ganha `cor` (GRIFO_CORES), `estilo` ('grifo' ou 'sub',
+// sublinhado) e `painel` ('resu' = Resumos, 'ref' = Diretrizes). Grifo antigo, sem os campos = amarelo,
+// grifado, nos Resumos. A última cor e o último estilo usados ficam lembrados no aparelho (grifo_pref).
+var GRIFO_CORES=[['amarelo','Amarelo'],['verde','Verde'],['azul','Azul'],['rosa','Rosa'],['vermelho','Vermelho']];
+function grifoCorOk(c){for(var i=0;i<GRIFO_CORES.length;i++){if(GRIFO_CORES[i][0]===c)return c;}return 'amarelo';}
+function grifoClasse(g){return 'g-'+grifoCorOk(g&&g.cor)+((g&&g.estilo==='sub')?' g-sub':'');}
+function grifoPref(){var p=null;try{p=lsGet('grifo_pref');}catch(e){}return {cor:grifoCorOk(p&&p.cor),estilo:(p&&p.estilo==='sub')?'sub':'grifo'};}
+function grifoPrefSalva(cor,estilo){try{lsSet('grifo_pref',{cor:grifoCorOk(cor),estilo:estilo==='sub'?'sub':'grifo'});}catch(e){}}
 function grifosLista(){return Array.isArray(DB.grifos)?DB.grifos:(DB.grifos=[]);}
-function grifosDoCapitulo(sub,tipo,tema){return grifosLista().filter(function(g){return g&&g.sub===sub&&(g.tipo||'capitulo')===tipo&&g.tema===tema;});}
+function grifosDoCapitulo(sub,tipo,tema,painel){painel=painel==='ref'?'ref':'resu';return grifosLista().filter(function(g){return g&&g.sub===sub&&(g.tipo||'capitulo')===tipo&&g.tema===tema&&((g.painel==='ref')?'ref':'resu')===painel;});}
+// O capítulo (Resumos) ou a diretriz (Diretrizes) do grifo ainda existe para este aluno?
+function grifoCapituloExiste(g){
+  if(!g)return false;
+  var priv=g.painel!=='ref',tipo=g.tipo==='artigo'?'artigo':'capitulo';
+  return (diretrizes||[]).some(function(d){return d&&!dirIsRascunho(d)&&(d.privado===true)===priv&&dirTipoOf(d)===tipo&&estSubDe(d)===g.sub&&dirTemaOf(d)===g.tema;});
+}
 // Reencontra o trecho no texto (ignorando espaços e quebras, que a seleção do navegador
 // altera entre parágrafos) e embrulha cada pedaço em <mark class="grifo">.
-function grifoMarca(raiz,txt,id){
+function grifoMarca(raiz,txt,id,g){
   var alvo=String(txt||'').replace(/\s+/g,'');if(alvo.length<3||!raiz)return false;
   var w=document.createTreeWalker(raiz,4,null),nos=[],mapa=[],plano='',m;
   while((m=w.nextNode())){var v=m.nodeValue||'';for(var i=0;i<v.length;i++){if(!/\s/.test(v.charAt(i))){mapa.push([nos.length,i]);plano+=v.charAt(i);}}nos.push(m);}
@@ -18618,23 +18659,43 @@ function grifoMarca(raiz,txt,id){
     var no=nos[ni],a=(ni===ini[0])?ini[1]:0,b=(ni===fim[0])?fim[1]+1:no.nodeValue.length;
     if(b<=a||!no.nodeValue.slice(a,b).trim())continue;
     var meio=no.splitText(a);meio.splitText(b-a);
-    var mk=document.createElement('mark');mk.className='grifo';mk.setAttribute('data-grifo',id);
+    var mk=document.createElement('mark');mk.className='grifo '+grifoClasse(g);mk.setAttribute('data-grifo',id);
     meio.parentNode.insertBefore(mk,meio);mk.appendChild(meio);
   }
   return true;
 }
 function grifosAplicar(root){
-  var lst=grifosDoCapitulo(refSubSel,refTipoSel,refTemaSel);if(!lst.length)return;
+  var painel=(root&&root.id==='ref-body')?'ref':'resu';
+  var lst=grifosDoCapitulo(refSubSel,refTipoSel,refTemaSel,painel);if(!lst.length)return;
   var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');
-  lst.forEach(function(g){for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id))break;}});
+  lst.forEach(function(g){for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id,g))break;}});
+}
+// Botões de cor e de estilo (a barra da seleção e a janela do grifo usam os mesmos).
+function grifoCoresHTML(cor){
+  return '<span class="grifo-cores" role="group" aria-label="Cor">'+GRIFO_CORES.map(function(c){
+    return '<button type="button" class="grifo-cor g-'+c[0]+'" data-grifo-cor="'+c[0]+'" aria-label="'+c[1]+'" title="'+c[1]+'" aria-pressed="'+(c[0]===cor?'true':'false')+'"></button>';
+  }).join('')+'</span>';
+}
+function grifoBarraPinta(b){
+  var p=grifoPref();
+  b.querySelectorAll('[data-grifo-modo]').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-grifo-modo')===p.estilo?'true':'false');});
+  b.querySelectorAll('[data-grifo-cor]').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-grifo-cor')===p.cor?'true':'false');});
 }
 function grifoBarra(){
   var b=document.getElementById('grifo-barra');if(b)return b;
   b=document.createElement('div');b.id='grifo-barra';b.className='grifo-barra';
-  b.innerHTML='<button type="button" data-grifar="1">🖍 Grifar</button><button type="button" data-grifar="nota">📝 Grifar e anotar</button><button type="button" data-grifar="x" aria-label="Fechar">✕</button>';
+  // Grifar ou sublinhar, as 5 cores (tocar numa cor já marca o trecho), anotar e fechar.
+  b.innerHTML='<button type="button" class="grifo-modo" data-grifo-modo="grifo" aria-label="Grifar" title="Grifar" aria-pressed="true">🖍</button>'
+    +'<button type="button" class="grifo-modo grifo-modo-u" data-grifo-modo="sub" aria-label="Sublinhar" title="Sublinhar" aria-pressed="false">U</button>'
+    +grifoCoresHTML(grifoPref().cor)
+    +'<button type="button" data-grifar="nota" aria-label="Marcar e anotar" title="Marcar e anotar">📝</button><button type="button" data-grifar="x" aria-label="Fechar">✕</button>';
   // Tocar no botão não pode desfazer a seleção antes de o grifo ser criado.
   b.addEventListener('mousedown',function(e){e.preventDefault();});
   b.addEventListener('click',function(e){
+    var md=e.target.closest?e.target.closest('[data-grifo-modo]'):null;
+    if(md){var p0=grifoPref();grifoPrefSalva(p0.cor,md.getAttribute('data-grifo-modo'));grifoBarraPinta(b);return;}
+    var cr=e.target.closest?e.target.closest('[data-grifo-cor]'):null;
+    if(cr){var p1=grifoPref();grifoPrefSalva(cr.getAttribute('data-grifo-cor'),p1.estilo);grifoBarraPinta(b);grifoCria(false);return;}
     var t=e.target.closest?e.target.closest('[data-grifar]'):null;if(!t)return;
     var q=t.getAttribute('data-grifar');
     if(q==='x'){grifoSel=null;b.classList.remove('on');try{window.getSelection().removeAllRanges();}catch(er){}return;}
@@ -18648,22 +18709,27 @@ function grifoSelecao(){
   if(!s||s.isCollapsed||!s.rangeCount){grifoSel=null;b.classList.remove('on');return;}
   var txt=String(s.toString()||'').trim();
   var el=function(n){return n&&(n.nodeType===1?n:n.parentNode);};
-  var a=el(s.anchorNode),f=el(s.focusNode),root=document.getElementById('resu-body');
+  // Resumos (#resu-body) e, desde 27/11/2026, Diretrizes (#ref-body).
+  var painel=refPrivadoMode?'resu':'ref';
+  var a=el(s.anchorNode),f=el(s.focusNode),root=document.getElementById(painel==='resu'?'resu-body':'ref-body');
   var dentro=function(x){return x&&root&&root.contains(x)&&x.closest&&x.closest('.dir-texto,.dir-pts')&&!x.closest('.wys-edit');};
-  if(!refPrivadoMode||!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;b.classList.remove('on');return;}
-  grifoSel={txt:txt,sub:refSubSel,tipo:refTipoSel,tema:refTemaSel};
+  if(!refTemaSel||txt.length<3||txt.length>800||!dentro(a)||!dentro(f)||a.closest('.dir-card')!==f.closest('.dir-card')){grifoSel=null;b.classList.remove('on');return;}
+  grifoSel={txt:txt,sub:refSubSel,tipo:refTipoSel,tema:refTemaSel,painel:painel};
+  grifoBarraPinta(b);
   b.classList.add('on');
 }
 function grifoCria(comNota){
   var s=grifoSel;if(!s)return;
-  var g={id:'g'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),sub:s.sub,tipo:s.tipo,tema:s.tema,txt:s.txt.slice(0,800),nota:'',at:Date.now()};
+  var pf=grifoPref();
+  var g={id:'g'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),sub:s.sub,tipo:s.tipo,tema:s.tema,txt:s.txt.slice(0,800),nota:'',at:Date.now(),
+    cor:pf.cor,estilo:pf.estilo,painel:s.painel==='ref'?'ref':'resu'};
   grifosLista().push(g);persist();
   grifoSel=null;grifoBarra().classList.remove('on');
   try{window.getSelection().removeAllRanges();}catch(e){}
-  var root=document.getElementById('resu-body');
-  if(root){var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id))break;}}
+  var root=document.getElementById(g.painel==='ref'?'ref-body':'resu-body');
+  if(root){var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id,g))break;}}
   if(comNota)grifoModal(g.id);
-  else try{notify('Trecho grifado. Os grifos ficam reunidos na aba Notas.','ok');}catch(e){}
+  else try{notify((g.estilo==='sub'?'Trecho sublinhado.':'Trecho grifado.')+' Ficam reunidos na aba Notas.','ok');}catch(e){}
 }
 function grifoModal(id){
   var g=grifosLista().filter(function(x){return x.id===id;})[0];if(!g)return;
@@ -18672,7 +18738,11 @@ function grifoModal(id){
     m.addEventListener('click',function(e){if(e.target===m)m.style.display='none';});}
   m.innerHTML='<div class="grifo-caixa" role="dialog" aria-label="Grifo">'
     +'<div class="grifo-cab">🖍 '+esc(g.tema)+'<span>'+esc(g.sub)+'</span></div>'
-    +'<blockquote class="grifo-trecho">'+esc(g.txt)+'</blockquote>'
+    +'<blockquote class="grifo-trecho '+grifoClasse(g)+'">'+esc(g.txt)+'</blockquote>'
+    +'<div class="grifo-estilo"><span role="group" aria-label="Estilo" style="display:flex;gap:.35rem">'
+      +'<button type="button" class="grifo-modo" data-grifo-modo="grifo" aria-pressed="'+(g.estilo==='sub'?'false':'true')+'">🖍 Grifado</button>'
+      +'<button type="button" class="grifo-modo" data-grifo-modo="sub" aria-pressed="'+(g.estilo==='sub'?'true':'false')+'"><u>Sublinhado</u></button></span>'
+      +grifoCoresHTML(grifoCorOk(g.cor))+'</div>'
     +'<label class="grifo-lab" for="grifo-nota">Sua nota</label>'
     +'<textarea id="grifo-nota" rows="4" placeholder="Escreva uma observação sobre este trecho">'+esc(g.nota||'')+'</textarea>'
     +'<div class="grifo-acoes"><button type="button" class="btn btn-danger btn-sm" data-grifo-del="'+esc(g.id)+'">Remover grifo</button><span style="flex:1"></span>'
@@ -18681,7 +18751,20 @@ function grifoModal(id){
   m.querySelector('[data-grifo-fecha]').onclick=function(){m.style.display='none';};
   m.querySelector('[data-grifo-salva]').onclick=function(){g.nota=String(m.querySelector('#grifo-nota').value||'').trim().slice(0,2000);g.at=Date.now();persist();m.style.display='none';try{notify('Nota salva no grifo.','ok');}catch(e){}grifosNotasAtualiza();};
   m.querySelector('[data-grifo-del]').onclick=function(){grifoRemove(g.id);m.style.display='none';};
+  // Trocar a cor ou o estilo de um grifo que já existe: vale na hora, no texto e na aba Notas.
+  m.querySelectorAll('[data-grifo-modo],[data-grifo-cor]').forEach(function(bt){bt.onclick=function(){
+    if(bt.hasAttribute('data-grifo-modo'))g.estilo=bt.getAttribute('data-grifo-modo')==='sub'?'sub':'grifo';
+    else g.cor=grifoCorOk(bt.getAttribute('data-grifo-cor'));
+    g.at=Date.now();persist();grifoPrefSalva(g.cor,g.estilo);grifoRepinta(g);
+    m.querySelectorAll('[data-grifo-modo]').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-grifo-modo')===(g.estilo==='sub'?'sub':'grifo')?'true':'false');});
+    m.querySelectorAll('[data-grifo-cor]').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-grifo-cor')===grifoCorOk(g.cor)?'true':'false');});
+    var bq=m.querySelector('.grifo-trecho');if(bq)bq.className='grifo-trecho '+grifoClasse(g);
+    grifosNotasAtualiza();
+  };});
   try{m.querySelector('#grifo-nota').focus();}catch(e){}
+}
+function grifoRepinta(g){
+  document.querySelectorAll('mark.grifo[data-grifo="'+g.id+'"]').forEach(function(mk){mk.className='grifo '+grifoClasse(g);});
 }
 function grifoRemove(id){
   DB.grifos=grifosLista().filter(function(x){return x.id!==id;});persist();
@@ -18690,10 +18773,12 @@ function grifoRemove(id){
 }
 function grifoAbreNoCapitulo(id){
   var g=grifosLista().filter(function(x){return x.id===id;})[0];if(!g)return;
-  if(!leituraItem({sub:g.sub,tipo:g.tipo,tema:g.tema})){try{notify('Este capítulo não está disponível agora.','err');}catch(e){}return;}
-  goPanel('resu');
+  if(!grifoCapituloExiste(g)){try{notify('Este capítulo não está disponível agora.','err');}catch(e){}return;}
+  var ref=g.painel==='ref';
+  goPanel(ref?'ref':'resu');
+  refPrivadoMode=!ref;
   refSubSel=g.sub;refTipoSel=g.tipo==='artigo'?'artigo':'capitulo';refTemaSel=g.tema;refFormat='resumo';refVoltaCap=null;refRevArt=null;
-  var root=document.getElementById('resu-body');if(!root)return;
+  var root=document.getElementById(ref?'ref-body':'resu-body');if(!root)return;
   renderDiretrizesInto(root);
   setTimeout(function(){
     var mk=root.querySelector('mark.grifo[data-grifo="'+id+'"]');if(!mk)return;
@@ -18719,17 +18804,17 @@ function grifosInit(){
 // Aba Notas: os grifos reunidos, por capítulo, como primeira entrada da lista.
 function grifosNotasItemHTML(){
   var n=grifosLista().length;if(!n)return '';
-  return '<div class="note-item note-grifos" data-note-grifos><div class="note-title">🖍 Grifos dos Resumos</div><div class="note-sub">'+n+' '+(n===1?'trecho grifado':'trechos grifados')+'</div></div>';
+  return '<div class="note-item note-grifos" data-note-grifos><div class="note-title">🖍 Grifos (Resumos e Diretrizes)</div><div class="note-sub">'+n+' '+(n===1?'trecho marcado':'trechos marcados')+'</div></div>';
 }
 function grifosNotasHTML(){
   var lst=grifosLista().slice().sort(function(a,b){return (b.at||0)-(a.at||0);});
-  var cab='<div class="grifos-cab"><button type="button" class="note-tb-btn note-voltar" data-grifos-volta>← Notas</button><h2>🖍 Grifos dos Resumos</h2></div>';
-  if(!lst.length)return cab+'<div class="empty">Nenhum trecho grifado. Nos Resumos, selecione um trecho do texto e toque em "Grifar".</div>';
+  var cab='<div class="grifos-cab"><button type="button" class="note-tb-btn note-voltar" data-grifos-volta>← Notas</button><h2>🖍 Grifos (Resumos e Diretrizes)</h2></div>';
+  if(!lst.length)return cab+'<div class="empty">Nenhum trecho marcado. Nos Resumos ou nas Diretrizes, selecione um trecho do texto e escolha a cor para grifar ou sublinhar.</div>';
   var grupos={},ordem=[];
-  lst.forEach(function(g){var k=g.sub+'||'+g.tema;if(!grupos[k]){grupos[k]=[];ordem.push(k);}grupos[k].push(g);});
+  lst.forEach(function(g){var k=(g.painel==='ref'?'ref':'resu')+'||'+g.sub+'||'+g.tema;if(!grupos[k]){grupos[k]=[];ordem.push(k);}grupos[k].push(g);});
   return cab+ordem.map(function(k){var gs=grupos[k],g0=gs[0];
-    return '<div class="grifos-grupo"><div class="grifos-grupo-h">'+(g0.tipo==='artigo'?'🔬 ':'📖 ')+esc(g0.tema)+'<span>'+esc(g0.sub)+'</span></div>'
-      +gs.map(function(g){return '<div class="grifos-item"><blockquote>'+esc(g.txt)+'</blockquote>'
+    return '<div class="grifos-grupo"><div class="grifos-grupo-h">'+(g0.painel==='ref'?'📋 ':(g0.tipo==='artigo'?'🔬 ':'📖 '))+esc(g0.tema)+'<span>'+esc(g0.sub)+(g0.painel==='ref'?' · Diretrizes':'')+'</span></div>'
+      +gs.map(function(g){return '<div class="grifos-item"><blockquote class="'+grifoClasse(g)+'">'+esc(g.txt)+'</blockquote>'
         +(g.nota?'<div class="grifos-nota">📝 '+esc(g.nota)+'</div>':'')
         +'<div class="grifos-acoes"><button type="button" class="btn btn-outline btn-sm" data-grifo-abre="'+esc(g.id)+'">Abrir no capítulo</button>'
         +'<button type="button" class="btn btn-ghost btn-sm" data-grifo-edita="'+esc(g.id)+'">'+(g.nota?'Editar nota':'Anotar')+'</button>'
