@@ -8,6 +8,12 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎧 PODCASTS: EPISÓDIO OUVIDO (2026-11-27, v511; sugestão de uma aluna no Instagram, repassada pelo professor: *"deixar marcado como concluído no app na área de podcasts igual tem na parte de cursos e resumos"*).**
+  - Cada episódio tem o botão "Marcar como ouvido" / "✓ Ouvido (desfazer)", como o "Marcar como concluída" das aulas, e o selo verde "✓ Ouvido" no cabeçalho.
+  - O áudio do próprio site marca sozinho a partir de 90% (`timeupdate`/`ended`), como o "Lido" dos Resumos, e nunca desmarca sozinho. O episódio do Spotify fica só no botão, porque o player deles não informa a posição.
+  - No topo, "Você ouviu X de Y episódios" (na subespecialidade filtrada), com barra e a opção "Esconder os já ouvidos" (guardada no aparelho).
+  - Marcar repinta só o cartão e a linha de progresso, sem redesenhar a lista, para não parar o áudio que está tocando.
+  - Dado: `DB.podOuvidos` = {"a<at>" ou "t<título>": quando}. Chave pessoal (PERSONAL_STATE_KEYS), sincroniza entre aparelhos; vale a do servidor, como `cursoProg`, para o "desfazer" também sincronizar.
 - **🛰️ SENTRY: A CONTA NUNCA CHEGAVA NOS EVENTOS (2026-11-27, v510; checagem das 12h28, ENDODIRECT-SITE-2 de volta).**
   - Achado: desde a v495 o Sentry lia `window.currentUser`, mas o `currentUser` do app é variável do bloco principal (IIFE) e nunca esteve no `window`. Todo evento saía sem `user.id`, e o "quantas contas" ficava sempre zero. O teste passava porque punha `window.currentUser` à mão.
   - Agora o app expõe só o uuid por `window.__endoContaId` (logo depois de `var currentUser=null;`), e o Sentry lê por ali. Nome e e-mail continuam fora. O teste (`test-sentry-lgpd.js`) confere a função no index.html e o evento com o uuid; conferido que falha sem a linha.

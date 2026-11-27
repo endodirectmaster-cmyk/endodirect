@@ -1884,6 +1884,12 @@ html[data-theme="light"] .cat-pill.on{background:var(--blue);border-color:var(--
 .pod-tit{flex:1;min-width:0}
 .pod-nome{font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:2px}
 .pod-meta{font-size:.68rem;color:var(--t3);margin-bottom:.4rem}
+/* Episódio ouvido (27/11/2026): selo verde, botão como o "Marcar como concluída" das aulas. */
+.pod-ouvido-tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;background:rgba(52,211,153,.14);color:var(--grn);font-size:.68rem;font-weight:700;white-space:nowrap}
+.pod-acoes{margin-top:.55rem;display:flex;gap:.4rem;flex-wrap:wrap}
+.pod-card.pod-ouvido .pod-ico{box-shadow:inset 0 0 0 2px var(--grn)}
+.pod-prog .pod-oculta{display:inline-flex;align-items:center;gap:.35rem;font-size:.76rem;color:var(--t2);cursor:pointer;white-space:nowrap}
+.pod-prog .pod-oculta input{accent-color:var(--grn);width:15px;height:15px;margin:0}
 .pod-corpo{margin-left:calc(46px + .8rem)}
 .pod-mais{display:none}
 /* QUANDO REVISAR, EM PALAVRAS (proposta 12): na linha da subespecialidade. */
@@ -8131,11 +8137,14 @@ var DB={
   grifos:lsGet('grifos')||[],
   // Quanto o aluno já leu de cada capítulo dos Resumos (27/11/2026): {"<sub>||<tema>": 0–100}. Pessoal.
   lidos:lsGet('lidos')||{},
+  // Podcasts ouvidos (27/11/2026): {"<chave do episódio>": quando}. Pessoal, sincroniza entre aparelhos.
+  podOuvidos:lsGet('podOuvidos')||{},
   qotd:(function(){try{return JSON.parse(localStorage.getItem('qotd_answered')||'{}')||{};}catch(e){return {};}})()
 };
 function persist(){
   ['q','fc','mm','notes','crono','sf_results','perf','perfTema','act','srs','srNew','goal','cursoProg','feitas','plan','acervoVisto'].forEach(function(k){lsSet(k,DB[k]);});
   lsSet('leitura',DB.leitura);lsSet('grifos',DB.grifos);lsSet('lidos',DB.lidos); // Resumos: último capítulo lido, grifos (17/11/2026) e % lido por capítulo (27/11/2026)
+  lsSet('podOuvidos',DB.podOuvidos); // Podcasts: episódios ouvidos (27/11/2026)
   try{localStorage.setItem('qotd_answered',JSON.stringify(DB.qotd||{}));}catch(e){}
   queueRemoteStateSave();
 }
@@ -8935,7 +8944,7 @@ function persistPodcasts(){lsSet('podcasts',podcasts);queueRemoteStateSave();}
 
 function userStatePayload(){
   // adm_perfil é PESSOAL (vai no app_state do próprio admin, não no global).
-  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,leitura:DB.leitura,grifos:DB.grifos,lidos:DB.lidos,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
+  var p={q:DB.q,fc:DB.fc,mm:DB.mm,notes:DB.notes,leitura:DB.leitura,grifos:DB.grifos,lidos:DB.lidos,podOuvidos:DB.podOuvidos,crono:DB.crono,sf_results:DB.sf_results,perf:DB.perf,perfTema:DB.perfTema,act:DB.act,srs:DB.srs,goal:DB.goal,cursoProg:DB.cursoProg,plan:DB.plan,qotd:DB.qotd,feitas:DB.feitas,enquete_cme:DB.enqueteCme,user_profile:lsGet('user_profile'),deg_trials:degTrials,ck_billing:lsGet('ck_billing'),presc_emitidas:lsGet('presc_emitidas')||[]};
   if(currentUser&&currentUser.role==='admin'){
     // Nunca persiste o perfil de OUTRO admin: se o e-mail do perfil em memória
     // não bater com o da sessão (resíduo de localStorage antigo), reconstrói da
@@ -8983,7 +8992,7 @@ function currentStatePayload(){
 // Chaves PESSOAIS (vivem no app_state do próprio usuário). As demais são
 // CONTEÚDO GLOBAL (provas, mural/radar, podcasts, cursos, diretrizes…), que só
 // vêm do estado global/RPC de membro.
-var PERSONAL_STATE_KEYS=['q','fc','mm','notes','leitura','grifos','lidos','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
+var PERSONAL_STATE_KEYS=['q','fc','mm','notes','leitura','grifos','lidos','podOuvidos','crono','sf_results','perf','perfTema','act','srs','goal','cursoProg','plan','adm_perfil','user_profile','deg_trials','ck_billing','presc_emitidas','feitas','favs','acervoVisto'];
 // personalOnly=true quando o payload é o app_state do PRÓPRIO usuário: aplica só
 // as chaves pessoais e NUNCA toca no conteúdo global. Sem isso, um app_state com
 // resíduo antigo de chaves globais (ex.: radar_avisos defasado) podia, ao
@@ -8998,6 +9007,8 @@ function applyStatePayload(payload,personalOnly){
   if(Array.isArray(payload.grifos))DB.grifos=payload.grifos;
   // % lido por capítulo: vale o MAIOR entre o servidor e o aparelho (ler no celular não apaga o lido no computador).
   if(payload.lidos&&typeof payload.lidos==='object')resuLidosMescla(payload.lidos);
+  // Podcasts ouvidos: como as aulas concluídas (cursoProg), vale a lista do servidor (o "desfazer" também sincroniza).
+  if(payload.podOuvidos&&typeof payload.podOuvidos==='object'&&!Array.isArray(payload.podOuvidos))DB.podOuvidos=payload.podOuvidos;
   // Último capítulo lido: vale o mais recente (o aparelho que leu agora não volta atrás).
   if(payload.leitura&&typeof payload.leitura==='object'&&(!DB.leitura||(payload.leitura.at||0)>=(DB.leitura.at||0)))DB.leitura=payload.leitura;
   if(payload.crono!==undefined)DB.crono=payload.crono;
@@ -11339,7 +11350,7 @@ var pendingOnboardCheck=false; // decidir o onboarding após o hydrate (com base
 // hydrate em seguida traz o estado REMOTO do usuário correto.
 function clearLocalUserData(){
   ['user_profile','q','fc','mm','notes','crono','sf_results','perf','feitas','ck_billing','deg_trials','fc_seeded','mm_seeded','fc_shared_seeded','fc_member_seeded'].forEach(function(k){lsSet(k,null);});
-  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};DB.leitura=null;DB.grifos=[];DB.lidos={};}catch(e){}
+  try{DB.q=[];DB.fc=[];DB.mm=[];DB.notes=[];DB.crono=null;DB.sf_results=[];DB.perf={};DB.feitas={};DB.leitura=null;DB.grifos=[];DB.lidos={};DB.podOuvidos={};}catch(e){}
   try{degTrials={};}catch(e){}
 }
 // Após o hydrate: se o aluno (membro real) continuar sem perfil, é a 1ª vez —
@@ -16335,7 +16346,11 @@ function podArea(p){return (p&&p.area)?p.area:'Miscelânea';}
 function podcastAbrirEpisodio(ep){
   if(!ep)return;
   podFilter=podArea(ep);
-  var lista=podcasts.filter(function(p){return podArea(p)===podFilter;}),i=lista.indexOf(ep);
+  var lista=podcasts.filter(function(p){return podArea(p)===podFilter;});
+  // Com "Esconder os já ouvidos" ligado, a página conta só os não ouvidos; se o próprio episódio já foi ouvido,
+  // a opção desliga nesta visita para ele aparecer.
+  if(podOcultaOuvidos){if(podOuvido(ep))podOcultaOuvidos=false;else lista=lista.filter(function(p){return !podOuvido(p);});}
+  var i=lista.indexOf(ep);
   if(i<0){var at=+ep.at||0;for(var k=0;k<lista.length;k++){if((+lista[k].at||0)===at&&lista[k].title===ep.title){i=k;break;}}}
   podPagina=i>0&&podPor>0?Math.floor(i/podPor):0;
   goPanel('podcast');
@@ -16344,6 +16359,68 @@ function podcastAbrirEpisodio(ep){
     try{c.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){c.scrollIntoView();}
     c.classList.add('pod-destaque');setTimeout(function(){c.classList.remove('pod-destaque');},2400);
   },80);
+}
+// EPISÓDIO OUVIDO (27/11/2026). Sugestão de uma aluna, repassada pelo professor: "deixar marcado como concluído
+// no app na área de podcasts igual tem na parte de cursos e resumos". Botão "Marcar como ouvido" em cada episódio
+// (como "Marcar como concluída" nas aulas) e, no áudio do próprio site, marca sozinho ao passar de 90% (como o
+// "Lido" dos Resumos). O episódio do Spotify fica só no botão: o player deles não diz até onde o aluno ouviu.
+// Tudo é atualizado no próprio cartão, sem redesenhar a lista, para não parar o áudio que está tocando.
+var POD_OUVIDO_PCT=0.9,podOcultaOuvidos=!!lsGet('pod_oculta_ouvidos'),podOuvidoLigado=false;
+function podOuvidosMapa(){if(!DB.podOuvidos||typeof DB.podOuvidos!=='object'||Array.isArray(DB.podOuvidos))DB.podOuvidos={};return DB.podOuvidos;}
+function podKey(p){return (p&&+p.at)?('a'+(+p.at)):('t'+String((p&&p.title)||''));}
+function podOuvido(p){return !!podOuvidosMapa()[podKey(p)];}
+function podMarcaOuvido(p,on){
+  var m=podOuvidosMapa(),k=podKey(p);
+  if(on){if(m[k])return false;m[k]=Date.now();}else{if(!m[k])return false;delete m[k];}
+  try{persist();}catch(e){}
+  return true;
+}
+function podPorChave(k){for(var i=0;i<podcasts.length;i++){if(podKey(podcasts[i])===k)return podcasts[i];}return null;}
+function podListaAtual(){return podFilter?podcasts.filter(function(p){return podArea(p)===podFilter;}):podcasts;}
+function podProgHTML(){
+  var list=podListaAtual(),total=list.length,n=list.filter(podOuvido).length,pct=total?Math.round(100*n/total):0;
+  var txt=(total&&n===total)?('Você ouviu <b>todos os '+total+'</b> episódios'):(n?('Você ouviu <b>'+n+' de '+total+'</b> episódios'):'Nenhum episódio marcado como ouvido ainda');
+  return '<div class="resu-prog pod-prog" id="pod-prog"><span>'+txt+'</span><span class="resu-prog-bar"><span style="width:'+pct+'%"></span></span>'
+    +'<label class="pod-oculta"><input type="checkbox" id="pod-oculta"'+(podOcultaOuvidos?' checked':'')+'> Esconder os já ouvidos</label></div>';
+}
+function podBotaoOuvidoHTML(ok){
+  return '<div class="pod-acoes"><button type="button" class="btn btn-sm '+(ok?'btn-outline':'btn-primary')+'" data-pod-ouvido aria-pressed="'+(ok?'true':'false')+'">'+(ok?'✓ Ouvido (desfazer)':'Marcar como ouvido')+'</button></div>';
+}
+// Repinta só o cartão (selo, botão) e a linha de progresso.
+function podCardPinta(card,ok){
+  if(!card)return;
+  card.classList.toggle('pod-ouvido',ok);
+  var meta=card.querySelector('.pod-meta'),tag=card.querySelector('.pod-ouvido-tag');
+  if(ok&&!tag&&meta){tag=document.createElement('span');tag.className='pod-ouvido-tag';tag.textContent='✓ Ouvido';meta.appendChild(tag);}
+  if(!ok&&tag)tag.remove();
+  var b=card.querySelector('[data-pod-ouvido]');
+  if(b){b.className='btn btn-sm '+(ok?'btn-outline':'btn-primary');b.textContent=ok?'✓ Ouvido (desfazer)':'Marcar como ouvido';b.setAttribute('aria-pressed',ok?'true':'false');}
+  var pg=document.getElementById('pod-prog');if(pg)pg.outerHTML=podProgHTML();
+}
+function podOuvidoLigar(){
+  if(podOuvidoLigado)return;podOuvidoLigado=true;
+  document.addEventListener('click',function(ev){
+    var b=ev.target&&ev.target.closest&&ev.target.closest('[data-pod-ouvido]');if(!b)return;
+    var card=b.closest('[data-pod-key]'),p=card&&podPorChave(card.getAttribute('data-pod-key'));if(!p)return;
+    var ok=!podOuvido(p);podMarcaOuvido(p,ok);podCardPinta(card,ok);
+  });
+  document.addEventListener('change',function(ev){
+    if(!ev.target||ev.target.id!=='pod-oculta')return;
+    podOcultaOuvidos=!!ev.target.checked;try{lsSet('pod_oculta_ouvidos',podOcultaOuvidos?1:0);}catch(e){}
+    podPagina=0;renderPodcasts();
+  });
+}
+// Áudio do próprio site: passou de 90% (ou terminou), marca como ouvido. Nunca desmarca sozinho.
+function podAudioLigar(el){
+  el.querySelectorAll('[data-pod-key] audio').forEach(function(a){
+    var chk=function(){
+      var d=a.duration;if(!(d>0)||!isFinite(d))return;
+      if(a.currentTime/d<POD_OUVIDO_PCT&&!a.ended)return;
+      var card=a.closest('[data-pod-key]'),p=card&&podPorChave(card.getAttribute('data-pod-key'));
+      if(p&&podMarcaOuvido(p,true))podCardPinta(card,true);
+    };
+    a.addEventListener('timeupdate',chk);a.addEventListener('ended',chk);
+  });
 }
 function podDataStr(p){var t=p&&Number(p.at);if(!t)return '';var d=new Date(t);return isNaN(d.getTime())?'':d.toLocaleDateString('pt-BR');}
 function renderPodcasts(){
@@ -16364,9 +16441,13 @@ function renderPodcasts(){
     var abre=!c.classList.contains('pod-aberto');c.classList.toggle('pod-aberto',abre);
     b.textContent=abre?'Mostrar menos':'Ler mais';b.setAttribute('aria-expanded',abre?'true':'false');
   });}
-  var _pg=listaPaginas(list.length,podPor,podPagina);podPagina=_pg.pagina;
-  var _mostra=list.slice(podPagina*podPor,podPagina*podPor+podPor);
-  el.innerHTML=listaPorHTML('pod',podPor,list.length,list.length===1?'episódio':'episódios')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);var _pt=podDescPartes(p.desc),_longo=_pt.texto.join(' ').length>180;return'<div class="card pod-card" data-pod-at="'+(+p.at||0)+'"><div class="pod-cab"><div class="pod-ico">🎧</div><div class="pod-tit"><div class="pod-nome">'+esc(p.title)+'</div><div class="pod-meta"><span class="tag tag-blue" style="margin-right:5px">'+esc(rotuloSubesp(a))+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+'</div></div></div><div class="pod-corpo'+(_longo?' pod-longo':'')+'"><div class="pod-texto">'+podDescCompletoHTML(p.desc)+'</div>'+(_longo?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais</button>':'')+podcastPlayerHTML(p)+'</div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
+  podOuvidoLigar();
+  // "Esconder os já ouvidos" tira da lista o que o aluno já marcou; a linha de progresso conta a subespecialidade inteira.
+  var _ver=podOcultaOuvidos?list.filter(function(p){return !podOuvido(p);}):list;
+  var _pg=listaPaginas(_ver.length,podPor,podPagina);podPagina=_pg.pagina;
+  var _mostra=_ver.slice(podPagina*podPor,podPagina*podPor+podPor);
+  el.innerHTML=podProgHTML()+listaPorHTML('pod',podPor,_ver.length,_ver.length===1?'episódio':'episódios')+(_ver.length?'':'<div class="empty">Você já ouviu todos os episódios desta lista. Desmarque "Esconder os já ouvidos" para vê-los de novo.</div>')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);var _pt=podDescPartes(p.desc),_longo=_pt.texto.join(' ').length>180;var _ok=podOuvido(p);return'<div class="card pod-card'+(_ok?' pod-ouvido':'')+'" data-pod-at="'+(+p.at||0)+'" data-pod-key="'+esc(podKey(p))+'"><div class="pod-cab"><div class="pod-ico">🎧</div><div class="pod-tit"><div class="pod-nome">'+esc(p.title)+'</div><div class="pod-meta"><span class="tag tag-blue" style="margin-right:5px">'+esc(rotuloSubesp(a))+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+(_ok?'<span class="pod-ouvido-tag">✓ Ouvido</span>':'')+'</div></div></div><div class="pod-corpo'+(_longo?' pod-longo':'')+'"><div class="pod-texto">'+podDescCompletoHTML(p.desc)+'</div>'+(_longo?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais</button>':'')+podcastPlayerHTML(p)+podBotaoOuvidoHTML(_ok)+'</div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
+  podAudioLigar(el);
   qotdArchLigaPaginacao(el,'pod',function(n){podPor=n;lsSet('pod_por_pagina',n);podPagina=0;renderPodcasts();},function(d){podPagina+=d;renderPodcasts();});
 }
 // DESCRIÇÃO EM PARÁGRAFOS, JUSTIFICADA (14/11/2026). Print do professor na aba Podcasts:

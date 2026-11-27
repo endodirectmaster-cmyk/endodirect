@@ -38,7 +38,7 @@ for (let p = 0; p < 94; p++) vistos = vistos.concat(itens.slice(p * 10, p * 10 +
 ok('🧨 a fatia por página cobre todos os itens, sem repetir', vistos.length === 933 && new Set(vistos).size === 933);
 
 const pod = corpo('renderPodcasts');
-ok('🧨 Podcasts mostram só a fatia da página', /var _mostra=list\.slice\(podPagina\*podPor,podPagina\*podPor\+podPor\);/.test(pod) && /listaPorHTML\('pod',podPor,list\.length,/.test(pod) && /_mostra\.map\(function\(p\)/.test(pod) && !/el\.innerHTML=list\.map/.test(pod));
+ok('🧨 Podcasts mostram só a fatia da página', /var _mostra=(?:list|_ver)\.slice\(podPagina\*podPor,podPagina\*podPor\+podPor\);/.test(pod) && /listaPorHTML\('pod',podPor,(?:list|_ver)\.length,/.test(pod) && /_mostra\.map\(function\(p\)/.test(pod) && !/el\.innerHTML=list\.map/.test(pod));
 ok('Podcasts: navegação e caixa ligadas, escolha guardada', /muralPagerHTML\(podPagina,_pg\.paginas,'pod-pag'\)/.test(pod) && /qotdArchLigaPaginacao\(el,'pod',function\(n\)\{podPor=n;lsSet\('pod_por_pagina',n\);podPagina=0;renderPodcasts\(\);\}/.test(pod));
 ok('🧨 trocar o filtro dos Podcasts volta à página 1', /k==='podfilter'\)\{podFilter=v;podPagina=0;renderPodcasts\(\);\}/.test(html));
 ok('estado dos Podcasts lido do aparelho', /\nvar podPor=listaPorLido\('pod_por_pagina'\),podPagina=0,podMaisLigado=false;/.test(html));
