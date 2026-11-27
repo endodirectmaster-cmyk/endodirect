@@ -109,6 +109,19 @@ function caixa(host, busca, ua, comDsn) {
   c.w.currentUser = { id: 'demo', email: 'x@y.z' };
   ok('conta de demonstração (id que não é uuid): nenhum usuário', !('user' in o.beforeSend(JSON.parse(JSON.stringify(ev)))));
   c.w.currentUser = null;
+  // O app real guarda o currentUser dentro do bloco principal; o Sentry lê o uuid por window.__endoContaId.
+  c.w.__endoContaId = function () { return '7A1E6C1A-9B7D-4C3E-8A5F-0123456789CD'; };
+  const pelaFuncao = o.beforeSend(JSON.parse(JSON.stringify(ev)));
+  ok('🧨 com login no app real (currentUser fora do window): o evento leva o uuid lido por window.__endoContaId', JSON.stringify(pelaFuncao.user) === JSON.stringify({ id: '7a1e6c1a-9b7d-4c3e-8a5f-0123456789cd' }), JSON.stringify(pelaFuncao.user));
+  c.w.__endoContaId = function () { return ''; };
+  ok('sem login: nenhum usuário', !('user' in o.beforeSend(JSON.parse(JSON.stringify(ev)))));
+  delete c.w.__endoContaId;
+}
+// 1d. O app expõe o uuid da conta, e só ele, para o Sentry.
+{
+  const src = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  ok('🧨 o app define window.__endoContaId logo depois de "var currentUser=null;" (sem isso o Sentry nunca recebe a conta)',
+    /var currentUser=null;\n(?:\/\/[^\n]*\n)*window\.__endoContaId=function\(\)\{return \(currentUser&&typeof currentUser\.id==='string'\)\?currentUser\.id:'';\};/.test(src));
 }
 // 2. Sem DSN: não inicia, e a fila é descartada.
 {
