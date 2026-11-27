@@ -8,6 +8,9 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🖍 ÍCONE DO MARCA-TEXTO VISÍVEL NA TELA ESCURA + MARCA D'ÁGUA AINDA MAIS ESPAÇADA (2026-11-27, v507; professor, com print: *"O lápis ficou bem escuro na tela escura [...] Além disso, diminui um pouco mais a frequência de aparecimento das marcas d'água nos textos."*).**
+  - O botão ao lado da estrela trocou o emoji 🖍 por um desenho de marca-texto (`grifoIco()`): contorno na cor do texto (`currentColor`, `--t2`) e um traço amarelo embaixo. Causa: botão não herda a cor do texto (fica `buttontext`, preto) e o 🖍 do Windows sai no estilo texto, por isso ficava preto no tema escuro. Lição: todo botão com ícone de texto precisa de `color` próprio.
+  - Marca d'água: uma a cada **1000×660 px** (antes 760×560), cerca de um terço a menos. O ladrilho continua mais baixo que a tela do celular, então ainda aparece ao menos uma marca.
 - **💧 MARCA D'ÁGUA MAIS ESPAÇADA + 🖍 AO LADO DA ESTRELA (2026-11-27, v506; professor, com prints: *"Diminui um pouco as marcas d'água que ficaram muito frequentes nos resumos"* e *"a seleção de texto só aparece se o aluno, por acaso, selecionar [...] O ideal é que [...] aparecesse também ali no canto superior direito, próximo da estrelinha"*).**
   - Marca d'água dos Resumos: uma a cada **760×560 px** (antes 520×380; em 18/11 já tinha saído de 420×230), cerca de metade. Mesmo texto, cor e inclinação; a tela de um celular ainda mostra ao menos uma.
   - No canto do cartão do capítulo (Resumos e Diretrizes), um **🖍 ao lado da ☆**: abre a barra de cores com a dica "Selecione um trecho do texto e toque numa cor para grifar ou sublinhar." A cor e o modo escolhidos ali valem para o próximo trecho; a dica some ao selecionar (vira a barra normal), no ✕, depois de marcar ou ao trocar de tela.

@@ -121,8 +121,11 @@ ok(/:root mark\.grifo\.g-sub,:root\[data-theme\] mark\.grifo\.g-sub\{background:
   '🧨 CSS: cores via --gc (o tema escuro não pode forçar o amarelo) e o sublinhado sem fundo');
 // 8) O 🖍 AO LADO DA ESTRELA (27/11/2026): avisa que dá para grifar, sem depender de o aluno selecionar por acaso
 const card2 = corpo('dirCardHTML');
-ok(/var _grifoBtn=\(refFormat==='resumo'\)\?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">🖍<\/button>':'';/.test(card2)
+ok(/var _grifoBtn=\(refFormat==='resumo'\)\?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">'\+grifoIco\(\)\+'<\/button>':'';/.test(card2)
   && /'<span class="dir-card-acoes">'\+_grifoBtn\+favStarHTML\('resumo',d\)\+'<\/span>'/.test(card2), '🧨 o 🖍 tem de ficar ao lado da estrela no texto do capítulo (Resumos e Diretrizes)');
+// O ícone é desenho na cor do texto (no Windows o emoji 🖍 saía preto na tela escura, 27/11/2026).
+ok(/stroke="currentColor"/.test(corpo('grifoIco')) && !/🖍/.test(corpo('grifoIco')), '🧨 o ícone do marca-texto tem de usar a cor do texto (currentColor), não o emoji');
+ok(/\.grifo-dica-btn\{[^}]*color:var\(--t2\)/.test(html), '🧨 o botão do marca-texto precisa de cor própria (botão não herda a cor do texto e ficava preto na tela escura)');
 ok(/var gd=e\.target&&e\.target\.closest\?e\.target\.closest\('\[data-grifo-dica\]'\):null;\s*if\(gd\)\{grifoDicaAbre\(\);return;\}/.test(corpo('grifosInit')), 'o 🖍 abre a barra com a dica');
 ok(/b\.classList\.add\('on','dica'\)/.test(corpo('grifoDicaAbre')) && /Selecione um trecho do texto e toque numa cor para grifar ou sublinhar\./.test(corpo('grifoBarra')), 'a dica explica o que fazer');
 ok(/if\(!b\.classList\.contains\('dica'\)\)b\.classList\.remove\('on'\);return;/.test(corpo('grifoSelecao')) && /b\.classList\.remove\('dica'\);\s*b\.classList\.add\('on'\);/.test(corpo('grifoSelecao')),

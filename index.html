@@ -2152,8 +2152,9 @@ mark.grifo.grifo-pisca{outline:2px solid var(--gold);outline-offset:2px}
 .grifo-barra.dica .grifo-dica-txt{display:block;flex-basis:100%;text-align:center;color:#fff;font-size:.78rem;line-height:1.4;padding:.25rem .5rem .15rem}
 .grifo-barra.dica [data-grifar="nota"]{display:none}
 .dir-card-acoes{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:.1rem}
-.grifo-dica-btn{background:none;border:0;cursor:pointer;font-size:1rem;line-height:1;padding:.2rem .3rem;border-radius:8px;opacity:.85}
-.grifo-dica-btn:hover{background:var(--s2);opacity:1}
+.grifo-dica-btn{background:none;border:0;cursor:pointer;line-height:1;padding:.2rem .3rem;border-radius:8px;color:var(--t2);display:inline-flex;align-items:center;justify-content:center}
+.grifo-dica-btn:hover{background:var(--s2);color:var(--tx)}
+.grifo-dica-ico{display:block;flex:none}
 .grifo-dica-btn:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 .dir-card.dir-com-grifo .dir-card-top{padding-right:4.6rem}
 .dir-card.dir-com-grifo .dir-texto>:first-child{padding-right:3.8rem}
@@ -18699,6 +18700,8 @@ function renderDashContinuar(){
 // grifar, se é com vermelho, amarelo, etc." Cada grifo ganha `cor` (GRIFO_CORES), `estilo` ('grifo' ou 'sub',
 // sublinhado) e `painel` ('resu' = Resumos, 'ref' = Diretrizes). Grifo antigo, sem os campos = amarelo,
 // grifado, nos Resumos. A última cor e o último estilo usados ficam lembrados no aparelho (grifo_pref).
+// Ícone do marca-texto (o 🖍 do cartão), desenhado na cor do texto para aparecer nos dois temas.
+function grifoIco(){return '<svg class="grifo-dica-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.5l5.5 5.5-7 7L7 11.5z"/><path d="M7 11.5l-1.6 4.4 2.7 2.7 4.4-1.6"/><path d="M3.5 21h10" stroke="#facc15" stroke-width="2.6"/></svg>';}
 var GRIFO_CORES=[['amarelo','Amarelo'],['verde','Verde'],['azul','Azul'],['rosa','Rosa'],['vermelho','Vermelho']];
 function grifoCorOk(c){for(var i=0;i<GRIFO_CORES.length;i++){if(GRIFO_CORES[i][0]===c)return c;}return 'amarelo';}
 function grifoClasse(g){return 'g-'+grifoCorOk(g&&g.cor)+((g&&g.estilo==='sub')?' g-sub':'');}
@@ -18937,10 +18940,11 @@ function marcaSvgURL(t){
   var x=String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   // Menos repetições (professor, 18/11: "Deixa menos marca d'água aparecendo na tela"): uma marca a cada
   // 520×380 px (antes 420×230). De novo em 27/11 ("Diminui um pouco as marcas d'água que ficaram muito
-  // frequentes nos resumos"): uma a cada 760×560 px, cerca de metade das marcas. O texto fica na parte
-  // esquerda do ladrilho para caber inteiro num cartão de celular (~360 px), e uma tela de celular ainda
-  // mostra ao menos uma marca.
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="760" height="560">'
+  // frequentes nos resumos"): uma a cada 760×560 px, cerca de metade das marcas. E mais uma vez em 27/11
+  // ("diminui um pouco mais a frequência"): uma a cada 1000×660 px, cerca de um terço a menos. O texto fica
+  // na parte esquerda do ladrilho para caber inteiro num cartão de celular (~360 px), e uma tela de celular
+  // ainda mostra ao menos uma marca (o ladrilho é mais baixo que a tela).
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="660">'
     +'<text x="210" y="280" text-anchor="middle" transform="rotate(-24 210 280)" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#7d8899" fill-opacity="0.2">'+x+'</text></svg>';
   return 'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
 }
@@ -20907,7 +20911,9 @@ function dirCardHTML(d,i){
   // 🖍 ao lado da estrela (professor, 27/11/2026: "a seleção de texto só aparece se o aluno, por acaso,
   // selecionar [...] O ideal é que [...] aparecesse também ali no canto superior direito, próximo da
   // estrelinha, para ele saber que existe essa opção de grifar"): abre a barra de cores com a dica.
-  var _grifoBtn=(refFormat==='resumo')?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">🖍</button>':'';
+  // O ícone é desenho (marca-texto na cor do tema + traço amarelo), não o emoji: no Windows o 🖍 saía preto
+  // na tela escura (professor, 27/11/2026: "O lápis ficou bem escuro na tela escura").
+  var _grifoBtn=(refFormat==='resumo')?'<button type="button" class="grifo-dica-btn" data-grifo-dica title="Grifar ou sublinhar o texto" aria-label="Grifar ou sublinhar o texto">'+grifoIco()+'</button>':'';
   return '<div class="dir-card'+(refPrivadoMode?' dir-marca':'')+(_grifoBtn?' dir-com-grifo':'')+'" style="position:relative" data-fav-tit="'+esc(d.titulo||d.tema||'')+'" data-fav-sub="'+esc(d.sub||'')+'">'
     +'<span class="dir-card-acoes">'+_grifoBtn+favStarHTML('resumo',d)+'</span>'
     +head+body+'</div>';
