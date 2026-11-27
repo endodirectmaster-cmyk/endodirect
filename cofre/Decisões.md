@@ -8,6 +8,10 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🏷️ DIRETRIZES: GRAU DA RECOMENDAÇÃO EM SELOS (2026-11-27, v513; professor, com print da POI: *"Essa sigla GPP, forte, não ficou bom, essas diretrizes"*).**
+  - Os rótulos em negrito no começo das recomendações, escritos como no documento, viram um selo colorido em português: "GPP" → **Boa prática**; "Forte ⊕⊕◯◯" → **Forte · evidência baixa**; "Condicional ⊕◯◯◯" → **Condicional · evidência muito baixa**; na SOP, "1.2.1 EBR ❖❖❖❖ ⊕◯◯◯" → 1.2.1 **Forte · evidência muito baixa**, "CR ❖❖❖" → **Condicional · consenso**, "PP" → **Ponto de prática**.
+  - Só na leitura (`dirGrauSelos` sobre o HTML do texto, quando ele tem ⊕/❖/GPP): o banco, o editor do professor e a busca ficam com o original. Hoje afeta a POI (k=30) e a SOP (k=11); as que já escrevem "Recomendação 1.1 (1∣⊕⊕⊕◯ — forte, evidência moderada)" (Addison, HAC, IA por glicocorticoide) e a de Cushing ("⊕⊕⊕◯ — forte") ficam como estão.
+  - Cores: forte verde, condicional âmbar, contra vermelho, boa prática azul, ponto de prática cinza; versão do tema claro com contraste próprio.
 - **🎧 PODCASTS: OUVIDO A PARTIR DE 80% (2026-11-27, v512; professor: *"Deixa quando passar de 80%"*).** O áudio do site marca o episódio como ouvido ao passar de 80% (era 90%, v511). `POD_OUVIDO_PCT=0.8`; o teste confere que 79% ainda não marca e 80,5% marca. Junto: a opção passou a se chamar **"Ocultar os já ouvidos"** (professor: *"Trocar esconder por ocultar"*).
 - **🎧 PODCASTS: EPISÓDIO OUVIDO (2026-11-27, v511; sugestão de uma aluna no Instagram, repassada pelo professor: *"deixar marcado como concluído no app na área de podcasts igual tem na parte de cursos e resumos"*).**
   - Cada episódio tem o botão "Marcar como ouvido" / "✓ Ouvido (desfazer)", como o "Marcar como concluída" das aulas, e o selo verde "✓ Ouvido" no cabeçalho.

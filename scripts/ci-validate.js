@@ -2574,5 +2574,14 @@ try {
   fail('regressão dos podcasts ouvidos (index.html) falhou:\n' + out);
 }
 
+// DIRETRIZES: GRAU EM SELOS (27/11/2026). Professor: "Essa sigla GPP, forte, não ficou bom". Só na leitura.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-diretriz-selos.js')], { stdio: 'pipe' });
+  ok('Diretrizes: "GPP"/"Forte ⊕⊕◯◯"/"EBR ❖❖❖❖" em selos em português, só na leitura');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos selos de grau das Diretrizes (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

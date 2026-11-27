@@ -2162,6 +2162,15 @@ mark.grifo.grifo-pisca{outline:2px solid var(--gold);outline-offset:2px}
 .grifo-barra.auto{flex-wrap:wrap;justify-content:center;border-radius:18px}
 .grifo-barra.auto .grifo-dica-txt{display:block;flex-basis:100%;text-align:center;color:#fff;font-size:.78rem;line-height:1.4;padding:.25rem .5rem .15rem}
 .grifo-barra.auto [data-grifar="nota"]{display:none}
+.rec-selo{display:inline-block;padding:.05rem .55rem;border-radius:999px;border:1px solid transparent;font-size:.76em;font-weight:700;line-height:1.55;vertical-align:.06em;white-space:nowrap;margin-right:.2rem}
+.rec-selo .rec-evid{font-weight:500}
+.rec-forte{background:rgba(52,211,153,.13);border-color:rgba(52,211,153,.4);color:#34d399}
+.rec-cond{background:rgba(245,179,44,.13);border-color:rgba(245,179,44,.4);color:#f5b32c}
+.rec-contra{background:rgba(248,113,113,.13);border-color:rgba(248,113,113,.4);color:#f87171}
+.rec-bp{background:rgba(96,165,250,.13);border-color:rgba(96,165,250,.4);color:#7fb0f7}
+.rec-pp{background:var(--s2);border-color:var(--bd2);color:var(--t2)}
+.rec-num{font-size:.8em;font-weight:700;color:var(--t3);margin-right:.35rem;font-variant-numeric:tabular-nums}
+html[data-theme="light"] .rec-forte{color:#047857}html[data-theme="light"] .rec-cond{color:#a15c00}html[data-theme="light"] .rec-contra{color:#b42318}html[data-theme="light"] .rec-bp{color:#1d4ed8}
 .dir-card-acoes{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:.1rem}
 .grifo-dica-btn{background:none;border:0;cursor:pointer;line-height:1;padding:.2rem .3rem;border-radius:8px;color:var(--t2);display:inline-flex;align-items:center;justify-content:center}
 .grifo-dica-btn:hover{background:var(--s2);color:var(--tx)}
@@ -20498,6 +20507,33 @@ function novosDeTotalHTML(n,total,fem){return (n&&total&&n>=total)?' <span class
 // professor mandou o print em 14/10/2026. O marcador do texto sai aqui, para
 // qualquer item que venha assim de novo; e a linha "— Evidência e notas de
 // aplicação —" é título de bloco, não ponto: sai sem marcador, como rótulo.
+// FORÇA DA RECOMENDAÇÃO EM SELOS LEGÍVEIS (professor, 27/11/2026, com print da POI: "Essa sigla GPP, forte, não ficou
+// bom, essas diretrizes"). Os rótulos em negrito do começo de cada recomendação, escritos como no documento original
+// ("GPP:", "Forte ⊕⊕◯◯:", "Condicional ⊕◯◯◯:"; na SOP, "1.2.1 EBR ❖❖❖❖ ⊕◯◯◯:", "2.3 CR ❖❖❖:", "4.1 PP:"), viram um
+// selo colorido em português: "Boa prática", "Forte · evidência baixa", "Condicional · consenso", "Ponto de prática".
+// Só na tela: o texto no banco, o editor do professor e a busca continuam com o original. Rótulo que não se encaixa
+// num desses formatos fica como está.
+var GRAU_EVID={'⊕⊕⊕⊕':'evidência alta','⊕⊕⊕◯':'evidência moderada','⊕⊕◯◯':'evidência baixa','⊕◯◯◯':'evidência muito baixa'};
+var GRAU_LOSANGO={'❖❖❖❖':['forte','Forte'],'❖❖❖':['cond','Condicional'],'❖❖':['cond','Condicional, qualquer opção'],'❖':['contra','Condicional, contra']};
+function dirGrauSelo(tipo,txt,extra){return '<span class="rec-selo rec-'+tipo+'">'+txt+(extra?'<span class="rec-evid"> · '+extra+'</span>':'')+'</span>';}
+function dirGrauRotulo(c){
+  var t=String(c).trim().replace(/\s*:\s*$/,''),m,tema='',num='',selo='';
+  m=t.match(/^(.*?)\s*\(([^()]{1,60})\)$/);
+  if(m&&/GPP|⊕|❖|\bPP\b|\bCR\b|\bEBR\b/.test(m[1])){t=m[1];tema=m[2];}
+  m=t.match(/^(\d+(?:\.\d+)+)\s+(.+)$/);if(m){num=m[1];t=m[2];}
+  if(t==='GPP')selo=dirGrauSelo('bp','Boa prática');
+  else if((m=t.match(/^(Forte|Condicional)(?:\s+(⊕[⊕◯]{3}))?$/)))selo=dirGrauSelo(m[1]==='Forte'?'forte':'cond',m[1],m[2]?(GRAU_EVID[m[2]]||''):'');
+  else if((m=t.match(/^(EBR|CR)(?:\s+(❖{1,4}))?(?:\s+(⊕[⊕◯]{3}))?$/))){
+    var l=GRAU_LOSANGO[m[2]||'']||['cond','Recomendação'];
+    selo=dirGrauSelo(l[0],l[1],m[1]==='CR'?'consenso':(m[3]?(GRAU_EVID[m[3]]||''):''));
+  }
+  else if(/^PP(?:\s+geral)?$/.test(t))selo=dirGrauSelo('pp',/geral/.test(t)?'Ponto de prática geral':'Ponto de prática');
+  if(!selo)return null;
+  return (num?'<span class="rec-num">'+num+'</span>':'')+selo+(tema?'<strong>'+tema.charAt(0).toUpperCase()+tema.slice(1)+':</strong>':'');
+}
+function dirGrauSelos(h){
+  return String(h||'').replace(/<strong>([^<]{1,90})<\/strong>/g,function(all,c){var r=dirGrauRotulo(c);return r===null?all:r;});
+}
 function dirPontoLI(p){
   var s=String(p==null?'':p).replace(/^\s*[•▪◦‣·\-–*]\s+/,'');
   var sep=/^\s*—\s*(.+?)\s*—\s*$/.exec(s);
@@ -21038,6 +21074,7 @@ function dirCardHTML(d,i){
       // Marcador [[figura]] no texto → a figura aparece exatamente nesse ponto.
       if(figHTML&&/\[\[\s*figura\s*\]\]/i.test(rz)){rz=rz.replace(/\[\[\s*figura\s*\]\]/ig,'\n\n%%ENDOFIG%%\n\n');figInText=true;}
       var htmlrz=mdToHtml(rz);
+      if(/⊕|❖|GPP/.test(rz))htmlrz=dirGrauSelos(htmlrz); // "GPP:", "Forte ⊕⊕◯◯:" → selos em português (27/11/2026)
       if(figInText)htmlrz=htmlrz.replace(/(?:<p>\s*)?%%ENDOFIG%%(?:\s*<\/p>)?/g,figHTML);
       parts.push('<div class="dir-texto">'+htmlrz+'</div>');
     }
