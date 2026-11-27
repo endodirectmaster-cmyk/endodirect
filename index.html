@@ -11543,8 +11543,13 @@ function doLogout(){
   var client=getSupabaseClient();
   // Encerra a sessão do Supabase em QUALQUER login real (e-mail/senha ou Google),
   // senão o watcher reencontra a sessão e re-loga sozinho ao voltar/recarregar.
+  // scope 'local' (professor, 27/11/2026, com print do iPhone na tela de entrar: "Está saindo do meu iPhone
+  // mesmo antes das 48h de inatividade. Será porque estou conectando e saindo do meu painel em alguns desktops
+  // diferentes?"): o padrão do supabase-js é 'global', que revoga a sessão de TODOS os aparelhos da conta. Sair
+  // num computador (ou a aba que ficou 48 h parada nele) derrubava o iPhone assim que o token dele vencia.
+  // Agora sai só deste aparelho, como já era na troca de aparelho (onSessionEvicted).
   if(travarFaceId){faceIdMarcarLiberado(false);faceIdAutoFeito=true;}
-  else if(client&&client.auth){try{ultimoSair=client.auth.signOut().catch(function(){});}catch(e){}}
+  else if(client&&client.auth){try{ultimoSair=client.auth.signOut({scope:'local'}).catch(function(){});}catch(e){}}
   if(deviceWatcher){clearInterval(deviceWatcher);deviceWatcher=null;}
   deviceSlot={uid:null,ok:false,emVoo:false};
   try{aparelhoBloqueadoFechar();}catch(e){}
@@ -31040,7 +31045,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('btn-login').addEventListener('click',doLoginAttempt);
   var _bSignup=document.getElementById('btn-signup');if(_bSignup)_bSignup.addEventListener('click',doSignup);
   var _bToggle=document.getElementById('btn-toggle-mode');if(_bToggle)_bToggle.addEventListener('click',function(){setLoginMode(_loginMode==='cadastro'?'entrar':'cadastro');});
-  var aLogoutBtn=document.getElementById('assine-logout');if(aLogoutBtn)aLogoutBtn.addEventListener('click',function(){var c=getSupabaseClient();if(c&&c.auth)c.auth.signOut().catch(function(){});hideAssineScreen();var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';});
+  var aLogoutBtn=document.getElementById('assine-logout');if(aLogoutBtn)aLogoutBtn.addEventListener('click',function(){var c=getSupabaseClient();if(c&&c.auth)c.auth.signOut({scope:'local'}).catch(function(){});hideAssineScreen();var ls=document.getElementById('login-screen');if(ls)ls.style.display='flex';});
   var aBackBtn=document.getElementById('assine-back');if(aBackBtn)aBackBtn.addEventListener('click',function(){
     // Volta para a plataforma sem deslogar (usado quando o aluno só foi ver os
     // pacotes a partir da degustação / de um recurso bloqueado).

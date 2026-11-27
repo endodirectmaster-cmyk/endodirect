@@ -2253,10 +2253,12 @@ o plano.
       Como o `member_content` não manda mais `diretrizes`, a falha da RPC de
       resumos ficou visível na aba Diretrizes (aviso + "Tentar de novo", feito) mas
       o card do Dashboard ainda não distingue "não chegou" de "não tem".
-- [ ] **`signOut()` sem escopo** em `doLogout`/`onSessionEvicted` revoga os
+- [x] **`signOut()` sem escopo** em `doLogout`/`onSessionEvicted` revoga os
       refresh tokens de TODOS os aparelhos do aluno: uma evicção por limite de 2
       dispositivos derruba também os legítimos quando o token expira, e cada
       relogin custa outra carga. Considerar `signOut({scope:'local'})` na evicção.
+      **Feito:** evicção em 12/10; `doLogout` e "Sair" da assinatura em 27/11 (v514),
+      depois de o professor ser derrubado do iPhone ao sair nos computadores.
 - [ ] **`@supabase/supabase-js@2` é tag flutuante** no `<script>`: o comportamento
       "queda de conexão devolve `{error}` sem `code`, não lança" — do qual
       `erroDeRede` depende — foi lido no fonte de hoje (2.117.x). Pinar a versão.
