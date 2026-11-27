@@ -5,7 +5,7 @@
 //  - o botão marcar e, ao redesenhar, o aluno perder o áudio que estava tocando (o cartão é repintado no lugar);
 //  - o ouvido não sincronizar entre aparelhos (chave pessoal fora do payload/PERSONAL_STATE_KEYS);
 //  - o áudio marcar antes de 80% ou desmarcar sozinho;
-//  - "Esconder os já ouvidos" sumir com a contagem da subespecialidade.
+//  - "Ocultar os já ouvidos" sumir com a contagem da subespecialidade.
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
@@ -87,22 +87,23 @@ pos = 10; a.dispatchEvent(new dom.window.Event('timeupdate'));
 ok(run('podOuvido(podcasts[2])'), 'voltar o áudio para o começo não desmarca');
 dur = NaN; run('DB.podOuvidos={}'); a.dispatchEvent(new dom.window.Event('timeupdate'));
 ok(!run('podOuvido(podcasts[2])'), 'sem duração conhecida (áudio ainda carregando), não marca');
-// 5) "Esconder os já ouvidos"
+// 5) "Ocultar os já ouvidos"
 lista.innerHTML = '<div id="pod-prog">' + run('podProgHTML()') + '</div>';
 const cx = doc.getElementById('pod-oculta');
 cx.checked = true; cx.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
-ok(run('podOcultaOuvidos') === true && salvo.ls.pod_oculta_ouvidos === 1 && run('renderizou') === 1, 'marcar "Esconder os já ouvidos" guarda a escolha e redesenha a lista');
+ok(run('podOcultaOuvidos') === true && salvo.ls.pod_oculta_ouvidos === 1 && run('renderizou') === 1, 'marcar "Ocultar os já ouvidos" guarda a escolha e redesenha a lista');
 
 // 6) estático: lista, sincronização e Spotify
 const pod = corpo('renderPodcasts');
-ok(/var _ver=podOcultaOuvidos\?list\.filter\(function\(p\)\{return !podOuvido\(p\);\}\):list;/.test(pod) && /el\.innerHTML=podProgHTML\(\)\+/.test(pod), '"Esconder os já ouvidos" filtra a lista; a linha de progresso fica no topo');
+ok(/var _ver=podOcultaOuvidos\?list\.filter\(function\(p\)\{return !podOuvido\(p\);\}\):list;/.test(pod) && /el\.innerHTML=podProgHTML\(\)\+/.test(pod), '"Ocultar os já ouvidos" filtra a lista; a linha de progresso fica no topo');
 ok(/data-pod-key="'\+esc\(podKey\(p\)\)\+'"/.test(pod) && /podBotaoOuvidoHTML\(_ok\)/.test(pod) && /podAudioLigar\(el\);/.test(pod), 'cada cartão tem a chave, o botão, e o áudio é ligado depois de desenhar');
 ok(/var PERSONAL_STATE_KEYS=\[[^\]]*'podOuvidos'/.test(html), '🧨 podOuvidos tem de ser chave PESSOAL (sincroniza entre aparelhos e não vai para o estado geral)');
 ok(/podOuvidos:DB\.podOuvidos,/.test(html) && /lsSet\('podOuvidos',DB\.podOuvidos\);/.test(corpo('persist')), 'podOuvidos vai para o servidor e fica no aparelho');
 ok(/if\(payload\.podOuvidos&&typeof payload\.podOuvidos==='object'&&!Array\.isArray\(payload\.podOuvidos\)\)DB\.podOuvidos=payload\.podOuvidos;/.test(html), 'o estado do servidor aplica os ouvidos');
 ok(/DB\.lidos=\{\};DB\.podOuvidos=\{\};\}catch\(e\)\{\}/.test(html), 'ao sair da conta, os ouvidos são limpos do aparelho');
-ok(/if\(podOcultaOuvidos\)\{if\(podOuvido\(ep\)\)podOcultaOuvidos=false;else lista=lista\.filter\(function\(p\)\{return !podOuvido\(p\);\}\);\}/.test(corpo('podcastAbrirEpisodio')), '🧨 abrir um episódio pelo Mural com "Esconder os já ouvidos" ligado acha a página certa (e mostra o episódio mesmo se já ouvido)');
+ok(/if\(podOcultaOuvidos\)\{if\(podOuvido\(ep\)\)podOcultaOuvidos=false;else lista=lista\.filter\(function\(p\)\{return !podOuvido\(p\);\}\);\}/.test(corpo('podcastAbrirEpisodio')), '🧨 abrir um episódio pelo Mural com "Ocultar os já ouvidos" ligado acha a página certa (e mostra o episódio mesmo se já ouvido)');
+ok(/> Ocultar os já ouvidos<\/label>/.test(corpo('podProgHTML')) && !/Esconder/.test(corpo('podProgHTML')+corpo('renderPodcasts')), 'a opção diz "Ocultar os já ouvidos" (professor, 27/11/2026: "Trocar esconder por ocultar")');
 ok(/\.pod-ouvido-tag\{/.test(html) && /\.pod-prog \.pod-oculta\{/.test(html), 'CSS do selo e da opção de esconder');
 
 if (falhas.length) { console.error('✗ podcasts ouvidos:\n  - ' + falhas.join('\n  - ')); process.exit(1); }
-console.log('✓ Podcasts: "Marcar como ouvido" em cada episódio, marca sozinho a partir de 80% do áudio, sincroniza e esconde os já ouvidos');
+console.log('✓ Podcasts: "Marcar como ouvido" em cada episódio, marca sozinho a partir de 80% do áudio, sincroniza e oculta os já ouvidos');
