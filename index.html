@@ -16347,7 +16347,7 @@ function podcastAbrirEpisodio(ep){
   if(!ep)return;
   podFilter=podArea(ep);
   var lista=podcasts.filter(function(p){return podArea(p)===podFilter;});
-  // Com "Esconder os já ouvidos" ligado, a página conta só os não ouvidos; se o próprio episódio já foi ouvido,
+  // Com "Ocultar os já ouvidos" ligado, a página conta só os não ouvidos; se o próprio episódio já foi ouvido,
   // a opção desliga nesta visita para ele aparecer.
   if(podOcultaOuvidos){if(podOuvido(ep))podOcultaOuvidos=false;else lista=lista.filter(function(p){return !podOuvido(p);});}
   var i=lista.indexOf(ep);
@@ -16362,10 +16362,10 @@ function podcastAbrirEpisodio(ep){
 }
 // EPISÓDIO OUVIDO (27/11/2026). Sugestão de uma aluna, repassada pelo professor: "deixar marcado como concluído
 // no app na área de podcasts igual tem na parte de cursos e resumos". Botão "Marcar como ouvido" em cada episódio
-// (como "Marcar como concluída" nas aulas) e, no áudio do próprio site, marca sozinho ao passar de 90% (como o
-// "Lido" dos Resumos). O episódio do Spotify fica só no botão: o player deles não diz até onde o aluno ouviu.
+// (como "Marcar como concluída" nas aulas) e, no áudio do próprio site, marca sozinho ao passar de 80% (professor,
+// 27/11/2026: "Deixa quando passar de 80%"; era 90%, como o "Lido" dos Resumos). O episódio do Spotify fica só no botão: o player deles não diz até onde o aluno ouviu.
 // Tudo é atualizado no próprio cartão, sem redesenhar a lista, para não parar o áudio que está tocando.
-var POD_OUVIDO_PCT=0.9,podOcultaOuvidos=!!lsGet('pod_oculta_ouvidos'),podOuvidoLigado=false;
+var POD_OUVIDO_PCT=0.8,podOcultaOuvidos=!!lsGet('pod_oculta_ouvidos'),podOuvidoLigado=false;
 function podOuvidosMapa(){if(!DB.podOuvidos||typeof DB.podOuvidos!=='object'||Array.isArray(DB.podOuvidos))DB.podOuvidos={};return DB.podOuvidos;}
 function podKey(p){return (p&&+p.at)?('a'+(+p.at)):('t'+String((p&&p.title)||''));}
 function podOuvido(p){return !!podOuvidosMapa()[podKey(p)];}
@@ -16381,7 +16381,7 @@ function podProgHTML(){
   var list=podListaAtual(),total=list.length,n=list.filter(podOuvido).length,pct=total?Math.round(100*n/total):0;
   var txt=(total&&n===total)?('Você ouviu <b>todos os '+total+'</b> episódios'):(n?('Você ouviu <b>'+n+' de '+total+'</b> episódios'):'Nenhum episódio marcado como ouvido ainda');
   return '<div class="resu-prog pod-prog" id="pod-prog"><span>'+txt+'</span><span class="resu-prog-bar"><span style="width:'+pct+'%"></span></span>'
-    +'<label class="pod-oculta"><input type="checkbox" id="pod-oculta"'+(podOcultaOuvidos?' checked':'')+'> Esconder os já ouvidos</label></div>';
+    +'<label class="pod-oculta"><input type="checkbox" id="pod-oculta"'+(podOcultaOuvidos?' checked':'')+'> Ocultar os já ouvidos</label></div>';
 }
 function podBotaoOuvidoHTML(ok){
   return '<div class="pod-acoes"><button type="button" class="btn btn-sm '+(ok?'btn-outline':'btn-primary')+'" data-pod-ouvido aria-pressed="'+(ok?'true':'false')+'">'+(ok?'✓ Ouvido (desfazer)':'Marcar como ouvido')+'</button></div>';
@@ -16410,7 +16410,7 @@ function podOuvidoLigar(){
     podPagina=0;renderPodcasts();
   });
 }
-// Áudio do próprio site: passou de 90% (ou terminou), marca como ouvido. Nunca desmarca sozinho.
+// Áudio do próprio site: passou de 80% (ou terminou), marca como ouvido. Nunca desmarca sozinho.
 function podAudioLigar(el){
   el.querySelectorAll('[data-pod-key] audio').forEach(function(a){
     var chk=function(){
@@ -16442,11 +16442,11 @@ function renderPodcasts(){
     b.textContent=abre?'Mostrar menos':'Ler mais';b.setAttribute('aria-expanded',abre?'true':'false');
   });}
   podOuvidoLigar();
-  // "Esconder os já ouvidos" tira da lista o que o aluno já marcou; a linha de progresso conta a subespecialidade inteira.
+  // "Ocultar os já ouvidos" tira da lista o que o aluno já marcou; a linha de progresso conta a subespecialidade inteira.
   var _ver=podOcultaOuvidos?list.filter(function(p){return !podOuvido(p);}):list;
   var _pg=listaPaginas(_ver.length,podPor,podPagina);podPagina=_pg.pagina;
   var _mostra=_ver.slice(podPagina*podPor,podPagina*podPor+podPor);
-  el.innerHTML=podProgHTML()+listaPorHTML('pod',podPor,_ver.length,_ver.length===1?'episódio':'episódios')+(_ver.length?'':'<div class="empty">Você já ouviu todos os episódios desta lista. Desmarque "Esconder os já ouvidos" para vê-los de novo.</div>')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);var _pt=podDescPartes(p.desc),_longo=_pt.texto.join(' ').length>180;var _ok=podOuvido(p);return'<div class="card pod-card'+(_ok?' pod-ouvido':'')+'" data-pod-at="'+(+p.at||0)+'" data-pod-key="'+esc(podKey(p))+'"><div class="pod-cab"><div class="pod-ico">🎧</div><div class="pod-tit"><div class="pod-nome">'+esc(p.title)+'</div><div class="pod-meta"><span class="tag tag-blue" style="margin-right:5px">'+esc(rotuloSubesp(a))+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+(_ok?'<span class="pod-ouvido-tag">✓ Ouvido</span>':'')+'</div></div></div><div class="pod-corpo'+(_longo?' pod-longo':'')+'"><div class="pod-texto">'+podDescCompletoHTML(p.desc)+'</div>'+(_longo?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais</button>':'')+podcastPlayerHTML(p)+podBotaoOuvidoHTML(_ok)+'</div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
+  el.innerHTML=podProgHTML()+listaPorHTML('pod',podPor,_ver.length,_ver.length===1?'episódio':'episódios')+(_ver.length?'':'<div class="empty">Você já ouviu todos os episódios desta lista. Desmarque "Ocultar os já ouvidos" para vê-los de novo.</div>')+_mostra.map(function(p){var a=podArea(p);var dt=podDataStr(p);var _pt=podDescPartes(p.desc),_longo=_pt.texto.join(' ').length>180;var _ok=podOuvido(p);return'<div class="card pod-card'+(_ok?' pod-ouvido':'')+'" data-pod-at="'+(+p.at||0)+'" data-pod-key="'+esc(podKey(p))+'"><div class="pod-cab"><div class="pod-ico">🎧</div><div class="pod-tit"><div class="pod-nome">'+esc(p.title)+'</div><div class="pod-meta"><span class="tag tag-blue" style="margin-right:5px">'+esc(rotuloSubesp(a))+'</span>'+(dt?'<span style="margin-right:5px">📅 '+esc(dt)+'</span>':'')+(_ok?'<span class="pod-ouvido-tag">✓ Ouvido</span>':'')+'</div></div></div><div class="pod-corpo'+(_longo?' pod-longo':'')+'"><div class="pod-texto">'+podDescCompletoHTML(p.desc)+'</div>'+(_longo?'<button type="button" class="pod-mais" data-pod-mais aria-expanded="false">Ler mais</button>':'')+podcastPlayerHTML(p)+podBotaoOuvidoHTML(_ok)+'</div></div>';}).join('')+muralPagerHTML(podPagina,_pg.paginas,'pod-pag');
   podAudioLigar(el);
   qotdArchLigaPaginacao(el,'pod',function(n){podPor=n;lsSet('pod_por_pagina',n);podPagina=0;renderPodcasts();},function(d){podPagina+=d;renderPodcasts();});
 }
