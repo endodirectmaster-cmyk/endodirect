@@ -8,6 +8,11 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **💊 MURAL: NOME DE FÁRMACO EM PORTUGUÊS (2026-11-27; professor, com print do card "Coprescrição de topiramato com semaglutida": *"Saiu 'topiramate' ao invés de 'topiramato'"*).**
+  - Causa: o resumo sai do abstract em inglês e a IA manteve a forma inglesa do nome.
+  - Agora: o prompt do radar (artigos, RSS e informes), das notícias e da discussão pede a forma em português (DCB), e `lib/farmacos-pt.js` confere a saída. Ela troca pelo dicionário e pelos radicais regulares (-gliflozina, -gliptina, -glitazona, -vastatina, -glutida/-dutida/-lintida..., -tinibe, -dronato) e acerta o artigo quando o nome fica feminino ("do retatrutide" → "da retatrutida").
+  - O que não muda: nome comercial, nome de estudo com hífen (Exenatide-PD3), trecho em inglês (palavra anterior "of/with/in/and..."); "insulin" fica fora da lista (quase sempre está em nome de índice ou produto em inglês).
+  - Banco: 7 cards do Mural corrigidos (topiramato, retatrutida, survodutida, mazdutida, cotadutida, efinopegdutida), com backup `main-antes-farmacos-pt-20261127`; conferido que só mudaram texto/titulo_pt/resumo/porque desses 7. As discussões completas já gravadas (cerca de 85 com algum nome em inglês, várias dentro de tabelas copiadas do artigo) ficaram como estavam; as novas já saem certas.
 - **🖍 GRIFO SEM SOBREPOSIÇÃO DE CORES E SEM AVISO VERDE (2026-11-27, v508; professor, com print: *"Essa mensagem do servidor no canto inferior direito verde fica aparecendo para os alunos. E [...] está havendo sobreposição de cores nos textos. Não é para acontecer isso."*).**
   - O aviso "Trecho grifado. Ficam reunidos na aba Notas." saiu. A dica do 🖍 agora diz que os grifos ficam na aba Notas.
   - Grifo sobre grifo: `grifoMarca` nunca põe um `<mark>` dentro de outro. O pedaço em comum sai do grifo antigo e fica só com o mais novo; o antigo continua antes e depois. Vale também ao reabrir (os grifos são aplicados do mais antigo ao mais novo), então quem já tinha grifos sobrepostos passa a ver uma cor só. O grifo antigo coberto por inteiro sai da lista, a não ser que tenha nota.

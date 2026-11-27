@@ -2554,5 +2554,15 @@ try {
   fail('regressão da nova organização dos Resumos (index.html) falhou:\n' + out);
 }
 
+// FÁRMACOS EM PORTUGUÊS NO MURAL (27/11/2026). Professor: "Saiu 'topiramate' ao invés de 'topiramato'". Regra no
+//      prompt e conferência na saída da IA (radar, notícias, discussão), sem mexer em estudo nem trecho em inglês.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-farmacos-pt.js')], { stdio: 'pipe' });
+  ok('nomes de fármacos em português no Mural (topiramato, semaglutida...), sem mexer em estudo nem trecho em inglês');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão dos nomes de fármacos em português (lib/farmacos-pt.js) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
