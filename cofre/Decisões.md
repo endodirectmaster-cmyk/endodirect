@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-26
+atualizado: 2026-11-27
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-11-26
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **📖 "REVISAR NO RESUMO" AO ERRAR UMA QUESTÃO (2026-11-27, v501; professor, da lista de sugestões: *"Faz a 1, 5, 6 e 10"*).** No Banco (`marcaResposta`) e no relatório do Simulado (`submitSF`), cada questão errada (no Simulado, também a deixada em branco) ganha o botão "📖 Revisar no Resumo · <capítulo>". O clique abre o capítulo pela Busca única (`buscaAbre`), já no ponto do texto em que aparece a palavra mais característica da questão.
+  - Escolha do capítulo (`capituloParaQuestao`): só entre os capítulos da MESMA subespecialidade (a área do banco, com "Básica" → "Endocrinologia Básica" e afins em `REVISA_AREA`), por BM25 sobre radicais de 6 letras de enunciado + comentário; a palavra do título do capítulo soma o dobro do seu peso. Afinado no banco real: capítulo certo em ~9 de cada 10 questões, e 99% das questões passam do corte mínimo (`REVISA_MIN=12`). Abaixo do corte, ou para quem não vê os Resumos, o botão não aparece.
+  - Nada vai ao servidor: o índice é montado no aparelho (uma subespecialidade por vez, no primeiro erro dela) a partir dos Resumos que o aluno já tem. O clique conta no Analytics como "Revisar no Resumo (após errar questão)".
+  - Teste: `scripts/test-revisar-resumo.js` (no CI).
 - **🎧 PODCAST NOVO NO MURAL DE AVISOS DO DASHBOARD (2026-11-26, v499; professor: *"Suba no mural do dashboard quando tiver alguma atualização também de podcast"*).** `avisosDoMural` passa a incluir cada episódio dos últimos 30 dias (pela data do episódio no feed, `at`), com 🎧 "Podcast novo", o título e a subespecialidade, só para quem abre a aba Podcasts (`canSeePanel('podcast')`). O botão "Ver →" chama `podcastAbrirEpisodio`: filtra a subespecialidade do episódio, vai à página em que ele está, abre a aba e rola até o cartão, que pisca em dourado. Teste em `scripts/test-mural-avisos.js` (seção 6, com o cartão desenhado).
   - **v500 (mesmo dia; professor, com print do Dashboard: *"Deixa o podcast no mural em formato de botão também, como acontece com as aulas. Tirar esse ver"*):** o aviso segue o formato das videoaulas: "1 podcast novo" (ou "N podcasts novos" no mesmo dia), as áreas no texto e um botão ▶ com o nome de cada episódio; o "Ver →" saiu.
 - **⏰ SESSÃO: 48 HORAS SEM USO (2026-11-26, v498; professor: *"Deixa login ativo da plataforma por 48h"*).** `SESSION_IDLE_MS` de 12 h para 48 h; a janela "Você está sem usar a plataforma há 48 horas… Deseja permanecer conectado?" continua, com 60 s para responder. O relógio só corre com a plataforma aberta; fechar e reabrir não derruba a sessão (o Supabase guarda o login). `test-sessao-inativa.js` ajustado (47 h 59 min não abre; 48 h abre).

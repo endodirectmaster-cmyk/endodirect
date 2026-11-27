@@ -2514,5 +2514,15 @@ try {
   fail('regressão do app do iPhone 1.4 (app-ios, index.html, api/publico.js) falhou:\n' + out);
 }
 
+// "📖 REVISAR NO RESUMO" AO ERRAR (27/11/2026). Professor: "Faz a 1, 5, 6 e 10" (sugestão 1): ao errar no
+//      Banco ou no Simulado, botão para o capítulo dos Resumos da mesma subespecialidade que trata do assunto.
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-revisar-resumo.js')], { stdio: 'pipe' });
+  ok('revisar no Resumo: só no erro, capítulo certo da mesma área, só para quem vê os Resumos, abre no ponto');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do "Revisar no Resumo" (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');

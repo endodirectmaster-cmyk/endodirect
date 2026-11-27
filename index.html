@@ -1013,6 +1013,9 @@ textarea{resize:vertical;line-height:1.6}
 .qo.annul{border-color:#f59e0b!important;color:#fbbf24!important;background:#33270c!important}
 .qo-ltr{font-weight:700;flex-shrink:0;width:14px}
 .q-fb{border-radius:var(--rs);padding:.6rem .85rem;font-size:.82rem;line-height:1.65;margin:.65rem 0;text-align:justify;text-align-last:left;overflow-wrap:anywhere}
+.q-revisa{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:.15rem .45rem;text-align:left;margin:.1rem 0 .4rem;white-space:normal;line-height:1.35}
+.q-revisa-cap{font-weight:400;color:var(--t2);font-size:.92em}
+.sf-revisa:not(:empty){margin-top:.5rem}
 .q-fb.ok{background:var(--grn-l);color:#34d399;border:1px solid #1e5436}
 .q-fb.er{background:var(--red-l);color:var(--red);border:1px solid #5a2326}
 .q-fb.annul{background:#33270c;color:#fbbf24;border:1px solid #5a4a1e}
@@ -11822,7 +11825,8 @@ function usoRegistrar(item){
 }
 var USO_ROTULOS={emc:'Educação Médica Continuada',resu_resumo:'Resumos: texto do capítulo',resu_flash:'Resumos: flashcards do capítulo',
   resu_mapa:'Resumos: mapa mental do capítulo',resu_video:'Resumos: videoaulas do capítulo',resu_artigo:'Resumos: artigos',
-  video_curso:'Videoaula dos cursos (play)',video_resumo:'Videoaula dos Resumos (play)',busca:'Busca'};
+  video_curso:'Videoaula dos cursos (play)',video_resumo:'Videoaula dos Resumos (play)',busca:'Busca',
+  revisar_resumo:'Revisar no Resumo (após errar questão)'};
 function usoRotulo(item){
   item=String(item||'');
   if(/^trava_/.test(item))return '🔒 '+usoRotulo(item.slice(6))+' (sem acesso)';
@@ -14986,6 +14990,12 @@ function marcaResposta(letter,answer,explanation,src,idx,q){
       fb.innerHTML='<div class="q-fb annul">⚠️ Questão anulada (sem gabarito oficial) — não conta na pontuação.'+(expTxt?' '+expTxt:'')+'</div>'+expImg;
     }else{
       fb.innerHTML='<div class="q-fb '+(ok?'ok':'er')+'">'+(ok?'✓ Correto!':'✗ Incorreto — Gabarito: '+esc(answer))+(expTxt?' — '+expTxt:'')+'</div>'+expImg;
+      // "📖 Revisar no Resumo" (27/11/2026): só no erro, e um instante depois, para o
+      // 1º índice da subespecialidade não atrasar a marcação da resposta.
+      if(!ok&&q)setTimeout(function(){
+        if(fb.querySelector&&fb.querySelector('.q-revisa'))return;
+        var h=revisaBotaoHTML(src+':'+idx,q);if(h)fb.innerHTML+=h;
+      },0);
     }
   }
   return {ok:ok,anulada:anulada};
@@ -19477,6 +19487,72 @@ function buscaAbre(ref,termos){
     }
   },80);
 }
+// ── "📖 REVISAR NO RESUMO" AO ERRAR (27/11/2026) ─────────────────────────────
+// Pedido do professor ("Faz a 1, 5, 6 e 10", sugestão 1): ao errar uma questão no
+// Banco ou no Simulado, um botão leva ao capítulo dos Resumos que trata do assunto,
+// já no ponto do texto em que aparece a palavra mais característica da questão.
+// O capítulo é o da MESMA subespecialidade que mais se parece com a questão
+// (enunciado + comentário), por BM25 sobre radicais de 6 letras: palavra rara na
+// subespecialidade pesa mais, e palavra do título do capítulo soma o dobro do seu
+// peso. Afinado com o banco real em 27/11 (Tireoide, Diabetes e Obesidade: capítulo
+// certo em ~9 de cada 10 questões). Sem capítulo que passe de REVISA_MIN, ou sem
+// acesso aos Resumos, o botão não aparece.
+var REVISA_AREA={'Básica':'Endocrinologia Básica','Dislipidemia e Aterosclerose':'Lípides','Endocrinologia Esportiva':'Endocrinologia do Esporte',
+  'Andrologia':'Endocrinologia Masculina','Endocrinologia Feminina e Andrologia':'Endocrinologia Feminina'};
+var REVISA_MIN=12,revisaCache=null,revisaRefs={};
+function revisaPalavras(s){return estNorm(s).split(/[^a-z0-9]+/).filter(function(w){return w.length>=4;});}
+function revisaRadical(w){return w.replace(/s$/,'').slice(0,6);}
+// Índice de UMA subespecialidade (feito na 1ª questão errada dela e guardado).
+function revisaSub(sub){
+  var it=buscaIndice(),chave=(buscaCache&&buscaCache.chave)||'';
+  if(!revisaCache||revisaCache.chave!==chave)revisaCache={chave:chave,subs:{}};
+  if(revisaCache.subs[sub])return revisaCache.subs[sub];
+  var S={caps:[],df:{},med:1},soma=0;
+  it.forEach(function(x){
+    if(x.t!=='resumo'||x.sub!==sub)return;
+    var tf={},n=0,tit={};
+    revisaPalavras(x.ti+' '+x.txt).forEach(function(w){var r=revisaRadical(w);tf[r]=(tf[r]||0)+1;n++;});
+    revisaPalavras(x.ti).forEach(function(w){tit[revisaRadical(w)]=1;});
+    Object.keys(tf).forEach(function(r){S.df[r]=(S.df[r]||0)+1;});
+    soma+=n;S.caps.push({x:x,tf:tf,dl:n,tit:tit});
+  });
+  if(S.caps.length)S.med=Math.max(1,soma/S.caps.length);
+  return (revisaCache.subs[sub]=S);
+}
+function capituloParaQuestao(q){
+  if(!q||!q.stem)return null;
+  var sub=String(q.area||q.sub||'').trim();sub=REVISA_AREA[sub]||sub;if(!sub)return null;
+  var S=revisaSub(sub),N=S.caps.length;if(!N)return null;
+  var palavra={};
+  revisaPalavras(String(q.stem)+' '+String(q.explanation||'')).forEach(function(w){var r=revisaRadical(w);if(!palavra[r])palavra[r]=w;});
+  var rads=Object.keys(palavra),melhor=null;
+  S.caps.forEach(function(c){
+    var s=0,termo='',tv=0;
+    rads.forEach(function(r){
+      var f=c.tf[r];if(!f)return;
+      var idf=Math.log(1+(N-S.df[r]+0.5)/(S.df[r]+0.5));
+      var v=idf*(f*2.2)/(f+1.2*(0.25+0.75*c.dl/S.med))+(c.tit[r]?2*idf:0);
+      s+=v;
+      if(v>tv&&c.x.n.indexOf(palavra[r])>=0){tv=v;termo=palavra[r];}
+    });
+    if(!melhor||s>melhor.s)melhor={s:s,c:c,termo:termo};
+  });
+  if(!melhor||melhor.s<REVISA_MIN)return null;
+  return {ref:melhor.c.x.ref,titulo:melhor.c.x.ti,termo:melhor.termo,s:melhor.s};
+}
+// O botão (vazio quando não há capítulo ou o aluno não vê os Resumos).
+function revisaBotaoHTML(chave,q){
+  if(typeof canSeePanel==='function'&&!canSeePanel('resu'))return '';
+  var r=null;try{r=capituloParaQuestao(q);}catch(e){r=null;}
+  if(!r)return '';
+  revisaRefs[chave]=r;
+  return '<button type="button" class="btn btn-outline btn-sm q-revisa" data-revisa="'+esc(chave)+'">📖 Revisar no Resumo <span class="q-revisa-cap">'+esc(r.titulo)+'</span></button>';
+}
+function revisaAbrir(chave){
+  var r=revisaRefs[chave];if(!r)return;
+  try{usoRegistrar('revisar_resumo');}catch(e){}
+  buscaAbre(r.ref,r.termo?[r.termo]:[]);
+}
 function grifosNotasAtualiza(){
   var gv=document.getElementById('grifos-view');if(gv&&gv.style.display!=='none')gv.innerHTML=grifosNotasHTML();
   try{renderNoteList();}catch(e){}
@@ -21485,10 +21561,16 @@ function submitSF(){
     var ua=sfState.answers[i];var anulada=!q.answer;var ok=anulada||(ua===q.answer);
     var gabHtml=anulada?'<strong style="color:#fbbf24">Anulada (sem gabarito)</strong>':'Gabarito: <strong>'+esc(q.answer)+'</strong>';
     var expImg=q.expImg?'<img src="'+esc(q.expImg)+'" alt="Figura do comentário" style="max-width:100%;display:block;border-radius:8px;margin-top:.4rem;border:1px solid var(--bd)">':'';
-    return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(anulada?'tag-gold':(ok?'tag-grn':'tag-red'))+'">'+(i+1)+(anulada?' ⚠':(ok?' ✓':' ✗'))+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • '+gabHtml+'</div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+expImg+'</div>':expImg)+'</div></div></div>';
+    return'<div class="card" style="margin-bottom:.5rem"><div style="display:flex;gap:.5rem;align-items:flex-start"><span class="tag '+(anulada?'tag-gold':(ok?'tag-grn':'tag-red'))+'">'+(i+1)+(anulada?' ⚠':(ok?' ✓':' ✗'))+'</span><div style="flex:1"><div style="font-size:.79rem;line-height:1.6;margin-bottom:.4rem">'+esc(q.stem)+'</div><div style="font-size:.74rem;color:var(--t2)">Sua resposta: <strong>'+(ua||'—')+'</strong> • '+gabHtml+'</div>'+(q.explanation?'<div style="font-size:.73rem;color:var(--t2);margin-top:.3rem;background:var(--s2);padding:.4rem .6rem;border-radius:var(--rs)">'+esc(q.explanation)+expImg+'</div>':expImg)+(!ok?'<div class="sf-revisa" data-sf-revisa="'+i+'"></div>':'')+'</div></div></div>';
   }).join('');
   document.getElementById('sf-report-content').innerHTML=fbPontualHTML()+html;
   fbPontualLigar();
+  var sfQs=sfState.qs;
+  setTimeout(function(){
+    document.querySelectorAll('#sf-report-content [data-sf-revisa]').forEach(function(el){
+      var i=+el.getAttribute('data-sf-revisa');el.innerHTML=revisaBotaoHTML('sf:'+i,sfQs[i]);
+    });
+  },0);
   var ge=document.getElementById('sf-go-erros');if(ge)ge.addEventListener('click',function(){goPanel('erros');});
   refreshDash();
 }
@@ -28313,6 +28395,8 @@ document.addEventListener('click',function(e){
   var dvc=c('.dir-video .aula-cap');
   if(dvc){var dvb=dvc.closest('.dir-video'),dvt=parseFloat(dvc.getAttribute('data-cap'))||0;aulaSeek(dvb&&dvb.querySelector('video'),dvt);aulaCapAtivo(dvb,dvt);return;}
   // questões
+  var rvr=c('[data-revisa]');
+  if(rvr){revisaAbrir(rvr.getAttribute('data-revisa'));return;}
   var qrow=c('.q-row');
   if(qrow&&!c('[data-del-q]')){toggleQDetail(parseInt(qrow.dataset.qi),qrow.dataset.src,qrow.dataset.mc==='true');return;}
   var qo=c('.qo');
