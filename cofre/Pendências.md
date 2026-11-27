@@ -1,9 +1,19 @@
 ---
 tags: [cofre, pendencias]
-atualizado: 2026-11-25
+atualizado: 2026-11-27
 ---
 
 # Pendências
+
+## 🔐⏰ Alerta de aparelho novo e lembrete diário (27/11, v503): acompanhar os primeiros dias
+
+No ar e conferido (ver [[Decisões]] e [[Arquitetura]] › "Relógio e gatilhos no banco"). Checagens:
+- [x] Rota com token do banco: `tarefas_hora` → 200; outra ação com o mesmo token → 403; token falso → 401.
+- [x] Simulação desfeita (conta de aluno com 1 aparelho): 2º aparelho → alerta "novo"; 3º → "bloqueado"; nada gravado.
+- [ ] Primeiro alerta real: conferir `select tipo, resultado, tentativas from endodirect_alertas_aparelho order by id desc limit 5;`
+  (esperado `resultado = 'enviado'`) e `net._http_response` (status 200).
+- [ ] Primeiro lembrete real (quando algum aluno ligar no Perfil): `select * from endodirect_lembretes_enviados order by enviado_em desc limit 5;`.
+- [ ] `cron.job_run_details` do job `endodirect-tarefas-hora` sem falhas nas primeiras 24 h.
 
 ## 📱 App do iPhone 1.4: gravação de tela, áudio e widget (25/11)
 
