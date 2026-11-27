@@ -4,7 +4,7 @@
 // 🧨 Os modos de quebrar isto em silêncio:
 //  - o botão marcar e, ao redesenhar, o aluno perder o áudio que estava tocando (o cartão é repintado no lugar);
 //  - o ouvido não sincronizar entre aparelhos (chave pessoal fora do payload/PERSONAL_STATE_KEYS);
-//  - o áudio marcar antes de 90% ou desmarcar sozinho;
+//  - o áudio marcar antes de 80% ou desmarcar sozinho;
 //  - "Esconder os já ouvidos" sumir com a contagem da subespecialidade.
 const fs = require('fs');
 const path = require('path');
@@ -38,7 +38,7 @@ vm.runInContext(`
   function podArea(p){return (p&&p.area)?p.area:'Miscelânea';}
   function renderPodcasts(){renderizou++;}
 `, ctx);
-vm.runInContext(html.match(/var POD_OUVIDO_PCT=0\.9,podOcultaOuvidos=!!lsGet\('pod_oculta_ouvidos'\),podOuvidoLigado=false;/)[0], ctx);
+vm.runInContext(html.match(/var POD_OUVIDO_PCT=0\.8,podOcultaOuvidos=!!lsGet\('pod_oculta_ouvidos'\),podOuvidoLigado=false;/)[0], ctx);
 ['podOuvidosMapa', 'podKey', 'podOuvido', 'podMarcaOuvido', 'podPorChave', 'podListaAtual', 'podProgHTML', 'podBotaoOuvidoHTML', 'podCardPinta', 'podOuvidoLigar', 'podAudioLigar']
   .forEach((n) => vm.runInContext(corpo(n), ctx));
 const run = (c) => vm.runInContext(c, ctx);
@@ -79,8 +79,10 @@ Object.defineProperty(a, 'currentTime', { get: () => pos });
 run('podAudioLigar(document.getElementById("pod-list"))');
 a.dispatchEvent(new dom.window.Event('timeupdate'));
 ok(!run('podOuvido(podcasts[2])'), '🧨 com 50% ouvido, ainda não marca');
-pos = 905; a.dispatchEvent(new dom.window.Event('timeupdate'));
-ok(run('podOuvido(podcasts[2])') && card.querySelector('.pod-ouvido-tag'), '🧨 passou de 90% do áudio: marca como ouvido sozinho');
+pos = 790; a.dispatchEvent(new dom.window.Event('timeupdate'));
+ok(!run('podOuvido(podcasts[2])'), '🧨 com 79% ouvido, ainda não marca');
+pos = 805; a.dispatchEvent(new dom.window.Event('timeupdate'));
+ok(run('podOuvido(podcasts[2])') && card.querySelector('.pod-ouvido-tag'), '🧨 passou de 80% do áudio (professor, 27/11/2026): marca como ouvido sozinho');
 pos = 10; a.dispatchEvent(new dom.window.Event('timeupdate'));
 ok(run('podOuvido(podcasts[2])'), 'voltar o áudio para o começo não desmarca');
 dur = NaN; run('DB.podOuvidos={}'); a.dispatchEvent(new dom.window.Event('timeupdate'));
@@ -103,4 +105,4 @@ ok(/if\(podOcultaOuvidos\)\{if\(podOuvido\(ep\)\)podOcultaOuvidos=false;else lis
 ok(/\.pod-ouvido-tag\{/.test(html) && /\.pod-prog \.pod-oculta\{/.test(html), 'CSS do selo e da opção de esconder');
 
 if (falhas.length) { console.error('✗ podcasts ouvidos:\n  - ' + falhas.join('\n  - ')); process.exit(1); }
-console.log('✓ Podcasts: "Marcar como ouvido" em cada episódio, marca sozinho a partir de 90% do áudio, sincroniza e esconde os já ouvidos');
+console.log('✓ Podcasts: "Marcar como ouvido" em cada episódio, marca sozinho a partir de 80% do áudio, sincroniza e esconde os já ouvidos');

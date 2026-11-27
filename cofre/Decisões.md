@@ -8,6 +8,7 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🎧 PODCASTS: OUVIDO A PARTIR DE 80% (2026-11-27, v512; professor: *"Deixa quando passar de 80%"*).** O áudio do site marca o episódio como ouvido ao passar de 80% (era 90%, v511). `POD_OUVIDO_PCT=0.8`; o teste confere que 79% ainda não marca e 80,5% marca.
 - **🎧 PODCASTS: EPISÓDIO OUVIDO (2026-11-27, v511; sugestão de uma aluna no Instagram, repassada pelo professor: *"deixar marcado como concluído no app na área de podcasts igual tem na parte de cursos e resumos"*).**
   - Cada episódio tem o botão "Marcar como ouvido" / "✓ Ouvido (desfazer)", como o "Marcar como concluída" das aulas, e o selo verde "✓ Ouvido" no cabeçalho.
   - O áudio do próprio site marca sozinho a partir de 90% (`timeupdate`/`ended`), como o "Lido" dos Resumos, e nunca desmarca sozinho. O episódio do Spotify fica só no botão, porque o player deles não informa a posição.

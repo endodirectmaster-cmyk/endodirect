@@ -16362,10 +16362,10 @@ function podcastAbrirEpisodio(ep){
 }
 // EPISÓDIO OUVIDO (27/11/2026). Sugestão de uma aluna, repassada pelo professor: "deixar marcado como concluído
 // no app na área de podcasts igual tem na parte de cursos e resumos". Botão "Marcar como ouvido" em cada episódio
-// (como "Marcar como concluída" nas aulas) e, no áudio do próprio site, marca sozinho ao passar de 90% (como o
-// "Lido" dos Resumos). O episódio do Spotify fica só no botão: o player deles não diz até onde o aluno ouviu.
+// (como "Marcar como concluída" nas aulas) e, no áudio do próprio site, marca sozinho ao passar de 80% (professor,
+// 27/11/2026: "Deixa quando passar de 80%"; era 90%, como o "Lido" dos Resumos). O episódio do Spotify fica só no botão: o player deles não diz até onde o aluno ouviu.
 // Tudo é atualizado no próprio cartão, sem redesenhar a lista, para não parar o áudio que está tocando.
-var POD_OUVIDO_PCT=0.9,podOcultaOuvidos=!!lsGet('pod_oculta_ouvidos'),podOuvidoLigado=false;
+var POD_OUVIDO_PCT=0.8,podOcultaOuvidos=!!lsGet('pod_oculta_ouvidos'),podOuvidoLigado=false;
 function podOuvidosMapa(){if(!DB.podOuvidos||typeof DB.podOuvidos!=='object'||Array.isArray(DB.podOuvidos))DB.podOuvidos={};return DB.podOuvidos;}
 function podKey(p){return (p&&+p.at)?('a'+(+p.at)):('t'+String((p&&p.title)||''));}
 function podOuvido(p){return !!podOuvidosMapa()[podKey(p)];}
@@ -16410,7 +16410,7 @@ function podOuvidoLigar(){
     podPagina=0;renderPodcasts();
   });
 }
-// Áudio do próprio site: passou de 90% (ou terminou), marca como ouvido. Nunca desmarca sozinho.
+// Áudio do próprio site: passou de 80% (ou terminou), marca como ouvido. Nunca desmarca sozinho.
 function podAudioLigar(el){
   el.querySelectorAll('[data-pod-key] audio').forEach(function(a){
     var chk=function(){
