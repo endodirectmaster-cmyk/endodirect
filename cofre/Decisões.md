@@ -8,6 +8,10 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🖍 GRIFO SEM SOBREPOSIÇÃO DE CORES E SEM AVISO VERDE (2026-11-27, v508; professor, com print: *"Essa mensagem do servidor no canto inferior direito verde fica aparecendo para os alunos. E [...] está havendo sobreposição de cores nos textos. Não é para acontecer isso."*).**
+  - O aviso "Trecho grifado. Ficam reunidos na aba Notas." saiu. A dica do 🖍 agora diz que os grifos ficam na aba Notas.
+  - Grifo sobre grifo: `grifoMarca` nunca põe um `<mark>` dentro de outro. O pedaço em comum sai do grifo antigo e fica só com o mais novo; o antigo continua antes e depois. Vale também ao reabrir (os grifos são aplicados do mais antigo ao mais novo), então quem já tinha grifos sobrepostos passa a ver uma cor só. O grifo antigo coberto por inteiro sai da lista, a não ser que tenha nota.
+  - Faixa contínua: `mark.grifo` sem folga lateral e sem cantos arredondados, para não aparecerem emendas entre o texto normal e o negrito.
 - **🖍 ÍCONE DO MARCA-TEXTO VISÍVEL NA TELA ESCURA + MARCA D'ÁGUA AINDA MAIS ESPAÇADA (2026-11-27, v507; professor, com print: *"O lápis ficou bem escuro na tela escura [...] Além disso, diminui um pouco mais a frequência de aparecimento das marcas d'água nos textos."*).**
   - O botão ao lado da estrela trocou o emoji 🖍 por um desenho de marca-texto (`grifoIco()`): contorno na cor do texto (`currentColor`, `--t2`) e um traço amarelo embaixo. Causa: botão não herda a cor do texto (fica `buttontext`, preto) e o 🖍 do Windows sai no estilo texto, por isso ficava preto no tema escuro. Lição: todo botão com ícone de texto precisa de `color` próprio.
   - Marca d'água: uma a cada **1000×660 px** (antes 760×560), cerca de um terço a menos. O ladrilho continua mais baixo que a tela do celular, então ainda aparece ao menos uma marca.

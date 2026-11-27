@@ -2130,7 +2130,7 @@ html[data-theme="light"] .dir-back{background:#f8f9fc;border-color:var(--bd2);co
 .dash-cont-bar{height:4px;border-radius:99px;background:var(--bd2);margin-top:.45rem;overflow:hidden}
 .dash-cont-bar span{display:block;height:100%;background:var(--blue);border-radius:99px}
 .dash-cont-go{font-size:.78rem;font-weight:700;color:var(--blue);white-space:nowrap}
-mark.grifo{--gc:250,204,21;background:rgba(var(--gc),.38);color:inherit;border-radius:3px;padding:0 1px;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+mark.grifo{--gc:250,204,21;background:rgba(var(--gc),.38);color:inherit;border-radius:0;padding:0;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 :root[data-theme="dark"] mark.grifo{background:rgba(var(--gc),.3)}
 /* Cores e sublinhado (27/11/2026): a cor é a variável --gc; o sublinhado tira o fundo. */
 mark.grifo.g-verde{--gc:52,211,153}
@@ -18728,7 +18728,18 @@ function grifoMarca(raiz,txt,id,g){
     if(b<=a||!no.nodeValue.slice(a,b).trim())continue;
     var meio=no.splitText(a);meio.splitText(b-a);
     var mk=document.createElement('mark');mk.className='grifo '+grifoClasse(g);mk.setAttribute('data-grifo',id);
-    meio.parentNode.insertBefore(mk,meio);mk.appendChild(meio);
+    var velho=meio.parentNode;
+    if(velho&&velho.nodeName==='MARK'&&velho.classList&&velho.classList.contains('grifo')){
+      // Nunca grifo dentro de grifo (professor, 27/11/2026: "está havendo sobreposição de cores nos textos. Não
+      // é para acontecer isso"): o pedaço sai do grifo antigo e, ali, vale só o grifo mais novo. Sobra do antigo
+      // o que vem antes e o que vem depois.
+      var vazio=function(n){if(n&&n.nodeType===3&&!n.nodeValue&&n.parentNode)n.parentNode.removeChild(n);};
+      vazio(meio.previousSibling);vazio(meio.nextSibling);
+      var resto=[];for(var sx=meio.nextSibling;sx;sx=sx.nextSibling)resto.push(sx);
+      velho.parentNode.insertBefore(mk,velho.nextSibling);mk.appendChild(meio);
+      if(resto.length){var dep=velho.cloneNode(false);mk.parentNode.insertBefore(dep,mk.nextSibling);resto.forEach(function(r){dep.appendChild(r);});}
+      if(!velho.firstChild)velho.parentNode.removeChild(velho);
+    }else{meio.parentNode.insertBefore(mk,meio);mk.appendChild(meio);}
   }
   return true;
 }
@@ -18753,7 +18764,7 @@ function grifoBarra(){
   var b=document.getElementById('grifo-barra');if(b)return b;
   b=document.createElement('div');b.id='grifo-barra';b.className='grifo-barra';
   // Grifar ou sublinhar, as 5 cores (tocar numa cor já marca o trecho), anotar e fechar.
-  b.innerHTML='<span class="grifo-dica-txt">Selecione um trecho do texto e toque numa cor para grifar ou sublinhar.</span>'
+  b.innerHTML='<span class="grifo-dica-txt">Selecione um trecho do texto e toque numa cor para grifar ou sublinhar. Os grifos ficam reunidos na aba Notas.</span>'
     +'<button type="button" class="grifo-modo" data-grifo-modo="grifo" aria-label="Grifar" title="Grifar" aria-pressed="true">🖍</button>'
     +'<button type="button" class="grifo-modo grifo-modo-u" data-grifo-modo="sub" aria-label="Sublinhar" title="Sublinhar" aria-pressed="false">U</button>'
     +grifoCoresHTML(grifoPref().cor)
@@ -18801,9 +18812,17 @@ function grifoCria(comNota){
   grifoSel=null;grifoBarra().classList.remove('on','dica');
   try{window.getSelection().removeAllRanges();}catch(e){}
   var root=document.getElementById(g.painel==='ref'?'ref-body':'resu-body');
-  if(root){var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id,g))break;}}
+  if(root){
+    var ids=function(){var o={};root.querySelectorAll('mark.grifo[data-grifo]').forEach(function(x){o[x.getAttribute('data-grifo')]=1;});return o;};
+    var antes=ids();
+    var caixas=root.querySelectorAll('.dir-card .dir-texto,.dir-card .dir-pts');for(var i=0;i<caixas.length;i++){if(grifoMarca(caixas[i],g.txt,g.id,g))break;}
+    // O grifo antigo que o novo cobriu por inteiro sumiu da tela: sai também da lista (a não ser que tenha nota).
+    var depois=ids(),cobertos=Object.keys(antes).filter(function(k){return !depois[k];});
+    if(cobertos.length){DB.grifos=grifosLista().filter(function(x){return !(x&&cobertos.indexOf(x.id)>=0&&!String(x.nota||'').trim());});persist();}
+  }
+  // Sem aviso verde a cada grifo (professor, 27/11/2026: "Essa mensagem [...] fica aparecendo para os alunos").
+  // Que os grifos ficam na aba Notas, a dica do 🖍 já diz.
   if(comNota)grifoModal(g.id);
-  else try{notify((g.estilo==='sub'?'Trecho sublinhado.':'Trecho grifado.')+' Ficam reunidos na aba Notas.','ok');}catch(e){}
 }
 function grifoModal(id){
   var g=grifosLista().filter(function(x){return x.id===id;})[0];if(!g)return;
