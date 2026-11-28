@@ -20,7 +20,11 @@ Neuroendocrinologia: *"partir para adrenal, com o mesmo raciocínio"*.
 - (feito) Adrenal: mesmo roteiro (levantamento por tema com as regras de `qb_temas.js` → redatores com BRIEF → revisores
   com REVISAO → dedup → gravação). Temas (nomes do professor): hiperaldosteronismo primário, síndrome de Cushing, incidentaloma,
   carcinoma adrenocortical, feocromocitoma/paraganglioma, insuficiência adrenal, HAC e miscelânea (o resto).
-- [ ] Lípides (em andamento 28/11, 00h45: 2 redatores) (*"Depois que acabar o de adrenal, vamos partir para o de lípides. E depois de lípides, obesidade."*, 28/11):
+- [ ] Lípides (28/11, 01h00): redigidas Lp(a) 29, LDL 6, HF 15, HDL/raras 12, metabolismo 7 (`scratchpad/banco40/lipides/`).
+  Revisão de HF/HDL/metabolismo rodando; a de Lp(a)/LDL fica para depois da janela (04h20 BRT, lembrete agendado).
+  Gravar junto as 13 da 2ª rodada de Neuro (`scratchpad/neuroq/gravar/rodada2.novas.json`, ENDODIRECT-2537 a 2549).
+  Avisar o professor: ENDODIRECT-1211 diz que a Lp(a) "inibe a fibrinólise" (a EAS 2022 diz que não foi comprovado in vivo).
+  (*"Depois que acabar o de adrenal, vamos partir para o de lípides. E depois de lípides, obesidade."*, 28/11):
   abaixo de 40 em 28/11: Lp(a) 11, hipercolesterolemia familiar 20, HDL e dislipidemias raras 25, metabolismo 32,
   tratamento do LDL 36 (~76 novas).
 - [ ] Obesidade: infância e adolescência 7, nutrição/exercício/suplementos 26, monogênica e sindrômica 34 (~53 novas).
