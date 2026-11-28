@@ -116,6 +116,12 @@ limite de 90% do limite de 5 horas... fazer o mesmo esquema de reduzir as ativid
 5 horas"*. Na prática: perto de 90%, não lançar agente novo e interromper os que acabaram de começar; os que já estão
 adiantados terminam; eu só confiro o que chega. `send_later` para 2 min depois da renovação, retomando com tudo.
 
+**Ajuste do mesmo dia (28/11/2026, 23h45):** *"Ao invés de trabalharmos com 90% do limite de 5 horas, se ajuste para
+trabalhar de forma que dê tempo e até sobre no limite de 5 horas para essa tarefa que estamos fazendo."* Para o banco de
+questões (Neuro → Adrenal): planejar o trabalho para caber na janela com folga, em vez de correr até perto de 90%. No
+máximo 3 agentes ao mesmo tempo; gravação, deduplicação e testes feitos por mim, sem agente; antes de cada leva de
+agentes, estimar o custo (~350 mil tokens por redator ou revisor) contra o que resta da janela (ledger acima).
+
 **Controle aproximado (12/11, o professor perguntou por que eu "sempre consegui fazer esse controle"):**
 nunca vi o percentual; o controle sempre foi aproximação (teto de tokens + mensagem de limite) e já
 errou (17/10). Agora: ledger dos tokens dos agentes por janela de 5 h (a janela renova no `resetsAt`
