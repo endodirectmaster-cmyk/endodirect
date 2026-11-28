@@ -8,7 +8,7 @@
    - Cross-origin (Supabase, jsDelivr, Vimeo, etc.): passa direto, sem interceptar — menos a
      biblioteca supabase-js (rede primeiro, cópia sem rede), para os Resumos baixados abrirem offline.
    - Estáticos do próprio domínio: stale-while-revalidate. */
-var CACHE = 'endodirect-v517';
+var CACHE = 'endodirect-v518';
 var ASSETS = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',

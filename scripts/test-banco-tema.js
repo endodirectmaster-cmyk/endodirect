@@ -51,6 +51,7 @@ ok(nomes('Adrenal').includes('Síndrome de Cushing'), 'Adrenal tem o tema "Sínd
 ok(nomes('Adrenal').includes('Miscelânea'), 'Adrenal tem o tema "Miscelânea"');
 ok(!nomes('Adrenal').some((t) => /massas adrenais|outras massas|fisiologia adrenal|de origem adrenal/i.test(t)), 'Adrenal sem "outras massas", "fisiologia" ou "Cushing de origem adrenal"');
 ok(nomes('Neuroendocrinologia').includes('Doença de Cushing'), 'Neuroendocrinologia tem o tema "Doença de Cushing"');
+ok(nomes('Neuroendocrinologia').includes('Miscelânea') && !nomes('Neuroendocrinologia').some((t) => /craniofaring/i.test(t)), 'Neuro: "Craniofaringioma e outras lesões selares" virou "Miscelânea" (professor, 28/11/2026)');
 ['Hiperaldosteronismo primário', 'Incidentaloma adrenal', 'Carcinoma adrenocortical', 'Feocromocitoma e paraganglioma', 'Insuficiência adrenal', 'Hiperplasia adrenal congênita']
   .forEach((t) => ok(nomes('Adrenal').includes(t), 'Adrenal tem o tema "' + t + '"'));
 ok(Object.keys(T).length === 14, 'as 14 subespecialidades das Diretrizes têm temas (tem ' + Object.keys(T).length + ')');
@@ -76,6 +77,7 @@ const casos = [
   [{ area: 'Neuroendocrinologia', stem: 'Mulher de 34 anos com doença de Cushing confirmada por cateterismo de seios petrosos.' }, 'Doença de Cushing'],
   [{ area: 'Neuroendocrinologia', stem: 'Pós-operatório de cirurgia transesfenoidal com sódio de 126 mEq/L no 7º dia.' }, 'SIADH e hiponatremia'],
   [{ area: 'Neuroendocrinologia', stem: 'Sobre a ghrelina, assinale a correta.' }, 'Miscelânea'],
+  [{ area: 'Neuroendocrinologia', category: 'Craniofaringioma e outras lesões selares', stem: 'Craniofaringioma adamantinomatoso.' }, 'Miscelânea'],
   [{ area: 'Neuroendocrinologia', stem: 'Adulto com pico de GH de 1,2 ng/mL no teste de tolerância à insulina.' }, 'Deficiência de GH'],
   // Rótulo antigo de área passa pela taxonomia (canonSub).
   [{ area: 'Básica', stem: 'Exposição a bisfenol A e ftalatos.' }, 'Disruptores endócrinos'],

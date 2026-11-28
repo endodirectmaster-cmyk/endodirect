@@ -8,6 +8,7 @@ atualizado: 2026-11-28
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🏷️ NEURO: "CRANIOFARINGIOMA E OUTRAS LESÕES SELARES" VIRA "MISCELÂNEA" (2026-11-28, v518; professor: *"Troca o nome do tema crâniofaringioma e outras celares por miscelânea"*).** Só o nome no filtro (`QB_TEMAS`); as regras de texto continuam as mesmas e se juntam à Miscelânea de sobra (≈ 45 questões). As 26 novas com `category` antigo caem nela pela regra (craniofaring…), sem mudar o banco.
 - **🍎 BANCO: +54 DE OBESIDADE, +12 DE LÍPIDES E 4 CORREÇÕES; FILTRO v517 (2026-11-28, ENDODIRECT-2617 a 2682).** O filtro passou a usar o nome exato do tema em `category` antes das regras (as 30 de infância caíam em outros temas). Correções: leptina na deficiência de LEPR (TEEM2019-059, USPR3ENDOCRINOLOGIA-2023-4, AULA-OBES2-Q5) e semaglutida aprovada para adolescentes (ENDODIRECT-524). Ver [[Banco de Questões]].
 - **🧈 BANCO: +67 QUESTÕES DE LÍPIDES E +13 DA 2ª RODADA DE NEURO (2026-11-28, ENDODIRECT-2537 a 2616).** Lp(a) 11 → 38, HF 20 → 35, HDL/raras 25 → 37, metabolismo 32 → 39, LDL 36 → 42; 2ª rodada curta de Lípides e Obesidade em andamento ([[Banco de Questões]]).
 - **🩹 BANCO: 13 QUESTÕES ANTIGAS CORRIGIDAS (2026-11-28; professor: *"Pode corrigir tudo e continuar"*).** Acromegalia/TOTG (14º Consenso), incidentaloma (ESE 2023) e Lp(a)/fibrinólise (EAS 2022); Endodirect reescritas, oficiais com nota de atualização; nenhum gabarito trocado. `gravar-diretriz` ganhou o modo substituir (v37 → 410 na v38). Ver [[Banco de Questões]].
