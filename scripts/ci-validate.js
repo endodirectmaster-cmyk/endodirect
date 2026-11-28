@@ -2603,6 +2603,16 @@ try {
   fail('regressão do Banco embaralhado (index.html) falhou:\n' + out);
 }
 
+// CÓDIGO DA QUESTÃO SÓ NO PAINEL DO PROFESSOR (28/11/2026). Professor: "Retirar o código da questão do painel dos
+// alunos, deixar mostrando somente no painel do professor."
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-codigo-so-professor.js')], { stdio: 'pipe' });
+  ok('Banco: código da questão escondido do aluno e mantido no painel do professor');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do código da questão só no painel do professor (index.html) falhou:\n' + out);
+}
+
 // TEMA DENTRO DA SUBESPECIALIDADE NO BANCO (28/11/2026). Professor: "após ele escolher a subespecialidade, por exemplo,
 // adrenal, deixar um filtro também para escolher ... hiperaldosteronismo ... Cushing ... incidentaloma adrenal".
 try {

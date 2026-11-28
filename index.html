@@ -15067,12 +15067,15 @@ function updateGenCounter(){
   var pct=Math.round(acertos/respondidas*100);
   el.textContent='Respondidas: '+respondidas+'/'+genQs.length+' · Acertos: '+acertos+' ('+pct+'%)';
 }
+// O código da questão (ENDODIRECT-…, USPR3…) não aparece para o aluno; fica só no painel do professor
+// (admProvaCardHTML). Professor, 28/11/2026: "Retirar o código da questão do painel dos alunos, deixar mostrando
+// somente no painel do professor."
 function qRowHTML(q,i,src,isMC){
-  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
+  return'<div><div class="q-row" data-qi="'+i+'" data-src="'+src+'" data-mc="'+(q.type?(q.type!=='disc'):isMC)+'"><div class="q-row-top"><div class="q-stem-prev">'+esc(q.stem||'')+'</div><div style="display:flex;gap:3px;flex-shrink:0">'+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div></div></div><div id="qd-'+src+'-'+i+'" style="display:none"></div></div>';
 }
 function qFullHTML(q,i,src,isMC){
   var mc=q.type?(q.type!=='disc'):isMC;
-  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+feitaSeloHTML(q,src,i)+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
+  var tags='<div style="display:flex;gap:3px;justify-content:flex-end;margin-bottom:.45rem">'+feitaSeloHTML(q,src,i)+diffTag(q.dificuldade||'intermediario')+(q.inst?'<span class="tag tag-pur" style="font-size:.57rem">'+esc(q.inst)+'</span>':'')+'</div>';
   var img=q.img?'<img src="'+esc(q.img)+'" alt="Figura" style="max-width:100%;display:block;border-radius:8px;margin:.55rem 0;border:1px solid var(--bd)">'
     +(q.imgRef?'<div style="font-size:.66rem;color:var(--t3);line-height:1.4;margin:-.3rem 0 .6rem;font-style:italic">'+esc(igShortRef(q.imgRef))+'</div>':''):'';
   var body;
@@ -15210,7 +15213,7 @@ function renderSavedQ(){
   var el=document.getElementById('q-saved-list');if(!el)return;
   setText('q-saved-count','('+DB.q.length+')');
   if(!DB.q.length){el.innerHTML='<div class="empty">Nenhuma questão salva.</div>';return;}
-  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+feitaSeloHTML(q,'saved',i)+(q.code?'<span style="font-family:monospace;font-size:.59rem;font-weight:700;background:var(--code-bg);color:var(--code-tx);padding:1px 6px;border-radius:99px">'+esc(q.code)+'</span>':'')+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
+  el.innerHTML='<div class="q-list">'+DB.q.map(function(q,i){return'<div><div class="q-row" data-qi="'+i+'" data-src="saved" data-mc="'+(q.type!=='disc')+'"><div class="q-row-top"><div class="q-stem-prev">'+esc((q.stem||'').substring(0,140))+'…</div><div style="display:flex;gap:3px;align-items:center">'+feitaSeloHTML(q,'saved',i)+diffTag(q.dificuldade)+'<button class="btn btn-ghost btn-sm" data-del-q="'+i+'" style="padding:2px 4px">✕</button></div></div></div><div id="qd-saved-'+i+'" style="display:none"></div></div>';}).join('')+'</div>';
 }
 var INST_PADRAO=[];
 // Em DEGUSTAÇÃO o aluno só enxerga uma amostra FIXA de 50 questões da
