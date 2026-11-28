@@ -118,6 +118,17 @@ ok(ctx.filterProvas('', '', 'Adrenal', '', 'Hiperaldosteronismo primário').leng
 ok(ctx.filterProvas('', '', 'Adrenal', 'mc', 'Carcinoma adrenocortical').length === 0, 'tema + tipo (objetiva) combinam');
 ok(ctx.filterProvas('', '', 'Adrenal').length === 5, 'sem tema, a subespecialidade inteira');
 
+// "Miscelânea" de Adrenal e de Neuro são temas separados (professor, 28/11/2026).
+pool = [
+  { area: 'Adrenal', stem: 'Sobre a embriologia do córtex adrenal.' },
+  { area: 'Neuroendocrinologia', stem: 'Craniofaringioma adamantinomatoso com calcificação.' },
+  { area: 'Neuroendocrinologia', stem: 'Sobre a ghrelina, assinale a correta.' },
+];
+ok(ctx.filterProvas('', '', 'Adrenal', '', 'Miscelânea').length === 1, 'Miscelânea de Adrenal traz só a de Adrenal');
+ok(ctx.filterProvas('', '', 'Neuroendocrinologia', '', 'Miscelânea').length === 2, 'Miscelânea de Neuro traz só as de Neuro');
+ok(ctx.qbTemaOpcoes('Adrenal', pool).find((o) => o.tema === 'Miscelânea').n === 1 && ctx.qbTemaOpcoes('Neuroendocrinologia', pool).find((o) => o.tema === 'Miscelânea').n === 2, 'a contagem da Miscelânea é de cada subespecialidade');
+ok(/if\(temaSel\.getAttribute\('data-sub'\)!==subT\)curT='';/.test(corpo('updateProvaInfo')), 'trocar a subespecialidade volta o tema para "Todos"');
+
 // Tela do aluno.
 ok(/<div class="fld2" id="q-ptema-field" style="[^"]*display:none[^"]*"><label>Tema<\/label><select id="q-ptema">/.test(html), 'caixa "Tema" no Banco do aluno, escondida até escolher a subespecialidade');
 ok(/\['q-inst','q-ano','q-parea','q-ptype','q-ptema'\]\.forEach/.test(html), 'trocar o tema atualiza a contagem');

@@ -15369,9 +15369,13 @@ function updateProvaInfo(){
     var temaSel=document.getElementById('q-ptema'),temaField=document.getElementById('q-ptema-field');
     var temaOps=area?qbTemaOpcoes(area,filterProvas(inst,ano,area,type)):[];
     if(temaSel){
-      var curT=temaSel.value;
+      var curT=temaSel.value,subT=area?canonSub(area):'';
+      // Trocou a subespecialidade: o tema volta para "Todos". "Miscelânea" existe em Adrenal e em Neuro, e são
+      // temas separados (professor, 28/11/2026); não pode parecer que a escolha passou de uma para a outra.
+      if(temaSel.getAttribute('data-sub')!==subT)curT='';
       if(!temaOps.some(function(o){return o.tema===curT;}))curT='';
       temaSel.innerHTML=qbTemaSelectHTML(temaOps,curT);temaSel.value=curT;tema=curT;
+      temaSel.setAttribute('data-sub',subT);
     }
     if(temaField)temaField.style.display=temaOps.length?'':'none';
   }catch(e){tema='';}
