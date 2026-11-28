@@ -5,7 +5,7 @@ atualizado: 2026-11-28
 
 # Pendências
 
-## 🧠➡️🫘 Banco: 40 questões por tema — Neuroendocrinologia agora, Adrenal em seguida (28/11)
+## 🧠➡️🫘 Banco: 40 questões por tema — Neuro → Adrenal → Lípides → Obesidade (28/11)
 
 Pedido do professor (28/11): ter pelo menos 40 questões de cada tema e completar o que faltar, sem repetir decisão já
 coberta no banco ("tomar o cuidado... para não fazer questões semelhantes às já pré-existentes"). Depois de
@@ -15,8 +15,12 @@ Neuroendocrinologia: *"partir para adrenal, com o mesmo raciocínio"*.
 - [ ] Adrenal: mesmo roteiro (levantamento por tema com as regras de `qb_temas.js` → redatores com BRIEF → revisores
   com REVISAO → dedup → gravação). Temas (nomes do professor): hiperaldosteronismo primário, síndrome de Cushing, incidentaloma,
   carcinoma adrenocortical, feocromocitoma/paraganglioma, insuficiência adrenal, HAC e miscelânea (o resto).
-- Limite de uso: ao chegar a 90% da janela de 5 h, em qualquer etapa, reduzir o ritmo até a janela zerar (ver
-  [[Convenções de Trabalho]] › "LIMITES ATUAIS").
+- [ ] Lípides (*"Depois que acabar o de adrenal, vamos partir para o de lípides. E depois de lípides, obesidade."*, 28/11):
+  abaixo de 40 em 28/11: Lp(a) 11, hipercolesterolemia familiar 20, HDL e dislipidemias raras 25, metabolismo 32,
+  tratamento do LDL 36 (~76 novas).
+- [ ] Obesidade: infância e adolescência 7, nutrição/exercício/suplementos 26, monogênica e sindrômica 34 (~53 novas).
+- Ritmo: caber na janela de 5 h com folga, no máximo 3 agentes ao mesmo tempo (ver [[Convenções de Trabalho]] ›
+  "LIMITES ATUAIS", ajuste de 28/11 23h45).
 
 ## 🔐⏰ Alerta de aparelho novo e lembrete diário (27/11, v503): acompanhar os primeiros dias
 
