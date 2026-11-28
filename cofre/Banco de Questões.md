@@ -101,6 +101,7 @@ a opção de qual tipo de questão da subespecialidade"*, no Banco do aluno e no
   regra da lista que casar vence. O que não casa vai para **"Miscelânea"**.
 - **Nomes pedidos pelo professor:** Adrenal tem "Síndrome de Cushing" (não "de origem adrenal") e "Miscelânea" no lugar de
   "outras massas" (a fisiologia adrenal também entra em Miscelânea). Em Neuroendocrinologia, o tema é "Doença de Cushing".
+  Neuro (28/11, v518): "Craniofaringioma e outras lesões selares" passou a se chamar "Miscelânea".
 - **Questão nova:** gravar em `category` o nome EXATO do tema (ex.: "Hiperaldosteronismo primário"), para não depender
   do texto.
 - **Conferência (28/11):** as mesmas regras rodaram em SQL no banco inteiro (3.151 questões): de 0 a 10 sem tema por
