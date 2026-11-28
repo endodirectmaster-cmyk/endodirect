@@ -1,9 +1,27 @@
 ---
 tags: [cofre, dados, supabase]
-atualizado: 2026-11-23
+atualizado: 2026-11-28
 ---
 
 # Dados e Supabase
+
+## 💽 PODA DAS CÓPIAS EM `endodirect_global_state_backup` (28/11/2026)
+
+- **Por quê:** o Supabase expandiu o disco de 2 para 8 GB (sem custo no Pro); 1,2 GB do banco eram 164 cópias inteiras do
+  `main` (~7 MB cada). Com o "pode" do professor, ficaram 42 e saíram 122. Banco 1,45 GB → 517 MB.
+- **Regra aplicada (cortes fixos, não `now()`):** todas desde 21/11 12h UTC; de 29/10 12h a 21/11, a última de cada dia
+  (horário de Brasília); antes, a última de cada mês. A janela de cada faixa é separada (`partition by faixa, dia|mês`):
+  sem isso, o "último de outubro" caía na faixa diária e o mês ficava sem cópia.
+- **Ninguém lê a tabela:** RLS ligado e sem política (só `service_role`/`postgres`), sem chave nem índice, nenhum gatilho
+  do `main` grava nela, e o código do site só faz `insert` (scripts). Remover cópias não muda nada para os alunos.
+- **Como:** `gravar-diretriz` v43 (token por sha256, prazo de 40 min) com três modos: `ensaio` (calcula e compara com a
+  contagem e o md5 das chaves `id|backed_up_at` conferidos antes), `podar` (numa transação, com `lock ... share row
+  exclusive`; aborta se o que saiu, o que ficou ou o md5 do `main` não baterem) e `compactar` (`vacuum (full, analyze)`
+  só da tabela de cópias, ~10 s). v44 de volta ao 410, `.tok` apagado, 410 conferido. O `deploy_edge_function` com
+  `delete` no código passou sem ser retido (o que retém é o `execute_sql`).
+- **Junto:** `revoke execute` de `public/anon/authenticated` nas três `endodirect_tmp_*` que sobraram (prazos vencidos em
+  14/11 e 24/11; a de pendências da Questão do Dia ainda era executável por `anon`, embora só com token).
+- O `vacuum full` não encolhe o disco provisionado (fica em 8 GB); só o uso.
 
 ## ✏️ NOME DO ALUNO CORRIGIDO PELO SUPORTE: `raw_user_meta_data->>'nome'` (23/11/2026)
 

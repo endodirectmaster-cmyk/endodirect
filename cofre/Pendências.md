@@ -5,13 +5,14 @@ atualizado: 2026-11-28
 
 # Pendências
 
-## 💽 Disco do Supabase expandido 2 → 8 GB (28/11, e-mail do Supabase ao professor)
+## 💽 Disco do Supabase: cópias antigas podadas (28/11, FEITO com o "pode" do professor)
 
-Banco com 1,38 GB, dos quais **1,2 GB são as 164 cópias inteiras do `main` em `endodirect_global_state_backup`**
-(desde 10/08; 8 só em 28/11, com as gravações do banco de questões), mais 240 MB de WAL: passou de 90% dos 2 GB e o
-Supabase expandiu sozinho. **Sem custo:** o Pro inclui 8 GB de disco por projeto (cobra só acima disso,
-US$ 0,125/GB/mês). Proposta ao professor (aguarda "pode"): reter todas as cópias dos últimos 7 dias, 1 por dia até 30
-dias e 1 por mês antes disso → ficam 45 (352 MB), saem 119 (784 MB). Apagar backup é destrutivo: só com o "pode".
+Professor: *"por mim não tem problema, contanto que não afete em nada o funcionamento da plataforma e a segurança da mesma"*.
+Saíram 122 das 164 cópias de `endodirect_global_state_backup`, ficaram 42 (todas desde 21/11; a última de cada dia de
+29/10 a 19/11; a última de agosto e a de outubro; setembro não tinha cópia). Banco de 1,45 GB → **517 MB** (tabela de
+cópias 1,26 GB → 341 MB, `vacuum full` só nela). Detalhes e método em [[Dados e Supabase]].
+- **Da próxima vez:** a tabela volta a crescer ~7 MB por gravação. Quando passar de ~1 GB, propor a mesma regra de novo e
+  esperar o "pode" (a autorização de 28/11 valeu para aquela poda, não é permanente).
 
 ## 🧠➡️🫘 Banco: 40 questões por tema — Neuro → Adrenal → Lípides → Obesidade (28/11)
 
