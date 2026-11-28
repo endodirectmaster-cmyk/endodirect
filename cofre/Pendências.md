@@ -15,10 +15,12 @@ Neuroendocrinologia: *"partir para adrenal, com o mesmo raciocínio"*.
 - [ ] Avisar o professor: ENDODIRECT-821, 822, 1776, TEEM2022-052 e USPR3ENDOCRINOLOGIA-2024-31 tratam o TOTG como
   confirmação obrigatória na acromegalia, em conflito com o 14º Consenso (2023). Depois: dedup cruzado
   (`dedup_sql.py`, Jaccard 0,32), rebalancear letras, códigos a partir de ENDODIRECT-2254, backup + gravação em lotes.
-- [ ] Adrenal: mesmo roteiro (levantamento por tema com as regras de `qb_temas.js` → redatores com BRIEF → revisores
+- [x] Adrenal: 52 gravadas (ENDODIRECT-2485 a 2536); todos os temas ≥ 40 pelo filtro. Avisar o professor das 5
+  antigas que contrariam a ESE 2023 (622, 616, TEEM2021-091, 1535, TEEM2020-087; ver [[Banco de Questões]]).
+- (feito) Adrenal: mesmo roteiro (levantamento por tema com as regras de `qb_temas.js` → redatores com BRIEF → revisores
   com REVISAO → dedup → gravação). Temas (nomes do professor): hiperaldosteronismo primário, síndrome de Cushing, incidentaloma,
   carcinoma adrenocortical, feocromocitoma/paraganglioma, insuficiência adrenal, HAC e miscelânea (o resto).
-- [ ] Lípides (*"Depois que acabar o de adrenal, vamos partir para o de lípides. E depois de lípides, obesidade."*, 28/11):
+- [ ] Lípides (em andamento 28/11, 00h45: 2 redatores) (*"Depois que acabar o de adrenal, vamos partir para o de lípides. E depois de lípides, obesidade."*, 28/11):
   abaixo de 40 em 28/11: Lp(a) 11, hipercolesterolemia familiar 20, HDL e dislipidemias raras 25, metabolismo 32,
   tratamento do LDL 36 (~76 novas).
 - [ ] Obesidade: infância e adolescência 7, nutrição/exercício/suplementos 26, monogênica e sindrômica 34 (~53 novas).

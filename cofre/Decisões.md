@@ -8,6 +8,7 @@ atualizado: 2026-11-28
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🫘 BANCO: +52 QUESTÕES DE ADRENAL (2026-11-28, ENDODIRECT-2485 a 2536).** Carcinoma adrenocortical (6 → 41), incidentaloma (26 → 40), HAC (39 → 42). Cinco antigas contrariam a ESE 2023 e aguardam o professor ([[Banco de Questões]]).
 - **🧠 BANCO: +231 QUESTÕES DE NEUROENDOCRINOLOGIA (2026-11-28, ENDODIRECT-2254 a 2484; professor: *"pelo menos 40 questões de cada um desses temas. Se não tiver, complemente"*, *"para não fazer questões semelhantes às já pré-existentes"*).** Redator + revisor independente por tema, dedup contra o banco e entre lotes; gravadas pela `gravar-diretriz` (modo acréscimo, v33 → 410 na v34). Detalhes e contagens em [[Banco de Questões]]. Ritmo: *"se ajuste para trabalhar de forma que dê tempo e até sobre no limite de 5 horas"* (máx. 3 agentes ao mesmo tempo).
 - **🏷️ BANCO: FILTRO DE TEMA DENTRO DA SUBESPECIALIDADE (2026-11-28, v516; professor: *"tanto do painel do professor como do aluno, após ele escolher a subespecialidade, por exemplo, adrenal, deixar um filtro também para escolher [...] hiperaldosteronismo [...] Cushing [...] incidentaloma adrenal [...] carcinoma adrenocortical e assim sucessivamente"*).**
   - Caixa "Tema" no Banco do aluno (aparece depois de escolher a subespecialidade) e no painel do professor, com a contagem por tema. O tema é calculado do texto (`QB_TEMAS`, 118 regras; categoria → enunciado → alternativas), sem gravar nada no banco; o que não casa vai para "Miscelânea". Detalhes em [[Banco de Questões]].
