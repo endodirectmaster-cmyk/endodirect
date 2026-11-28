@@ -146,8 +146,8 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(!/data-exp-alt|qalt-|function explicarAlternativas|var altMemo|outras alternativas estão incorretas\?<\/button>/.test(html), '🧨 sem o botão "Por que as outras alternativas estão incorretas?" (saiu em 11/11/2026, pedido do professor), nem o código que chamava a IA');
     ok(/O botão "Por que as outras alternativas estão incorretas\?" \(IA, 04\/10\/2026\) saiu/.test(so), 'selectOpt: comentário registra por que o botão saiu');
     ok(/try\{feitaRegistrar\(q,null,src,i,'disc'\);\}catch\(e\)\{\}/.test(corpo('evalDisc')), 'evalDisc: discursiva avaliada vira respondida');
-    ok(/margin-bottom:\.45rem">'\+feitaSeloHTML\(q,src,i\)\+diffTag\(/.test(corpo('qFullHTML')), 'qFullHTML: o selo entra nas etiquetas do card (objetivas e discursivas)');
-    ok(/align-items:center">'\+feitaSeloHTML\(q,'saved',i\)\+diffTag\(/.test(corpo('renderSavedQ')), 'renderSavedQ: o banco salvo também mostra o selo');
+    ok(/margin-bottom:\.45rem">'\+feitaSeloHTML\(q,src,i\)\+\(q\.inst\?/.test(corpo('qFullHTML')), 'qFullHTML: o selo entra nas etiquetas do card (objetivas e discursivas)');
+    ok(/align-items:center">'\+feitaSeloHTML\(q,'saved',i\)\+'<button/.test(corpo('renderSavedQ')), 'renderSavedQ: o banco salvo também mostra o selo');
     // 13/11/2026: "Salvar todas" saiu com a lista paginada (o Banco passou a "Estudar" uma por vez);
     // fica o "💾 Salvar" de cada questão.
     ok(/\{code:q\.code\|\|genCode\(q\.area\),type:qtype,at:Date\.now\(\)\}/.test(corpo('saveOneQ')) && !/function saveAllQ\(/.test(html), 'salvar: a cópia preserva o código original — responder no banco salvo marca a mesma questão do Banco');

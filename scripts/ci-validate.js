@@ -2607,7 +2607,7 @@ try {
 // alunos, deixar mostrando somente no painel do professor."
 try {
   execFileSync(process.execPath, [path.join('scripts', 'test-codigo-so-professor.js')], { stdio: 'pipe' });
-  ok('Banco: código da questão escondido do aluno e mantido no painel do professor');
+  ok('Banco: aluno vê só a instituição; código e dificuldade só no painel do professor');
 } catch (e) {
   const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
   fail('regressão do código da questão só no painel do professor (index.html) falhou:\n' + out);
