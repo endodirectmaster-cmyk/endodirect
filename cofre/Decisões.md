@@ -1,6 +1,6 @@
 ---
 tags: [cofre, decisoes]
-atualizado: 2026-11-27
+atualizado: 2026-11-28
 ---
 
 # Decisões
@@ -8,6 +8,10 @@ atualizado: 2026-11-27
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🏷️ BANCO: FILTRO DE TEMA DENTRO DA SUBESPECIALIDADE (2026-11-28, v516; professor: *"tanto do painel do professor como do aluno, após ele escolher a subespecialidade, por exemplo, adrenal, deixar um filtro também para escolher [...] hiperaldosteronismo [...] Cushing [...] incidentaloma adrenal [...] carcinoma adrenocortical e assim sucessivamente"*).**
+  - Caixa "Tema" no Banco do aluno (aparece depois de escolher a subespecialidade) e no painel do professor, com a contagem por tema. O tema é calculado do texto (`QB_TEMAS`, 118 regras; categoria → enunciado → alternativas), sem gravar nada no banco; o que não casa vai para "Miscelânea". Detalhes em [[Banco de Questões]].
+  - Nomes do professor (28/11): em Adrenal, "Síndrome de Cushing" e "Miscelânea" (*"onde tem outras massas adrenais, coloque o resto como miscelânea"*); em Neuroendocrinologia, "Doença de Cushing". Rótulo da SOP corrigido para "Síndrome dos ovários policísticos (SOP)".
+  - Depois de Neuroendocrinologia, o completar-40-por-tema segue para Adrenal com o mesmo roteiro (ver [[Pendências]]).
 - **🔀 BANCO EMBARALHADO + "PROLACTINÔMICO" (2026-11-28, v515; professor, com print da "Questão 23 de 250" de Neuroendocrinologia: *"Esse termo prolactinômico não existe [...] as questões de cada uma delas estão vindo em sequência, ao invés de vir embaralhadas. Embaralhar também no aplicativo"*).**
   - O "Estudar" abria a lista na ordem em que as questões foram gravadas, e os lotes entram por tema: vinha um tema inteiro, depois o outro. Agora `bancoEmbaralha` (Fisher-Yates numa cópia) a cada "Estudar"; dentro da sessão a ordem fica fixa (Anterior/Próxima e o resultado). O app do iPhone usa o mesmo `index.html`.
   - Teste `scripts/test-banco-embaralhado.js` (no `ci-validate`): permutação sem perda, banco guardado intacto, temas misturados (de 240 vizinhos do mesmo tema em 249 para ~30) e o "Estudar" chamando o embaralhamento.

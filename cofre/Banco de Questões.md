@@ -1,6 +1,6 @@
 ---
 tags: [cofre, questoes]
-atualizado: 2026-11-14
+atualizado: 2026-11-28
 ---
 
 # Banco de Questões
@@ -12,6 +12,25 @@ atualizado: 2026-11-14
 - Shape normalizado: `{stem, options:{A..E}, answer, explanation, area, inst, ano?, code, type, at}` (ver `normalizeImportedQuestion`). Ver [[Dados e Supabase]].
 - **`DB.feitas`** (2026-10-05) — questões do Banco **já respondidas pelo aluno**: `{ chave: {ok:1|0, at} }`, chave = `srsKey(q)` (código, ou enunciado em minúsculas, a mesma do caderno de erros). Pessoal: `persist()` + `PERSONAL_STATE_KEYS` + `userStatePayload` → `app_state`; na hidratação, `mesclarFeitas(servidor, aparelho)` fica com o registro mais recente por questão; `clearLocalUserData` zera ao trocar de conta. Gravada em `selectOpt` (`feitaRegistrar`; anulada entra como `{ok:null,tipo:'anulada'}` — "Anulada · vista em") e em `evalDisc` (discursiva avaliada, `tipo:'disc'` — "Respondida em"). A cópia salva (`saveOneQ`/`saveAllQ`) preserva o código original, então responder no banco salvo marca a mesma questão. Na tela: selo "Acertou/Errou em dd/mm" no card (`feitaSeloHTML`, id `qfeita-<src>-<i>`), contagem "N já respondidas" em `updateProvaInfo`, caixa `#q-naofeitas` ("Mostrar só as que ainda não respondi"). O botão "Sortear 5 não respondidas" (`#btn-sortear-5`, `sortearNaoFeitas`) **saiu em 2026-11-11**, a pedido do professor: a caixa já mostra só as não respondidas. `genAnswered` continua existindo, mas só para o contador da sessão (zera a cada Buscar) — a memória entre buscas e aparelhos é `DB.feitas`.
 - **~~Explicação das alternativas incorretas~~ (RETIRADA em 2026-11-11, pedido do professor: "a ideia, no comentário de cada questão, é mostrar o porquê que determinada questão está correta, mas também analisar as demais alternativas").** O botão e `explicarAlternativas`/`explicarAlternativasPrompt`/`altMemo` saíram do código. Medição no mesmo dia: das 2.935 objetivas, ~1.130 parecem explicar só o gabarito pela busca de palavras, mas a busca SUPERESTIMA (na amostra, 4 de 5 já analisavam as demais). Complemento em amostra: ver Decisões 2026-11-11 ("COMPLETAR OS COMENTÁRIOS DO BANCO"). Histórico: (2026-10-05) — o banco só tem o comentário do gabarito. Depois de responder, o card ganha o botão "Por que as outras alternativas estão incorretas?" (`data-exp-alt="src|idx"` → `explicarAlternativas`): `callAIJson(groundSys(persona), usr, 1100, 0, AI_MODEL_CLINICO)` — **sempre `groundSys`** (sentinela; sem ela o servidor corta o system em 60 mil caracteres e as diretrizes perdem o fim) — com enunciado, alternativas **pelo texto**, gabarito pelo texto e comentário do professor; a IA devolve `{itens:[{alternativa,motivo}]}`; memória por questão na sessão (`altMemo`); exige **pacote** (`blockIfDegustacao`: degustação e curso avulso ficam de fora, com aviso) e o botão só aparece para quem tem; acessos pendentes → "Confirmando o seu plano…" e nova tentativa da RPC. **Sem rótulo "gerado por IA"** no texto: o professor pediu para retirar (05/10/2026). O texto na tela é rotulado "Comentário gerado por IA a partir do gabarito e do comentário do professor".
+
+## Filtro de tema dentro da subespecialidade (2026-11-28, v516)
+
+Pedido do professor: *"após ele escolher a subespecialidade, por exemplo, adrenal, deixar um filtro também para escolher
+a opção de qual tipo de questão da subespecialidade"*, no Banco do aluno e no do painel do professor.
+- **Onde:** `QB_TEMAS` no `index.html` (14 subespecialidades, 118 regras); `qbTemaDe(q)` devolve o tema; caixa
+  `#q-ptema` (aluno, aparece só depois de escolher a subespecialidade) e `#adm-bq-tema` (painel). Cada tema mostra a
+  contagem com os outros filtros aplicados. Teste: `scripts/test-banco-tema.js`.
+- **Como o tema sai:** do texto, sem gravar nada no banco. Ordem: `category` → enunciado → enunciado + alternativas; a 1ª
+  regra da lista que casar vence. O que não casa vai para **"Miscelânea"**.
+- **Nomes pedidos pelo professor:** Adrenal tem "Síndrome de Cushing" (não "de origem adrenal") e "Miscelânea" no lugar de
+  "outras massas" (a fisiologia adrenal também entra em Miscelânea). Em Neuroendocrinologia, o tema é "Doença de Cushing".
+- **Questão nova:** gravar em `category` o nome EXATO do tema (ex.: "Hiperaldosteronismo primário"), para não depender
+  do texto.
+- **Conferência (28/11):** as mesmas regras rodaram em SQL no banco inteiro (3.151 questões): de 0 a 10 sem tema por
+  subespecialidade, e as amostras de cada tema bateram. As regras de trabalho ficam em
+  `scratchpad/temas/qb_temas.js` + `gen_sql.js` (gera o SQL de contagem); ao mudar uma regra, mudar nos dois lugares.
+- **Fronteira de palavra:** o `\b` do JavaScript trata letra acentuada como não-letra ("Huánuco" casaria `\bhu\b`). O
+  `qbTemaCompila` troca `\b` por fronteira explícita com acentos, sem lookbehind (quebraria o iOS 12).
 
 ## Questões com diretriz antiga: atualizadas (2026-11-14)
 

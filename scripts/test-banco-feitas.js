@@ -165,7 +165,7 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(/if\(soNao&&soNao\.checked\)qs=qs\.filter\(function\(q\)\{return !feitaDe\(q\);\}\);\s*renderProvaResults\(bancoEmbaralha\(qs\)\);/.test(bind), 'Buscar: com a caixa marcada, tira as respondidas da lista (e embaralha, 28/11)');
     ok(/_soNao\.addEventListener\('change',updateProvaInfo\)/.test(bind), 'caixa: marcar/desmarcar refaz a contagem na hora');
     // O Simulado continua usando filterProvas com a semântica de sempre (sem feitas).
-    ok(/function filterProvas\(inst,ano,area,type\)\{\s*return provasPool\(\)\.filter\(/.test(html), 'filterProvas: inalterada (o Simulado depende dela)');
+    ok(/function filterProvas\(inst,ano,area,type,tema\)\{\s*return provasPool\(\)\.filter\(/.test(html) && /&&typeOk&&\(!tema\|\|qbTemaDe\(q\)===tema\);/.test(html), 'filterProvas: mesma assinatura + tema opcional no fim (o Simulado chama com 3 argumentos; 28/11/2026)');
   }
 
   if (falhas.length) {

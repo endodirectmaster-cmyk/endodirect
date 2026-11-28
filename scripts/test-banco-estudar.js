@@ -35,7 +35,7 @@ function corpo(nome) {
 ok('🧨 sem "Buscar questões"; o botão é "▶ Estudar"', !/Buscar questões<\/button>/.test(html) && /id="btn-filter-provas" disabled>▶ Estudar<\/button>/.test(html));
 ok('🧨 a lista de 3 por página saiu (renderGenQ, GEN_PER_PAGE, Salvar todas)', !/function renderGenQ\(|GEN_PER_PAGE|btn-save-all-q|function saveAllQ\(/.test(html));
 const upi = corpo('updateProvaInfo');
-ok('a contagem muda a cada filtro (change → updateProvaInfo)', /\['q-inst','q-ano','q-parea','q-ptype'\]\.forEach\(function\(id\)\{var e=document\.getElementById\(id\);if\(e\)e\.addEventListener\('change',updateProvaInfo\);\}\);/.test(html));
+ok('a contagem muda a cada filtro (change → updateProvaInfo)', /\['q-inst','q-ano','q-parea','q-ptype','q-ptema'\]\.forEach\(function\(id\)\{var e=document\.getElementById\(id\);if\(e\)e\.addEventListener\('change',updateProvaInfo\);\}\);/.test(html));
 ok('🧨 o botão diz quantas questões entram e fica desligado com zero ou carregando',
   /var podeN=\(!estado&&n>0\)\?n:0;bt\.disabled=!podeN;bt\.textContent=podeN\?\('▶ Estudar '\+nBR\(podeN\)\+\(podeN===1\?' questão':' questões'\)\):'▶ Estudar';/.test(upi));
 ok('🧨 Estudar abre a tela cheia (renderProvaResults → qzAbrir)', /qzAbrir\(\);/.test(corpo('renderProvaResults')) && /bancoEstadoHTML\(_est\)/.test(corpo('renderProvaResults')));
