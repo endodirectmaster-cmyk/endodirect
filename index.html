@@ -15341,6 +15341,16 @@ function bancoTentarDeNovo(btn){
     if(!bancoEstado()){var rs=document.getElementById('q-gen-results');if(rs)rs.innerHTML='';}
   });
 }
+// Banco embaralhado a cada "Estudar" (professor, 28/11/2026, com print da Questão 23 de 250 de Neuroendocrinologia:
+// "no banco de questões, as questões de cada uma delas estão vindo em sequência, ao invés de vir embaralhadas.
+// Embaralhar também no aplicativo"). A lista saía na ordem em que as questões foram gravadas, e os lotes entram por
+// tema: um tema inteiro seguido do outro. Fisher-Yates numa CÓPIA (o banco guardado não muda de ordem); dentro da
+// sessão a ordem fica fixa, para Anterior/Próxima e o resultado. O app usa este mesmo código.
+function bancoEmbaralha(lista){
+  var a=(lista||[]).slice();
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
 function renderProvaResults(qs){
   if(!qs.length){var _est=bancoEstado();document.getElementById('q-gen-results').innerHTML=_est?bancoEstadoHTML(_est):'<div class="empty">Nenhuma questão encontrada.</div>';return;}
   genQs=qs.map(function(q){return Object.assign({},q,{type:q.type||(q.options&&Object.keys(q.options).length?'mc':'disc')});});
@@ -31178,7 +31188,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var qs=filterProvas(inst,ano,area,type);
     var soNao=document.getElementById('q-naofeitas');
     if(soNao&&soNao.checked)qs=qs.filter(function(q){return !feitaDe(q);});
-    renderProvaResults(qs);
+    renderProvaResults(bancoEmbaralha(qs));
   });
   // Estudar (tela cheia, uma por vez): Voltar sai; Anterior/Próxima andam; setas e Esc no teclado.
   document.getElementById('qz-sair').addEventListener('click',qzFechar);

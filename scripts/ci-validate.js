@@ -2593,5 +2593,15 @@ try {
   fail('regressão do "Sair" só deste aparelho (index.html) falhou:\n' + out);
 }
 
+// BANCO EMBARALHADO (28/11/2026). Professor: "as questões de cada uma delas estão vindo em sequência, ao invés de vir
+// embaralhadas. Embaralhar também no aplicativo".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-banco-embaralhado.js')], { stdio: 'pipe' });
+  ok('Banco de questões embaralhado a cada "Estudar" (site e app), sem mexer na ordem guardada');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do Banco embaralhado (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
