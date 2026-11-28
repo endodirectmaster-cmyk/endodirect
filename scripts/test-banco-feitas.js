@@ -162,7 +162,7 @@ const Q = { code: 'ADR-01', stem: 'Paciente com hipercortisolismo…', area: 'Ad
     ok(/Todas as '\+lista\.length\+' questões desses filtros já foram respondidas\. Desmarque a opção para revê-las\./.test(upi), 'updateProvaInfo: quando tudo já foi respondido, diz isso em vez de "Nenhuma questão"');
     const iBind = html.indexOf("document.getElementById('btn-filter-provas').addEventListener('click',function(){");
     const bind = html.slice(iBind, iBind + 2600);
-    ok(/if\(soNao&&soNao\.checked\)qs=qs\.filter\(function\(q\)\{return !feitaDe\(q\);\}\);\s*renderProvaResults\(qs\);/.test(bind), 'Buscar: com a caixa marcada, tira as respondidas da lista');
+    ok(/if\(soNao&&soNao\.checked\)qs=qs\.filter\(function\(q\)\{return !feitaDe\(q\);\}\);\s*renderProvaResults\(bancoEmbaralha\(qs\)\);/.test(bind), 'Buscar: com a caixa marcada, tira as respondidas da lista (e embaralha, 28/11)');
     ok(/_soNao\.addEventListener\('change',updateProvaInfo\)/.test(bind), 'caixa: marcar/desmarcar refaz a contagem na hora');
     // O Simulado continua usando filterProvas com a semântica de sempre (sem feitas).
     ok(/function filterProvas\(inst,ano,area,type\)\{\s*return provasPool\(\)\.filter\(/.test(html), 'filterProvas: inalterada (o Simulado depende dela)');
