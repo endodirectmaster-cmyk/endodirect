@@ -2603,5 +2603,15 @@ try {
   fail('regressão do Banco embaralhado (index.html) falhou:\n' + out);
 }
 
+// TEMA DENTRO DA SUBESPECIALIDADE NO BANCO (28/11/2026). Professor: "após ele escolher a subespecialidade, por exemplo,
+// adrenal, deixar um filtro também para escolher ... hiperaldosteronismo ... Cushing ... incidentaloma adrenal".
+try {
+  execFileSync(process.execPath, [path.join('scripts', 'test-banco-tema.js')], { stdio: 'pipe' });
+  ok('Banco: filtro de tema dentro da subespecialidade (aluno e painel do professor)');
+} catch (e) {
+  const out = (e.stdout ? e.stdout.toString() : '') + (e.stderr ? e.stderr.toString() : '');
+  fail('regressão do filtro de tema do Banco (index.html) falhou:\n' + out);
+}
+
 if (errors) { console.error(`\n${errors} verificação(ões) falharam.`); process.exit(1); }
 console.log('\nTodas as verificações passaram.');
