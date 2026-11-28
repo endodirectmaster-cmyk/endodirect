@@ -5,6 +5,15 @@ atualizado: 2026-11-28
 
 # Pendências
 
+## 🔁 Banco: 252 questões TEEM com cópia ENDODIRECT idêntica (28/11, aguarda o professor)
+
+A planilha de questões próprias (`origem: endodirect_questoes.csv`) trouxe cópias das provas TEEM (mesmo enunciado e alternativas, comentário mais longo):
+Tireoide 63, Diabetes 62, Obesidade 48, Pediátrica 23, Básica 22, Adrenal 11, Lípides 9, Masculina 6, Feminina 6. Quem tem só o plano vê só a cópia
+(o TEEM é exclusivo do EndoTEEM); quem tem o EndoTEEM vê as duas. Proposta: para quem tem o EndoTEEM, esconder a cópia quando a original
+TEEM está no pool (sem apagar nada). Decisão comercial à parte: se o conteúdo TEEM deve ficar só com o EndoTEEM.
+- Também aguarda: mover as 8 questões do tema "Andrologia" (área antiga "Endocrinologia Feminina e Andrologia") para Endocrinologia Masculina.
+- Calculadora de risco CV × SBC Risco (sbcrisco.cardiol.br): bate em tudo; só no DM a SBC usa "LDL-c ≥ 190" e a T4.8 da diretriz "> 190" (nós) — perguntado ao professor.
+
 ## 💽 Disco do Supabase: cópias antigas podadas (28/11, FEITO com o "pode" do professor)
 
 Professor: *"por mim não tem problema, contanto que não afete em nada o funcionamento da plataforma e a segurança da mesma"*.
