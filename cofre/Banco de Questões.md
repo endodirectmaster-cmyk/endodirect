@@ -13,6 +13,28 @@ atualizado: 2026-11-28
 - **`DB.feitas`** (2026-10-05) — questões do Banco **já respondidas pelo aluno**: `{ chave: {ok:1|0, at} }`, chave = `srsKey(q)` (código, ou enunciado em minúsculas, a mesma do caderno de erros). Pessoal: `persist()` + `PERSONAL_STATE_KEYS` + `userStatePayload` → `app_state`; na hidratação, `mesclarFeitas(servidor, aparelho)` fica com o registro mais recente por questão; `clearLocalUserData` zera ao trocar de conta. Gravada em `selectOpt` (`feitaRegistrar`; anulada entra como `{ok:null,tipo:'anulada'}` — "Anulada · vista em") e em `evalDisc` (discursiva avaliada, `tipo:'disc'` — "Respondida em"). A cópia salva (`saveOneQ`/`saveAllQ`) preserva o código original, então responder no banco salvo marca a mesma questão. Na tela: selo "Acertou/Errou em dd/mm" no card (`feitaSeloHTML`, id `qfeita-<src>-<i>`), contagem "N já respondidas" em `updateProvaInfo`, caixa `#q-naofeitas` ("Mostrar só as que ainda não respondi"). O botão "Sortear 5 não respondidas" (`#btn-sortear-5`, `sortearNaoFeitas`) **saiu em 2026-11-11**, a pedido do professor: a caixa já mostra só as não respondidas. `genAnswered` continua existindo, mas só para o contador da sessão (zera a cada Buscar) — a memória entre buscas e aparelhos é `DB.feitas`.
 - **~~Explicação das alternativas incorretas~~ (RETIRADA em 2026-11-11, pedido do professor: "a ideia, no comentário de cada questão, é mostrar o porquê que determinada questão está correta, mas também analisar as demais alternativas").** O botão e `explicarAlternativas`/`explicarAlternativasPrompt`/`altMemo` saíram do código. Medição no mesmo dia: das 2.935 objetivas, ~1.130 parecem explicar só o gabarito pela busca de palavras, mas a busca SUPERESTIMA (na amostra, 4 de 5 já analisavam as demais). Complemento em amostra: ver Decisões 2026-11-11 ("COMPLETAR OS COMENTÁRIOS DO BANCO"). Histórico: (2026-10-05) — o banco só tem o comentário do gabarito. Depois de responder, o card ganha o botão "Por que as outras alternativas estão incorretas?" (`data-exp-alt="src|idx"` → `explicarAlternativas`): `callAIJson(groundSys(persona), usr, 1100, 0, AI_MODEL_CLINICO)` — **sempre `groundSys`** (sentinela; sem ela o servidor corta o system em 60 mil caracteres e as diretrizes perdem o fim) — com enunciado, alternativas **pelo texto**, gabarito pelo texto e comentário do professor; a IA devolve `{itens:[{alternativa,motivo}]}`; memória por questão na sessão (`altMemo`); exige **pacote** (`blockIfDegustacao`: degustação e curso avulso ficam de fora, com aviso) e o botão só aparece para quem tem; acessos pendentes → "Confirmando o seu plano…" e nova tentativa da RPC. **Sem rótulo "gerado por IA"** no texto: o professor pediu para retirar (05/10/2026). O texto na tela é rotulado "Comentário gerado por IA a partir do gabarito e do comentário do professor".
 
+## Neuroendocrinologia: +231 questões por tema (2026-11-28, ENDODIRECT-2254 a 2484)
+
+Pedido do professor (28/11): *"pelo menos 40 questões de cada um desses temas. Se não tiver, complemente"* e *"tomar o
+cuidado quando for formular novas questões para não fazer questões semelhantes às já pré-existentes"*.
+- **Como:** 11 redatores (um por tema) leram antes todas as questões do tema no banco inteiro e listaram as decisões já
+  cobertas; 11 revisores independentes resolveram cada questão sem o gabarito, conferiram conduta e fontes no PubMed e
+  compararam com o banco e com os outros lotes (Jaccard do `igTokensStem`, corte 0,32; e pela decisão testada).
+  266 redigidas → **231 gravadas** (35 descartadas ou fundidas por repetir decisão de outro lote ou do banco); nenhuma
+  acima de 0,32 contra o banco. Gabarito reequilibrado (58/58/58/57); 47 intermediárias e 184 avançadas.
+- **Formato:** `{ano:2026, area:'Neuroendocrinologia', code, inst:'Endodirect', stem, options{A–D}, answer, explanation
+  (termina em "Fonte:"), dificuldade, category}` com `category` = nome exato do tema do filtro. O aluno recebe pela
+  `endodirect_member_provas()` (item inteiro; inst Endodirect).
+- **Gravação:** pela função `gravar-diretriz` no modo de acréscimo ao `provas` (v33; voltou ao 410 na v34; token
+  apagado). Backup "antes de acrescentar 231 questoes novas de Neuroendocrinologia". 3.151 → 3.382; resto do payload e
+  questões antigas com o mesmo md5 de antes; 231/231 com md5 de enunciado, comentário e gabarito iguais aos locais.
+  Scripts: `scratchpad/neuroq/gravar/` (`prep.py`, `post.js`, `index.ts`).
+- **Contagem pelo filtro depois da gravação:** prolactina 65, GH 48, SIADH 42, raros/genética 41, doença de Cushing 40,
+  AVP 38, craniofaringioma/selares 37, adenoma NF 37, apoplexia 34, acromegalia 34, hipopituitarismo 31, hipofisite 26,
+  miscelânea 8. A contagem manual do levantamento tinha superestimado alguns temas (acromegalia: 26 pelo filtro, não 32).
+  2ª rodada em andamento para os que ficaram pouco abaixo de 40; hipofisite fica abaixo por escolha (o revisor
+  confirmou que as decisões que restam já estão no banco ou nos lotes).
+
 ## Filtro de tema dentro da subespecialidade (2026-11-28, v516)
 
 Pedido do professor: *"após ele escolher a subespecialidade, por exemplo, adrenal, deixar um filtro também para escolher

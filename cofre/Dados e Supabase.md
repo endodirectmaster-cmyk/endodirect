@@ -169,6 +169,11 @@ atualizado: 2026-11-23
   backup; confere que `payload - 'diretrizes'` e o array dos itens não tocados têm o mesmo md5 de antes.
   Gravou 49 substituídos, 1 removido e 61 novos (283 → 343); v32 voltou ao 410, token apagado. Cliente:
   `scratchpad/artigos/post2.js`. Publicado nunca é alvo: a função recusa item sem `rascunho:true`.
+  Em 28/11 a v33 ganhou o modo **acréscimo ao `provas`** (questões novas do Banco): itens com campos fechados
+  (`ano, area, code, inst, stem, options A–D, answer, explanation com "Fonte:", dificuldade, category`), code
+  `ENDODIRECT-nnnn`; guarda pelo code (mesmo code com outro enunciado aborta; mesmo code e enunciado é pulado); backup;
+  confere `payload - 'provas'` e as questões antigas com o mesmo md5. Gravou 231 de Neuro (3.151 → 3.382) em ~30 s com
+  ~500 KB num POST só; v34 voltou ao 410, token apagado. Cliente: `scratchpad/neuroq/gravar/post.js`.
   Desde 25/10 o deploy da função está liberado em `.claude/settings.json`
   (`mcp__Supabase__deploy_edge_function`).
 - **md5 do jsonb fora do banco:** o texto do jsonb sai com as chaves ordenadas por tamanho e

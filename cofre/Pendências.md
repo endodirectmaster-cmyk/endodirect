@@ -10,7 +10,10 @@ atualizado: 2026-11-28
 Pedido do professor (28/11): ter pelo menos 40 questões de cada tema e completar o que faltar, sem repetir decisão já
 coberta no banco ("tomar o cuidado... para não fazer questões semelhantes às já pré-existentes"). Depois de
 Neuroendocrinologia: *"partir para adrenal, com o mesmo raciocínio"*.
-- [ ] Neuro: 11 temas redigidos; revisão independente de 10 concluída (28/11, 23h40); falta raros/genética. Depois: dedup cruzado
+- [x] Neuro: 231 questões gravadas (ENDODIRECT-2254 a 2484), ver [[Banco de Questões]].
+- [ ] Neuro 2ª rodada: hipopit +10, acromegalia +7, apoplexia +6, crânio/selares +4, adenoma NF +4, AVP +3 (pelo filtro).
+- [ ] Avisar o professor: ENDODIRECT-821, 822, 1776, TEEM2022-052 e USPR3ENDOCRINOLOGIA-2024-31 tratam o TOTG como
+  confirmação obrigatória na acromegalia, em conflito com o 14º Consenso (2023). Depois: dedup cruzado
   (`dedup_sql.py`, Jaccard 0,32), rebalancear letras, códigos a partir de ENDODIRECT-2254, backup + gravação em lotes.
 - [ ] Adrenal: mesmo roteiro (levantamento por tema com as regras de `qb_temas.js` → redatores com BRIEF → revisores
   com REVISAO → dedup → gravação). Temas (nomes do professor): hiperaldosteronismo primário, síndrome de Cushing, incidentaloma,
