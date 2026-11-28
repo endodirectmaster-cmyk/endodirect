@@ -8,6 +8,7 @@ atualizado: 2026-11-28
 Log de decisões de produto e técnicas (mais recentes no topo).
 
 ## 2026-11
+- **🧈 BANCO: +67 QUESTÕES DE LÍPIDES E +13 DA 2ª RODADA DE NEURO (2026-11-28, ENDODIRECT-2537 a 2616).** Lp(a) 11 → 38, HF 20 → 35, HDL/raras 25 → 37, metabolismo 32 → 39, LDL 36 → 42; 2ª rodada curta de Lípides e Obesidade em andamento ([[Banco de Questões]]).
 - **🩹 BANCO: 13 QUESTÕES ANTIGAS CORRIGIDAS (2026-11-28; professor: *"Pode corrigir tudo e continuar"*).** Acromegalia/TOTG (14º Consenso), incidentaloma (ESE 2023) e Lp(a)/fibrinólise (EAS 2022); Endodirect reescritas, oficiais com nota de atualização; nenhum gabarito trocado. `gravar-diretriz` ganhou o modo substituir (v37 → 410 na v38). Ver [[Banco de Questões]].
 - **🫘 BANCO: +52 QUESTÕES DE ADRENAL (2026-11-28, ENDODIRECT-2485 a 2536).** Carcinoma adrenocortical (6 → 41), incidentaloma (26 → 40), HAC (39 → 42). Cinco antigas contrariam a ESE 2023 e aguardam o professor ([[Banco de Questões]]).
 - **🧠 BANCO: +231 QUESTÕES DE NEUROENDOCRINOLOGIA (2026-11-28, ENDODIRECT-2254 a 2484; professor: *"pelo menos 40 questões de cada um desses temas. Se não tiver, complemente"*, *"para não fazer questões semelhantes às já pré-existentes"*).** Redator + revisor independente por tema, dedup contra o banco e entre lotes; gravadas pela `gravar-diretriz` (modo acréscimo, v33 → 410 na v34). Detalhes e contagens em [[Banco de Questões]]. Ritmo: *"se ajuste para trabalhar de forma que dê tempo e até sobre no limite de 5 horas"* (máx. 3 agentes ao mesmo tempo).

@@ -11,7 +11,7 @@ Pedido do professor (28/11): ter pelo menos 40 questões de cada tema e completa
 coberta no banco ("tomar o cuidado... para não fazer questões semelhantes às já pré-existentes"). Depois de
 Neuroendocrinologia: *"partir para adrenal, com o mesmo raciocínio"*.
 - [x] Neuro: 231 questões gravadas (ENDODIRECT-2254 a 2484), ver [[Banco de Questões]].
-- [ ] Neuro 2ª rodada: hipopit +10, acromegalia +7, apoplexia +6, crânio/selares +4, adenoma NF +4, AVP +3 (pelo filtro).
+- [x] Neuro 2ª rodada: 13 gravadas (2537–2549).
 - [x] TOTG na acromegalia, ESE 2023 no incidentaloma e Lp(a)/fibrinólise: 13 antigas corrigidas em 28/11 ("Pode corrigir tudo"). Depois: dedup cruzado
   (`dedup_sql.py`, Jaccard 0,32), rebalancear letras, códigos a partir de ENDODIRECT-2254, backup + gravação em lotes.
 - [x] Adrenal: 52 gravadas (ENDODIRECT-2485 a 2536); todos os temas ≥ 40 pelo filtro. Avisar o professor das 5
@@ -19,7 +19,7 @@ Neuroendocrinologia: *"partir para adrenal, com o mesmo raciocínio"*.
 - (feito) Adrenal: mesmo roteiro (levantamento por tema com as regras de `qb_temas.js` → redatores com BRIEF → revisores
   com REVISAO → dedup → gravação). Temas (nomes do professor): hiperaldosteronismo primário, síndrome de Cushing, incidentaloma,
   carcinoma adrenocortical, feocromocitoma/paraganglioma, insuficiência adrenal, HAC e miscelânea (o resto).
-- [ ] Lípides (28/11, 01h00): redigidas Lp(a) 29, LDL 6, HF 15, HDL/raras 12, metabolismo 7 (`scratchpad/banco40/lipides/`).
+- [~] Lípides: 67 gravadas (2550–2616); 2ª rodada curta (HF +6, HDL +4, Lp(a) +3, metabolismo +2) em andamento. Histórico (28/11, 01h00): redigidas Lp(a) 29, LDL 6, HF 15, HDL/raras 12, metabolismo 7 (`scratchpad/banco40/lipides/`).
   Revisão de HF/HDL/metabolismo rodando; a de Lp(a)/LDL fica para depois da janela (04h20 BRT, lembrete agendado).
   Gravar junto as 13 da 2ª rodada de Neuro (`scratchpad/neuroq/gravar/rodada2.novas.json`, ENDODIRECT-2537 a 2549).
   (*"Depois que acabar o de adrenal, vamos partir para o de lípides. E depois de lípides, obesidade."*, 28/11):
