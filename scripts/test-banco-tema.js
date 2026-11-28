@@ -80,6 +80,10 @@ const casos = [
   // Rótulo antigo de área passa pela taxonomia (canonSub).
   [{ area: 'Básica', stem: 'Exposição a bisfenol A e ftalatos.' }, 'Disruptores endócrinos'],
   [{ area: 'Geral', stem: 'Qualquer coisa.' }, ''],
+  // Nome exato do tema em `category` vence as regras (28/11/2026); e "adolescência" conta para infância.
+  [{ area: 'Obesidade', category: 'Obesidade na infância e adolescência', stem: 'Adolescente de 14 anos inicia semaglutida 2,4 mg.' }, 'Obesidade na infância e adolescência'],
+  [{ area: 'Obesidade', stem: 'Obesidade na adolescência: qual exame de rastreio?' }, 'Obesidade na infância e adolescência'],
+  [{ area: 'Adrenal', category: 'Incidentaloma adrenal', stem: 'Cortisol pós-dexametasona de 2,9 µg/dL.' }, 'Incidentaloma adrenal'],
   // As alternativas entram só depois do enunciado.
   [{ area: 'Adrenal', stem: 'Qual o tratamento?', options: { A: 'Espironolactona e dosar aldosterona', B: 'Outra' } }, 'Hiperaldosteronismo primário'],
 ];

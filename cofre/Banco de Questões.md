@@ -13,6 +13,83 @@ atualizado: 2026-11-28
 - **`DB.feitas`** (2026-10-05) — questões do Banco **já respondidas pelo aluno**: `{ chave: {ok:1|0, at} }`, chave = `srsKey(q)` (código, ou enunciado em minúsculas, a mesma do caderno de erros). Pessoal: `persist()` + `PERSONAL_STATE_KEYS` + `userStatePayload` → `app_state`; na hidratação, `mesclarFeitas(servidor, aparelho)` fica com o registro mais recente por questão; `clearLocalUserData` zera ao trocar de conta. Gravada em `selectOpt` (`feitaRegistrar`; anulada entra como `{ok:null,tipo:'anulada'}` — "Anulada · vista em") e em `evalDisc` (discursiva avaliada, `tipo:'disc'` — "Respondida em"). A cópia salva (`saveOneQ`/`saveAllQ`) preserva o código original, então responder no banco salvo marca a mesma questão. Na tela: selo "Acertou/Errou em dd/mm" no card (`feitaSeloHTML`, id `qfeita-<src>-<i>`), contagem "N já respondidas" em `updateProvaInfo`, caixa `#q-naofeitas` ("Mostrar só as que ainda não respondi"). O botão "Sortear 5 não respondidas" (`#btn-sortear-5`, `sortearNaoFeitas`) **saiu em 2026-11-11**, a pedido do professor: a caixa já mostra só as não respondidas. `genAnswered` continua existindo, mas só para o contador da sessão (zera a cada Buscar) — a memória entre buscas e aparelhos é `DB.feitas`.
 - **~~Explicação das alternativas incorretas~~ (RETIRADA em 2026-11-11, pedido do professor: "a ideia, no comentário de cada questão, é mostrar o porquê que determinada questão está correta, mas também analisar as demais alternativas").** O botão e `explicarAlternativas`/`explicarAlternativasPrompt`/`altMemo` saíram do código. Medição no mesmo dia: das 2.935 objetivas, ~1.130 parecem explicar só o gabarito pela busca de palavras, mas a busca SUPERESTIMA (na amostra, 4 de 5 já analisavam as demais). Complemento em amostra: ver Decisões 2026-11-11 ("COMPLETAR OS COMENTÁRIOS DO BANCO"). Histórico: (2026-10-05) — o banco só tem o comentário do gabarito. Depois de responder, o card ganha o botão "Por que as outras alternativas estão incorretas?" (`data-exp-alt="src|idx"` → `explicarAlternativas`): `callAIJson(groundSys(persona), usr, 1100, 0, AI_MODEL_CLINICO)` — **sempre `groundSys`** (sentinela; sem ela o servidor corta o system em 60 mil caracteres e as diretrizes perdem o fim) — com enunciado, alternativas **pelo texto**, gabarito pelo texto e comentário do professor; a IA devolve `{itens:[{alternativa,motivo}]}`; memória por questão na sessão (`altMemo`); exige **pacote** (`blockIfDegustacao`: degustação e curso avulso ficam de fora, com aviso) e o botão só aparece para quem tem; acessos pendentes → "Confirmando o seu plano…" e nova tentativa da RPC. **Sem rótulo "gerado por IA"** no texto: o professor pediu para retirar (05/10/2026). O texto na tela é rotulado "Comentário gerado por IA a partir do gabarito e do comentário do professor".
 
+## Obesidade +54, Lípides 2ª rodada +12 e mais 4 correções (2026-11-28, ENDODIRECT-2617 a 2682; v517)
+
+Gravação única (`gravar-diretriz` v41 → 410 na v42): 3.514 → 3.580; 66/66 conferem; substituídas 4/4.
+- **Obesidade (2617–2670):** infância e adolescência 30, nutrição/exercício/suplementos 16, monogênica e sindrômica 8.
+- **Lípides 2ª rodada (2671–2682):** HF 6 (inclui ORION-16, Wiegman, Lancet Diabetes Endocrinol 2026;14(3):233-42),
+  HDL/raras 4, metabolismo 2. Lp(a) ficou em 38: os redatores e revisores não acharam decisão nova sem quase-clone.
+- **Correções:** TEEM2019-059 e USPR3ENDOCRINOLOGIA-2023-4 (nota: na deficiência de LEPR a leptina fica no esperado para
+  a massa gorda, Farooqi NEJM 2007; na USP, D também é verdadeira e C tem exceção — leptina bioinativa, Wabitsch NEJM
+  2015), AULA-OBES2-Q5 (comentário) e ENDODIRECT-524 (gabarito estava errado: semaglutida 2,4 mg aprovada pela Anvisa
+  para ≥ 12 anos desde 2023; pergunta invertida, letra A mantida).
+- **v517 (filtro):** o nome EXATO do tema em `category` passou a valer antes das regras; a regra de infância passou a
+  casar "adolescência"/"infância". Sem isso, as 30 novas de infância caíam em outros temas (o filtro mostrava 16).
+- **Pelo filtro, depois:** Obesidade — farmacológico 85, fisiologia 75, bariátrica 62, comorbidades 62, avaliação 45,
+  nutrição 42, monogênica 42, infância 40. Lípides — hipertrigliceridemia 46, secundárias 44, LDL 42, HF 41,
+  metabolismo 41, HDL/raras 41, Lp(a) 38.
+
+## Lípides +67 e Neuro 2ª rodada +13 (2026-11-28, ENDODIRECT-2537 a 2616)
+
+Numa gravação só (`gravar-diretriz` v39 → 410 na v40): 3.434 → 3.514; 80/80 conferem.
+- **Neuro 2ª rodada (2537–2549):** hipopituitarismo 4, acromegalia 5, AVP 3, apoplexia 1 (18 redigidas, 5 descartadas por
+  repetir decisão do banco ou do lote de Adrenal do mesmo dia). Pelo filtro: AVP 41, acromegalia 39, crânio/selares 37,
+  adenoma NF 37, hipopit 35, apoplexia 35, hipofisite 26 — abaixo de 40 por não haver decisão nova sem quase-clone.
+- **Lípides (2550–2616):** Lp(a) 27 (Lp(a)HORIZON conferido no PubMed: Cho L et al., NEJM 7/11/2026, PMID 43001734,
+  pelacarsena sem redução de eventos), LDL 6, HF 15, HDL/raras 12, metabolismo 7. Um gabarito corrigido na revisão (HF com
+  AVC prévio = muito alto risco pela SBC 2025, não extremo). Pelo filtro, depois: hipertrigliceridemia 46, secundárias 44,
+  LDL 42, metabolismo 39, Lp(a) 38, HDL/raras 37, HF 35 → 2ª rodada curta em andamento.
+
+## Correção de 13 questões antigas (2026-11-28, "Pode corrigir tudo e continuar")
+
+Achadas durante o completar-40 (os revisores compararam com as diretrizes vigentes). Mesmo critério de 14/11: Endodirect
+reescrita; prova oficial com parágrafo final "Atualização (nov/2026): ..." no comentário. Nenhuma letra de gabarito mudou.
+- **Acromegalia (14º Consenso, Giustina et al., Pituitary 2024;27(1):7-22: IGF-1 > 1,3 × LSN com quadro típico confirma;
+  TOTG só no IGF-1 limítrofe):** ENDODIRECT-821, 822, 1776 reescritas; notas em TEEM2022-052, USPR3ENDOCRINOLOGIA-2024-31
+  e TEEM2026-075.
+- **Incidentaloma (ESE/ENSAT 2023):** ENDODIRECT-622 (agora com invasão do rim → via aberta), 616 (minimamente invasiva +
+  glicocorticoide perioperatório na MACS), 615 (esteroides sexuais e precursores na suspeita de carcinoma), 1535 (não
+  repetir imagem nem hormônios sem sinal novo) reescritas; notas em TEEM2021-091 e TEEM2020-087 (hoje nenhuma alternativa
+  fica certa).
+- **Lp(a) (EAS 2022):** ENDODIRECT-1211 reescrita (fosfolipídios oxidados; "inibe a fibrinólise" virou distrator).
+- **Gravação:** backup `main-antes-correcoes-13-20261128` + backup da função; `gravar-diretriz` v37 com modo
+  **substituir** (casa por code + md5 do enunciado e do comentário atuais; confere que o resto do payload e as outras
+  questões ficaram idênticos); v38 de volta ao 410, token apagado. 13/13 conferem. Arquivos em
+  `scratchpad/banco40/correcoes/`; cliente `scratchpad/banco40/post_subst.js`.
+
+## Adrenal: +52 questões (2026-11-28, ENDODIRECT-2485 a 2536)
+
+Mesmo roteiro da Neuro (redator → revisor independente → dedup → `gravar-diretriz` v35, de volta ao 410 na v36).
+Carcinoma adrenocortical 35 (36 redigidas; 1 descartada por repetir a via minimamente invasiva do incidentaloma),
+incidentaloma 14, HAC 3. 3.382 → 3.434; 52/52 conferem. **Pelo filtro, depois:** feocromocitoma 58, síndrome de Cushing
+54, insuficiência adrenal 52, hiperaldosteronismo 42, HAC 42, carcinoma 41, incidentaloma 40, miscelânea 10.
+- **Questões antigas que contrariam a ESE/ENSAT 2023 de incidentaloma** (confirmadas pelo revisor; aguardam o
+  professor, não mexi): ENDODIRECT-622 e ENDODIRECT-616 (via aberta para lesão ≤ 6 cm sem invasão), TEEM2021-091
+  ("considerar metástase" em lesão homogênea de −3 UH; nenhuma alternativa fica certa), ENDODIRECT-1535 (repetir a
+  avaliação hormonal periodicamente) e TEEM2020-087 (metanefrinas em lesão de 5 UH).
+
+## Neuroendocrinologia: +231 questões por tema (2026-11-28, ENDODIRECT-2254 a 2484)
+
+Pedido do professor (28/11): *"pelo menos 40 questões de cada um desses temas. Se não tiver, complemente"* e *"tomar o
+cuidado quando for formular novas questões para não fazer questões semelhantes às já pré-existentes"*.
+- **Como:** 11 redatores (um por tema) leram antes todas as questões do tema no banco inteiro e listaram as decisões já
+  cobertas; 11 revisores independentes resolveram cada questão sem o gabarito, conferiram conduta e fontes no PubMed e
+  compararam com o banco e com os outros lotes (Jaccard do `igTokensStem`, corte 0,32; e pela decisão testada).
+  266 redigidas → **231 gravadas** (35 descartadas ou fundidas por repetir decisão de outro lote ou do banco); nenhuma
+  acima de 0,32 contra o banco. Gabarito reequilibrado (58/58/58/57); 47 intermediárias e 184 avançadas.
+- **Formato:** `{ano:2026, area:'Neuroendocrinologia', code, inst:'Endodirect', stem, options{A–D}, answer, explanation
+  (termina em "Fonte:"), dificuldade, category}` com `category` = nome exato do tema do filtro. O aluno recebe pela
+  `endodirect_member_provas()` (item inteiro; inst Endodirect).
+- **Gravação:** pela função `gravar-diretriz` no modo de acréscimo ao `provas` (v33; voltou ao 410 na v34; token
+  apagado). Backup "antes de acrescentar 231 questoes novas de Neuroendocrinologia". 3.151 → 3.382; resto do payload e
+  questões antigas com o mesmo md5 de antes; 231/231 com md5 de enunciado, comentário e gabarito iguais aos locais.
+  Scripts: `scratchpad/neuroq/gravar/` (`prep.py`, `post.js`, `index.ts`).
+- **Contagem pelo filtro depois da gravação:** prolactina 65, GH 48, SIADH 42, raros/genética 41, doença de Cushing 40,
+  AVP 38, craniofaringioma/selares 37, adenoma NF 37, apoplexia 34, acromegalia 34, hipopituitarismo 31, hipofisite 26,
+  miscelânea 8. A contagem manual do levantamento tinha superestimado alguns temas (acromegalia: 26 pelo filtro, não 32).
+  2ª rodada em andamento para os que ficaram pouco abaixo de 40; hipofisite fica abaixo por escolha (o revisor
+  confirmou que as decisões que restam já estão no banco ou nos lotes).
+
 ## Filtro de tema dentro da subespecialidade (2026-11-28, v516)
 
 Pedido do professor: *"após ele escolher a subespecialidade, por exemplo, adrenal, deixar um filtro também para escolher
