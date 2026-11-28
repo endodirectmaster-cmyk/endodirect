@@ -110,6 +110,12 @@ aviso do professor (painel de uso), o estado `rejected` no `get_session` e a men
 um agente. Parar = não lançar agente novo, gravar o que já foi revisado, registrar o que falta e
 agendar a retomada para depois da renovação.
 
+**Ritmo reduzido em vez de parada total (28/11/2026).** Professor: *"Dá só uma reduzida no ritmo... quando redefinir...
+aí você retoma com força máxima"* e, sobre o banco de questões (Neuro e depois Adrenal): *"se por acaso atingirmos um
+limite de 90% do limite de 5 horas... fazer o mesmo esquema de reduzir as atividades até reiniciar, zerar o limite das
+5 horas"*. Na prática: perto de 90%, não lançar agente novo e interromper os que acabaram de começar; os que já estão
+adiantados terminam; eu só confiro o que chega. `send_later` para 2 min depois da renovação, retomando com tudo.
+
 **Controle aproximado (12/11, o professor perguntou por que eu "sempre consegui fazer esse controle"):**
 nunca vi o percentual; o controle sempre foi aproximação (teto de tokens + mensagem de limite) e já
 errou (17/10). Agora: ledger dos tokens dos agentes por janela de 5 h (a janela renova no `resetsAt`
