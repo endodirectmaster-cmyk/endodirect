@@ -13,6 +13,22 @@ atualizado: 2026-11-28
 - **`DB.feitas`** (2026-10-05) — questões do Banco **já respondidas pelo aluno**: `{ chave: {ok:1|0, at} }`, chave = `srsKey(q)` (código, ou enunciado em minúsculas, a mesma do caderno de erros). Pessoal: `persist()` + `PERSONAL_STATE_KEYS` + `userStatePayload` → `app_state`; na hidratação, `mesclarFeitas(servidor, aparelho)` fica com o registro mais recente por questão; `clearLocalUserData` zera ao trocar de conta. Gravada em `selectOpt` (`feitaRegistrar`; anulada entra como `{ok:null,tipo:'anulada'}` — "Anulada · vista em") e em `evalDisc` (discursiva avaliada, `tipo:'disc'` — "Respondida em"). A cópia salva (`saveOneQ`/`saveAllQ`) preserva o código original, então responder no banco salvo marca a mesma questão. Na tela: selo "Acertou/Errou em dd/mm" no card (`feitaSeloHTML`, id `qfeita-<src>-<i>`), contagem "N já respondidas" em `updateProvaInfo`, caixa `#q-naofeitas` ("Mostrar só as que ainda não respondi"). O botão "Sortear 5 não respondidas" (`#btn-sortear-5`, `sortearNaoFeitas`) **saiu em 2026-11-11**, a pedido do professor: a caixa já mostra só as não respondidas. `genAnswered` continua existindo, mas só para o contador da sessão (zera a cada Buscar) — a memória entre buscas e aparelhos é `DB.feitas`.
 - **~~Explicação das alternativas incorretas~~ (RETIRADA em 2026-11-11, pedido do professor: "a ideia, no comentário de cada questão, é mostrar o porquê que determinada questão está correta, mas também analisar as demais alternativas").** O botão e `explicarAlternativas`/`explicarAlternativasPrompt`/`altMemo` saíram do código. Medição no mesmo dia: das 2.935 objetivas, ~1.130 parecem explicar só o gabarito pela busca de palavras, mas a busca SUPERESTIMA (na amostra, 4 de 5 já analisavam as demais). Complemento em amostra: ver Decisões 2026-11-11 ("COMPLETAR OS COMENTÁRIOS DO BANCO"). Histórico: (2026-10-05) — o banco só tem o comentário do gabarito. Depois de responder, o card ganha o botão "Por que as outras alternativas estão incorretas?" (`data-exp-alt="src|idx"` → `explicarAlternativas`): `callAIJson(groundSys(persona), usr, 1100, 0, AI_MODEL_CLINICO)` — **sempre `groundSys`** (sentinela; sem ela o servidor corta o system em 60 mil caracteres e as diretrizes perdem o fim) — com enunciado, alternativas **pelo texto**, gabarito pelo texto e comentário do professor; a IA devolve `{itens:[{alternativa,motivo}]}`; memória por questão na sessão (`altMemo`); exige **pacote** (`blockIfDegustacao`: degustação e curso avulso ficam de fora, com aviso) e o botão só aparece para quem tem; acessos pendentes → "Confirmando o seu plano…" e nova tentativa da RPC. **Sem rótulo "gerado por IA"** no texto: o professor pediu para retirar (05/10/2026). O texto na tela é rotulado "Comentário gerado por IA a partir do gabarito e do comentário do professor".
 
+## Obesidade +54, Lípides 2ª rodada +12 e mais 4 correções (2026-11-28, ENDODIRECT-2617 a 2682; v517)
+
+Gravação única (`gravar-diretriz` v41 → 410 na v42): 3.514 → 3.580; 66/66 conferem; substituídas 4/4.
+- **Obesidade (2617–2670):** infância e adolescência 30, nutrição/exercício/suplementos 16, monogênica e sindrômica 8.
+- **Lípides 2ª rodada (2671–2682):** HF 6 (inclui ORION-16, Wiegman, Lancet Diabetes Endocrinol 2026;14(3):233-42),
+  HDL/raras 4, metabolismo 2. Lp(a) ficou em 38: os redatores e revisores não acharam decisão nova sem quase-clone.
+- **Correções:** TEEM2019-059 e USPR3ENDOCRINOLOGIA-2023-4 (nota: na deficiência de LEPR a leptina fica no esperado para
+  a massa gorda, Farooqi NEJM 2007; na USP, D também é verdadeira e C tem exceção — leptina bioinativa, Wabitsch NEJM
+  2015), AULA-OBES2-Q5 (comentário) e ENDODIRECT-524 (gabarito estava errado: semaglutida 2,4 mg aprovada pela Anvisa
+  para ≥ 12 anos desde 2023; pergunta invertida, letra A mantida).
+- **v517 (filtro):** o nome EXATO do tema em `category` passou a valer antes das regras; a regra de infância passou a
+  casar "adolescência"/"infância". Sem isso, as 30 novas de infância caíam em outros temas (o filtro mostrava 16).
+- **Pelo filtro, depois:** Obesidade — farmacológico 85, fisiologia 75, bariátrica 62, comorbidades 62, avaliação 45,
+  nutrição 42, monogênica 42, infância 40. Lípides — hipertrigliceridemia 46, secundárias 44, LDL 42, HF 41,
+  metabolismo 41, HDL/raras 41, Lp(a) 38.
+
 ## Lípides +67 e Neuro 2ª rodada +13 (2026-11-28, ENDODIRECT-2537 a 2616)
 
 Numa gravação só (`gravar-diretriz` v39 → 410 na v40): 3.434 → 3.514; 80/80 conferem.
